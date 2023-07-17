@@ -2,14 +2,13 @@
 	<view class="tn-flex tn-flex-direction-column">
 		<!-- 头部控件 -->
 		<view class="image-wrapper">
-			<image :src="userInfo.head_img" style="position: relative;height: 600rpx;width: 100%;" mode="aspectFill"
-				@tap="isLogin?'':goLogin">
+			<image :src="userInfo.head_img" style="position: relative;height: 500rpx;width: 100%;" mode="aspectFill">
 			</image>
 		</view>
 		<view class="tn-padding" style="position: absolute;top: 100rpx;width: 100%;">
 			<view class="tn-flex tn-flex-col-center">
 				<tn-avatar :src="userInfo.head_img" size="xl" :border="true" backgroundColor="#f8f7f8"
-					borderColor="#ffffff" :borderSize="6"></tn-avatar>
+					borderColor="#ffffff" :borderSize="6" @tap="isLogin ? goProfile() : goLogin()"></tn-avatar>
 				<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-flex-1 tn-margin-left-sm">
 					<view class="tn-flex tn-flex-col-center">
 						<text :class="userInfo.level==='admin'?'tn-color-purplered':'tn-color-white'"
@@ -18,6 +17,7 @@
 					<view v-if="isLogin">
 						<tn-button :plain="true" size="sm" shape="round"> 编辑
 						</tn-button>
+						<tn-button :plain="true" size="sm" shape="round" @tap="logOut">退出</tn-button>
 					</view>
 				</view>
 			</view>
@@ -28,18 +28,9 @@
 				:zIndex="2" activeColor="#fb7299" style="border-radius: 20rpx 20rpx 0 0;background-color: white;">
 			</v-tabs>
 		</view>
-		<swiper :current="tabsIndex" @change="changeSwpier" style="height: 100vh;">
-			<swiper-item style="overflow: auto;">
-				<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback">
-					<articleList :content="content"></articleList>
-				</mescroll-body>
-
-			</swiper-item>
-			<swiper-item>
-				
-			</swiper-item>
-		</swiper>
-
+		<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :down="downOption">
+			<articleList :content="content"></articleList>
+		</mescroll-body>
 	</view>
 </template>
 
@@ -53,19 +44,22 @@
 		},
 		data() {
 			return {
+				mescroll: [],
 				userInfo: [],
 				content: [],
 				isLogin: false,
 				tabs: ['动态', '评论'],
 				tabsIndex: 0,
 				swiperHeight: 0, //活动组件高度
-				comments:[],
+				comments: [],
+				downOption: {
+					auto: false,
+				}
 			}
 		},
 		onLoad() {
-			//每次加载页面时都获取userInfo
 			this.userInfo = uni.getStorageSync('userInfo')
-			if (uni.getStorageSync('token') != null) {
+			if (uni.getStorageSync('token') != '') {
 				this.isLogin = true
 			}
 		},
@@ -73,7 +67,10 @@
 			//监听登录事件获取userInfo
 			uni.$on('loginCompete', data => {
 				this.userInfo = uni.getStorageSync('userInfo')
+				this.isLogin = true
+				this.mescroll.resetUpScroll()
 			})
+			
 		},
 		methods: {
 			//获取文章信息
@@ -96,6 +93,7 @@
 						article = res.data.data
 						if (page === 1) this.content = []
 						this.content = this.content.concat(article.data)
+						console.log(res)
 					}
 					mescroll.endByPage(article.count, article.page);
 				}).catch(err => {
@@ -110,9 +108,22 @@
 			},
 			//前往登录
 			goLogin() {
+				console.log('点击了登录')
 				uni.navigateTo({
 					url: '/pages/user/login'
 				})
+			},
+			//个人主页
+			goProfile() {
+
+			},
+			logOut() {
+				console.log('点击了退出')
+				uni.clearStorageSync('token')
+				this.isLogin = false
+				setTimeout(() => {
+					this.$router.go(0)
+				}, 200)
 			}
 		}
 	}
