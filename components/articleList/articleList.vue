@@ -155,7 +155,8 @@
 					params: {
 						limit: num,
 						page: page,
-						order: this.tabsIndex === 1 ? 'views desc' : this.tabsIndex===2? 'is_top desc,views desc':''
+						order: this.tabsIndex === 1 ? 'views desc' : this.tabsIndex === 2 ?
+							'is_top desc,views desc' : ''
 					}
 				}).then(res => {
 					console.log(res)
@@ -178,8 +179,11 @@
 			},
 			goPost(index) {
 				let data = this.content
-				uni.navigateTo({
-					url: '/pages/article/article?id=' + data[index].id
+				this.$Router.push({
+					path: '/pages/article/article',
+					query: {
+						id: data[index].id
+					}
 				})
 			},
 			followUser() {

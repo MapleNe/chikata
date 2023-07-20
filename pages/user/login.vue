@@ -97,7 +97,10 @@
 						}, 800)
 					}
 				}).catch(err => {
-					console.log(err);
+					uni.showToast({
+						icon:'none',
+						title:err.msg
+					})
 				});
 			},
 			back() {

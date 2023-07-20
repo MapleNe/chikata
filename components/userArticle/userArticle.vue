@@ -153,8 +153,11 @@
 			},
 			goPost(index) {
 				let data = this.content
-				uni.navigateTo({
-					url: '/pages/article/article?id=' + data[index].id
+				this.$Router.push({
+					path: '/pages/article/article',
+					query: {
+						id: data[index].id
+					}
 				})
 			},
 			followUser() {
