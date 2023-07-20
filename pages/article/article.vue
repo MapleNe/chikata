@@ -94,9 +94,9 @@
 </template>
 
 <script>
-	import {
-		token
-	} from '../../static/config';
+	// import {
+	// 	token
+	// } from '../../static/config';
 	import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 	export default {
 		mixins: [MescrollMixin], // 使用mixin
@@ -116,10 +116,11 @@
 					}
 				},
 				params: [], //页面传参
-				token: null, //token
 				secondNav: false,
+				token: null,
 			}
 		},
+
 		onLoad(params) {
 			this.params = params
 			this.getArticle()
@@ -188,7 +189,7 @@
 					content: this.commentText,
 				}, {
 					header: {
-						'Authorization': this.token
+						'Authorization': this.token,
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
@@ -277,4 +278,7 @@
 </script>
 
 <style>
+	page {
+		height: auto;
+	}
 </style>

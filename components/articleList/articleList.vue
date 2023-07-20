@@ -1,112 +1,181 @@
 <template>
 	<view>
-		<view v-for="(item,index) in content" :key="index">
-			<view class="tn-margin">
-				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-					<view class="tn-flex tn-flex-col-center">
-						<tn-avatar :src="item.expand.author.head_img"></tn-avatar>
-						<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
-							<text>{{item.expand.author.nickname}}</text>
-							<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
-						</view>
-					</view>
-					<view>
-						<tn-button size="sm" :plain="true" shape="round" @tap="followUser">关注</tn-button>
-					</view>
-
-				</view>
-				<view @tap.stop="goPost(index)">
-					<view class="tn-padding tn-no-padding-left">
-						<rich-text :nodes="item.description"></rich-text>
-					</view>
-					<!-- 单张图片 -->
-					<view v-if="item.expand.images.length===1">
-						<image v-for="(images,index) in item.expand.images" :key="index" :src="images.src"
-							mode="aspectFill" style="height: 400rpx;width: 400rpx;border-radius:10rpx;"
-							@tap.stop="previewImage(item.expand.images,index)">
-						</image>
-					</view>
-					<!-- 单张结束 -->
-					<!-- 复数开始 -->
-					<view v-if="item.expand.images.length===2||item.expand.images.length===4">
-						<tn-grid align="left" :col="item.expand.images.length" hoverClass="none">
-							<block v-for="(images, index) in item.expand.images" :key="index">
-								<!-- H5 -->
-								<!-- #ifndef MP-WEIXIN -->
-								<tn-grid-item
-									style="height: 256rpx;width: 256rpx;margin-right: 6rpx;margin-bottom: 6rpx;">
-									<image :src="images.src" mode="aspectFill"
-										style="height: 256rpx;width: 256rpx;border-radius: 10rpx;"
-										@tap.stop="previewImage(item.expand.images,index)">
-									</image>
-								</tn-grid-item>
-								<!-- #endif-->
-
-								<!-- 微信小程序 -->
-								<!-- #ifdef MP-WEIXIN -->
-								<!-- <tn-grid-item :style="{width: gridItemWidth}">
-									<view style="padding: 30rpx;">{{ item }}</view>
-								</tn-grid-item> -->
-								<!-- #endif-->
-							</block>
-						</tn-grid>
-					</view>
-					<view v-else>
-						<tn-grid align="left" :col="3" hoverClass="none">
-							<block v-for="(images, index) in item.expand.images" :key="index">
-								<!-- H5 -->
-								<!-- #ifndef MP-WEIXIN -->
-								<tn-grid-item
-									style="height: 220rpx;width: 220rpx;margin-right: 6rpx;margin-bottom: 6rpx">
-									<image :src="images.src" mode="aspectFill"
-										style="height: 220rpx;width: 220rpx;border-radius: 10rpx;"
-										@tap.stop="previewImage(item.expand.images,index)">
-									</image>
-								</tn-grid-item>
-								<!-- #endif-->
-
-								<!-- 微信小程序 -->
-								<!-- #ifdef MP-WEIXIN -->
-								<!-- <tn-grid-item :style="{width: gridItemWidth}">
-									<view style="padding: 30rpx;">{{ item }}</view>
-								</tn-grid-item> -->
-								<!-- #endif-->
-							</block>
-						</tn-grid>
-					</view>
-					<!-- 点赞控件 -->
-					<view class="tn-flex tn-flex-col-center tn-margin-top-xs tn-flex-row-between">
-						<text class="tn-bg-gray--light tn-radius tn-padding-xs tn-text-sm tn-icon-circle"
-							v-for="(category,categoryIndex) in item.expand.sort" :key="categoryIndex">{{category.name}}</text>
-						<view class="tn-flex tn-flex-col-center tn-text-xl tn-flex-row-around tn-flex-basic-sm">
-							<text class="tn-icon-fire"></text>
-							<text class="tn-icon-message"></text>
-							<text class="tn-icon-like"></text>
-						</view>
-					</view>
-				</view>
+		<z-paging ref="paging" @query="getArticle" v-model="content" :auto="false">
+			<view v-if="tabsIndex===0 &&swiper" class="tn-margin">
+				<tn-swiper :list="swiperList" :height="300" name="img" backgroundColor="tn-bg-gray--light" :radius="10"
+					v-if="isBanner">
+				</tn-swiper>
 			</view>
+			<view v-for="(item,index) in content" :key="index">
+				<view class="tn-margin">
+					<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+						<view class="tn-flex tn-flex-col-center">
+							<tn-avatar :src="item.expand.author.head_img"></tn-avatar>
+							<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
+								<text>{{item.expand.author.nickname}}</text>
+								<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
+							</view>
+						</view>
+						<view>
+							<tn-button size="sm" :plain="true" shape="round" @tap="followUser">关注</tn-button>
+						</view>
 
-			<!-- 间隔开始 -->
-			<view class="tn-bg-gray--light tn-padding-xs"></view>
-			<!-- 间隔结束 -->
-		</view>
+					</view>
+					<view @tap.stop="goPost(index)">
+						<view class="tn-padding tn-no-padding-left">
+							<rich-text :nodes="item.description"></rich-text>
+						</view>
+						<!-- 单张图片 -->
+						<view v-if="item.expand.images.length===1">
+							<image v-for="(images,index) in item.expand.images" :key="index" :src="images.src"
+								mode="aspectFill" style="height: 400rpx;width: 400rpx;border-radius:10rpx;"
+								@tap.stop="previewImage(item.expand.images,index)">
+							</image>
+						</view>
+						<!-- 单张结束 -->
+						<!-- 复数开始 -->
+						<view v-if="item.expand.images.length===2||item.expand.images.length===4">
+							<tn-grid align="left" :col="item.expand.images.length" hoverClass="none">
+								<block v-for="(images, index) in item.expand.images" :key="index">
+									<!-- H5 -->
+									<!-- #ifndef MP-WEIXIN -->
+									<tn-grid-item
+										style="height: 256rpx;width: 256rpx;margin-right: 6rpx;margin-bottom: 6rpx;">
+										<image :src="images.src" mode="aspectFill"
+											style="height: 256rpx;width: 256rpx;border-radius: 10rpx;"
+											@tap.stop="previewImage(item.expand.images,index)">
+										</image>
+									</tn-grid-item>
+									<!-- #endif-->
+
+									<!-- 微信小程序 -->
+									<!-- #ifdef MP-WEIXIN -->
+									<!-- <tn-grid-item :style="{width: gridItemWidth}">
+									<view style="padding: 30rpx;">{{ item }}</view>
+								</tn-grid-item> -->
+									<!-- #endif-->
+								</block>
+							</tn-grid>
+						</view>
+						<view v-else>
+							<tn-grid align="left" :col="3" hoverClass="none">
+								<block v-for="(images, index) in item.expand.images" :key="index">
+									<!-- H5 -->
+									<!-- #ifndef MP-WEIXIN -->
+									<tn-grid-item
+										style="height: 220rpx;width: 220rpx;margin-right: 6rpx;margin-bottom: 6rpx">
+										<image :src="images.src" mode="aspectFill"
+											style="height: 220rpx;width: 220rpx;border-radius: 10rpx;"
+											@tap.stop="previewImage(item.expand.images,index)">
+										</image>
+									</tn-grid-item>
+									<!-- #endif-->
+
+									<!-- 微信小程序 -->
+									<!-- #ifdef MP-WEIXIN -->
+									<!-- <tn-grid-item :style="{width: gridItemWidth}">
+									<view style="padding: 30rpx;">{{ item }}</view>
+								</tn-grid-item> -->
+									<!-- #endif-->
+								</block>
+							</tn-grid>
+						</view>
+						<!-- 点赞控件 -->
+						<view class="tn-flex tn-flex-col-center tn-margin-top-xs tn-flex-row-between">
+							<text class="tn-bg-gray--light tn-radius tn-padding-xs tn-text-sm tn-icon-circle"
+								v-for="(category,categoryIndex) in item.expand.sort"
+								:key="categoryIndex">{{category.name}}</text>
+							<view class="tn-flex tn-flex-col-center tn-text-xl tn-flex-row-around tn-flex-basic-sm">
+								<text class="tn-icon-fire"></text>
+								<text class="tn-icon-message"></text>
+								<text class="tn-icon-like"></text>
+							</view>
+						</view>
+					</view>
+				</view>
+
+				<!-- 间隔开始 -->
+				<view class="tn-bg-gray--light tn-padding-xs"></view>
+				<!-- 间隔结束 -->
+			</view>
+		</z-paging>
 	</view>
 </template>
 
 <script>
 	export default {
 		props: {
-			content:{
-				type: Array,
+			// content: {
+			// 	type: Array,
+			// },
+			swiper: {
+				type: Boolean,
+				default: false
+			},
+			tabsIndex: {
+				type: Number,
+				default: null
+			},
+			swiperIndex: {
+				type: Number,
+				default: null
 			}
 		},
 		name: "articleList",
 		data() {
 			return {
+				content: [],
+				firstLoad: false,
+				isBanner: false,
+				swiperList: [],
 			};
 		},
+		created() {
+			this.getBanner()
+			let pages = getCurrentPages()
+			console.log(pages)
+		},
+		watch: {
+			swiperIndex: {
+				handler(e) {
+					if (e === this.tabsIndex) {
+						if (!this.firstLoad) {
+							setTimeout(() => {
+								this.$refs.paging.reload()
+							}, 200)
+						}
+					}
+				},
+				immediate: true
+			}
+		},
 		methods: {
+			getArticle(page, num) {
+				this.$http.get('/article/all', {
+					params: {
+						limit: num,
+						page: page,
+						order: this.tabsIndex === 1 ? 'views desc' : this.tabsIndex===2? 'is_top desc,views desc':''
+					}
+				}).then(res => {
+					console.log(res)
+					this.$refs.paging.complete(res.data.data.data)
+					this.firstLoad = true
+				})
+			},
+			getBanner() {
+				this.$http.get('/banner').then(res => {
+					if (res.data.code === 200) {
+						if (res.data.data.count > 0) {
+							let data = res.data.data
+							this.swiperList = data.data
+							this.isBanner = true
+						} else {
+							this.isBanner = false
+						}
+					}
+				})
+			},
 			goPost(index) {
 				let data = this.content
 				uni.navigateTo({

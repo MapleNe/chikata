@@ -1,37 +1,37 @@
 <template>
-	<view>
-		<!-- 导航开始 -->
-		<tn-nav-bar :isBack="false" customBack>
-			<view class="tn-margin-sm tn-no-margin-top">
-				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-					<tn-avatar :src="userInfo.head_img" @tap="isLogin?goMine():goLogin()"></tn-avatar>
-					<view
-						class="tn-bg-gray--light tn-round tn-padding-left-sm tn-flex-1 tn-margin-left tn-margin-right">
-						<tn-input placeholder="这是搜索占位"></tn-input>
-					</view>
-					<view>
-						<text class="tn-text-xxl tn-icon-email"></text>
+	<!-- 使用z-paging-swiper为根节点可以免计算高度 -->
+	<z-paging-swiper>
+		<!-- 需要固定在顶部不滚动的view放在slot="top"的view中 -->
+		<!-- 注意！此处的z-tabs为独立的组件，可替换为第三方的tabs，若需要使用z-tabs，请在插件市场搜索z-tabs并引入，否则会报插件找不到的错误 -->
+		<template #top>
+			<tn-nav-bar :isBack="false" customBack>
+				<view class="tn-margin-sm tn-no-margin-top">
+					<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+						<tn-avatar :src="userInfo.head_img" @tap="goMine"></tn-avatar>
+						<view
+							class="tn-bg-gray--light tn-round tn-padding-left-sm tn-flex-1 tn-margin-left tn-margin-right">
+							<tn-input placeholder="这是搜索占位"></tn-input>
+						</view>
+						<view>
+							<text class="tn-text-xxl tn-icon-email"></text>
+						</view>
 					</view>
 				</view>
-			</view>
-		</tn-nav-bar>
-		<tn-sticky><v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#fb7299"
-				activeColor="#fb7299"></v-tabs></tn-sticky>
-
-		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
-		<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :fixed="false">
-			<view class="tn-margin">
-				<!-- 轮播图 开始-->
-				<tn-swiper :list="swiperList" :height="300" name="img" backgroundColor="tn-bg-gray--light" :radius="10"
-					v-if="isBanner">
-				</tn-swiper>
-				<!-- 轮播图 结束 -->
-			</view>
-			<!-- 文章开始 -->
-			<articleList :content="content"></articleList>
-		</mescroll-body>
-		<!-- 文章结束 -->
-	</view>
+			</tn-nav-bar>
+			<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
+			<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#fb7299"
+				activeColor="#fb7299"></v-tabs>
+		</template>
+		<!-- swiper必须设置height:100%，因为swiper有默认的高度，只有设置高度100%才可以铺满页面  -->
+		
+		<swiper class="swiper" :current="tabsIndex" @change="changeSwpier" style="height: 100%">
+			<swiper-item class="swiper-item" v-for="(item, index) in tabs" :key="index">
+				
+				<articleList :tabsIndex="index" :swiperIndex="tabsIndex" :content="content" :swiper="true">
+				</articleList>
+			</swiper-item>
+		</swiper>
+	</z-paging-swiper>
 </template>
 
 <script>
@@ -49,7 +49,6 @@
 				tabs: ['首页', '热门', '关注'],
 				content: [],
 				userInfo: [],
-				isLogin: false,
 			}
 		},
 		onLoad() {
@@ -84,25 +83,6 @@
 				})
 			},
 
-			upCallback(mescroll) {
-				let size = mescroll.size
-				let page = mescroll.num
-				let article
-				this.$http.get('/article', {
-					params: {
-						limit: size,
-						page: page
-					}
-				}).then(res => {
-					if (res.data.code === 200) {
-						article = res.data.data
-						if (page === 1) this.content = []
-						this.content = this.content.concat(article.data)
-					}
-					mescroll.endByPage(article.count, article.page);
-				})
-			},
-
 			changeTab(index) {
 				this.tabsIndex = index
 			},
@@ -119,6 +99,7 @@
 					url: '/pages/user/login'
 				})
 			},
+
 			// 时间转换，有点长
 
 		}
@@ -126,5 +107,7 @@
 </script>
 
 <style>
-
+	.swiper {
+		height: 100%;
+	}
 </style>

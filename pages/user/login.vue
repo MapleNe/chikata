@@ -77,42 +77,44 @@
 				}).then(res => {
 					if (res.data.code === 200) {
 						let data = res.data;
-						uni.setStorageSync('token', data.data['login-token']);
-						uni.setStorageSync('userInfo',data.data.user)
-						uni.$emit('loginCompete',true)
-						// console.log(uni.getStorageSync('userInfo'))
+						let token = data.data['login-token']
+						uni.setStorageSync('token', token);
+						this.$store.commit('setToken', token);
+						uni.setStorageSync('userInfo', data.data.user)
+						uni.$emit('loginCompete', true)
+						console.log(data.data.user)
 						uni.showToast({
 							icon: 'none',
 							title: data.msg
 						});
-						setTimeout(()=>{
+						setTimeout(() => {
 							this.back()
-						},800)
+						}, 800)
 					}
 				}).catch(err => {
 					console.log(err);
 				});
 			},
 			back() {
-			  
-			  // 通过判断当前页面的页面栈信息，是否有上一页进行返回，如果没有则跳转到首页
-			  const pages = getCurrentPages()
-			  if (pages && pages.length > 0) {
-			    const firstPage = pages[0]
-			    if (pages.length == 1 && (!firstPage.route || firstPage.route != 'pages/tabbar/index')) {
-			      uni.reLaunch({
-			        url: '/pages/tabbar/index'
-			      })
-			    } else {
-			      uni.navigateBack({
-			        delta: 1
-			      })
-			    }
-			  } else {
-			    uni.reLaunch({
-			      url: '/pages/tabbar/index'
-			    })
-			  }
+
+				// 通过判断当前页面的页面栈信息，是否有上一页进行返回，如果没有则跳转到首页
+				const pages = getCurrentPages()
+				if (pages && pages.length > 0) {
+					const firstPage = pages[0]
+					if (pages.length == 1 && (!firstPage.route || firstPage.route != 'pages/tabbar/index')) {
+						uni.reLaunch({
+							url: '/pages/tabbar/index'
+						})
+					} else {
+						uni.navigateBack({
+							delta: 1
+						})
+					}
+				} else {
+					uni.reLaunch({
+						url: '/pages/tabbar/index'
+					})
+				}
 			}
 
 		}

@@ -63,6 +63,17 @@
             }
             
         }
+        ,{
+            "path" : "pages/tabbar/publish/publish",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false,
+				"backgroundColor": " #f8f7f8"
+            }
+            
+        }
+        
     ],
 	"tabBar": {
 		"backgroundColor": "#ffffff",
@@ -88,7 +99,10 @@
 			}
 		],
 		"midButton": {
-			"text": "发布"
+			// "text": "发布",
+			"iconPath": "static/img/search.png",
+			"width": "80px",
+			"height": "40px"
 		}
 	},
 	"globalStyle": {
