@@ -7,7 +7,7 @@
 			<tn-nav-bar :isBack="false" customBack>
 				<view class="tn-margin-sm tn-no-margin-top">
 					<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-						<tn-avatar :src="userInfo.head_img?userInfo.head_img:''" @tap="goMine"></tn-avatar>
+						<tn-avatar :src="userInfo.head_img" @tap="hasLogin?goMine():goLogin()"></tn-avatar>
 						<view
 							class="tn-bg-gray--light tn-round tn-padding-left-sm tn-flex-1 tn-margin-left tn-margin-right">
 							<tn-input placeholder="这是搜索占位"></tn-input>
@@ -52,7 +52,6 @@
 				tabsIndex: 0,
 				tabs: ['首页', '热门', '关注'],
 				content: [],
-				
 			}
 		},
 		onLoad() {
@@ -61,16 +60,9 @@
 			console.log(this.userInfo)
 		},
 		created() {
-			uni.$on('loginCompete', data => {
-				this.isLogin = data
-				// console.log(this.userInfo)
-			})
-			uni.$on('logout', data => {
-				this.isLogin = data
-			})
 		},
 		computed: {
-			...mapState(['userInfo']),
+			...mapState(['userInfo','hasLogin']),
 			// 兼容小程序
 			gridItemWidth() {
 				return 100 / this.col + '%'

@@ -351,7 +351,7 @@
 			addArtiCle(res) {
 				this.$http.post('/article/save', {
 					title: this.articleTitle === null ? res.text.substring(0, 10) : this.articleTitle,
-					content: res.hmtl,
+					content: res.html,
 					description: res.text,
 
 				}, {
