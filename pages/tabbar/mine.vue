@@ -18,7 +18,7 @@
 						</tn-avatar>
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-flex-1 tn-margin-left-sm">
 							<view class="tn-flex tn-flex-col-center">
-								<text :class="userInfo.level==='admin'?'tn-color-purplered':'tn-color-white'"
+								<text :class="userInfo.level==='admin'?'ch-color-main':'tn-color-white'"
 									class="tn-text-bold tn-text-xl">{{userInfo.nickname}}</text>
 							</view>
 							<view v-if="hasLogin">
@@ -30,8 +30,8 @@
 				</view>
 				<!-- 控件结束 -->
 				<view style="position: relative;bottom: 20rpx;">
-					<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#fb7299"
-						:zIndex="2" activeColor="#fb7299"
+					<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
+						:zIndex="2" activeColor="#29B7CB"
 						style="border-radius: 20rpx 20rpx 0 0;background-color: white;">
 					</v-tabs>
 				</view>
@@ -117,13 +117,17 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	.image-wrapper {
 		position: relative;
 	}
 
 	.swiper {
 		height: 100%;
+	}
+
+	.ch-color-main {
+		color: $ch-color-main;
 	}
 
 	.image-wrapper::after {
