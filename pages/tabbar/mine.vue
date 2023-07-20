@@ -3,7 +3,7 @@
 		<template #top>
 			<view class="tn-flex tn-flex-direction-column">
 				<!-- 头部控件 -->
-				<view style="position: fixed; right: 0;z-index: 2;" class="tn-margin" v-if="isLogin">
+				<view style="position: fixed; right: 0;z-index: 2;" class="tn-margin" v-if="hasLogin">
 					<tn-button :plain="true" size="sm" shape="round" @tap="logout">退出</tn-button>
 				</view>
 				<view class="image-wrapper">
@@ -14,14 +14,14 @@
 				<view class="tn-padding" style="position: absolute;top: 100rpx;width: 100%;">
 					<view class="tn-flex tn-flex-col-center">
 						<tn-avatar :src="userInfo.head_img" size="xl" :border="true" backgroundColor="#f8f7f8"
-							borderColor="#ffffff" :borderSize="6" @tap="isLogin ? goProfile() : goLogin()">
+							borderColor="#ffffff" :borderSize="6" @tap="hasLogin ? goProfile() : goLogin()">
 						</tn-avatar>
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-flex-1 tn-margin-left-sm">
 							<view class="tn-flex tn-flex-col-center">
 								<text :class="userInfo.level==='admin'?'tn-color-purplered':'tn-color-white'"
 									class="tn-text-bold tn-text-xl">{{userInfo.nickname}}</text>
 							</view>
-							<view v-if="isLogin">
+							<view v-if="hasLogin">
 								<tn-button :plain="true" size="sm" shape="round"> 编辑
 								</tn-button>
 							</view>
@@ -40,7 +40,7 @@
 		</template>
 		<swiper class="swiper" :current="tabsIndex" @change="changeSwpier">
 			<swiper-item class="swiper-item" v-for="(item, index) in tabs" :key="index">
-				<userArticle :tabsIndex="index" :swiperIndex="tabsIndex" v-if="isLogin"></userArticle>
+				<userArticle :tabsIndex="index" :swiperIndex="tabsIndex" v-if="hasLogin"></userArticle>
 				<view class="tn-flex tn-flex-row-center tn-margin-top-xl" v-else>
 					<tn-button size="sm" :plain="true" shape="round" @tap="goLogin">去登录</tn-button>
 				</view>
@@ -51,6 +51,10 @@
 </template>
 
 <script>
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex';
 	import userArticle from "@/components/userArticle/userArticle.vue";
 	import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 	export default {
@@ -58,11 +62,12 @@
 		components: {
 			userArticle
 		},
+		computed: {
+			...mapState(['hasLogin', 'userInfo']), //从Store获取全局变量
+		},
 		data() {
 			return {
-				userInfo: [],
 				content: [],
-				isLogin: false,
 				tabs: ['动态', '评论'],
 				tabsIndex: 0,
 				swiperHeight: 0, //活动组件高度
@@ -71,24 +76,17 @@
 			}
 		},
 		onLoad() {
-			this.userInfo = uni.getStorageSync('userInfo')
 			// uni.clearStorageSync('token')
 			// uni.clearStorageSync('userInfo')
 		},
 		created() {
 			//监听登录事件获取userInfo
-			uni.$on('loginCompete', data => {
-				this.userInfo = uni.getStorageSync('userInfo')
-				this.isLogin = true
-				console.log('登录状态：' + this.isLogin)
-			})
+			uni.$on('loginCompete', data => {})
 			this.token = uni.getStorageSync('token')
-			if (this.token !== '') {
-				this.isLogin = true
-				console.log(this.token)
-			}
+			console.log(this.token)
 		},
 		methods: {
+			...mapMutations(['logout']),
 			changeTab(index) {
 				this.tabsIndex = index
 			},
@@ -106,15 +104,15 @@
 			goProfile() {
 
 			},
-			logout() {
-				console.log('点击了退出')
-				uni.clearStorageSync('token')
-				uni.clearStorage('userInfo')
-				this.isLogin = false
-				setTimeout(() => {
-					this.$router.go(0)
-				}, 200)
-			}
+			// logout() {
+			// 	console.log('点击了退出')
+			// 	uni.clearStorageSync('token')
+			// 	uni.clearStorage('userInfo')
+			// 	this.isLogin = false
+			// 	setTimeout(() => {
+			// 		this.$router.go(0)
+			// 	}, 200)
+			// }
 		}
 	}
 </script>

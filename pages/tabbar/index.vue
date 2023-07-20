@@ -7,7 +7,7 @@
 			<tn-nav-bar :isBack="false" customBack>
 				<view class="tn-margin-sm tn-no-margin-top">
 					<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-						<tn-avatar :src="userInfo.head_img" @tap="goMine"></tn-avatar>
+						<tn-avatar :src="userInfo.head_img?userInfo.head_img:''" @tap="goMine"></tn-avatar>
 						<view
 							class="tn-bg-gray--light tn-round tn-padding-left-sm tn-flex-1 tn-margin-left tn-margin-right">
 							<tn-input placeholder="这是搜索占位"></tn-input>
@@ -23,10 +23,10 @@
 				activeColor="#fb7299"></v-tabs>
 		</template>
 		<!-- swiper必须设置height:100%，因为swiper有默认的高度，只有设置高度100%才可以铺满页面  -->
-		
+
 		<swiper class="swiper" :current="tabsIndex" @change="changeSwpier" style="height: 100%">
 			<swiper-item class="swiper-item" v-for="(item, index) in tabs" :key="index">
-				
+
 				<articleList :tabsIndex="index" :swiperIndex="tabsIndex" :content="content" :swiper="true">
 				</articleList>
 			</swiper-item>
@@ -35,6 +35,10 @@
 </template>
 
 <script>
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex';
 	import articleList from "@/components/articleList/articleList.vue";
 	import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 	export default {
@@ -48,41 +52,31 @@
 				tabsIndex: 0,
 				tabs: ['首页', '热门', '关注'],
 				content: [],
-				userInfo: [],
+				
 			}
 		},
 		onLoad() {
-			this.getBanner()
-			this.userInfo = uni.getStorageSync('userInfo')
+			//这个userInfo从全局缓存中获取
+			// this.userInfo = uni.getStorageSync('userInfo')
+			console.log(this.userInfo)
 		},
 		created() {
 			uni.$on('loginCompete', data => {
-				this.userInfo = uni.getStorageSync('userInfo')
-				this.isLogin = true
+				this.isLogin = data
 				// console.log(this.userInfo)
+			})
+			uni.$on('logout', data => {
+				this.isLogin = data
 			})
 		},
 		computed: {
+			...mapState(['userInfo']),
 			// 兼容小程序
 			gridItemWidth() {
 				return 100 / this.col + '%'
 			}
 		},
 		methods: {
-			getBanner() {
-				this.$http.get('/banner').then(res => {
-					if (res.data.code === 200) {
-						if (res.data.data.count > 0) {
-							let data = res.data.data
-							this.swiperList = data.data
-							this.isBanner = true
-						} else {
-							this.isBanner = false
-						}
-					}
-				})
-			},
-
 			changeTab(index) {
 				this.tabsIndex = index
 			},
@@ -90,13 +84,13 @@
 				this.tabsIndex = event.detail.current
 			},
 			goMine() {
-				uni.switchTab({
-					url: '/pages/tabbar/mine'
+				this.$Router.pushTab({
+					path: '/pages/tabbar/mine'
 				})
 			},
 			goLogin() {
-				uni.navigateTo({
-					url: '/pages/user/login'
+				this.$Router.push({
+					path: '/pages/user/login'
 				})
 			},
 

@@ -46,6 +46,10 @@ const store = new Vuex.Store({
 		vuex_status_bar_height: 0,
 		// 自定义导航栏的高度
 		vuex_custom_bar_height: 0,
+		hasLogin: false,
+		userInfo: {
+			head_img:'',//必须定义 否则无法使用
+		},
 	},
 	mutations: {
 		$tStore(state, payload) {
@@ -68,6 +72,30 @@ const store = new Vuex.Store({
 			// 保存变量到本地中
 			saveLifeData(saveKey, state[saveKey])
 		},
+		login(state, user) {
+			state.hasLogin = true
+			state.userInfo = user
+			uni.setStorage({
+				key: 'userInfo',
+				data: user
+			})
+		},
+		setToken(state, token){
+			uni.setStorage({
+				key:'token',
+				data:token
+			})
+		},
+		logout(state) {
+			state.userInfo = {},
+				state.hasLogin = false,
+				uni.removeStorage({
+					key: 'userInfo',
+				});
+				uni.removeStorage({
+					key:'token'
+				})
+		}
 	},
 	actions: {}
 })

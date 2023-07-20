@@ -43,6 +43,10 @@
 </template>
 
 <script>
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex';
 	export default {
 		data() {
 			return {
@@ -53,6 +57,7 @@
 			}
 		},
 		methods: {
+			...mapMutations(['logout', 'login', 'setToken']),
 			changeLogin() {
 				if (!this.codeLogin) {
 					this.codeLogin = true
@@ -78,9 +83,9 @@
 					if (res.data.code === 200) {
 						let data = res.data;
 						let token = data.data['login-token']
-						uni.setStorageSync('token', token);
-						this.$store.commit('setToken', token);
-						uni.setStorageSync('userInfo', data.data.user)
+						this.setToken(token)
+						// uni.setStorageSync('userInfo', data.data.user)
+						this.login(data.data.user)
 						uni.$emit('loginCompete', true)
 						console.log(data.data.user)
 						uni.showToast({
