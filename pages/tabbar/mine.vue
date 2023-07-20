@@ -96,8 +96,8 @@
 			//前往登录
 			goLogin() {
 				console.log('点击了登录')
-				uni.navigateTo({
-					url: '/pages/user/login'
+				this.$Router.push({
+					path: '/pages/user/login'
 				})
 			},
 			//个人主页

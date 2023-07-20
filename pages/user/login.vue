@@ -107,17 +107,15 @@
 				if (pages && pages.length > 0) {
 					const firstPage = pages[0]
 					if (pages.length == 1 && (!firstPage.route || firstPage.route != 'pages/tabbar/index')) {
-						uni.reLaunch({
-							url: '/pages/tabbar/index'
+						this.$Router.replaceAll({
+							path: '/pages/tabbar/index'
 						})
 					} else {
-						uni.navigateBack({
-							delta: 1
-						})
+						this.$Router.back(1)
 					}
 				} else {
-					uni.reLaunch({
-						url: '/pages/tabbar/index'
+					this.$Router.replaceAll({
+						path: '/pages/tabbar/index'
 					})
 				}
 			}
