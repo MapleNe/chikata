@@ -364,6 +364,9 @@
 					console.log(err)
 				})
 			},
+			updateArticle(){
+				
+			},
 			editAction(item) {
 				if (this.moreAction === item.id) {
 					this.moreAction = null;

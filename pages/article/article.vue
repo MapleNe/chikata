@@ -32,10 +32,10 @@
 					<mp-html :content="article.content" />
 				</view>
 				<view class="tn-flex tn-flex-col-center">
-					<view class="tn-bg-gray--light tn-padding-xs tn-text-sm tn-radius"
-						v-for="(category,index) in article.expand.sort" :key="index">
-						<text class="tn-icon-circle"></text>
-						<text>{{category.name}}</text>
+					<view v-for="(category,index) in article.expand.sort" :key="index"
+						class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius">
+						<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
+						<text class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
 					</view>
 				</view>
 			</view>
@@ -210,23 +210,21 @@
 			},
 			//返回上一页
 			back() {
-
+			
 				// 通过判断当前页面的页面栈信息，是否有上一页进行返回，如果没有则跳转到首页
 				const pages = getCurrentPages()
 				if (pages && pages.length > 0) {
 					const firstPage = pages[0]
 					if (pages.length == 1 && (!firstPage.route || firstPage.route != 'pages/tabbar/index')) {
-						uni.reLaunch({
-							url: '/pages/tabbar/index'
+						this.$Router.replaceAll({
+							path: '/pages/tabbar/index'
 						})
 					} else {
-						uni.navigateBack({
-							delta: 1
-						})
+						this.$Router.back(1)
 					}
 				} else {
-					uni.reLaunch({
-						url: '/pages/tabbar/index'
+					this.$Router.replaceAll({
+						path: '/pages/tabbar/index'
 					})
 				}
 			},

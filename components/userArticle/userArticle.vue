@@ -52,7 +52,7 @@
 								</block>
 							</tn-grid>
 						</view>
-						<view v-else>
+						<view v-if="item.expand.images.length>=3">
 							<tn-grid align="left" :col="3" hoverClass="none">
 								<block v-for="(images, index) in item.expand.images" :key="index">
 									<!-- H5 -->
@@ -77,9 +77,11 @@
 						</view>
 						<!-- 点赞控件 -->
 						<view class="tn-flex tn-flex-col-center tn-margin-top-xs tn-flex-row-between">
-							<text class="tn-bg-gray--light tn-radius tn-padding-xs tn-text-sm tn-icon-circle"
-								v-for="(category,categoryIndex) in item.expand.sort"
-								:key="categoryIndex">{{category.name}}</text>
+							<view v-for="(category,index) in item.expand.sort" :key="index"
+								class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius">
+								<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
+								<text class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
+							</view>
 							<view class="tn-flex tn-flex-col-center tn-text-xl tn-flex-row-around tn-flex-basic-sm">
 								<text class="tn-icon-fire"></text>
 								<text class="tn-icon-message"></text>
