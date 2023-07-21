@@ -7,8 +7,10 @@
 			</view>
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
-		<lsj-edit ref="lsjEdit" placeholder="输入正文" @onReady="editReady" @input="getConetnt">
+
+		<lsj-edit ref="lsjEdit" placeholder="啊~灵感在迸发~" @onReady="editReady" @input="getConetnt">
 		</lsj-edit>
+
 		<!-- 上拉组件 -->
 		<you-touchbox :auto="false" :maxTop="0.85" :minTop="0.08" :initTop="0.5"
 			customStyle="border-radius:20rpx 20rpx 0 0">
@@ -17,7 +19,6 @@
 				<!-- 循环控件 -->
 				<text class="" <view v-for="(item ,index) in editList" :key="item.id" @tap="editAction(item)">
 					<text :class="[item.icon, {'ch-color-main': moreAction === item.id}]"></text>
-
 			</view>
 	</view>
 	<!-- 展开面板 -->
@@ -90,7 +91,7 @@
 	<!-- 面板展开结束 -->
 	<!-- 文章属性开始 -->
 	<view class="tn-margin tn-margin-top-xl">
-		<view class="tn-margin-bottom tn-flex tn-flex-row-between tn-flex-col-center" @tap="showCategory = true">
+		<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center" @tap="showCategory = true">
 			<view class="tn-flex tn-flex-col-center">
 				<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
 				<text>圈子/板块</text>
@@ -414,6 +415,7 @@
 					title: this.articleTitle === null ? res.text.substring(0, 10) : this.articleTitle,
 					content: res.html,
 					description: res.text,
+					sort_id: this.categoryId,
 
 				}, {
 					header: {
@@ -509,7 +511,7 @@
 				//获取到板块信息后关闭弹出层
 				setTimeout(() => {
 					this.showCategory = false
-				},100)
+				}, 100)
 			}
 		}
 	}
