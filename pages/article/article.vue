@@ -1,20 +1,21 @@
 <template>
 	<view>
-		<tn-nav-bar customBack :zIndex="2">
-			<view slot="back" class="tn-margin-top-sm tn-flex tn-flex-col-start" @tap="back">
-				<text class="tn-icon-left tn-text-xxl"></text>
-				<view class="tn-flex tn-flex-col-center" v-if="secondNav">
-					<tn-avatar size="sm" :src="article.expand.author.head_img"></tn-avatar>
-					<text class="tn-margin-left-sm">{{article.expand.author.nickname}}</text>
-				</view>
-			</view>
-			{{article.title}}
-		</tn-nav-bar>
-		<!-- 页面内容 -->
-		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 		<!-- 文章详情 开始 -->
-		<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :safearea="true"
-			bottom="100rpx">
+		<z-paging ref="paging" @query="getComment" v-model="comments" :safe-area-inset-bottom="true">
+			<template #top>
+				<tn-nav-bar customBack :zIndex="2">
+					<view slot="back" class="tn-margin-top-sm tn-flex tn-flex-col-start" @tap="back">
+						<text class="tn-icon-left tn-text-xxl"></text>
+						<view class="tn-flex tn-flex-col-center" v-if="secondNav">
+							<tn-avatar size="sm" :src="article.expand.author.head_img"></tn-avatar>
+							<text class="tn-margin-left-sm">{{article.expand.author.nickname}}</text>
+						</view>
+					</view>
+					{{article.title}}
+				</tn-nav-bar>
+				<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
+			</template>
+			<!-- 页面内容 -->
 			<view class="tn-margin">
 				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 					<view class="tn-flex tn-flex-col-center">
@@ -55,29 +56,62 @@
 								<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
 							</view>
 						</view>
-						<view class="tn-margin tn-padding-left-xl" style="overflow: hidden;word-wrap: break-word">
+						<view class="tn-margin tn-padding-left-xl" style="overflow: hidden;word-wrap: break-word"
+							@tap="subReply(item)">
 							<!-- {{item.content}} -->
 							<mp-html :content="item.content"></mp-html>
 						</view>
+						<!-- 子评论 -->
+						<view class="tn-margin">
+							<view class="tn-margin-left-xl tn-padding-sm tn-bg-gray--light ch-radius"
+								v-if="item.son.length>0">
+								<view v-for="(subComment, index) in item.son" :key="index">
+									<view class="tn-flex tn-flex-col-center">
+										<tn-avatar :src="subComment.expand.head_img"></tn-avatar>
+										<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
+											<text>{{subComment.nickname}}</text>
+											<text class="tn-text-xs">{{getDateDiff(subComment.create_time)}}</text>
+										</view>
+									</view>
+									<view class="tn-margin tn-padding-left-xl"
+										style="overflow: hidden;word-wrap: break-word">
+										<mp-html :content="subComment.content"></mp-html>
+									</view>
+
+								</view>
+							</view>
+						</view>
+
 					</view>
 				</view>
 			</view>
-		</mescroll-body>
-		<!-- 底部开始 -->
-		<view style="position: fixed;bottom: 0;width: 100%;z-index: 2;"
-			class="tn-padding tn-bg-white tn-flex tn-flex-col-center">
-			<view class="tn-bg-gray--light tn-padding-left tn-round">
-				<tn-input :disabled="true" :placeholder="commentBoxText" @click="commentAction"></tn-input>
-			</view>
-			<view class="tn-flex tn-flex-row-around tn-text-xl tn-flex-basic-md">
-				<text class="tn-icon-fire"></text>
-				<text class="tn-icon-message"></text>
-				<text class="tn-icon-like"></text>
-			</view>
-		</view>
-		<!-- 底部 结束 -->
+			<template #bottom>
+				<!-- 底部开始 -->
+				<view class="tn-padding tn-bg-white tn-flex tn-flex-col-center">
+					<view class="tn-bg-gray--light tn-padding-left tn-round">
+						<tn-input :disabled="true" :placeholder="commentBoxText" @click="commentAction"></tn-input>
+					</view>
+					<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-1">
+						<view class="tn-flex tn-flex-col-center">
+							<text class="tn-text-xl tn-icon-fire"></text>
+							<text>{{article.views}}</text>
+						</view>
+						<view class="tn-flex tn-flex-col-center">
+							<text class="tn-text-xl tn-icon-message"></text>
+							<text>{{article.expand.comments.count}}</text>
+						</view>
+						<view class="tn-flex tn-flex-col-center">
+							<text class="tn-text-xl tn-icon-like"></text>
+							<text>{{article.views}}</text>
+						</view>
+					</view>
+				</view>
+				<!-- 底部 结束 -->
+			</template>
+		</z-paging>
+
 		<!-- 弹出层 开始 -->
-		<tn-popup v-model="commentBoxOpen" mode="bottom" :borderRadius="10" :zIndex="3">
+		<tn-popup v-model="commentBoxOpen" mode="bottom" :borderRadius="10" :zIndex="3" @close="resetComment">
 			<view class="tn-margin">
 				<view class="tn-bg-gray--light tn-padding-sm"
 					style="height: 150rpx;overflow: hidden; border-radius: 10rpx;">
@@ -94,30 +128,31 @@
 </template>
 
 <script>
-	// import {
-	// 	token
-	// } from '../../static/config';
 	import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 	export default {
 		mixins: [MescrollMixin], // 使用mixin
 		data() {
 			return {
-				mescroll: null,
 				commentBoxText: '我想说...', //底部盒子显示的信息
 				commentText: null, //这个才是回复的信息
 				commentBoxOpen: false, //控制弹出层
 				comments: [], //获取到的评论列表
+				//为什么要定义这堆东西？我也不知道 不定义就报错 但是不影响正常使用
 				article: {
+					title: '',
 					expand: {
-						author: {},
+						author: {
+							head_img: ''
+						},
 						comments: {
-							count: 0
+							count: 0,
 						}
 					}
 				},
 				params: [], //页面传参
 				secondNav: false,
 				token: null,
+				pid: 0,
 			}
 		},
 
@@ -143,35 +178,40 @@
 					}
 				}).then(res => {
 					if (res.data.code == 200) {
-						let data = res.data.data
-						this.article = data
-						console.log(this.article)
+						this.article = res.data.data
+
 					}
 				})
 			},
-			upCallback(mescroll) {
-				let num = mescroll.size
-				let page = mescroll.num
+			getComment(page, num) {
 				this.$http.get('/comments/article', {
 					params: {
 						article_id: this.params.id,
 						limit: num,
-						page: page
-
+						page: page,
+						tree: false
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
-						let data = res.data.data
-						if (page === 1) this.comments = []
-						this.comments = this.comments.concat(data.data)
-						mescroll.endByPage(data.count, data.page, 1000);
-						// console.log(data.count, data.page)
+						this.$refs.paging.complete(res.data.data.data)
+						console.log(res.data.data.data)
 
 					}
 				})
 			},
 			commentAction() {
 				this.commentBoxOpen = true
+			},
+			//关闭popup重置placeholder
+			resetComment() {
+				this.commentBoxText = '我想说...'
+				this.pid = 0
+			},
+			subReply(item) {
+				this.commentBoxOpen = true
+				this.commentBoxText = '回复:' + item.nickname
+				this.pid = item.id
+				console.log(item.id)
 			},
 			commentCheck() {
 				if (this.commentText === null) {
@@ -187,6 +227,7 @@
 				this.$http.post('/comments/add', {
 					article_id: this.article.id,
 					content: this.commentText,
+					pid: this.pid,
 				}, {
 					header: {
 						'Authorization': this.token,
@@ -201,7 +242,7 @@
 					}
 					setTimeout(() => {
 						this.commentBoxOpen = false
-						this.mescroll.resetUpScroll()
+						this.$refs.paging.reload()
 
 					}, 800)
 				}).catch(err => {
@@ -210,7 +251,7 @@
 			},
 			//返回上一页
 			back() {
-			
+
 				// 通过判断当前页面的页面栈信息，是否有上一页进行返回，如果没有则跳转到首页
 				const pages = getCurrentPages()
 				if (pages && pages.length > 0) {
@@ -275,8 +316,12 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	page {
 		height: auto;
+	}
+
+	.ch-radius {
+		border-radius: 10rpx;
 	}
 </style>

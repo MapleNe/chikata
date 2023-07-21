@@ -7,10 +7,10 @@
 				<text class="tn-text-xl tn-icon-left"></text>
 			</tn-button>
 			<view class="tn-flex tn-flex-direction-column">
-				<text class="tn-text-bold tn-text-xl-xxl">
-					君
+				<text class="tn-text-bold tn-text-xl-xxl tn-margin-bottom-sm tn-margin-top-lg">
+					Luck Day
 				</text>
-				<text class="tn-color-grey">
+				<text class="tn-color-grey tn-margin-bottom-sm">
 					快来{{loginAction?'登录':'注册'}}吧~
 				</text>
 				<view class="tn-color-grey tn-flex tn-flex-direction-column" style="height: 30rpx;" v-show="hitokoto">

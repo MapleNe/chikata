@@ -82,10 +82,20 @@
 								<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
 								<text class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
 							</view>
-							<view class="tn-flex tn-flex-col-center tn-text-xl tn-flex-row-around tn-flex-basic-sm">
-								<text class="tn-icon-fire"></text>
-								<text class="tn-icon-message"></text>
-								<text class="tn-icon-like"></text>
+							<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-basic-sm">
+								<view class="tn-flex tn-flex-col-center">
+									<text class="tn-text-xl tn-icon-fire"></text>
+									<text>{{item.views}}</text>
+								</view>
+								<view class="tn-flex tn-flex-col-center">
+									<text class="tn-text-xl tn-icon-message"></text>
+									<text>{{item.expand.comments.count}}</text>
+								</view>
+								<view class="tn-flex tn-flex-col-center">
+									<text class="tn-text-xl tn-icon-like"></text>
+									<text>{{item.views}}</text>
+								</view>
+								
 							</view>
 						</view>
 					</view>
