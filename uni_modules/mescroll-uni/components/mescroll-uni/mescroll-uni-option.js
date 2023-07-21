@@ -4,7 +4,7 @@ const GlobalOption = {
 	down: {
 		// 其他down的配置参数也可以写,这里只展示了常用的配置:
 		offset: 80, // 在列表顶部,下拉大于80px,松手即可触发下拉刷新的回调
-		native: false // 是否使用系统自带的下拉刷新; 默认false; 仅在mescroll-body生效 (值为true时,还需在pages配置enablePullDownRefresh:true;详请参考mescroll-native的案例)
+		native: true // 是否使用系统自带的下拉刷新; 默认false; 仅在mescroll-body生效 (值为true时,还需在pages配置enablePullDownRefresh:true;详请参考mescroll-native的案例)
 	},
 	up: {
 		// 其他up的配置参数也可以写,这里只展示了常用的配置:
