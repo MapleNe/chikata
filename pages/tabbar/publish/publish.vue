@@ -14,137 +14,150 @@
 		<!-- 上拉组件 -->
 		<you-touchbox :auto="false" :maxTop="0.85" :minTop="0.08" :initTop="0.5"
 			customStyle="border-radius:20rpx 20rpx 0 0">
-			<view class="tn-margin tn-flex tn-flex-row-between tn-text-xl">
+			<view class="tn-margin tn-flex tn-flex-row-between tn-text-xxl">
 				<text class="tn-icon-image" @tap="addImage"></text>
 				<!-- 循环控件 -->
-				<text class="" <view v-for="(item ,index) in editList" :key="item.id" @tap="editAction(item)">
+				<view v-for="(item ,index) in editList" :key="item.id" @tap="editAction(item)">
 					<text :class="[item.icon, {'ch-color-main': moreAction === item.id}]"></text>
-			</view>
-	</view>
-	<!-- 展开面板 -->
-	<view v-show="moreAction === 0" class="tn-margin">
-		<view class="tn-margin-bottom">
-			<text class="tn-icon-down-triangle">标题大小</text>
-			<view class=" tn-flex tn-flex-row-between tn-bg-gray--light tn-radius">
-				<view v-for="(item,index) in title" :key="item.id" class="tn-text-xl tn-padding"
-					@tap="editSubAction(item)">
-					<text :class="{'ch-color-main': titleMoreAction === item.id}">{{item.val}}</text>
 				</view>
 			</view>
-		</view>
-		<view class="tn-margin-bottom">
-			<text class="tn-icon-down-triangle">字体样式</text>
-			<view class=" tn-flex tn-flex-row-between tn-bg-gray--light tn-radius">
-				<view v-for="(item,index) in fontStyle" :key="item.id" class="tn-text-xl tn-padding"
-					@tap="editSubAction(item)">
-					<text :class="{'ch-color-main': selectAction.includes(item.id)}">{{item.name}}</text>
+			<!-- 展开面板 -->
+			<view v-show="moreAction === 0" class="tn-margin">
+				<view class="tn-margin-bottom">
+					<text class="tn-icon-down-triangle">标题大小</text>
+					<view class=" tn-flex tn-flex-row-between tn-bg-gray--light tn-radius">
+						<view v-for="(item,index) in title" :key="item.id" class="tn-text-xl tn-padding"
+							@tap="editSubAction(item)">
+							<text :class="{'ch-color-main': titleMoreAction === item.id}">{{item.val}}</text>
+						</view>
+					</view>
+				</view>
+				<view class="tn-margin-bottom">
+					<text class="tn-icon-down-triangle">字体样式</text>
+					<view class=" tn-flex tn-flex-row-between tn-bg-gray--light tn-radius">
+						<view v-for="(item,index) in fontStyle" :key="item.id" class="tn-text-xl tn-padding"
+							@tap="editSubAction(item)">
+							<text :class="{'ch-color-main': selectAction.includes(item.id)}">{{item.name}}</text>
+						</view>
+					</view>
 				</view>
 			</view>
-		</view>
-	</view>
-	<view v-show="moreAction === 1" class="tn-margin tn-flex tn-flex-direction-column">
-		<view class="tn-margin-bottom">
-			<text class="tn-icon-down-triangle tn-text-left">字体大小</text>
-			<view class="tn-flex tn-bg-gray--light tn-flex-row-between tn-padding tn-radius">
-				<view v-for="(item,index) in fontSize" :key="item.id" @tap="editSubAction(item)">
-					<text :class="{'ch-color-main': fontSizeMoreAction === item.id}">{{item.name}}</text>
+			<view v-show="moreAction === 1" class="tn-margin tn-flex tn-flex-direction-column">
+				<view class="tn-margin-bottom">
+					<text class="tn-icon-down-triangle tn-text-left">字体大小</text>
+					<view class="tn-flex tn-bg-gray--light tn-flex-row-between tn-padding tn-radius">
+						<view v-for="(item,index) in fontSize" :key="item.id" @tap="editSubAction(item)">
+							<text :class="{'ch-color-main': fontSizeMoreAction === item.id}">{{item.name}}</text>
+						</view>
+					</view>
+				</view>
+				<view class="tn-margin-bottom">
+					<text class="tn-icon-down-triangle tn-text-left">字体背景</text><text
+						class="tn-margin-left-xs tn-text-xs">选择字体背景后一定要更换字体颜色</text>
+					<view class="tn-flex tn-bg-gray--light tn-padding tn-radius tn-flex-row-between">
+						<view class="tn-round tn-padding-xs tn-border-solid tn-bold-border"
+							:class="backgroundColorMoreAction===item.id?'tn-border-bluepurple':'tn-border-white'"
+							:style="'background-color:'+item.val" v-for="(item ,index) in backgroundColor"
+							:key="item.id" @tap="editSubAction(item)">
+						</view>
+					</view>
+				</view>
+				<view class="tn-margin-bottom">
+					<text class="tn-icon-down-triangle tn-text-left">字体颜色</text>
+					<view class="tn-flex tn-bg-gray--light tn-padding tn-radius tn-flex-row-between">
+						<view class="tn-round tn-padding-xs tn-border-solid tn-bold-border"
+							:class="colorMoreAction===item.id?'tn-border-bluepurple':'tn-border-white'"
+							:style="'background-color:'+item.val" v-for="(item ,index) in color" :key="item.id"
+							@tap="editSubAction(item)">
+						</view>
+					</view>
+				</view>
+
+			</view>
+			<view v-show="moreAction === 2" class="tn-margin tn-flex tn-flex-direction-column">
+				<text class="tn-icon-down-triangle tn-text-left">文字方向</text>
+				<view class="tn-margin-bottom tn-flex tn-bg-gray--light tn-padding tn-radius tn-flex-row-between">
+					<view class="tn-flex tn-flex-direction-column" v-for="(item, index) in align" :key="item.id"
+						@tap="editSubAction(item)">
+						<text :class="[item.icon, {'ch-color-main': alignMoreAction === item.id}]" class="tn-text-xl">
+						</text>
+						<text class="tn-text-sm">
+							{{item.name}}
+						</text>
+					</view>
+				</view>
+
+			</view>
+			<!-- 面板展开结束 -->
+			<!-- 文章属性开始 -->
+			<view class="tn-margin tn-margin-top-xl">
+				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center"
+					@tap="showCategory = true">
+					<view class="tn-flex tn-flex-col-center">
+						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
+						<text>圈子板块</text>
+					</view>
+					<view class="tn-flex tn-flex-col-center">
+						<text>{{categoryTitle}}</text> <!-- 点击出现Popup -->
+						<text class="tn-icon-right-triangle">
+						</text>
+					</view>
+				</view>
+				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center">
+					<view class="tn-flex tn-flex-col-center">
+						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
+						<text>帖子标题</text>
+					</view>
+					<view class="tn-flex tn-flex-col-center">
+						<text>为空时自动获取</text> <!-- 点击出现Popup -->
+						<text class="tn-icon-right-triangle">
+						</text>
+					</view>
+				</view>
+				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center" @tap="tagsAction">
+					<view class="tn-flex tn-flex-col-center">
+						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
+						<text>话题标签</text>
+					</view>
+					<view class="tn-flex tn-flex-col-center">
+						<text>名称占位</text> <!-- 点击出现Popup -->
+						<text class="tn-icon-right-triangle">
+						</text>
+					</view>
+
+				</view>
+				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center"
+					@tap="permissionAction">
+					<view class="tn-flex tn-flex-col-center">
+						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
+						<text>谁人可见</text>
+					</view>
+					<view class="tn-flex tn-flex-col-center">
+						<text>名称占位</text> <!-- 点击出现Popup -->
+						<text class="tn-icon-right-triangle">
+						</text>
+					</view>
 				</view>
 			</view>
-		</view>
-		<view class="tn-margin-bottom">
-			<text class="tn-icon-down-triangle tn-text-left">字体背景</text><text
-				class="tn-margin-left-xs tn-text-xs">选择字体背景后一定要更换字体颜色</text>
-			<view class="tn-flex tn-bg-gray--light tn-padding tn-radius tn-flex-row-between">
-				<view class="tn-round tn-padding-xs tn-border-solid tn-bold-border"
-					:class="backgroundColorMoreAction===item.id?'tn-border-bluepurple':'tn-border-white'"
-					:style="'background-color:'+item.val" v-for="(item ,index) in backgroundColor" :key="item.id"
-					@tap="editSubAction(item)">
-				</view>
-			</view>
-		</view>
-		<view class="tn-margin-bottom">
-			<text class="tn-icon-down-triangle tn-text-left">字体颜色</text>
-			<view class="tn-flex tn-bg-gray--light tn-padding tn-radius tn-flex-row-between">
-				<view class="tn-round tn-padding-xs tn-border-solid tn-bold-border"
-					:class="colorMoreAction===item.id?'tn-border-bluepurple':'tn-border-white'"
-					:style="'background-color:'+item.val" v-for="(item ,index) in color" :key="item.id"
-					@tap="editSubAction(item)">
-				</view>
-			</view>
-		</view>
+			<!-- 文章属性结束 -->
+			<!-- Popup组件开始 -->
+			<tn-popup mode="bottom" length="50%" v-model="showCategory" :borderRadius="20" :closeBtn="true">
+				<z-paging-swiper>
+					<template #top>
+						<v-tabs v-model="cateTabsIndex" :tabs="categoryTabs" @change="changeTab" lineHeight="8rpx"
+							lineColor="#29B7CB" :zIndex="2" activeColor="#29B7CB"></v-tabs>
+					</template>
+					<swiper class="swiper" :current="cateTabsIndex" @change="changeSwpier">
+						<swiper-item v-for="(item, index) in categoryTabs" :key="index">
+							<categoryList :tabsIndex="cateTabsIndex" @getCategoryInfo="getCategoryInfo"></categoryList>
+						</swiper-item>
+					</swiper>
 
-	</view>
-	<view v-show="moreAction === 2" class="tn-margin tn-flex tn-flex-direction-column">
-		<text class="tn-icon-down-triangle tn-text-left">文字方向</text>
-		<view class="tn-margin-bottom tn-flex tn-bg-gray--light tn-padding tn-radius tn-flex-row-between">
-			<view class="tn-flex tn-flex-direction-column" v-for="(item, index) in align" :key="item.id"
-				@tap="editSubAction(item)">
-				<text :class="[item.icon, {'ch-color-main': alignMoreAction === item.id}]" class="tn-text-xl">
-				</text>
-				<text class="tn-text-sm">
-					{{item.name}}
-				</text>
-			</view>
-		</view>
-
-	</view>
-	<!-- 面板展开结束 -->
-	<!-- 文章属性开始 -->
-	<view class="tn-margin tn-margin-top-xl">
-		<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center" @tap="showCategory = true">
-			<view class="tn-flex tn-flex-col-center">
-				<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
-				<text>圈子/板块</text>
-			</view>
-			<view class="tn-flex tn-flex-col-center">
-				<text>{{categoryTitle}}</text> <!-- 点击出现Popup -->
-				<text class="tn-icon-right-triangle">
-				</text>
-			</view>
-		</view>
-		<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center" @tap="tagAction">
-			<view class="tn-flex tn-flex-col-center">
-				<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
-				<text>话题/标签</text>
-			</view>
-			<view class="tn-flex tn-flex-col-center">
-				<text>名称占位</text> <!-- 点击出现Popup -->
-				<text class="tn-icon-right-triangle">
-				</text>
-			</view>
-			
-		</view>
-		<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center" @tap="permissionAction">
-			<view class="tn-flex tn-flex-col-center">
-				<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
-				<text>谁人可见</text>
-			</view>
-			<view class="tn-flex tn-flex-col-center">
-				<text>名称占位</text> <!-- 点击出现Popup -->
-				<text class="tn-icon-right-triangle">
-				</text>
-			</view>
-		</view>
-	</view>
-	<!-- 文章属性结束 -->
-	<!-- Popup组件开始 -->
-	<tn-popup mode="bottom" length="50%" v-model="showCategory" :borderRadius="20" :closeBtn="true">
-		<z-paging-swiper>
-			<template #top>
-				<v-tabs v-model="cateTabsIndex" :tabs="categoryTabs" @change="changeTab" lineHeight="8rpx"
-					lineColor="#29B7CB" :zIndex="2" activeColor="#29B7CB"></v-tabs>
-			</template>
-			<swiper class="swiper" :current="cateTabsIndex" @change="changeSwpier">
-				<swiper-item v-for="(item, index) in categoryTabs" :key="index">
-					<categoryList :tabsIndex="cateTabsIndex" @getCategoryInfo="getCategoryInfo"></categoryList>
-				</swiper-item>
-			</swiper>
-
-		</z-paging-swiper>
+				</z-paging-swiper>
 
 
-	</tn-popup>
-	</you-touchbox>
+			</tn-popup>
+		</you-touchbox>
 	</view>
 </template>
 
@@ -355,6 +368,7 @@
 				selectAction: [],
 				showCategory: false,
 
+
 			}
 		},
 		onLoad() {
@@ -367,16 +381,11 @@
 				// 演示----监听光标进入
 				this.edit.$on('edit:focus', (e) => {
 					// console.log('监听光标进入',e);
+
 				});
 				// 演示----监听输入
 				this.edit.$on('edit:input', (e) => {
-					if (!this.edit.textCount) {
-						console.log(this.edit)
-						this.subMoreAction = null;
-						this.colorMoreAction = null;
-						this.backgroundColorMoreAction = null;
-						this.fontStyleMoreAction = null;
-					}
+
 					// console.log('监听输入', e);
 				});
 				// 演示----监听光标指向不同样式时回调
@@ -384,6 +393,7 @@
 					// console.log('监听光标当前位置样式变化',JSON.stringify(e));
 				})
 			},
+
 			async save() {
 				// 获取插入的图片列表
 				let imgs = await this.edit.getImages()
@@ -412,8 +422,6 @@
 							'Authorization': uni.getStorageSync('token')
 						}
 					})
-					// 因为演示的时候没有服务器，所以直接换个网络图方便后续演示，
-					// 实际项目应使用上方注释内容
 					//替换掉Windows data错误的反斜杠
 					return data.data.replace(/\\/g, '/')
 
@@ -525,6 +533,18 @@
 				setTimeout(() => {
 					this.showCategory = false
 				}, 100)
+			},
+			permissionAction() {
+				uni.showToast({
+					icon: 'none',
+					title: '还没做欸嘿'
+				})
+			},
+			tagsAction() {
+				uni.showToast({
+					icon: 'none',
+					title: '还没做欸嘿'
+				})
 			}
 		}
 	}

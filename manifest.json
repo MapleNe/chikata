@@ -45,7 +45,8 @@
             },
             /* ios打包配置 */
             "ios" : {
-                "dSYMs" : false
+                "dSYMs" : false,
+                "idfa" : false
             },
             /* SDK配置 */
             "sdkConfigs" : {
@@ -97,7 +98,7 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wx1b37e84d136f56d5",
+        "appid" : "",
         "setting" : {
             "urlCheck" : false
         },

@@ -54,42 +54,43 @@
 				</view>
 				<view class="tn-margin-top">
 					<ls-skeleton :skeleton="commentSk" :loading="loading">
-					<view v-for="(item,index) in comments" :key="index">
-						<view class="tn-flex tn-flex-col-center">
-							<tn-avatar :src="item.expand.head_img"></tn-avatar>
-							<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
-								<text>{{item.nickname}}</text>
-								<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
-							</view>
-						</view>
-						<view class="tn-margin tn-padding-left-xl" style="overflow: hidden;word-wrap: break-word"
-							@tap="subReply(item)">
-							<!-- {{item.content}} -->
-							<mp-html :content="item.content"></mp-html>
-						</view>
-						<!-- 子评论 -->
-						<view class="tn-margin">
-							<view class="tn-margin-left-xl tn-padding-sm tn-bg-gray--light ch-radius"
-								v-if="item.son.length>0">
-								<view v-for="(subComment, index) in item.son" :key="index">
-									<view class="tn-flex tn-flex-col-center">
-										<tn-avatar :src="subComment.expand.head_img"></tn-avatar>
-										<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
-											<text>{{subComment.nickname}}</text>
-											<text class="tn-text-xs">{{getDateDiff(subComment.create_time)}}</text>
-										</view>
-									</view>
-									<view class="tn-margin tn-padding-left-xl"
-										style="overflow: hidden;word-wrap: break-word">
-										<mp-html :content="subComment.content"></mp-html>
-									</view>
-
+						<view v-for="(item,index) in comments" :key="index">
+							<view class="tn-flex tn-flex-col-center">
+								<tn-avatar :src="item.expand.head_img"></tn-avatar>
+								<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
+									<text>{{item.nickname}}</text>
+									<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
 								</view>
 							</view>
-							
-						</view>
+							<view class="tn-margin tn-padding-left-xl" style="overflow: hidden;word-wrap: break-word"
+								@tap="subReply(item)">
+								<!-- {{item.content}} -->
+								<mp-html :content="item.content"></mp-html>
+							</view>
+							<!-- 子评论 -->
+							<view class="tn-margin">
+								<view class="tn-margin-left-xl tn-padding-sm tn-bg-gray--light ch-radius"
+									v-if="item.son.length>0">
+									<view v-for="(subComment, index) in item.son" :key="index">
+										<view class="tn-flex tn-flex-col-center">
+											<tn-avatar :src="subComment.expand.head_img"></tn-avatar>
+											<view
+												class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
+												<text>{{subComment.nickname}}</text>
+												<text class="tn-text-xs">{{getDateDiff(subComment.create_time)}}</text>
+											</view>
+										</view>
+										<view class="tn-margin tn-padding-left-xl"
+											style="overflow: hidden;word-wrap: break-word">
+											<mp-html :content="subComment.content"></mp-html>
+										</view>
 
-					</view>
+									</view>
+								</view>
+
+							</view>
+
+						</view>
 					</ls-skeleton>
 				</view>
 			</view>
@@ -169,7 +170,7 @@
 					'line*3',
 					20,
 					'card-lg',
-					'line',
+					'circle-sm+line-sm',
 				],
 				commentSk: [
 					'circle+line-sm*2',
@@ -204,9 +205,11 @@
 						this.article = res.data.data
 						setTimeout(() => {
 							this.loading = false
-						}, 400)
+						}, 800)
 
 					}
+				}).catch(err => {
+					this.$refs.paging.complete(false)
 				})
 			},
 			getComment(page, num) {

@@ -146,7 +146,7 @@
 				skeleton: [
 					'circle+line-sm*2',
 					'line-sm*3',
-					'card-lg+card-lg',
+					'card-lg',
 					'circle-sm+line-sm'
 				],
 				loading: true,
@@ -186,7 +186,9 @@
 					this.loading = true
 					setTimeout(() => {
 						this.loading = false
-					},400)
+					}, 400)
+				}).catch(err => {
+					this.$refs.paging.complete(false)
 				})
 			},
 			getBanner() {
