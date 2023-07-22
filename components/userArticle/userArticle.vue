@@ -169,7 +169,7 @@
 					console.log(uni.getStorageSync('userInfo').id)
 					this.$refs.paging.complete(res.data.data.data)
 					this.firstLoad = true
-					this.loading = true
+					//骨架屏仅在第一次加载时显示
 					setTimeout(() => {
 						this.loading = false
 					}, 400)

@@ -53,8 +53,8 @@
 					<text>评论：{{article.expand.comments.count}}</text>
 				</view>
 				<view class="tn-margin-top">
-					<ls-skeleton :skeleton="commentSk" :loading="loading">
-						<view v-for="(item,index) in comments" :key="index">
+					<view v-for="(item,index) in comments" :key="index">
+						<ls-skeleton :skeleton="commentSk" :loading="loading">
 							<view class="tn-flex tn-flex-col-center">
 								<tn-avatar :src="item.expand.head_img"></tn-avatar>
 								<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
@@ -89,9 +89,8 @@
 								</view>
 
 							</view>
-
-						</view>
-					</ls-skeleton>
+						</ls-skeleton>
+					</view>
 				</view>
 			</view>
 			<template #bottom>
