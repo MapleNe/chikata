@@ -1,6 +1,7 @@
 <template>
 	<view>
 		<!-- 文章详情 开始 -->
+
 		<z-paging ref="paging" @query="getComment" v-model="comments" :safe-area-inset-bottom="true">
 			<template #top>
 				<tn-nav-bar customBack :zIndex="2">
@@ -16,30 +17,34 @@
 				<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 			</template>
 			<!-- 页面内容 -->
+
 			<view class="tn-margin">
-				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-					<view class="tn-flex tn-flex-col-center">
-						<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
-						<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
-							<text>{{article.expand.author.nickname}}</text>
-							<text class="tn-text-xs">{{getDateDiff(article.create_time)}}</text>
+				<ls-skeleton :skeleton="articleSk" :loading="loading">
+					<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+						<view class="tn-flex tn-flex-col-center">
+							<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
+							<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
+								<text>{{article.expand.author.nickname}}</text>
+								<text class="tn-text-xs">{{getDateDiff(article.create_time)}}</text>
+							</view>
+						</view>
+						<view>
+							<tn-button size="sm" :plain="true" shape="round">关注</tn-button>
 						</view>
 					</view>
-					<view>
-						<tn-button size="sm" :plain="true" shape="round">关注</tn-button>
+					<view class="tn-margin-top" style="max-width: 100%;">
+						<mp-html :content="article.content" />
 					</view>
-				</view>
-				<view class="tn-margin-top" style="max-width: 100%;">
-					<mp-html :content="article.content" />
-				</view>
-				<view class="tn-flex tn-flex-col-center">
-					<view v-for="(category,index) in article.expand.sort" :key="index"
-						class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius">
-						<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
-						<text class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
+					<view class="tn-flex tn-flex-col-center">
+						<view v-for="(category,index) in article.expand.sort" :key="index"
+							class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius">
+							<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
+							<text class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
+						</view>
 					</view>
-				</view>
+				</ls-skeleton>
 			</view>
+
 			<view class="tn-padding-xs tn-bg-gray--light"></view><!-- 间隔 -->
 			<!-- 文章详情 结束 -->
 			<!-- 评论区 开始 -->
@@ -48,6 +53,7 @@
 					<text>评论：{{article.expand.comments.count}}</text>
 				</view>
 				<view class="tn-margin-top">
+					<ls-skeleton :skeleton="commentSk" :loading="loading">
 					<view v-for="(item,index) in comments" :key="index">
 						<view class="tn-flex tn-flex-col-center">
 							<tn-avatar :src="item.expand.head_img"></tn-avatar>
@@ -80,9 +86,11 @@
 
 								</view>
 							</view>
+							
 						</view>
 
 					</view>
+					</ls-skeleton>
 				</view>
 			</view>
 			<template #bottom>
@@ -108,6 +116,7 @@
 				</view>
 				<!-- 底部 结束 -->
 			</template>
+
 		</z-paging>
 
 		<!-- 弹出层 开始 -->
@@ -123,6 +132,7 @@
 				<tn-button shape="round" :plain="true" size="sm" @click="commentCheck">发送~</tn-button>
 			</view>
 		</tn-popup>
+
 	</view>
 
 </template>
@@ -153,6 +163,19 @@
 				secondNav: false,
 				token: null,
 				pid: 0,
+				loading: true,
+				articleSk: [
+					'circle+line-sm*2',
+					'line*3',
+					20,
+					'card-lg',
+					'line',
+				],
+				commentSk: [
+					'circle+line-sm*2',
+					10,
+					'line-sm*3'
+				],
 			}
 		},
 
@@ -179,6 +202,9 @@
 				}).then(res => {
 					if (res.data.code == 200) {
 						this.article = res.data.data
+						setTimeout(() => {
+							this.loading = false
+						}, 400)
 
 					}
 				})

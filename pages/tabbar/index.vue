@@ -59,10 +59,9 @@
 			// this.userInfo = uni.getStorageSync('userInfo')
 			console.log(this.userInfo)
 		},
-		created() {
-		},
+		created() {},
 		computed: {
-			...mapState(['userInfo','hasLogin']),
+			...mapState(['userInfo', 'hasLogin']),
 			// 兼容小程序
 			gridItemWidth() {
 				return 100 / this.col + '%'

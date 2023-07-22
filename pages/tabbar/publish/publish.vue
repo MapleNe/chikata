@@ -8,7 +8,7 @@
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 
-		<lsj-edit ref="lsjEdit" placeholder="啊~灵感在迸发~" @onReady="editReady" @input="getConetnt">
+		<lsj-edit ref="lsjEdit" placeholder="啊~灵感在迸发~" @onReady="editReady">
 		</lsj-edit>
 
 		<!-- 上拉组件 -->
@@ -102,10 +102,22 @@
 				</text>
 			</view>
 		</view>
-		<view class="tn-margin-bottom tn-flex tn-flex-row-between tn-flex-col-center" @tap="tagAction">
+		<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center" @tap="tagAction">
 			<view class="tn-flex tn-flex-col-center">
 				<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
 				<text>话题/标签</text>
+			</view>
+			<view class="tn-flex tn-flex-col-center">
+				<text>名称占位</text> <!-- 点击出现Popup -->
+				<text class="tn-icon-right-triangle">
+				</text>
+			</view>
+			
+		</view>
+		<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center" @tap="permissionAction">
+			<view class="tn-flex tn-flex-col-center">
+				<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
+				<text>谁人可见</text>
 			</view>
 			<view class="tn-flex tn-flex-col-center">
 				<text>名称占位</text> <!-- 点击出现Popup -->
@@ -359,6 +371,7 @@
 				// 演示----监听输入
 				this.edit.$on('edit:input', (e) => {
 					if (!this.edit.textCount) {
+						console.log(this.edit)
 						this.subMoreAction = null;
 						this.colorMoreAction = null;
 						this.backgroundColorMoreAction = null;
