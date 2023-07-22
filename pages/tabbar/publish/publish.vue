@@ -7,10 +7,8 @@
 			</view>
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
-
-		<lsj-edit ref="lsjEdit" placeholder="啊~灵感在迸发~" @onReady="editReady">
+		<lsj-edit ref="lsjEdit" placeholder="啊~灵感在迸发~" @onReady="editReady" :styles="{'overflow':'hidden','height':'75vh'}">
 		</lsj-edit>
-
 		<!-- 上拉组件 -->
 		<you-touchbox :auto="false" :maxTop="0.85" :minTop="0.08" :initTop="0.5"
 			customStyle="border-radius:20rpx 20rpx 0 0">
@@ -422,14 +420,13 @@
 							'Authorization': uni.getStorageSync('token')
 						}
 					})
-					
+
 					console.log(data.data)
 					return data.data
 
 
 				}).then(res => {
-					console.log('替换完成,最终内容为', JSON.stringify(res.html));
-					
+					// console.log('替换完成,最终内容为', JSON.stringify(res.html));
 					this.addArtiCle(res)
 				});
 			},
@@ -449,7 +446,15 @@
 						'Authorization': uni.getStorageSync('token')
 					}
 				}).then(res => {
-					console.log(res)
+					if (res.data.code === 200) {
+						uni.showToast({
+							icon: 'none',
+							title: '发布' + res.data.msg
+						})
+						setTimeout(() => {
+							this.back()
+						}, 1000)
+					}
 				}).catch(err => {
 					console.log(err)
 				})
@@ -551,7 +556,25 @@
 					icon: 'none',
 					title: '还没做欸嘿'
 				})
-			}
+			},
+			back() {
+				// 通过判断当前页面的页面栈信息，是否有上一页进行返回，如果没有则跳转到首页
+				const pages = getCurrentPages()
+				if (pages && pages.length > 0) {
+					const firstPage = pages[0]
+					if (pages.length == 1 && (!firstPage.route || firstPage.route != 'pages/tabbar/index')) {
+						this.$Router.replaceAll({
+							path: '/pages/tabbar/index'
+						})
+					} else {
+						this.$Router.back(1)
+					}
+				} else {
+					this.$Router.replaceAll({
+						path: '/pages/tabbar/index'
+					})
+				}
+			},
 		}
 	}
 </script>
