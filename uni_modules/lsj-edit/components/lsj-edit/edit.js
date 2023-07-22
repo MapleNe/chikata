@@ -202,29 +202,31 @@ export class Edit extends Observer {
 	 * @param {Function} fn 返回替换后图片地址
 	 */
 	async replaceImage(fn) {
-		let res = await this.getContents();
-		let cuops = JSON.stringify(res.delta.ops);
-		let ops = res.delta.ops;
-
-		for (let temp of ops) {
-			if (typeof temp.insert === "object") {
-				if ("image" in temp.insert) {
-					let img = temp.insert.image;
-					// 将本地图片路径替换为网络路径
-					temp.insert.image = await fn(img);
-				}
-			}
-		}
-
-		if (cuops === JSON.stringify(ops)) {
-			return res;
-		}
-
-		return await this.tool('setContents', {
-			delta: {
-				ops
-			}
-		}).getContents();
+	  let res = await this.getContents();
+	  let cuops = JSON.stringify(res.delta.ops);
+	  let ops = res.delta.ops;
+	
+	  for (let temp of ops) {
+	    if (typeof temp.insert === "object") {
+	      if ("image" in temp.insert) {
+	        let img = temp.insert.image;
+	        // 将本地图片路径替换为网络路径
+	        temp.insert.image = await fn(img);
+	        // 删除 data-local 属性  后端正则匹配会出错 所以删除
+	        delete temp.attributes["data-local"];
+	      }
+	    }
+	  }
+	
+	  if (cuops === JSON.stringify(ops)) {
+	    return res;
+	  }
+	
+	  return await this.tool('setContents', {
+	    delta: {
+	      ops
+	    }
+	  }).getContents();
 	}
 
 

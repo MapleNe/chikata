@@ -422,15 +422,21 @@
 							'Authorization': uni.getStorageSync('token')
 						}
 					})
-					//替换掉Windows data错误的反斜杠
-					return data.data.replace(/\\/g, '/')
+					
+					console.log(data.data)
+					return data.data
+
 
 				}).then(res => {
-					console.log('替换完成,最终内容为', JSON.stringify(res.text));
+					console.log('替换完成,最终内容为', JSON.stringify(res.html));
+					
 					this.addArtiCle(res)
 				});
-
 			},
+			// async getContent(){
+			// 	let data = await this.edit.getContents()
+			// 	console.log(data)
+			// },
 			addArtiCle(res) {
 				this.$http.post('/article/save', {
 					title: this.articleTitle === null ? res.text.substring(0, 10) : this.articleTitle,
