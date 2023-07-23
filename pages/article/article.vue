@@ -4,14 +4,7 @@
 
 		<z-paging ref="paging" @query="getComment" v-model="comments" :safe-area-inset-bottom="true">
 			<template #top>
-				<tn-nav-bar customBack :zIndex="2">
-					<view slot="back" class="tn-margin-top-sm tn-flex tn-flex-col-start" @tap="back">
-						<text class="tn-icon-left tn-text-xxl"></text>
-						<view class="tn-flex tn-flex-col-center" v-if="secondNav">
-							<tn-avatar size="sm" :src="article.expand.author.head_img"></tn-avatar>
-							<text class="tn-margin-left-sm">{{article.expand.author.nickname}}</text>
-						</view>
-					</view>
+				<tn-nav-bar :zIndex="2">
 					{{article.title}}
 				</tn-nav-bar>
 				<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
@@ -76,12 +69,22 @@
 											<tn-avatar :src="subComment.expand.head_img"></tn-avatar>
 											<view
 												class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
-												<text>{{subComment.nickname}}</text>
+												<view class="tn-flex tn-flex-col-center">
+													<text>{{subComment.nickname}}</text>
+													<!-- 写一段注释 这个是父评论的id不等于子评论的pid里的id才会显示-->
+													<view v-if="item.id !== subComment.expand.pid.id"
+														class="tn-flex tn-flex-col-center">
+														<text class="tn-icon-right-triangle"></text>
+														<text>{{subComment.expand.pid.nickname}}</text>
+													</view>
+
+												</view>
+
 												<text class="tn-text-xs">{{getDateDiff(subComment.create_time)}}</text>
 											</view>
 										</view>
 										<view class="tn-margin tn-padding-left-xl"
-											style="overflow: hidden;word-wrap: break-word">
+											style="overflow: hidden;word-wrap: break-word" @tap="subReply(subComment)">
 											<mp-html :content="subComment.content"></mp-html>
 										</view>
 
@@ -184,14 +187,7 @@
 			this.getArticle()
 			this.token = uni.getStorageSync('token')
 		},
-		onPageScroll(scroll) {
-			let scrollTop = scroll.scrollTop
-			if (scrollTop >= this.vuex_custom_bar_height) {
-				this.secondNav = true
-			} else {
-				this.secondNav = false
-			}
-		},
+
 		methods: {
 			async getArticle() {
 				await this.$http.get('/article/one', {
