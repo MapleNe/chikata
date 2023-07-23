@@ -17,7 +17,7 @@
 						<view class="tn-flex tn-flex-col-center">
 							<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
 							<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
-								<text>{{article.expand.author.nickname}}</text>
+								<text class="tn-text-bold">{{article.expand.author.nickname}}</text>
 								<text class="tn-text-xs">{{getDateDiff(article.create_time)}}</text>
 							</view>
 						</view>
@@ -51,7 +51,7 @@
 							<view class="tn-flex tn-flex-col-center">
 								<tn-avatar :src="item.expand.head_img"></tn-avatar>
 								<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
-									<text>{{item.nickname}}</text>
+									<text class="tn-text-bold">{{item.nickname}}</text>
 									<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
 								</view>
 							</view>
@@ -70,12 +70,12 @@
 											<view
 												class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
 												<view class="tn-flex tn-flex-col-center">
-													<text>{{subComment.nickname}}</text>
+													<text class="tn-text-bold">{{subComment.nickname}}</text>
 													<!-- 写一段注释 这个是父评论的id不等于子评论的pid里的id才会显示-->
 													<view v-if="item.id !== subComment.expand.pid.id"
 														class="tn-flex tn-flex-col-center">
 														<text class="tn-icon-right-triangle"></text>
-														<text>{{subComment.expand.pid.nickname}}</text>
+														<text class="tn-text-bold">{{subComment.expand.pid.nickname}}</text>
 													</view>
 
 												</view>
