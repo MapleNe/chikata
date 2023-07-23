@@ -191,8 +191,8 @@
 					this.$refs.paging.complete(false)
 				})
 			},
-			getBanner() {
-				this.$http.get('/banner').then(res => {
+			async getBanner() {
+				await this.$http.get('/banner').then(res => {
 					if (res.data.code === 200) {
 						if (res.data.data.count > 0) {
 							let data = res.data.data

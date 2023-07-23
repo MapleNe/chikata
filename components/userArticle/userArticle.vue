@@ -166,7 +166,6 @@
 						where: 'users_id=' + uni.getStorageSync('userInfo').id
 					}
 				}).then(res => {
-					console.log(uni.getStorageSync('userInfo').id)
 					this.$refs.paging.complete(res.data.data.data)
 					this.firstLoad = true
 					//骨架屏仅在第一次加载时显示

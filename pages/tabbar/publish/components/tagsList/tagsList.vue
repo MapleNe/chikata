@@ -1,9 +1,9 @@
 <template>
-	<z-paging ref="paging" @query="getCategory" v-model="content" :auto="true">
+	<z-paging ref="paging" @query="getTags" v-model="content" :auto="true">
 		<view class="tn-margin">
 			<view v-for="(item,index) in content" :key="index">
 				<view class="ch-bg-main tn-flex tn-flex-col-center tn-margin-bottom-sm"
-					style="border-radius: 10rpx;position: relative;" @tap="pushCategoryInfo(item)">
+					style="border-radius: 10rpx;position: relative;" @tap="pushTagsInfo(item)">
 					<view class="tn-padding-xs">
 						<tn-avatar :border="true" borderColor="#fff" :borderSize="6" size="xl"
 							:src="item.opt.head_img"></tn-avatar>
@@ -12,10 +12,9 @@
 						<text>{{item.name}}</text>
 						<text>{{item.description}}</text>
 					</view>
-					<view v-if="selectedCategory.id === item.id" class="tn-icon-left-triangle tn-text-xl-xxl"
-						style="position: absolute;right: 0;"></view>
-
+					<view v-if="isSelected(item)" class="tn-icon-left-triangle tn-text-xl-xxl" style="position: absolute;right: 0;"></view>
 				</view>
+
 			</view>
 		</view>
 
@@ -29,29 +28,30 @@
 				type: Number,
 				default: null
 			},
-			selectedCategory: {
-				type: Object,
-				default: null
-			}
+			selectedTags: {
+				type: Array,
+				default: null,
+			},
 		},
-		name: "categoryList",
+		name: "tagsList",
 		data() {
 			return {
 				content: [],
 				firstLoad: false,
-				categoryInfo: [],
+				tagsInfo: [],
+				innerSelectedTags: [],
 			};
 		},
 		onLoad() {
 
 		},
 		created() {
-			uni.$emit('getCategoryInfo', this.categoryInfo) //废弃
+			uni.$emit('getTagsInfo', this.tagsInfo) //废弃
 			console.log('组件加载')
 		},
 		methods: {
-			getCategory(page, num) {
-				this.$http.get('/article-sort/all', {
+			getTags(page, num) {
+				this.$http.get('/tag/all', {
 					params: {
 						limit: num,
 						page: page
@@ -61,10 +61,14 @@
 					this.$refs.paging.complete(res.data.data.data)
 				})
 			},
-			pushCategoryInfo(item) {
-				this.$emit('getCategoryInfo', item)
+			pushTagsInfo(item) {
+				this.$emit('getTagsInfo', item)
 				// console.log(item)
 			},
+			//是否已选中
+			isSelected(item) {
+				return this.selectedTags.some(tag => tag.id === item.id);
+			}
 		}
 	}
 </script>

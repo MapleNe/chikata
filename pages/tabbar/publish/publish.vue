@@ -1,13 +1,14 @@
 <template>
 	<view class="tn-bg-gray--light">
-		<tn-nav-bar fiexd>
+		<tn-nav-bar fiexd :zIndex="2">
 			编辑
 			<view slot="right" class="tn-margin">
 				<tn-button size="sm" shape="round" :plain="true" @tap="save">保存</tn-button>
 			</view>
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
-		<lsj-edit ref="lsjEdit" placeholder="啊~灵感在迸发~" @onReady="editReady" :styles="{'overflow':'hidden','height':'75vh'}">
+		<lsj-edit ref="lsjEdit" placeholder="啊~灵感在迸发~" @onReady="editReady"
+			:styles="{'overflow':'hidden','height':'75vh'}">
 		</lsj-edit>
 		<!-- 上拉组件 -->
 		<you-touchbox :auto="false" :maxTop="0.85" :minTop="0.08" :initTop="0.5"
@@ -101,31 +102,36 @@
 						</text>
 					</view>
 				</view>
-				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center">
+				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center"
+					@tap="showTitleModal = true">
 					<view class="tn-flex tn-flex-col-center">
 						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
 						<text>帖子标题</text>
 					</view>
 					<view class="tn-flex tn-flex-col-center">
-						<text>为空时自动获取</text> <!-- 点击出现Popup -->
+						<text>{{articleTitle}}</text>
 						<text class="tn-icon-right-triangle">
 						</text>
 					</view>
 				</view>
-				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center" @tap="tagsAction">
-					<view class="tn-flex tn-flex-col-center">
+				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center" @tap="showTags = true">
+					<view class="tn-flex tn-flex-col-center tn-flex-nowrap tn-text-ellipsis">
 						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
 						<text>话题标签</text>
 					</view>
-					<view class="tn-flex tn-flex-col-center">
-						<text>名称占位</text> <!-- 点击出现Popup -->
+					<view class="tn-flex tn-flex-col-center tn-flex-nowrap tn-text-ellipsis" style="overflow: hidden;">
+						<text v-for="(item,index) in selectedTags" :key="index"
+							class="tn-bg-gray--light ch-radius tn-margin-left-xs tn-color-grey tn-text-sm tn-padding-xs"
+							@tap.stop="deleteTags(index)">
+							{{item.name}}
+						</text>
 						<text class="tn-icon-right-triangle">
 						</text>
 					</view>
 
 				</view>
 				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center"
-					@tap="permissionAction">
+					@tap="showPermission = true">
 					<view class="tn-flex tn-flex-col-center">
 						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
 						<text>谁人可见</text>
@@ -139,6 +145,7 @@
 			</view>
 			<!-- 文章属性结束 -->
 			<!-- Popup组件开始 -->
+			<!-- 圈子板块组件 -->
 			<tn-popup mode="bottom" length="50%" v-model="showCategory" :borderRadius="20" :closeBtn="true">
 				<z-paging-swiper>
 					<template #top>
@@ -147,30 +154,76 @@
 					</template>
 					<swiper class="swiper" :current="cateTabsIndex" @change="changeSwpier">
 						<swiper-item v-for="(item, index) in categoryTabs" :key="index">
-							<categoryList :tabsIndex="cateTabsIndex" @getCategoryInfo="getCategoryInfo"></categoryList>
+							<categoryList :tabsIndex="cateTabsIndex" @getCategoryInfo="getCategoryInfo"
+								:selectedCategory="selectedCategory"></categoryList>
 						</swiper-item>
 					</swiper>
 
 				</z-paging-swiper>
-
-
 			</tn-popup>
+			<!-- 标签tag组件 -->
+			<tn-popup mode="bottom" length="50%" v-model="showTags" :borderRadius="20" :closeBtn="true">
+				<z-paging-swiper>
+					<template #top>
+						<v-tabs v-model="tagsTabsIndex" :tabs="tagsTabs" @change="changeTagsTab" lineHeight="8rpx"
+							lineColor="#29B7CB" :zIndex="2" activeColor="#29B7CB"></v-tabs>
+					</template>
+					<swiper class="swiper" :current="tagsTabsIndex" @change="changeTagsSwiper">
+						<swiper-item v-for="(item,index) in tagsTabs" :key="index">
+							<tagsList :tabsIndex="tagsTabsIndex" @getTagsInfo="getTagsInfo"
+								:selectedTags="selectedTags"></tagsList>
+						</swiper-item>
+					</swiper>
+				</z-paging-swiper>
+			</tn-popup>
+			<!-- 权限组件 -->
+			<tn-popup mode="bottom" length="50%" v-model="showPermission" :borderRadius="20" :closeBtn="true">
+				<view class="tn-margin tn-flex tn-flex-direction-column">
+					<view class="tn-flex tn-flex-direction-column tn-margin-bottom-xl tn-margin-top-xl">
+						<text class="tn-text-lg tn-text-bold">公开</text>
+						<text class="tn-color-grey">所有人均能查看</text>
+					</view>
+					<view class="tn-flex tn-flex-direction-column">
+						<text class="tn-text-lg tn-text-bold">不可见</text>
+						<text class="tn-color-grey">仅能自己查看</text>
+					</view>
+				</view>
+			</tn-popup>
+			<!-- popup组件结束 -->
+			<!-- modal开始 -->
+			<tn-modal v-model="showTitleModal" :radius="10" :custom="true" width="90%">
+				<view class="tn-flex tn-flex-direction-column">
+					<text class="tn-text-bold tn-text-xl tn-margin-bottom-sm">标题</text>
+					<view
+						class="tn-bg-gray--light ch-radius tn-padding-left-sm tn-padding-right-sm tn-margin-bottom-sm">
+						<tn-input :maxLength="20" v-model="articleTitle" placeholder="帖子标题不超过20字符" :clearable="false" />
+					</view>
+					<view class="tn-text-right">
+						<tn-button :plain="true" size="sm" shape="round" @tap="showTitleModal = false">Get！</tn-button>
+					</view>
+
+				</view>
+			</tn-modal>
 		</you-touchbox>
 	</view>
 </template>
 
 <script>
-	import categoryList from '@/pages/tabbar/publish/components/categoryList/categoryList.vue';
+	import categoryList from './components/categoryList/categoryList.vue';
+	import tagsList from './components/tagsList/tagsList.vue'
 	export default {
 		components: {
-			categoryList
+			categoryList,
+			tagsList
 		},
 		data() {
 			return {
 				categoryTabs: ['全部', '关注'],
-				cateTabsIndex: 0,
+				cateTabsIndex: 0, //用来接收设置用
 				categoryTitle: null,
 				categoryId: null,
+				tagsTabsIndex: 0,
+				tagsTabs: ['全部', '关注'],
 				content: null,
 				edit: null,
 				editList: [{
@@ -365,7 +418,11 @@
 				alignMoreAction: null,
 				selectAction: [],
 				showCategory: false,
-
+				showTags: false,
+				showTitleModal: false,
+				selectedTags: [],
+				selectedCategory: {},
+				showPermission: false,
 
 			}
 		},
@@ -435,11 +492,13 @@
 			// 	console.log(data)
 			// },
 			addArtiCle(res) {
+				const selectedTagIds = selectedTags.map(tag => tag.id).join(",");
 				this.$http.post('/article/save', {
-					title: this.articleTitle === null ? res.text.substring(0, 10) : this.articleTitle,
-					content: res.html,
-					description: res.text,
-					sort_id: this.categoryId,
+					title: this.articleTitle === null ? res.text.substring(0, 10) : this.articleTitle, //标题为空时从简介获取
+					content: res.html, //帖子内容 如果要更新文章的话不能这么写得定义一个变量来存储
+					description: res.text, //简介 如果要更新文章的话不能这么写得定义一个变量来存储
+					sort_id: this.categoryId, //分类ID 
+					tag_id: selectedTagIds, //标签id 如果要更新文章的话不能这么写得定义一个变量来存储
 
 				}, {
 					header: {
@@ -534,24 +593,40 @@
 			changeTab(index) {
 				this.cateTabsIndex = index
 			},
+			changeTagsTab(index) {
+				this.tagsTabsIndex = index
+			},
 			changeSwpier(event) {
 				this.cateTabsIndex = event.detail.current
+			},
+			changeTagsSwiper(event) {
+				this.tagsTabsIndex = event.detail.current
 			},
 			getCategoryInfo(data) {
 				this.categoryTitle = data.name;
 				this.categoryId = data.id;
+				this.selectedCategory = data
 				//获取到板块信息后关闭弹出层
 				setTimeout(() => {
 					this.showCategory = false
 				}, 100)
 			},
-			permissionAction() {
-				uni.showToast({
-					icon: 'none',
-					title: '还没做欸嘿'
-				})
+			deleteTags(index) {
+				this.selectedTags.splice(index, 1);
 			},
-			tagsAction() {
+			//从自定义组件的emit事件监听中获取到TAG的信息
+			getTagsInfo(data) {
+				const index = this.selectedTags.findIndex(tag => tag.id === data.id);
+				if (index !== -1) {
+					// 如果数据已经存在，从数组中删除
+					this.selectedTags.splice(index, 1);
+				} else {
+					// 如果数据不存在，将其添加到数组中
+					this.selectedTags.push(data);
+				}
+				console.log(this.selectedTags);
+			},
+			permissionAction() {
 				uni.showToast({
 					icon: 'none',
 					title: '还没做欸嘿'
@@ -575,6 +650,7 @@
 					})
 				}
 			},
+
 		}
 	}
 </script>

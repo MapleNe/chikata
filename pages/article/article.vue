@@ -193,8 +193,8 @@
 			}
 		},
 		methods: {
-			getArticle() {
-				this.$http.get('/article/one', {
+			async getArticle() {
+				await this.$http.get('/article/one', {
 					params: {
 						id: this.params.id,
 						mode: 'html'
@@ -211,8 +211,8 @@
 					this.$refs.paging.complete(false)
 				})
 			},
-			getComment(page, num) {
-				this.$http.get('/comments/article', {
+			async getComment(page, num) {
+				await this.$http.get('/comments/article', {
 					params: {
 						article_id: this.params.id,
 						limit: num,
