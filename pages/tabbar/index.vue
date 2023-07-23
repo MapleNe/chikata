@@ -10,7 +10,7 @@
 						<tn-avatar :src="userInfo.head_img" @tap="hasLogin?goMine():goLogin()"></tn-avatar>
 						<view
 							class="tn-bg-gray--light tn-round tn-padding-left-sm tn-flex-1 tn-margin-left tn-margin-right">
-							<tn-input placeholder="这是搜索占位"></tn-input>
+							<tn-input placeholder="这是搜索占位" :disabled="true" @tap="goSearch()"></tn-input>
 						</view>
 						<view>
 							<text class="tn-text-xxl tn-icon-email"></text>
@@ -26,7 +26,6 @@
 
 		<swiper class="swiper" :current="tabsIndex" @change="changeSwpier" >
 			<swiper-item class="swiper-item" v-for="(item, index) in tabs" :key="index">
-
 				<articleList :tabsIndex="index" :swiperIndex="tabsIndex" :content="content" :swiper="true">
 				</articleList>
 			</swiper-item>
@@ -84,6 +83,15 @@
 					path: '/pages/user/login'
 				})
 			},
+			goSearch(){
+				this.$Router.push({
+					path:'/pages/common/search/search',
+					animation:{
+					        animationType:'slide-in-right',
+					        animationDuration:500
+					    }
+				})
+			}
 
 			// 时间转换，有点长
 

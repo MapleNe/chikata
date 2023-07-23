@@ -75,7 +75,8 @@
 													<view v-if="item.id !== subComment.expand.pid.id"
 														class="tn-flex tn-flex-col-center">
 														<text class="tn-icon-right-triangle"></text>
-														<text class="tn-text-bold">{{subComment.expand.pid.nickname}}</text>
+														<text
+															class="tn-text-bold">{{subComment.expand.pid.nickname}}</text>
 													</view>
 
 												</view>
@@ -200,7 +201,7 @@
 						this.article = res.data.data
 						setTimeout(() => {
 							this.loading = false
-						}, 800)
+						}, 600)
 
 					}
 				}).catch(err => {
@@ -221,6 +222,8 @@
 						console.log(res.data.data.data)
 
 					}
+				}).catch(err => {
+					this.$refs.paging.complete(false)
 				})
 			},
 			commentAction() {

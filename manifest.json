@@ -87,9 +87,9 @@
             "splashscreen" : {
                 "androidStyle" : "default",
                 "android" : {
-                    "hdpi" : "C:/Users/Amiya/Desktop/res/drawable-hdpi/slap.9.png",
-                    "xhdpi" : "C:/Users/Amiya/Desktop/res/drawable-xhdpi/slap.9.png",
-                    "xxhdpi" : "C:/Users/Amiya/Desktop/res/drawable-xxhdpi/slap.9.png"
+                    "hdpi" : "C:/Users/Amiya/Desktop/slpha.png",
+                    "xhdpi" : "C:/Users/Amiya/Desktop/slpha.png",
+                    "xxhdpi" : "C:/Users/Amiya/Desktop/slpha.png"
                 }
             }
         }

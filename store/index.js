@@ -48,7 +48,7 @@ const store = new Vuex.Store({
 		vuex_custom_bar_height: 0,
 		hasLogin: false,
 		userInfo: {
-			head_img:'',//必须定义 否则无法使用
+			head_img: '', //必须定义 否则无法使用
 		},
 	},
 	mutations: {
@@ -80,10 +80,10 @@ const store = new Vuex.Store({
 				data: user
 			})
 		},
-		setToken(state, token){
+		setToken(state, token) {
 			uni.setStorage({
-				key:'token',
-				data:token
+				key: 'token',
+				data: token
 			})
 		},
 		logout(state) {
@@ -92,9 +92,9 @@ const store = new Vuex.Store({
 				uni.removeStorage({
 					key: 'userInfo',
 				});
-				uni.removeStorage({
-					key:'token'
-				})
+			uni.removeStorage({
+				key: 'token'
+			})
 		}
 	},
 	actions: {}

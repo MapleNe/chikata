@@ -19,13 +19,6 @@
 			}
 
 		}, {
-			"path": "pages/search/search",
-			"style": {
-				"navigationBarTitleText": "文章搜索",
-				"enablePullDownRefresh": false
-			}
-
-		}, {
 			"path": "pages/tabbar/circle",
 			"style": {
 				"navigationBarTitleText": "",
@@ -63,7 +56,16 @@
 
 		}
 
-	],
+	    ,{
+            "path" : "pages/common/search/search",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
 	"tabBar": {
 		"backgroundColor": "#ffffff",
 		"color": "#949494",
