@@ -26,7 +26,7 @@
 						</view>
 					</view>
 					<view class="tn-margin-top" style="max-width: 100%;">
-						<mp-html :content="article.content" />
+						<mp-html :content="article.content" :selectable="true" />
 					</view>
 					<view class="tn-flex tn-flex-col-center">
 						<view v-for="(category,index) in article.expand.sort" :key="index"
@@ -86,7 +86,7 @@
 										</view>
 										<view class="tn-margin tn-padding-left-xl"
 											style="overflow: hidden;word-wrap: break-word" @tap="subReply(subComment)">
-											<mp-html :content="subComment.content"></mp-html>
+											<mp-html :content="subComment.content" :selectable="true"></mp-html>
 										</view>
 
 									</view>
