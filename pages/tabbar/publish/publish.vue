@@ -137,7 +137,7 @@
 						<text>谁人可见</text>
 					</view>
 					<view class="tn-flex tn-flex-col-center">
-						<text>名称占位</text> <!-- 点击出现Popup -->
+						<text>{{permission.auth}}</text> <!-- 点击出现Popup -->
 						<text class="tn-icon-right-triangle">
 						</text>
 					</view>
@@ -179,14 +179,21 @@
 			<!-- 权限组件 -->
 			<tn-popup mode="bottom" length="50%" v-model="showPermission" :borderRadius="20" :closeBtn="true">
 				<view class="tn-margin tn-flex tn-flex-direction-column">
-					<view class="tn-flex tn-flex-direction-column tn-margin-bottom-xl tn-margin-top-xl">
-						<text class="tn-text-lg tn-text-bold">公开</text>
-						<text class="tn-color-grey">所有人均能查看</text>
+					<view class="tn-flex tn-flex-col-center  tn-margin-top-xl">
+						<text class="tn-text-lg tn-text-bold">文章权限</text>
+						<text class="tn-icon-down-triangle"></text>
 					</view>
-					<view class="tn-flex tn-flex-direction-column">
-						<text class="tn-text-lg tn-text-bold">不可见</text>
-						<text class="tn-color-grey">仅能自己查看</text>
+					<view class="tn-margin">
+						<view v-for="(item,index) in permission"
+							class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-bottom-sm"
+							@tap="permissionAction(index)">
+							<text>{{item.name}}</text>
+							<text class="tn-icon-success" v-if="item.active"></text>
+						</view>
+
 					</view>
+
+
 				</view>
 			</tn-popup>
 			<!-- popup组件结束 -->
@@ -423,6 +430,25 @@
 				selectedTags: [],
 				selectedCategory: {},
 				showPermission: false,
+				opt: {
+					password: "",
+					auth: "anyone",
+					comments: {
+						show: true,
+						allow: true,
+					}
+				},
+				permission: [{
+						name: '公开可见',
+						permission: 'anyone',
+						active: true
+					},
+					{
+						name: '自己可见',
+						permission: 'private',
+						active: false
+					}
+				]
 
 			}
 		},
@@ -624,11 +650,16 @@
 				}
 				console.log(this.selectedTags);
 			},
-			permissionAction() {
-				uni.showToast({
-					icon: 'none',
-					title: '还没做欸嘿'
-				})
+			permissionAction(index) {
+				for (let i = 0; i < this.permission.length; i++) {
+					if (i !== index) {
+						this.permission[i].active = false; // 关闭其他项
+					} else {
+						this.permission[i].active = true; // 打开当前项
+						this.opt.auth = this.permission[i].permission; // 设置opt的auth值
+						console.log(this.opt.auth)
+					}
+				}
 			},
 			back() {
 				// 通过判断当前页面的页面栈信息，是否有上一页进行返回，如果没有则跳转到首页
