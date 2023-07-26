@@ -16,6 +16,9 @@
 			</view>
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
+		<view v-show="focus&&is_search">
+			111
+		</view>
 		<view class="tn-margin">
 			<text class="tn-text-bold">热搜</text>
 			<view v-for="(item,index) in hotSearchList" :key="index" class="tn-margin-bottom-xs">
@@ -61,6 +64,8 @@
 			return {
 				searchKey: null,
 				showMoreHistory: false,
+				focus: false,
+				is_search: false,
 				//虚拟数据
 				hotSearchList: [{
 						title: '老八大战奥里给',
@@ -88,7 +93,7 @@
 			}
 		},
 		onShow() {
-			this.getHotSearch()
+
 
 		},
 		mounted() {
@@ -115,13 +120,6 @@
 						}
 
 					}
-				})
-			},
-			getHotSearch() {
-				this.$http.get('/hot-search/complex', {
-
-				}).then(res => {
-					console.log(res)
 				})
 			},
 			moreAction() {

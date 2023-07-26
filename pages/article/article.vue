@@ -28,7 +28,7 @@
 					<view class="tn-margin-top" style="max-width: 100%;">
 						<mp-html :content="article.content" :selectable="true" />
 					</view>
-					<view class="tn-flex tn-flex-col-center">
+					<view class="tn-flex tn-flex-col-center tn-margin-top">
 						<view v-for="(category,index) in article.expand.sort" :key="index"
 							class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius">
 							<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
@@ -112,9 +112,9 @@
 							<text class="tn-text-xl tn-icon-message"></text>
 							<text>{{article.expand.comments.count}}</text>
 						</view>
-						<view class="tn-flex tn-flex-col-center">
-							<text class="tn-text-xl tn-icon-like"></text>
-							<text>{{article.views}}</text>
+						<view class="tn-flex tn-flex-col-center" @tap="likeAction">
+							<text :class="article.expand.like.is_like?'tn-text-xl tn-icon-like-fill tn-color-red':'tn-text-xl tn-icon-like'"></text>
+							<text>{{article.expand.like.likes_count}}</text>
 						</view>
 					</view>
 				</view>
@@ -151,12 +151,15 @@
 				commentText: null, //这个才是回复的信息
 				commentBoxOpen: false, //控制弹出层
 				comments: [], //获取到的评论列表
-				//为什么要定义这堆东西？我也不知道 不定义就报错 但是不影响正常使用
+				//为什么要定义这堆东西？我也不知道 不定义就报错 但是不影响正常使用草
 				article: {
 					title: '',
 					expand: {
 						author: {
 							head_img: ''
+						},
+						like:{
+							
 						},
 						comments: {
 							count: 0,
@@ -198,6 +201,7 @@
 					}
 				}).then(res => {
 					if (res.data.code == 200) {
+						console.log(res.data.data)
 						this.article = res.data.data
 						setTimeout(() => {
 							this.loading = false
@@ -275,6 +279,28 @@
 				}).catch(err => {
 					console.log(err)
 				})
+			},
+			likeAction(index) {
+			    this.$http.put('/ArticleLike/Record', {
+			        article_id: this.article.id
+			    }, {
+			        header: {
+			            Authorization: uni.getStorageSync('token')
+			        }
+			    }).then(res => {
+			        if (res.data.code === 200) {
+			            this.article.expand.like.is_like = !this.article.expand.like.is_like
+			            if (this.article.expand.like.is_like) {
+			                this.article.expand.like.likes_count++
+			            } else {
+			                this.article.expand.like.likes_count--
+			            }
+			            uni.showToast({
+			                icon: 'none',
+			                title: res.data.msg
+			            })
+			        }
+			    })
 			},
 			//返回上一页
 			back() {

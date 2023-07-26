@@ -1,17 +1,24 @@
 import inisENV from '@/static/config.js'
-import { inisHelper } from '@/utils/helper.js'
+import {
+	inisHelper
+} from '@/utils/helper.js'
 import Request from '@/utils/luch-request/index.js'
 
 const http = new Request()
 
 // 全局配置
 http.setConfig((config) => {
-    config.baseURL = inisHelper.customProcessApi(inisENV.api)
-	config.header  = {
+	config.baseURL = inisHelper.customProcessApi(inisENV.api)
+	config.header = {
 		'Content-Type': 'application/x-www-form-urlencoded',
 	}
+	//全局配置请求Token 当不为空时才添加
+	const token = uni.getStorageSync('token')
+	if (token) {
+		config.header['Authorization'] = uni.getStorageSync('token');
+	}
 	config.timeout = 60 * 1000
-    return config
+	return config
 })
 
 // 请求拦截
@@ -19,6 +26,7 @@ http.setConfig((config) => {
 http.interceptors.request.use((config) => {
 	config.header = {
 		...config.header,
+
 	}
 	if (config.method == 'GET') config.params.token = inisENV.token
 	return config

@@ -429,6 +429,9 @@
 		onLoad() {
 			// console.log(uni.getStorageSync('token'))
 		},
+		onBackPress(e) {
+			console.log(e)
+		},
 		methods: {
 			editReady(edit) {
 				// 将富文本对象存放到当前页面，便于后续直接操作
@@ -492,18 +495,13 @@
 			// 	console.log(data)
 			// },
 			addArtiCle(res) {
-				const selectedTagIds = selectedTags.map(tag => tag.id).join(",");
+				const selectedTagIds = this.selectedTags.map(tag => tag.id).join(",");
 				this.$http.post('/article/save', {
 					title: this.articleTitle === null ? res.text.substring(0, 10) : this.articleTitle, //标题为空时从简介获取
 					content: res.html, //帖子内容 如果要更新文章的话不能这么写得定义一个变量来存储
 					description: res.text, //简介 如果要更新文章的话不能这么写得定义一个变量来存储
 					sort_id: this.categoryId, //分类ID 
 					tag_id: selectedTagIds, //标签id 如果要更新文章的话不能这么写得定义一个变量来存储
-
-				}, {
-					header: {
-						'Authorization': uni.getStorageSync('token')
-					}
 				}).then(res => {
 					if (res.data.code === 200) {
 						uni.showToast({

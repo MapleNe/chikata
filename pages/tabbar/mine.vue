@@ -78,11 +78,13 @@
 		onLoad() {
 			// uni.clearStorageSync('token')
 			// uni.clearStorageSync('userInfo')
+			
 		},
 		created() {
 			//监听登录事件获取userInfo
 			uni.$on('loginCompete', data => {})
 			this.token = uni.getStorageSync('token')
+			console.log(this.token)
 		},
 		methods: {
 			...mapMutations(['logout']),

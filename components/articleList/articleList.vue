@@ -98,9 +98,10 @@
 										<text class="tn-text-xl tn-icon-message"></text>
 										<text>{{item.expand.comments.count}}</text>
 									</view>
-									<view class="tn-flex tn-flex-col-center">
-										<text class="tn-text-xl tn-icon-like"></text>
-										<text>{{item.views}}</text>
+									<view class="tn-flex tn-flex-col-center" @tap.stop="likeAction(index)">
+										<text
+											:class="item.expand.like.is_like?'tn-text-xl tn-icon-like-fill tn-color-red':'tn-text-xl tn-icon-like'"></text>
+										<text>{{item.expand.like.likes_count}}</text>
 									</view>
 
 								</view>
@@ -180,13 +181,15 @@
 							'is_top desc,views desc' : ''
 					}
 				}).then(res => {
-					console.log(res)
-					this.$refs.paging.complete(res.data.data.data)
-					this.firstLoad = true
-					//骨架屏仅在第一次加载数据时显示
-					setTimeout(() => {
-						this.loading = false
-					}, 400)
+					if (res.data.code === 200) {
+						this.$refs.paging.complete(res.data.data.data)
+						this.firstLoad = true
+						console.log(res.data.data.data)
+						//骨架屏仅在第一次加载数据时显示
+						setTimeout(() => {
+							this.loading = false
+						}, 400)
+					}
 				}).catch(err => {
 					this.$refs.paging.complete(false)
 				})
@@ -204,6 +207,37 @@
 					}
 				})
 			},
+			likeAction(index) {
+			    this.$http.put('/ArticleLike/Record', {
+			        article_id: this.content[index].id
+			    }, {
+			        header: {
+			            Authorization: uni.getStorageSync('token')
+			        }
+			    }).then(res => {
+			        if (res.data.code === 200) {
+			            this.content[index].expand.like.is_like = !this.content[index].expand.like.is_like
+			            if (this.content[index].expand.like.is_like) {
+			                this.content[index].expand.like.likes_count++
+			            } else {
+			                this.content[index].expand.like.likes_count--
+			            }
+			            uni.showToast({
+			                icon: 'none',
+			                title: res.data.msg
+			            })
+			        }else{
+						if(res.data.code===403){
+							uni.showToast({
+								icon:'none',
+								title:'令牌失效请重新登录'
+							})
+						}
+					}
+			    }).catch(err=>{
+					console.log('位于articleList的错误请联系管理')
+				})
+			},
 			goPost(index) {
 				let data = this.content
 				this.$Router.push({
@@ -214,7 +248,9 @@
 				})
 			},
 			followUser() {
-				console.log('点击了关注')
+				this.$http.put('/Focus/Record',{
+					
+				})
 			},
 			getDateDiff(data) {
 				// 传进来的data必须是日期格式，不能是时间戳

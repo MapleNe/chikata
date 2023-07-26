@@ -76,26 +76,9 @@
 			}
 		},
 		onLoad() {
-			this.getHotArticle()
+			
 		},
 		methods: {
-			// 获取热门文章
-			getHotArticle(){
-				this.$http.get('/article',{
-					params: {
-						limit: 8,
-						order: 'views desc'
-					}
-				}).then(res => {
-					if (res.data.code == 200) {
-						let data = res.data.data
-						data.data.forEach(item=>{
-							item.views = this.$inisHelper.format.number(item.views)
-						})
-						this.article = data
-					}
-				})
-			},
 			// 执行搜索
 			search(){
 				this.$http.get('/article',{
