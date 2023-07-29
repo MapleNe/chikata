@@ -84,8 +84,7 @@
 							<!-- 点赞控件 -->
 							<view class="tn-flex tn-flex-col-center tn-margin-top-xs tn-flex-row-between">
 								<view v-for="(category,index) in item.expand.sort" :key="index"
-									class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius"
-									@tap.stop="goCategory(category)">
+									class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius">
 									<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
 									<text
 										class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
@@ -187,7 +186,7 @@
 						id: this.id,
 						limit: num,
 						page: page,
-						order: this.tabsIndex === 1 ? 'views desc' : this.tabsIndex === 2 ?
+						order: this.tabsIndex === 1 ? 'create_time desc' : this.tabsIndex === 2 ?
 							'is_top desc,views desc' : ''
 					}
 				}).then(res => {
@@ -241,14 +240,7 @@
 					},
 				})
 			},
-			goCategory(category) {
-				this.$Router.push({
-					path: '/pages/common/category/category',
-					query: {
-						id: category.id
-					}
-				})
-			},
+			
 			followUser(index) {
 				this.$http.put('/Focus/Record', {
 					fansId: this.content[index].users_id
