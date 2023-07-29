@@ -80,10 +80,10 @@ const store = new Vuex.Store({
 				data: user
 			})
 		},
-		setRefreshToken(state, refreshToken){
+		setRefreshToken(state, refreshToken) {
 			uni.setStorage({
-				key:'refreshToken',
-				data:refreshToken
+				key: 'refreshToken',
+				data: refreshToken
 			})
 		},
 		setToken(state, token) {
@@ -95,11 +95,14 @@ const store = new Vuex.Store({
 		logout(state) {
 			state.userInfo = {},
 				state.hasLogin = false,
-				uni.removeStorage({
+				uni.removeStorageSync({
 					key: 'userInfo',
 				});
-			uni.removeStorage({
-				key: 'token'
+			uni.removeStorageSync({
+				key: 'token',
+			});
+			uni.removeStorageSync({
+				key: 'refreshToken',
 			})
 		}
 	},

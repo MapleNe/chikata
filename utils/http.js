@@ -14,7 +14,7 @@ http.setConfig((config) => {
 	}
 	const token = uni.getStorageSync('token')
 	if (token) {
-		config.header['Authorization'] = token;
+		config.header['Authorization'] = uni.getStorageSync('token');
 	}
 	config.timeout = 60 * 1000
 	return config
