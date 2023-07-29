@@ -16,10 +16,10 @@
 			</view>
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
-		<view v-show="focus&&is_search">
-			111
+		<view v-show="is_search">
+			<commonList :content="article"></commonList>
 		</view>
-		<view class="tn-margin">
+		<view class="tn-margin" v-show="!is_search">
 			<text class="tn-text-bold">热搜</text>
 			<view v-for="(item,index) in hotSearchList" :key="index" class="tn-margin-bottom-xs">
 				<view class="tn-flex tn-flex-col-center">
@@ -59,7 +59,11 @@
 </template>
 
 <script>
+	import commonList from '@/components/commonList/commonList.vue';
 	export default {
+		components: {
+			commonList
+		},
 		data() {
 			return {
 				searchKey: null,
@@ -90,6 +94,7 @@
 
 				],
 				historySearch: [],
+				article: [],
 			}
 		},
 		onShow() {
@@ -105,20 +110,25 @@
 		},
 		methods: {
 			searchAction() {
+				if (!this.searchKey) {
+					return; // Exit the function if searchKey is empty
+				}
 				this.$http.get('/article/all', {
 					params: {
 						search: this.searchKey
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
+						this.is_search = true
+						this.article = res.data.data.data
+						console.log(this.article)
 						if (!this.historySearch.includes(this.searchKey)) {
 							if (this.historySearch.length >= 10) {
-								this.historySearch.shift(); // 移除最旧的搜索记录
+								this.historySearch.shift(); // Remove the oldest search record
 							}
 							this.historySearch.push(this.searchKey);
 							uni.setStorageSync('historySearch', this.historySearch);
 						}
-
 					}
 				})
 			},

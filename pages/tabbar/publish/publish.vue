@@ -85,7 +85,6 @@
 						</text>
 					</view>
 				</view>
-
 			</view>
 			<!-- 面板展开结束 -->
 			<!-- 文章属性开始 -->
@@ -128,13 +127,25 @@
 						<text class="tn-icon-right-triangle">
 						</text>
 					</view>
-
+				</view>
+				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center"
+					@tap="showCollect = true">
+					<view class="tn-flex tn-flex-col-center tn-flex-nowrap tn-text-ellipsis">
+						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
+						<text>文章合集</text>
+					</view>
+					<view class="tn-flex tn-flex-col-center tn-flex-nowrap tn-text-ellipsis">
+						<text>
+						</text>
+						<text class="tn-icon-right-triangle">
+						</text>
+					</view>
 				</view>
 				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center"
 					@tap="showPermission = true">
 					<view class="tn-flex tn-flex-col-center">
 						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
-						<text>谁人可见</text>
+						<text>权限设置</text>
 					</view>
 					<view class="tn-flex tn-flex-col-center">
 						<text>{{permission.auth}}</text> <!-- 点击出现Popup -->
@@ -184,17 +195,37 @@
 						<text class="tn-icon-down-triangle"></text>
 					</view>
 					<view class="tn-margin">
-						<view v-for="(item,index) in permission"
+						<view v-for="(item,index) in permission" :key="index"
 							class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-bottom-sm"
 							@tap="permissionAction(index)">
 							<text>{{item.name}}</text>
 							<text class="tn-icon-success" v-if="item.active"></text>
 						</view>
+					</view>
+					<view class="tn-flex tn-flex-col-center">
+						<text class="tn-text-lg tn-text-bold">评论权限</text>
+						<text class="tn-icon-down-triangle"></text>
+					</view>
+					<view class="tn-margin">
+						<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-bottom-sm"
+							@tap="opt.comments.allow = !opt.comments.allow">
+							<text>允许评论</text>
+							<text class="tn-icon-success" v-if="opt.comments.allow"></text>
+						</view>
+						<view class="tn-flex tn-flex-row-between tn-flex-col-center"
+							@tap="opt.comments.show = !opt.comments.show">
+							<text>评论可见</text>
+							<text class="tn-icon-success" v-if="opt.comments.show"></text>
+						</view>
 
 					</view>
-
-
 				</view>
+			</tn-popup>
+			<!-- 合集popup -->
+			<tn-popup mode="bottom" length="50%" v-model="showCollect" :borderRadius="20" :closeBtn="true">
+				<collectList>
+					
+				</collectList>
 			</tn-popup>
 			<!-- popup组件结束 -->
 			<!-- modal开始 -->
@@ -217,11 +248,13 @@
 
 <script>
 	import categoryList from './components/categoryList/categoryList.vue';
-	import tagsList from './components/tagsList/tagsList.vue'
+	import tagsList from './components/tagsList/tagsList.vue';
+	import collectList from './components/collectList/collectList.vue';
 	export default {
 		components: {
 			categoryList,
-			tagsList
+			tagsList,
+			collectList,
 		},
 		data() {
 			return {
@@ -447,8 +480,10 @@
 						name: '自己可见',
 						permission: 'private',
 						active: false
-					}
-				]
+					},
+
+				],
+				showCollect: false,
 
 			}
 		},
@@ -528,6 +563,7 @@
 					description: res.text, //简介 如果要更新文章的话不能这么写得定义一个变量来存储
 					sort_id: this.categoryId, //分类ID 
 					tag_id: selectedTagIds, //标签id 如果要更新文章的话不能这么写得定义一个变量来存储
+					opt: JSON.stringify(this.opt), //权限设置
 				}).then(res => {
 					if (res.data.code === 200) {
 						uni.showToast({
@@ -657,7 +693,6 @@
 					} else {
 						this.permission[i].active = true; // 打开当前项
 						this.opt.auth = this.permission[i].permission; // 设置opt的auth值
-						console.log(this.opt.auth)
 					}
 				}
 			},

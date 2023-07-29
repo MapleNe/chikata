@@ -156,7 +156,7 @@
 			this.timer = null;
 		},
 		methods: {
-			...mapMutations(['logout', 'login', 'setToken']),
+			...mapMutations(['logout', 'login', 'setToken', 'setRefreshToken']),
 			changeLogin() {
 				if (!this.codeLogin) {
 					this.codeLogin = true
@@ -210,8 +210,9 @@
 					code: this.code
 				}).then(res => {
 					if (res.data.code === 200) {
-						let data = res.data;
+						let data = res.data
 						let token = data.data['login-token']
+						this.setRefreshToken(res.data.data.refreshToken)
 						this.setToken(token)
 						// uni.setStorageSync('userInfo', data.data.user)
 						this.login(data.data.user)
@@ -233,13 +234,14 @@
 					password: this.password
 				}).then(res => {
 					if (res.data.code === 200) {
-						let data = res.data;
+						let data = res.data
 						let token = data.data['login-token']
+						this.setRefreshToken(res.data.data.refreshToken)
 						this.setToken(token)
 						// uni.setStorageSync('userInfo', data.data.user)
 						this.login(data.data.user)
 						uni.$emit('loginCompete', true)
-						console.log(data.data.user)
+						console.log(res)
 						uni.showToast({
 							icon: 'none',
 							title: data.msg
@@ -249,6 +251,7 @@
 						}, 800)
 					}
 				}).catch(err => {
+					console.log(err)
 					uni.showToast({
 						icon: 'none',
 						title: err.msg
@@ -294,9 +297,9 @@
 						icon: 'none',
 						title: res.data.msg
 					})
-					setTimeout(()=>{
+					setTimeout(() => {
 						this.passwordLogin()
-					},500)
+					}, 500)
 				}).catch(err => {
 					uni.showToast({
 						icon: 'none',

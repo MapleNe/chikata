@@ -78,7 +78,7 @@
 		onLoad() {
 			// uni.clearStorageSync('token')
 			// uni.clearStorageSync('userInfo')
-			
+
 		},
 		created() {
 			//监听登录事件获取userInfo
@@ -123,14 +123,6 @@
 		position: relative;
 	}
 
-	.swiper {
-		height: 100%;
-	}
-
-	.ch-color-main {
-		color: $ch-color-main;
-	}
-
 	.image-wrapper::after {
 		content: "";
 		position: absolute;
@@ -139,5 +131,13 @@
 		height: 100%;
 		width: 100%;
 		background: linear-gradient(to top, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
+	}
+
+	.swiper {
+		height: 100%;
+	}
+
+	.ch-color-main {
+		color: $ch-color-main;
 	}
 </style>

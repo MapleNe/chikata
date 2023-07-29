@@ -12,7 +12,7 @@
 				"enablePullDownRefresh": false
 			}
 		}, {
-			"path": "pages/article/article",
+			"path": "pages/common/article/article",
 			"style": {
 				"navigationBarTitleText": "文章详情",
 				"enablePullDownRefresh": false
@@ -58,6 +58,15 @@
 
 	    ,{
             "path" : "pages/common/search/search",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/common/category/category",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",

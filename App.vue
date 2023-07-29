@@ -40,4 +40,8 @@
 <style lang="scss">
 	@import './tuniao-ui/index.scss';
 	@import './tuniao-ui/iconfont.css';
+	/*APP自定义样式*/
+	.ch-bg-main{
+		background: $ch-color-main;
+	}
 </style>

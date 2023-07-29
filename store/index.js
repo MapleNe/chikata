@@ -80,6 +80,12 @@ const store = new Vuex.Store({
 				data: user
 			})
 		},
+		setRefreshToken(state, refreshToken){
+			uni.setStorage({
+				key:'refreshToken',
+				data:refreshToken
+			})
+		},
 		setToken(state, token) {
 			uni.setStorage({
 				key: 'token',

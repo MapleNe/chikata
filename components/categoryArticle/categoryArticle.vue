@@ -1,12 +1,7 @@
 <template>
 	<view>
-		<z-paging ref="paging" @query="getArticle" v-model="content" :auto="false" :auto-clean-list-when-reload="false"
-			:auto-scroll-to-top-when-reload="false">
-			<view v-if="tabsIndex===0 &&swiper" class="tn-margin">
-				<tn-swiper :list="swiperList" :height="300" name="img" backgroundColor="tn-bg-gray--light" :radius="10"
-					v-if="isBanner">
-				</tn-swiper>
-			</view>
+		<z-paging ref="paging" @query="getArticle" v-model="content" :auto="false">
+			
 			<view v-for="(item,index) in content" :key="index">
 				<view class="tn-margin">
 					<ls-skeleton :skeleton="skeleton" :loading="loading">
@@ -130,6 +125,10 @@
 			// content: {
 			// 	type: Array,
 			// },
+			id: {
+				type: Number,
+				default: 0
+			},
 			swiper: {
 				type: Boolean,
 				default: false
@@ -143,10 +142,15 @@
 				default: null
 			}
 		},
-		name: "articleList",
+		name: "categoryArticle",
 		data() {
 			return {
 				content: [],
+				categoryInfo: {
+					opt: {
+						head_img: null,
+					}
+				},
 				firstLoad: false,
 				isBanner: false,
 				swiperList: [],
@@ -160,7 +164,6 @@
 			};
 		},
 		created() {
-			this.getBanner()
 			let pages = getCurrentPages()
 		},
 		watch: {
@@ -179,8 +182,9 @@
 		},
 		methods: {
 			async getArticle(page, num) {
-				await this.$http.get('/article/all', {
+				await this.$http.get('/article-sort/article', {
 					params: {
+						id: this.id,
 						limit: num,
 						page: page,
 						order: this.tabsIndex === 1 ? 'views desc' : this.tabsIndex === 2 ?
@@ -188,9 +192,9 @@
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
-						this.$refs.paging.complete(res.data.data.data)
+						this.$refs.paging.complete(res.data.data.expand.data)
+						this.categoryInfo = res.data.data
 						this.firstLoad = true
-						console.log(res)
 						//骨架屏仅在第一次加载数据时显示
 						setTimeout(() => {
 							this.loading = false
@@ -198,21 +202,10 @@
 					}
 				}).catch(err => {
 					this.$refs.paging.complete(false)
+					console.log(err)
 				})
 			},
-			async getBanner() {
-				await this.$http.get('/banner').then(res => {
-					if (res.data.code === 200) {
-						if (res.data.data.count > 0) {
-							let data = res.data.data
-							this.swiperList = data.data
-							this.isBanner = true
-						} else {
-							this.isBanner = false
-						}
-					}
-				})
-			},
+
 			likeAction(index) {
 				this.$http.put('/ArticleLike/Record', {
 					article_id: this.content[index].id

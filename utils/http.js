@@ -12,10 +12,9 @@ http.setConfig((config) => {
 	config.header = {
 		'Content-Type': 'application/x-www-form-urlencoded',
 	}
-	//全局配置请求Token 当不为空时才添加
 	const token = uni.getStorageSync('token')
 	if (token) {
-		config.header['Authorization'] = uni.getStorageSync('token');
+		config.header['Authorization'] = token;
 	}
 	config.timeout = 60 * 1000
 	return config
@@ -37,6 +36,27 @@ http.interceptors.request.use((config) => {
 // 响应拦截
 //   所有的网络请求返回数据之后都会先执行这个方法
 http.interceptors.response.use(async (response) => {
+	if (response.data.code === 403) {
+		try {
+			const newToken = await http.get('/users/NewToken', {
+				header: {
+					refreshToken: uni.getStorageSync('refreshToken')
+				}
+			}).then(res => {
+				if (res.data.code === 200) {
+					uni.setStorageSync('token', res.data.data['login-token'])
+					console.log('更新token完成')
+				}
+				console.log('请求成功', res)
+			})
+			response.config.header['Authorization'] = uni.getStorageSync('token')
+			const res = await http.request(response.config)
+			console.log('newtoken', newToken)
+			return res
+		} catch (err) {
+			console.log('更新失败', err)
+		}
+	}
 	return response
 }, error => {
 	return Promise.reject(error)
