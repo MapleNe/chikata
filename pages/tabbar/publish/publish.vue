@@ -223,9 +223,21 @@
 			</tn-popup>
 			<!-- 合集popup -->
 			<tn-popup mode="bottom" length="50%" v-model="showCollect" :borderRadius="20" :closeBtn="true">
-				<collectList>
-					
-				</collectList>
+				<z-paging-swiper>
+					<template #top>
+						<view class="tn-margin">
+							<text>全部合集</text>
+						</view>
+					</template>
+					<swiper class="swiper">
+						<swiper-item>
+							<collectList @getCollectInfo="getCollectInfo" :selectedCollect="selectedCollect">
+							</collectList>
+						</swiper-item>
+					</swiper>
+
+				</z-paging-swiper>
+
 			</tn-popup>
 			<!-- popup组件结束 -->
 			<!-- modal开始 -->
@@ -259,6 +271,7 @@
 		data() {
 			return {
 				categoryTabs: ['全部', '关注'],
+				collectTabs: ['全部'],
 				cateTabsIndex: 0, //用来接收设置用
 				categoryTitle: null,
 				categoryId: null,
@@ -462,6 +475,7 @@
 				showTitleModal: false,
 				selectedTags: [],
 				selectedCategory: {},
+				selectedCollect: [],
 				showPermission: false,
 				opt: {
 					password: "",
@@ -685,6 +699,16 @@
 					this.selectedTags.push(data);
 				}
 				console.log(this.selectedTags);
+			},
+			getCollectInfo(data) {
+				if (this.selectedCollect.length > 0) {
+					// Remove any existing item from the array
+					this.selectedCollect.splice(0, 1);
+				}
+
+				// Add the new item to the array
+				this.selectedCollect.push(data);
+				console.log(this.selectedCollect);
 			},
 			permissionAction(index) {
 				for (let i = 0; i < this.permission.length; i++) {
