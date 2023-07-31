@@ -498,6 +498,7 @@
 
 				],
 				showCollect: false,
+				collectId: null,
 
 			}
 		},
@@ -576,6 +577,7 @@
 					content: res.html, //帖子内容 如果要更新文章的话不能这么写得定义一个变量来存储
 					description: res.text, //简介 如果要更新文章的话不能这么写得定义一个变量来存储
 					sort_id: this.categoryId, //分类ID 
+					collections_id: this.selectedCollect[0].id, //合集id
 					tag_id: selectedTagIds, //标签id 如果要更新文章的话不能这么写得定义一个变量来存储
 					opt: JSON.stringify(this.opt), //权限设置
 				}).then(res => {
