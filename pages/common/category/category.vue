@@ -1,38 +1,20 @@
 <template>
-	<z-paging-swiper>
-		<template #top>
-			<tn-nav-bar alpha :zIndex="2">
-			</tn-nav-bar>
-			<view class="image-wrapper">
-				<image :src="categoryInfo.opt.head_img" mode="aspectFill" style="width: 100%;height: 300rpx;"></image>
-			</view>
-			<view style="position: absolute;top: 180rpx;" class="tn-margin-left-sm tn-flex tn-flex-col-center">
-				<tn-avatar size="lg" :src="categoryInfo.opt.head_img"></tn-avatar>
-				<text class="tn-margin-left-sm tn-color-white">{{categoryInfo.name}}</text>
-			</view>
-
-			<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
-				activeColor="#29B7CB"></v-tabs>
-		</template>
-		<swiper class="swiper" :current="tabsIndex" @change="changeSwpier">
-			<swiper-item v-for="(item, index) in tabs" :key="index">
-				<categoryArticle :id="id" :tabsIndex="index" :swiperIndex="tabsIndex"></categoryArticle>
-			</swiper-item>
-		</swiper>
-	</z-paging-swiper>
+	<view>
+		<tn-nav-bar :backgroundColor="background"></tn-nav-bar>
+		<categoryArticle :id="id" ref="paging"></categoryArticle>
+	</view>
 </template>
 
 <script>
+	import ZPMixin from '@/uni_modules/z-paging/components/z-paging/js/z-paging-mixin';
 	import categoryArticle from '../../../components/categoryArticle/categoryArticle.vue';
-
 	export default {
 		components: {
 			categoryArticle
 		},
+		mixins: [ZPMixin],
 		data() {
 			return {
-				tabs: ['推荐', '最新', '热门'],
-				tabsIndex: 0,
 				content: [],
 				id: 0,
 				categoryInfo: {
@@ -40,7 +22,23 @@
 						head_img: null
 					}
 				},
+				maxScroll: 200,
+				background:'rgba(255,255,255,0)'
 			}
+		},
+		onPageScroll(e) {
+			this.$refs.paging.updatePageScrollTop(e.scrollTop);
+			// 获取页面滚动距离
+			const scrollTop = e.scrollTop;
+			// 计算当前透明度
+			const opacity = scrollTop <= this.maxScroll ? scrollTop / this.maxScroll : 1;
+			
+			// 根据透明度设置导航栏背景颜色
+			this.background = `rgba(255, 255, 255, ${opacity})`;
+			
+		},
+		onReachBottom() {
+			this.$refs.paging.pageReachBottom();
 		},
 		onLoad(option) {
 			this.id = Number(option.id)
@@ -63,6 +61,24 @@
 			changeSwpier(event) {
 				this.tabsIndex = event.detail.current
 			},
+			back() {
+				// 通过判断当前页面的页面栈信息，是否有上一页进行返回，如果没有则跳转到首页
+				const pages = getCurrentPages()
+				if (pages && pages.length > 0) {
+					const firstPage = pages[0]
+					if (pages.length == 1 && (!firstPage.route || firstPage.route != 'pages/tabbar/index')) {
+						this.$Router.replaceAll({
+							path: '/pages/tabbar/index'
+						})
+					} else {
+						this.$Router.back(1)
+					}
+				} else {
+					this.$Router.replaceAll({
+						path: '/pages/tabbar/index'
+					})
+				}
+			},
 		}
 	}
 </script>
@@ -70,19 +86,5 @@
 <style lang="scss">
 	.swiper {
 		height: 100%;
-	}
-
-	.image-wrapper {
-		position: relative;
-	}
-
-	.image-wrapper::after {
-		content: "";
-		position: absolute;
-		top: 0;
-		left: 0;
-		height: 100%;
-		width: 100%;
-		background: linear-gradient(to top, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
 	}
 </style>

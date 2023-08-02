@@ -1,7 +1,21 @@
 <template>
 	<view>
-		<z-paging ref="paging" @query="getArticle" v-model="content" :auto="false">
-			
+		<!-- 头部组件开始 -->
+		
+		<view class="image-wrapper">
+			<image :src="categoryInfo.opt.head_img" mode="aspectFill" style="width: 100%;height: 300rpx;"></image>
+		</view>
+		<view style="position: absolute;top: 180rpx;" class="tn-margin-left-sm tn-flex tn-flex-col-center">
+			<tn-avatar size="lg" shape="square" :src="categoryInfo.opt.head_img"></tn-avatar>
+			<text class="tn-margin-left-sm tn-color-white">{{categoryInfo.name}}</text>
+		</view>
+		<view style="position: relative;bottom: 15rpx;">
+			<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
+				:zIndex="2" activeColor="#29B7CB" style="border-radius: 20rpx 20rpx 0 0;background-color: white;">
+			</v-tabs>
+		</view>
+
+		<z-paging ref="paging" @query="getArticle" v-model="content" use-page-scroll>
 			<view v-for="(item,index) in content" :key="index">
 				<view class="tn-margin">
 					<ls-skeleton :skeleton="skeleton" :loading="loading">
@@ -132,18 +146,18 @@
 				type: Boolean,
 				default: false
 			},
-			tabsIndex: {
-				type: Number,
-				default: null
-			},
+
 			swiperIndex: {
 				type: Number,
 				default: null
-			}
+			},
+			
 		},
 		name: "categoryArticle",
 		data() {
 			return {
+				tabs: ['推荐', '最新', '热门'],
+				tabsIndex: 0,
 				content: [],
 				categoryInfo: {
 					opt: {
@@ -160,7 +174,9 @@
 					'circle-sm+line-sm'
 				],
 				loading: true,
+				navcolor: null,
 			};
+
 		},
 		created() {
 			let pages = getCurrentPages()
@@ -177,8 +193,9 @@
 					}
 				},
 				immediate: true
-			}
+			},
 		},
+
 		methods: {
 			async getArticle(page, num) {
 				await this.$http.get('/article-sort/article', {
@@ -240,7 +257,7 @@
 					},
 				})
 			},
-			
+
 			followUser(index) {
 				this.$http.put('/Focus/Record', {
 					fansId: this.content[index].users_id
@@ -263,6 +280,10 @@
 							break;
 					}
 				});
+			},
+			changeTab(index) {
+				this.tabsIndex = index
+				this.$refs.paging.reload();
 			},
 			getDateDiff(data) {
 				// 传进来的data必须是日期格式，不能是时间戳
@@ -317,10 +338,34 @@
 					urls: data,
 				});
 			},
+			reload() {
+				this.$refs.paging.reload();
+			},
+			updatePageScrollTop(scrollTop) {
+				this.$refs.paging.updatePageScrollTop(scrollTop);
+			},
+			doChatRecordLoadMore() {
+				this.$refs.paging.doChatRecordLoadMore();
+			},
+			pageReachBottom() {
+				this.$refs.paging.pageReachBottom();
+			},
 		}
 	}
 </script>
 
-<style>
+<style lang="scss" scoped>
+	.image-wrapper {
+		position: relative;
+	}
 
+	.image-wrapper::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
+		background: linear-gradient(to top, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
+	}
 </style>

@@ -142,7 +142,8 @@
 				loading: true,
 			};
 		},
-		created() {},
+		created() {
+		},
 		watch: {
 			swiperIndex: {
 				handler(e) {

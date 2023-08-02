@@ -1,9 +1,9 @@
 <template>
-	<z-paging ref="paging" @query="getCollect" v-model="content" :auto="true">
+	<z-paging ref="paging" @query="getCollect" v-model="content" :auto="false">
 		<view class="tn-margin">
 			<view v-for="(item,index) in content" :key="index">
 				<view class="ch-bg-main tn-color-white tn-flex tn-flex-col-center tn-margin-bottom-sm"
-					style="border-radius: 10rpx;position: relative;" @tap="pushCollectInfo(item)">
+					style="border-radius: 10rpx;position: relative;">
 					<view class="tn-padding-xs">
 						<tn-avatar :border="true" borderColor="#fff" :borderSize="6" size="xl"
 							:src="item.image"></tn-avatar>
@@ -12,8 +12,7 @@
 						<text>{{item.name}}</text>
 						<text>{{item.descrip}}</text>
 					</view>
-					<view v-if="isSelected(item)" class="tn-icon-left-triangle tn-text-xl-xxl"
-						style="position: absolute;right: 0;"></view>
+
 				</view>
 			</view>
 		</view>
@@ -24,37 +23,49 @@
 <script>
 	export default {
 		props: {
-			selectedCollect: {
-				type: Array,
-				default: null,
+			tabsIndex: {
+				type: Number,
+				default: 0
 			},
+			swiperIndex: {
+				type: Number,
+				default: 0
+			}
 		},
 		name: "collectList",
 		data() {
 			return {
+				firstLoad: false,
 				content: [],
 			};
 		},
-		created() {
-			console.log('输出', this.selectedCollect)
+		created() {},
+		watch: {
+			swiperIndex: {
+				handler(e) {
+					if (e === this.tabsIndex) {
+						if (!this.firstLoad) {
+							setTimeout(() => {
+								this.$refs.paging.reload()
+							}, 5)
+						}
+					}
+				},
+				immediate: true
+			}
 		},
 		methods: {
 			getCollect() {
 				this.$http.get('/collections/Find').then(res => {
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data)
+						this.firstLoad = true
 					}
 					console.log(res)
 				})
 			},
-			pushCollectInfo(item) {
-				this.$emit('getCollectInfo', item)
-				// console.log(item)
-			},
+
 			//是否已选中
-			isSelected(item) {
-				return this.selectedCollect.some(collect => collect.id === item.id);
-			}
 		}
 	}
 </script>

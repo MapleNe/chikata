@@ -3,13 +3,19 @@
 		<template #top>
 			<view class="tn-flex tn-flex-direction-column">
 				<!-- 头部控件 -->
-				<view style="position: fixed; right: 0;z-index: 2;" class="tn-margin" v-if="hasLogin">
-					<tn-button :plain="true" size="sm" shape="round" @tap="logout">退出</tn-button>
-				</view>
-				<view class="image-wrapper">
-					<image :src="userInfo.head_img" style="position: relative;height: 500rpx;width: 100%;"
-						mode="aspectFill">
+
+				<view class="image-wrapper" style="position: relative;">
+					<image :src="userInfo.head_img" style="height: 500rpx;width: 100%;" mode="aspectFill">
 					</image>
+				</view>
+				<view class="tn-margin tn-flex" style="position: absolute; right: 0;top: 380rpx;" v-if="hasLogin">
+					<view class="tn-margin-right-sm">
+						<tn-button :plain="true" size="sm" shape="round">编辑</tn-button>
+					</view>
+					<view>
+						<tn-button :plain="true" size="sm" shape="round" @tap="logout">退出</tn-button>
+					</view>
+					
 				</view>
 				<view class="tn-padding" style="position: absolute;top: 100rpx;width: 100%;">
 					<view class="tn-flex tn-flex-col-center">
@@ -22,12 +28,12 @@
 									class="tn-text-bold tn-text-xl">{{userInfo.nickname}}</text>
 							</view>
 							<view v-if="hasLogin">
-								<tn-button :plain="true" size="sm" shape="round"> 编辑
-								</tn-button>
+
 							</view>
 						</view>
 					</view>
 				</view>
+
 				<!-- 控件结束 -->
 				<view style="position: relative;bottom: 20rpx;">
 					<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
@@ -39,8 +45,14 @@
 			</view>
 		</template>
 		<swiper class="swiper" :current="tabsIndex" @change="changeSwpier">
-			<swiper-item class="swiper-item" v-for="(item, index) in tabs" :key="index">
-				<userArticle :tabsIndex="index" :swiperIndex="tabsIndex" v-if="hasLogin"></userArticle>
+			<swiper-item class="swiper-item">
+				<userArticle :tabsIndex="tabsIndex" :swiperIndex="tabsIndex" v-if="hasLogin"></userArticle>
+				<view class="tn-flex tn-flex-row-center tn-margin-top-xl" v-else>
+					<tn-button size="sm" :plain="true" shape="round" @tap="goLogin">去登录</tn-button>
+				</view>
+			</swiper-item>
+			<swiper-item class="swiper-item">
+				<collectList :tabsIndex="tabsIndex" :swiperIndex="swiperIndex" v-if="hasLogin"></collectList>
 				<view class="tn-flex tn-flex-row-center tn-margin-top-xl" v-else>
 					<tn-button size="sm" :plain="true" shape="round" @tap="goLogin">去登录</tn-button>
 				</view>
@@ -56,11 +68,13 @@
 		mapMutations
 	} from 'vuex';
 	import userArticle from "@/components/userArticle/userArticle.vue";
+	import collectList from "@/components/collectList/collectList.vue";
 	import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 	export default {
 		mixins: [MescrollMixin], // 使用mixin
 		components: {
-			userArticle
+			userArticle,
+			collectList
 		},
 		computed: {
 			...mapState(['hasLogin', 'userInfo']), //从Store获取全局变量
@@ -68,11 +82,12 @@
 		data() {
 			return {
 				content: [],
-				tabs: ['动态', '评论'],
+				tabs: ['动态', '合集'],
 				tabsIndex: 0,
 				swiperHeight: 0, //活动组件高度
 				comments: [],
 				token: null,
+				swiperIndex: null,
 			}
 		},
 		onLoad() {
@@ -82,9 +97,12 @@
 		},
 		created() {
 			//监听登录事件获取userInfo
-			uni.$on('loginCompete', data => {})
-			this.token = uni.getStorageSync('token')
-			console.log(this.token)
+			uni.$on('loginComplete', data => {
+				if(data){
+					this.token = uni.getStorageSync('token')
+					console.log(this.token)
+				}
+			})
 		},
 		methods: {
 			...mapMutations(['logout']),
@@ -92,6 +110,7 @@
 				this.tabsIndex = index
 			},
 			changeSwpier(event) {
+				this.swiperIndex = event.detail.current
 				this.tabsIndex = event.detail.current
 			},
 			//前往登录

@@ -5,16 +5,11 @@ import {
 import Request from '@/utils/luch-request/index.js'
 
 const http = new Request()
-
 // 全局配置
 http.setConfig((config) => {
 	config.baseURL = inisHelper.customProcessApi(inisENV.api)
 	config.header = {
 		'Content-Type': 'application/x-www-form-urlencoded',
-	}
-	const token = uni.getStorageSync('token')
-	if (token) {
-		config.header['Authorization'] = uni.getStorageSync('token');
 	}
 	config.timeout = 60 * 1000
 	return config
@@ -28,6 +23,10 @@ http.interceptors.request.use((config) => {
 
 	}
 	if (config.method == 'GET') config.params.token = inisENV.token
+	const token = uni.getStorageSync('token')
+	if (token) {
+		config.header['Authorization'] = uni.getStorageSync('token');
+	}
 	return config
 }, (config) => {
 	return Promise.reject(config)

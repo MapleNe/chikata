@@ -95,13 +95,13 @@ const store = new Vuex.Store({
 		logout(state) {
 			state.userInfo = {},
 				state.hasLogin = false,
-				uni.removeStorageSync({
+				uni.removeStorage({
 					key: 'userInfo',
-				});
-			uni.removeStorageSync({
+				})
+			uni.removeStorage({
 				key: 'token',
-			});
-			uni.removeStorageSync({
+			})
+			uni.removeStorage({
 				key: 'refreshToken',
 			})
 		}
