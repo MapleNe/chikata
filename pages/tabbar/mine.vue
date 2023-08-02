@@ -10,12 +10,12 @@
 				</view>
 				<view class="tn-margin tn-flex" style="position: absolute; right: 0;top: 380rpx;" v-if="hasLogin">
 					<view class="tn-margin-right-sm">
-						<tn-button :plain="true" size="sm" shape="round">编辑</tn-button>
+						<tn-button :plain="true" size="sm" shape="round" @tap="goProfile">编辑</tn-button>
 					</view>
 					<view>
 						<tn-button :plain="true" size="sm" shape="round" @tap="logout">退出</tn-button>
 					</view>
-					
+
 				</view>
 				<view class="tn-padding" style="position: absolute;top: 100rpx;width: 100%;">
 					<view class="tn-flex tn-flex-col-center">
@@ -98,7 +98,7 @@
 		created() {
 			//监听登录事件获取userInfo
 			uni.$on('loginComplete', data => {
-				if(data){
+				if (data) {
 					this.token = uni.getStorageSync('token')
 					console.log(this.token)
 				}
@@ -122,7 +122,9 @@
 			},
 			//个人主页
 			goProfile() {
-
+				this.$Router.push({
+					path: '/pages/user/profile'
+				})
 			},
 			// logout() {
 			// 	console.log('点击了退出')
