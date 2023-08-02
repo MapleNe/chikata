@@ -225,9 +225,8 @@
 			<tn-popup mode="bottom" length="50%" v-model="showCollect" :borderRadius="20" :closeBtn="true">
 				<z-paging-swiper>
 					<template #top>
-						<view class="tn-margin">
-							<text>全部合集</text>
-						</view>
+						<v-tabs :tabs="['全部']" lineHeight="8rpx" lineColor="#29B7CB" :zIndex="2"
+							activeColor="#29B7CB"></v-tabs>
 					</template>
 					<swiper class="swiper">
 						<swiper-item>
