@@ -108,7 +108,7 @@
 										<text class="tn-text-xl tn-icon-fire"></text>
 										<text>{{item.views}}</text>
 									</view>
-									<view class="tn-flex tn-flex-col-center">
+									<view class="tn-flex tn-flex-col-center" @tap.stop="showComments(index)">
 										<text class="tn-text-xl tn-icon-message"></text>
 										<text>{{item.expand.comments.count}}</text>
 									</view>
@@ -248,6 +248,9 @@
 				}).catch(err => {
 					console.log('位于articleList的错误请联系管理')
 				})
+			},
+			showComments(index){
+				this.$emit('getComments',this.content[index].id)
 			},
 			goAticle(index) {
 				this.$Router.push({

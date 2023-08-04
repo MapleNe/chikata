@@ -1,7 +1,10 @@
 <template>
 	<view>
 		<tn-nav-bar :backgroundColor="background"></tn-nav-bar>
-		<categoryArticle :id="id" ref="paging"></categoryArticle>
+		<categoryArticle :id="id" ref="paging" @getComments="getComments"></categoryArticle>
+		<tn-popup v-model="showComments" mode="bottom" length="60%" :borderRadius="20" :safeAreaInsetBottom="true">
+			<commentList :id="commentId"></commentList>
+		</tn-popup>
 	</view>
 </template>
 
@@ -17,13 +20,15 @@
 			return {
 				content: [],
 				id: 0,
+				commentId: null,
+				showComments: false,
 				categoryInfo: {
 					opt: {
 						head_img: null
 					}
 				},
 				maxScroll: 200,
-				background:'rgba(255,255,255,0)'
+				background: 'rgba(255,255,255,0)'
 			}
 		},
 		onPageScroll(e) {
@@ -32,10 +37,10 @@
 			const scrollTop = e.scrollTop;
 			// 计算当前透明度
 			const opacity = scrollTop <= this.maxScroll ? scrollTop / this.maxScroll : 1;
-			
+
 			// 根据透明度设置导航栏背景颜色
 			this.background = `rgba(255, 255, 255, ${opacity})`;
-			
+
 		},
 		onReachBottom() {
 			this.$refs.paging.pageReachBottom();
@@ -45,6 +50,12 @@
 			this.getcategoryInfo()
 		},
 		methods: {
+			getComments(id) {
+				if (id) {
+					this.commentId = id
+					this.showComments = true
+				}
+			},
 			getcategoryInfo() {
 				this.$http.get('/article-sort/one', {
 					params: {
