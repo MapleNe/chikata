@@ -2,7 +2,7 @@
 	<view>
 		<z-paging ref="paging" @query="getArticle" v-model="content" :auto="false">
 			<view v-for="(item,index) in content" :key="index">
-				<view class="tn-margin">
+				<view class="tn-margin tn-no-margin-top">
 					<ls-skeleton :skeleton="skeleton" :loading="loading">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 							<view class="tn-flex tn-flex-col-center">

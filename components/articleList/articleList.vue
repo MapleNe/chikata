@@ -25,7 +25,6 @@
 									<text>{{item.expand.focus?'已关注':'关注'}}</text>
 								</tn-button>
 							</view>
-
 						</view>
 						<view @tap.stop="goPost(index)">
 							<view class="tn-padding tn-no-padding-left">
@@ -100,7 +99,7 @@
 										<text class="tn-text-xl tn-icon-fire"></text>
 										<text>{{item.views}}</text>
 									</view>
-									<view class="tn-flex tn-flex-col-center">
+									<view class="tn-flex tn-flex-col-center" @tap.stop="showComments(index)">
 										<text class="tn-text-xl tn-icon-message"></text>
 										<text>{{item.expand.comments.count}}</text>
 									</view>
@@ -121,6 +120,7 @@
 				<!-- 间隔结束 -->
 			</view>
 		</z-paging>
+		
 	</view>
 </template>
 
@@ -237,8 +237,11 @@
 						}
 					}
 				}).catch(err => {
-					console.log('位于articleList的错误请联系管理')
+					
 				})
+			},
+			showComments(index){
+				this.$emit('getComments',this.content[index].id)
 			},
 			goPost(index) {
 				this.$Router.push({

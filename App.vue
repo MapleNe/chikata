@@ -21,8 +21,6 @@
 				})
 			})
 			console.log('App Launch')
-
-
 		},
 		onShow: function() {
 			console.log('App Show')
@@ -31,7 +29,7 @@
 			console.log('App Hide')
 		},
 		methods: {
-			...mapMutations(['login']),
+			...mapMutations(['login', 'logout']),
 		}
 
 	}
@@ -40,11 +38,13 @@
 <style lang="scss">
 	@import './tuniao-ui/index.scss';
 	@import './tuniao-ui/iconfont.css';
+
 	/*APP自定义样式*/
-	.ch-bg-main{
+	.ch-bg-main {
 		background: $ch-color-primary;
 	}
-	.ch-color-primary{
+
+	.ch-color-primary {
 		color: $ch-color-primary;
 	}
 </style>
