@@ -1,7 +1,6 @@
 <template>
 	<view>
 		<!-- 文章详情 开始 -->
-
 		<z-paging ref="paging" @query="getComment" v-model="comments" :safe-area-inset-bottom="true">
 			<template #top>
 				<tn-nav-bar :zIndex="2">
@@ -22,7 +21,11 @@
 							</view>
 						</view>
 						<view>
-							<tn-button size="sm" :plain="true" shape="round">关注</tn-button>
+							<tn-button size="sm" :backgroundColor="article.expand.focus?'tn-bg-gray--light':'#29B7CB'"
+								:fontColor="article.expand.focus?'tn-color-grey':'tn-color-white'" shape="round"
+								@tap="followUser(index)">
+								<text>{{article.expand.focus?'已关注':'关注'}}</text>
+							</tn-button>
 						</view>
 					</view>
 					<view class="tn-margin-top" style="max-width: 100%;">
@@ -175,7 +178,7 @@
 					'circle+line-sm*2',
 					'line*3',
 					20,
-					'card-lg',
+					'card+card+card',
 					'circle-sm+line-sm',
 				],
 				commentSk: [
@@ -223,7 +226,6 @@
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.data)
-						console.log(res.data.data.data)
 
 					}
 				}).catch(err => {

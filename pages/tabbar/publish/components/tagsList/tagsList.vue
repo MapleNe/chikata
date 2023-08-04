@@ -75,11 +75,11 @@
 
 <style lang="scss">
 	.ch-border-main {
-		border: $ch-color-main 1rpx solid;
+		border: $ch-color-primary 1rpx solid;
 	}
 
 	.ch-bg-main {
-		background-color: $ch-color-main;
+		background-color: $ch-color-primary;
 		color: #fff;
 	}
 </style>

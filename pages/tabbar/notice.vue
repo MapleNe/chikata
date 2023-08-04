@@ -76,6 +76,6 @@
 
 <style lang="scss">
 	.ch-border-main {
-		border-color: $ch-color-main;
+		border-color: $ch-color-primary;
 	}
 </style>

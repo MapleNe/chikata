@@ -10,7 +10,7 @@
 							:autoHeight="false"></tn-input>
 					</view>
 					<view>
-						<text class="ch-color-main" @tap="searchAction">搜索</text>
+						<text class="ch-color-primary" @tap="searchAction">搜索</text>
 					</view>
 				</view>
 			</view>
@@ -166,8 +166,8 @@
 </script>
 
 <style lang="scss">
-	.ch-color-main {
-		color: $ch-color-main;
+	.ch-color-primary {
+		color: $ch-color-primary;
 	}
 
 	.hide {

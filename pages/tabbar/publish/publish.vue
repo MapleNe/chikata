@@ -17,7 +17,7 @@
 				<text class="tn-icon-image" @tap="addImage"></text>
 				<!-- 循环控件 -->
 				<view v-for="(item ,index) in editList" :key="item.id" @tap="editAction(item)">
-					<text :class="[item.icon, {'ch-color-main': moreAction === item.id}]"></text>
+					<text :class="[item.icon, {'ch-color-primary': moreAction === item.id}]"></text>
 				</view>
 			</view>
 			<!-- 展开面板 -->
@@ -27,7 +27,7 @@
 					<view class=" tn-flex tn-flex-row-between tn-bg-gray--light tn-radius">
 						<view v-for="(item,index) in title" :key="item.id" class="tn-text-xl tn-padding"
 							@tap="editSubAction(item)">
-							<text :class="{'ch-color-main': titleMoreAction === item.id}">{{item.val}}</text>
+							<text :class="{'ch-color-primary': titleMoreAction === item.id}">{{item.val}}</text>
 						</view>
 					</view>
 				</view>
@@ -36,7 +36,7 @@
 					<view class=" tn-flex tn-flex-row-between tn-bg-gray--light tn-radius">
 						<view v-for="(item,index) in fontStyle" :key="item.id" class="tn-text-xl tn-padding"
 							@tap="editSubAction(item)">
-							<text :class="{'ch-color-main': selectAction.includes(item.id)}">{{item.name}}</text>
+							<text :class="{'ch-color-primary': selectAction.includes(item.id)}">{{item.name}}</text>
 						</view>
 					</view>
 				</view>
@@ -46,7 +46,7 @@
 					<text class="tn-icon-down-triangle tn-text-left">字体大小</text>
 					<view class="tn-flex tn-bg-gray--light tn-flex-row-between tn-padding tn-radius">
 						<view v-for="(item,index) in fontSize" :key="item.id" @tap="editSubAction(item)">
-							<text :class="{'ch-color-main': fontSizeMoreAction === item.id}">{{item.name}}</text>
+							<text :class="{'ch-color-primary': fontSizeMoreAction === item.id}">{{item.name}}</text>
 						</view>
 					</view>
 				</view>
@@ -78,7 +78,7 @@
 				<view class="tn-margin-bottom tn-flex tn-bg-gray--light tn-padding tn-radius tn-flex-row-between">
 					<view class="tn-flex tn-flex-direction-column" v-for="(item, index) in align" :key="item.id"
 						@tap="editSubAction(item)">
-						<text :class="[item.icon, {'ch-color-main': alignMoreAction === item.id}]" class="tn-text-xl">
+						<text :class="[item.icon, {'ch-color-primary': alignMoreAction === item.id}]" class="tn-text-xl">
 						</text>
 						<text class="tn-text-sm">
 							{{item.name}}
@@ -92,7 +92,7 @@
 				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center"
 					@tap="showCategory = true">
 					<view class="tn-flex tn-flex-col-center">
-						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
+						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-primary"></text>
 						<text>圈子板块</text>
 					</view>
 					<view class="tn-flex tn-flex-col-center">
@@ -104,7 +104,7 @@
 				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center"
 					@tap="showTitleModal = true">
 					<view class="tn-flex tn-flex-col-center">
-						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
+						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-primary"></text>
 						<text>帖子标题</text>
 					</view>
 					<view class="tn-flex tn-flex-col-center">
@@ -115,7 +115,7 @@
 				</view>
 				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center" @tap="showTags = true">
 					<view class="tn-flex tn-flex-col-center tn-flex-nowrap tn-text-ellipsis">
-						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
+						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-primary"></text>
 						<text>话题标签</text>
 					</view>
 					<view class="tn-flex tn-flex-col-center tn-flex-nowrap tn-text-ellipsis" style="overflow: hidden;">
@@ -131,7 +131,7 @@
 				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center"
 					@tap="showCollect = true">
 					<view class="tn-flex tn-flex-col-center tn-flex-nowrap tn-text-ellipsis">
-						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
+						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-primary"></text>
 						<text>文章合集</text>
 					</view>
 					<view class="tn-flex tn-flex-col-center tn-flex-nowrap tn-text-ellipsis">
@@ -144,7 +144,7 @@
 				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center"
 					@tap="showPermission = true">
 					<view class="tn-flex tn-flex-col-center">
-						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-main"></text>
+						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-primary"></text>
 						<text>权限设置</text>
 					</view>
 					<view class="tn-flex tn-flex-col-center">
@@ -161,7 +161,7 @@
 				<z-paging-swiper>
 					<template #top>
 						<v-tabs v-model="cateTabsIndex" :tabs="categoryTabs" @change="changeTab" lineHeight="8rpx"
-							lineColor="#29B7CB" :zIndex="2" activeColor="#29B7CB"></v-tabs>
+							lineColor="#29B7CB" :zIndex="2" activeColor="#29B7CB" :lineScale="0.2"></v-tabs>
 					</template>
 					<swiper class="swiper" :current="cateTabsIndex" @change="changeSwpier">
 						<swiper-item v-for="(item, index) in categoryTabs" :key="index">
@@ -177,7 +177,7 @@
 				<z-paging-swiper>
 					<template #top>
 						<v-tabs v-model="tagsTabsIndex" :tabs="tagsTabs" @change="changeTagsTab" lineHeight="8rpx"
-							lineColor="#29B7CB" :zIndex="2" activeColor="#29B7CB"></v-tabs>
+							lineColor="#29B7CB" :zIndex="2" activeColor="#29B7CB" :lineScale="0.2"></v-tabs>
 					</template>
 					<swiper class="swiper" :current="tagsTabsIndex" @change="changeTagsSwiper">
 						<swiper-item v-for="(item,index) in tagsTabs" :key="index">
@@ -226,7 +226,7 @@
 				<z-paging-swiper>
 					<template #top>
 						<v-tabs :tabs="['全部']" lineHeight="8rpx" lineColor="#29B7CB" :zIndex="2"
-							activeColor="#29B7CB"></v-tabs>
+							activeColor="#29B7CB" :lineScale="0.2"></v-tabs>
 					</template>
 					<swiper class="swiper">
 						<swiper-item>
@@ -236,7 +236,6 @@
 					</swiper>
 
 				</z-paging-swiper>
-
 			</tn-popup>
 			<!-- popup组件结束 -->
 			<!-- modal开始 -->
@@ -250,7 +249,6 @@
 					<view class="tn-text-right">
 						<tn-button :plain="true" size="sm" shape="round" @tap="showTitleModal = false">Get！</tn-button>
 					</view>
-
 				</view>
 			</tn-modal>
 		</you-touchbox>
@@ -753,7 +751,7 @@
 		height: 100%;
 	}
 
-	.ch-color-main {
-		color: $ch-color-main;
+	.ch-color-primary {
+		color: $ch-color-primary;
 	}
 </style>

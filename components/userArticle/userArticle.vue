@@ -168,7 +168,6 @@
 				}).then(res => {
 					this.$refs.paging.complete(res.data.data.data)
 					this.firstLoad = true
-					console.log(res)
 					//骨架屏仅在第一次加载时显示
 					setTimeout(() => {
 						this.loading = false

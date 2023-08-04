@@ -20,7 +20,7 @@
 			</tn-nav-bar>
 			<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 			<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
-				activeColor="#29B7CB"></v-tabs>
+				activeColor="#29B7CB" :lineScale="0.2"></v-tabs>
 		</template>
 		<!-- swiper必须设置height:100%，因为swiper有默认的高度，只有设置高度100%才可以铺满页面  -->
 
