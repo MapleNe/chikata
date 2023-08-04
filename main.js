@@ -54,3 +54,8 @@ import {
 	http
 } from '@/utils/http.js'
 Vue.prototype.$http = http
+
+Vue.prototype.$isBase64 = function(str) {
+  const base64Regex = /^data:image\/[a-z]+;base64,/
+  return base64Regex.test(str)
+}

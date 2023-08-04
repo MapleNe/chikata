@@ -128,8 +128,8 @@
 				sex: null,
 				description: null,
 				longtext: {
-					"birthday": "1999-01-01",
-					"background_img": "",
+					birthday: '1999-01-01',
+					background_img: null,
 				},
 				//模态框配置.
 				showClipper: false,
@@ -206,8 +206,10 @@
 				})
 			},
 			upload() {
+				const filePath = this.$isBase64(this.head_img) ? this.head_img : 'file://' + plus.io.convertLocalFileSystemURL(this.head_img)
 				this.$http.upload('/file/upload', {
-					filePath: this.head_img
+					filePath: filePath,
+					name:'file'
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.head_img = res.data.data
@@ -216,8 +218,10 @@
 				})
 			},
 			uploadBackground() {
+				const filePath = this.$isBase64(this.longtext.background_img) ? this.longtext.background_img : 'file://' + plus.io.convertLocalFileSystemURL(this.longtext.background_img)
 				this.$http.upload('/file/upload', {
-					filePath: this.longtext.background_img
+					filePath: filePath,
+					name:'file'
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.longtext.background_img = res.data.data
