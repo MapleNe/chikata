@@ -269,15 +269,18 @@
 							title: '评论' + res.data.msg
 						})
 						this.commentText = null
-						setTimeout(() => {
-							this.commentBoxOpen = false
-							this.$refs.paging.reload()
-							console.log(this.comments.length)
-						}, 800)
 					}
-					
+					setTimeout(() => {
+						this.commentBoxOpen = false
+						this.$refs.paging.reload()
+						console.log(this.comments.length)
+					}, 800)
+
 				}).catch(err => {
-					console.log(err)
+					uni.showToast({
+						icon: "none",
+						title: err.data.msg
+					})
 				})
 			},
 			likeAction(index) {
@@ -343,8 +346,7 @@
 
 				// console.log('diffValue：'+diffValue+' ' +'diffMonth：'+diffMonth+' ' +'diffWeek：'+diffWeek+' ' +'diffDay：'+diffDay+' ' +'diffHour：'+diffHour+' ' +'diffMinute：'+diffMinute);
 
-				if (diffValue < 0) {
-				} else if (diffMonth > 3) {
+				if (diffValue < 0) {} else if (diffMonth > 3) {
 					result = timePublish.getFullYear() + "-";
 					result += timePublish.getMonth() + "-";
 					result += timePublish.getDate();
