@@ -26,7 +26,7 @@
 								</tn-button>
 							</view>
 						</view>
-						<view @tap.stop="goPost(index)">
+						<view @tap.stop="goAticle(index)">
 							<view class="tn-padding tn-no-padding-left">
 								<rich-text :nodes="item.description"></rich-text>
 							</view>
@@ -243,7 +243,7 @@
 			showComments(index){
 				this.$emit('getComments',this.content[index].id)
 			},
-			goPost(index) {
+			goAticle(index) {
 				this.$Router.push({
 					path: '/pages/common/article/article',
 					query: {

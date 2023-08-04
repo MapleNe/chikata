@@ -5,7 +5,7 @@
 				<view class="tn-flex tn-flex-row-between tn-margin tn-text-bold">
 					<text class="tn-text-bold">评论列表</text>
 					<text>ID:{{id}}</text>
-					<view class="tn-flex tn-flex-col-center">
+					<view class="tn-flex tn-flex-col-center" @tap.stop="goAticle()">
 						<text class="tn-icon-open tn-text-lg"></text>
 						<text>详情</text>
 					</view>
@@ -103,6 +103,14 @@
 					}
 				}).catch(err => {
 					this.$refs.paging.complete(false)
+				})
+			},
+			goAticle(index) {
+				this.$Router.push({
+					path: '/pages/common/article/article',
+					query: {
+						id: this.id
+					},
 				})
 			},
 			commentAction() {

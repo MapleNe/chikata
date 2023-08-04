@@ -13,7 +13,7 @@
 
 
 				</view>
-				<view @tap.stop="goPost(index)">
+				<view @tap.stop="goAticle(index)">
 					<view class="tn-padding tn-no-padding-left">
 						<rich-text :nodes="item.description"></rich-text>
 					</view>
@@ -120,7 +120,7 @@
 			};
 		},
 		methods: {
-			goPost(index) {
+			goAticle(index) {
 				let data = this.content
 				this.$Router.push({
 					path: '/pages/common/article/article',

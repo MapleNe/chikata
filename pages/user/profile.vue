@@ -117,7 +117,7 @@
 			this.nickname = this.userInfo.nickname
 			this.sex = this.userInfo.sex
 			this.description = this.userInfo.description
-			this.longtext = JSON.parse(this.userInfo.longtext)
+			this.longtext = this.userInfo.longtext
 
 		},
 		data() {

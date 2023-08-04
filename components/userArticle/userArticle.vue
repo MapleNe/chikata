@@ -2,7 +2,7 @@
 	<view>
 		<z-paging ref="paging" @query="getArticle" v-model="content" :auto="false">
 			<view v-for="(item,index) in content" :key="index">
-				<view class="tn-margin tn-no-margin-top">
+				<view class="tn-margin">
 					<ls-skeleton :skeleton="skeleton" :loading="loading">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 							<view class="tn-flex tn-flex-col-center">
@@ -14,7 +14,7 @@
 							</view>
 
 						</view>
-						<view @tap.stop="goPost(index)">
+						<view @tap.stop="goAticle(index)">
 							<view class="tn-padding tn-no-padding-left">
 								<rich-text :nodes="item.description"></rich-text>
 							</view>
@@ -207,7 +207,7 @@
 					console.log('位于articleList的错误请联系管理')
 				})
 			},
-			goPost(index) {
+			goAticle(index) {
 				let data = this.content
 				this.$Router.push({
 					path: '/pages/common/article/article',
