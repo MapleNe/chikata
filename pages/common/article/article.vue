@@ -116,7 +116,8 @@
 							<text>{{article.expand.comments.count}}</text>
 						</view>
 						<view class="tn-flex tn-flex-col-center" @tap="likeAction">
-							<text :class="article.expand.like.is_like?'tn-text-xl tn-icon-like-fill tn-color-red':'tn-text-xl tn-icon-like'"></text>
+							<text
+								:class="article.expand.like.is_like?'tn-text-xl tn-icon-like-fill tn-color-red':'tn-text-xl tn-icon-like'"></text>
 							<text>{{article.expand.like.likes_count}}</text>
 						</view>
 					</view>
@@ -161,8 +162,8 @@
 						author: {
 							head_img: ''
 						},
-						like:{
-							
+						like: {
+
 						},
 						comments: {
 							count: 0,
@@ -261,10 +262,6 @@
 					article_id: this.article.id,
 					content: this.commentText,
 					pid: this.pid,
-				}, {
-					header: {
-						'Authorization': this.token,
-					}
 				}).then(res => {
 					if (res.data.code === 200) {
 						uni.showToast({
@@ -272,37 +269,38 @@
 							title: '评论' + res.data.msg
 						})
 						this.commentText = null
+						setTimeout(() => {
+							this.commentBoxOpen = false
+							this.$refs.paging.reload()
+							console.log(this.comments.length)
+						}, 800)
 					}
-					setTimeout(() => {
-						this.commentBoxOpen = false
-						this.$refs.paging.reload()
-
-					}, 800)
+					
 				}).catch(err => {
 					console.log(err)
 				})
 			},
 			likeAction(index) {
-			    this.$http.put('/ArticleLike/Record', {
-			        article_id: this.article.id
-			    }, {
-			        header: {
-			            Authorization: uni.getStorageSync('token')
-			        }
-			    }).then(res => {
-			        if (res.data.code === 200) {
-			            this.article.expand.like.is_like = !this.article.expand.like.is_like
-			            if (this.article.expand.like.is_like) {
-			                this.article.expand.like.likes_count++
-			            } else {
-			                this.article.expand.like.likes_count--
-			            }
-			            uni.showToast({
-			                icon: 'none',
-			                title: res.data.msg
-			            })
-			        }
-			    })
+				this.$http.put('/ArticleLike/Record', {
+					article_id: this.article.id
+				}, {
+					header: {
+						Authorization: uni.getStorageSync('token')
+					}
+				}).then(res => {
+					if (res.data.code === 200) {
+						this.article.expand.like.is_like = !this.article.expand.like.is_like
+						if (this.article.expand.like.is_like) {
+							this.article.expand.like.likes_count++
+						} else {
+							this.article.expand.like.likes_count--
+						}
+						uni.showToast({
+							icon: 'none',
+							title: res.data.msg
+						})
+					}
+				})
 			},
 			//返回上一页
 			back() {
@@ -346,12 +344,10 @@
 				// console.log('diffValue：'+diffValue+' ' +'diffMonth：'+diffMonth+' ' +'diffWeek：'+diffWeek+' ' +'diffDay：'+diffDay+' ' +'diffHour：'+diffHour+' ' +'diffMinute：'+diffMinute);
 
 				if (diffValue < 0) {
-					alert("错误时间");
 				} else if (diffMonth > 3) {
 					result = timePublish.getFullYear() + "-";
 					result += timePublish.getMonth() + "-";
 					result += timePublish.getDate();
-					alert(result);
 				} else if (diffMonth > 1) {
 					result = parseInt(diffMonth) + "月前";
 				} else if (diffWeek > 1) {
