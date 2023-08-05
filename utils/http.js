@@ -37,7 +37,7 @@ http.interceptors.request.use((config) => {
 http.interceptors.response.use(async (response) => {
 	if (response.data.code === 403) {
 		try {
-			const newToken = await http.get('/users/NewToken', {
+			const newToken = await http.get('/users/newtoken', {
 				header: {
 					refreshToken: uni.getStorageSync('refreshToken')
 				}

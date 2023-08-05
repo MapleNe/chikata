@@ -14,7 +14,11 @@
 							<view class="tn-flex tn-flex-col-center">
 								<tn-avatar :src="item.expand.author.head_img"></tn-avatar>
 								<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
-									<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
+									<view class="tn-flex tn-flex-col-center">
+										<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
+										<text v-if="item.expand.author.level==='admin'"
+											class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
+									</view>
 									<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
 								</view>
 							</view>
@@ -26,7 +30,8 @@
 								</tn-button>
 							</view>
 						</view>
-						<view @tap.stop="goAticle(index)">
+						<view @tap="goAticle(index)">
+
 							<view class="tn-padding tn-no-padding-left">
 								<rich-text :nodes="item.description"></rich-text>
 							</view>
@@ -120,12 +125,16 @@
 				<!-- 间隔结束 -->
 			</view>
 		</z-paging>
-		
+
 	</view>
 </template>
 
 <script>
+	import chunLeiPopups from "@/components/chunLei-popups/chunLei-popups.vue";
 	export default {
+		components: {
+			chunLeiPopups
+		},
 		props: {
 			// content: {
 			// 	type: Array,
@@ -143,6 +152,7 @@
 				default: null
 			}
 		},
+
 		name: "articleList",
 		data() {
 			return {
@@ -157,7 +167,13 @@
 					'circle-sm+line-sm'
 				],
 				loading: true,
+				showPop: false
 			};
+		},
+		onReady() {
+			this.$nextTick(() => {
+				this.$refs.readMore.init()
+			})
 		},
 		created() {
 			this.getBanner()
@@ -236,11 +252,14 @@
 						}
 					}
 				}).catch(err => {
-					
+
 				})
 			},
-			showComments(index){
-				this.$emit('getComments',this.content[index].id)
+			close() {
+				this.$refs.tooltop.close()
+			},
+			showComments(index) {
+				this.$emit('getComments', this.content[index].id)
 			},
 			goAticle(index) {
 				this.$Router.push({

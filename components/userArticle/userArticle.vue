@@ -8,7 +8,11 @@
 							<view class="tn-flex tn-flex-col-center">
 								<tn-avatar :src="item.expand.author.head_img"></tn-avatar>
 								<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
-									<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
+									<view class="tn-flex tn-flex-col-center">
+										<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
+										<text v-if="item.expand.author.level==='admin'"
+											class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
+									</view>
 									<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
 								</view>
 							</view>

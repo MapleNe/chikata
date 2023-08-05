@@ -3,7 +3,7 @@
 		<view class="tn-margin">
 			<view v-for="(item,index) in content" :key="index">
 				<view class="ch-bg-main tn-color-white tn-flex tn-flex-col-center tn-margin-bottom-sm"
-					style="border-radius: 10rpx;position: relative;" @tap="pushCollectInfo(item)">
+					style="border-radius: 10rpx;position: relative;" @tap="pushCollectInfo(item.id)">
 					<view class="tn-padding-xs">
 						<tn-avatar :border="true" borderColor="#fff" :borderSize="6" size="xl"
 							:src="item.image"></tn-avatar>
@@ -25,7 +25,7 @@
 	export default {
 		props: {
 			selectedCollect: {
-				type: Array,
+				type: Number,
 				default: null,
 			},
 		},
@@ -48,12 +48,17 @@
 				})
 			},
 			pushCollectInfo(item) {
-				this.$emit('getCollectInfo', item)
+				if(this.selectedCollect === item){
+					this.$emit('getCollectInfo', null)
+				}else{
+					this.$emit('getCollectInfo', item)
+				}
+				
 				// console.log(item)
 			},
 			//是否已选中
 			isSelected(item) {
-				return this.selectedCollect.some(collect => collect.id === item.id);
+				return this.selectedCollect === item.id;
 			}
 		}
 	}

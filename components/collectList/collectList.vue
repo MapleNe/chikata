@@ -3,13 +3,13 @@
 		<view class="tn-margin">
 			<view v-for="(item,index) in content" :key="index">
 				<view class="ch-bg-main tn-color-white tn-flex tn-flex-col-center tn-margin-bottom-sm"
-					style="border-radius: 10rpx;position: relative;">
+					style="border-radius: 10rpx;position: relative;" @tap.stop="goCollect(index)">
 					<view class="tn-padding-xs">
 						<tn-avatar :border="true" borderColor="#fff" :borderSize="6" size="xl"
 							:src="item.image"></tn-avatar>
 					</view>
 					<view class="tn-flex tn-flex-col-center tn-flex-direction-column tn-flex-1">
-						<text>{{item.name}}</text>
+						<text class="tn-text-bold">{{item.name}}</text>
 						<text>{{item.descrip}}</text>
 					</view>
 
@@ -64,8 +64,14 @@
 					console.log(res)
 				})
 			},
-
-			//是否已选中
+			goCollect(index){
+				this.$Router.push({
+					path:'/pages/common/collect/collect',
+					query: {
+						id: this.content[index].id
+					}
+				})
+			}
 		}
 	}
 </script>

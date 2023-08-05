@@ -4,7 +4,7 @@
 		<z-paging ref="paging" @query="getComment" v-model="comments" :safe-area-inset-bottom="true">
 			<template #top>
 				<tn-nav-bar :zIndex="2">
-					{{article.title}}
+					详情
 				</tn-nav-bar>
 				<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 			</template>
@@ -16,14 +16,18 @@
 						<view class="tn-flex tn-flex-col-center">
 							<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
 							<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
-								<text class="tn-text-bold">{{article.expand.author.nickname}}</text>
+								<view class="tn-flex tn-flex-col-center">
+									<text class="tn-text-bold">{{article.expand.author.nickname}}</text>
+									<text v-if="article.expand.author.level==='admin'"
+										class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
+								</view>
 								<text class="tn-text-xs">{{getDateDiff(article.create_time)}}</text>
 							</view>
 						</view>
 						<view>
 							<tn-button size="sm" :backgroundColor="article.expand.focus?'tn-bg-gray--light':'#29B7CB'"
 								:fontColor="article.expand.focus?'tn-color-grey':'tn-color-white'" shape="round"
-								@tap="followUser(index)">
+								@tap="followUser()">
 								<text>{{article.expand.focus?'已关注':'关注'}}</text>
 							</tn-button>
 						</view>
@@ -128,7 +132,8 @@
 		</z-paging>
 
 		<!-- 弹出层 开始 -->
-		<tn-popup v-model="commentBoxOpen" mode="bottom" :borderRadius="10" :zIndex="3" @close="resetComment">
+		<tn-popup v-model="commentBoxOpen" mode="bottom" :borderRadius="10" :zIndex="3"
+			@close="resetComment;showEmoji=false">
 			<view class="tn-margin">
 				<view class="tn-bg-gray--light tn-padding-sm"
 					style="height: 150rpx;overflow: hidden; border-radius: 10rpx;">
@@ -136,9 +141,38 @@
 						:autoHeight="false"></tn-input>
 				</view>
 			</view>
-			<view class="tn-margin tn-text-right">
-				<tn-button shape="round" :plain="true" size="sm" @click="commentCheck">发送~</tn-button>
+			<view class="tn-flex tn-margin tn-flex-col-center tn-flex-row-between">
+				<view class="tn-flex tn-flex-col-center">
+					<text class="tn-text-xl tn-icon-emoji-good" @tap.stop="showEmoji=!showEmoji;getEmojiList()"></text>
+				</view>
+				<view class="">
+					<tn-button shape="round" :plain="true" size="sm" @click="commentCheck">发送~</tn-button>
+				</view>
 			</view>
+			<view v-show="showEmoji">
+				<v-tabs v-model="emojiIndex" :tabs="emojiTabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
+					activeColor="#29B7CB" :lineScale="0.2"></v-tabs>
+					<scroll-view scroll-y style="height: 20vh;" class="tn-margin-top-xs">
+						<tn-grid :col="8">
+							<block v-for="(item, index) in emojiList" :key="index">
+								<!-- H5 -->
+								<!-- #ifndef MP-WEIXIN -->
+								<tn-grid-item>
+									<image :src="item" mode="aspectFill" style="height: 50rpx;width: 50rpx;"  @tap.stop="insertEmoji(index)"></image>
+								</tn-grid-item>
+								<!-- #endif-->
+						
+								<!-- 微信小程序 -->
+								<!-- #ifdef MP-WEIXIN -->
+								<tn-grid-item :style="{width: gridItemWidth}">
+									<view style="padding: 30rpx;">{{ item }}</view>
+								</tn-grid-item>
+								<!-- #endif-->
+							</block>
+						</tn-grid>
+					</scroll-view>
+			</view>
+
 		</tn-popup>
 
 	</view>
@@ -152,7 +186,7 @@
 		data() {
 			return {
 				commentBoxText: '我想说...', //底部盒子显示的信息
-				commentText: null, //这个才是回复的信息
+				commentText: '', //这个才是回复的信息
 				commentBoxOpen: false, //控制弹出层
 				comments: [], //获取到的评论列表
 				//为什么要定义这堆东西？我也不知道 不定义就报错 但是不影响正常使用草
@@ -187,6 +221,10 @@
 					10,
 					'line-sm*3'
 				],
+				showEmoji: false,
+				emojiTabs: [],
+				emojiIndex: 0,
+				emojiList: [],
 			}
 		},
 
@@ -232,6 +270,58 @@
 					this.$refs.paging.complete(false)
 				})
 			},
+			getEmojiList() {
+				this.$http.get('/emoji/list').then(res => {
+					if (res.data.code === 200) {
+						this.emojiTabs = res.data.data
+						this.getEmojiAll()
+					}
+				})
+			},
+			getEmojiAll() {
+				this.$http.get('/emoji/one', {
+					params: {
+						name: this.emojiTabs[this.emojiIndex]
+					}
+				}).then(res => {
+					if(res.data.code===200){
+						this.emojiList = res.data.data
+					}
+				})
+			},
+			insertEmoji(index){
+				console.log(index)
+				this.commentText +=`[${index}]`
+			},
+			renderEmoji(content) {
+			  return content.replace(/\[([^\]]+)\]/g, (_, name) => {
+			    const url = this.emojiList[name]
+			    return `<img src="${url}" class="emoji">` 
+			  })
+			},
+			followUser() {
+				this.$http.put('/Focus/Record', {
+					fansId: this.article.users_id
+				}).then(res => {
+					switch (res.data.code) {
+						case 200:
+							uni.showToast({
+								icon: 'none',
+								title: res.data.msg
+							});
+							break;
+						case 400:
+							uni.showToast({
+								icon: 'none',
+								title: res.data.msg
+							});
+							break;
+						default:
+							// 处理其他情况
+							break;
+					}
+				});
+			},
 			commentAction() {
 				this.commentBoxOpen = true
 			},
@@ -257,9 +347,10 @@
 				}
 			},
 			commentSend() {
+				
 				this.$http.post('/comments/add', {
 					article_id: this.article.id,
-					content: this.commentText,
+					content: this.renderEmoji(this.commentText),
 					pid: this.pid,
 				}).then(res => {
 					if (res.data.code === 200) {
@@ -285,10 +376,6 @@
 			likeAction(index) {
 				this.$http.put('/ArticleLike/Record', {
 					article_id: this.article.id
-				}, {
-					header: {
-						Authorization: uni.getStorageSync('token')
-					}
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.article.expand.like.is_like = !this.article.expand.like.is_like
@@ -304,9 +391,11 @@
 					}
 				})
 			},
+			changeTab(index) {
+				this.emojiIndex = index
+			},
 			//返回上一页
 			back() {
-
 				// 通过判断当前页面的页面栈信息，是否有上一页进行返回，如果没有则跳转到首页
 				const pages = getCurrentPages()
 				if (pages && pages.length > 0) {
@@ -372,7 +461,10 @@
 	page {
 		height: auto;
 	}
-
+	.emoji {
+	  width: 40rpx !important;
+	  height: 40rpx !important;
+	}
 	.ch-radius {
 		border-radius: 10rpx;
 	}

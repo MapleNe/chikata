@@ -78,7 +78,8 @@
 				<view class="tn-margin-bottom tn-flex tn-bg-gray--light tn-padding tn-radius tn-flex-row-between">
 					<view class="tn-flex tn-flex-direction-column" v-for="(item, index) in align" :key="item.id"
 						@tap="editSubAction(item)">
-						<text :class="[item.icon, {'ch-color-primary': statusObj.align === item.val}]" class="tn-text-xl">
+						<text :class="[item.icon, {'ch-color-primary': statusObj.align === item.val}]"
+							class="tn-text-xl">
 						</text>
 						<text class="tn-text-sm">
 							{{item.name}}
@@ -225,8 +226,8 @@
 			<tn-popup mode="bottom" length="50%" v-model="showCollect" :borderRadius="20" :closeBtn="true">
 				<z-paging-swiper>
 					<template #top>
-						<v-tabs :tabs="['全部']" lineHeight="8rpx" lineColor="#29B7CB" :zIndex="2"
-							activeColor="#29B7CB" :lineScale="0.2"></v-tabs>
+						<v-tabs :tabs="['全部']" lineHeight="8rpx" lineColor="#29B7CB" :zIndex="2" activeColor="#29B7CB"
+							:lineScale="0.2"></v-tabs>
 					</template>
 					<swiper class="swiper">
 						<swiper-item>
@@ -276,7 +277,7 @@
 				tagsTabs: ['全部', '关注'],
 				content: null,
 				edit: null,
-				statusObj:{},
+				statusObj: {},
 				editList: [{
 						id: 0,
 						name: '标题',
@@ -437,19 +438,19 @@
 						id: 0,
 						name: '粗体',
 						format: 'bold',
-						active:false
+						active: false
 					},
 					{
 						id: 1,
 						name: '斜体',
 						format: 'italic',
-						active:false
+						active: false
 					},
 					{
 						id: 2,
 						name: '下划线',
 						format: 'underline',
-						active:false
+						active: false
 					}
 				],
 				moreAction: null,
@@ -460,7 +461,7 @@
 				showTitleModal: false,
 				selectedTags: [],
 				selectedCategory: {},
-				selectedCollect: [],
+				selectedCollect: null,
 				showPermission: false,
 				opt: {
 					password: "",
@@ -493,7 +494,7 @@
 		onBackPress(e) {
 			console.log(e)
 		},
-		
+
 		methods: {
 			editReady(edit) {
 				// 将富文本对象存放到当前页面，便于后续直接操作
@@ -511,11 +512,11 @@
 				// 演示----监听光标指向不同样式时回调
 				this.edit.$on('edit:statuschange', this.statuschange)
 			},
-			statuschange(e){
+			statuschange(e) {
 				this.statusObj = e.detail
 				console.log(this.statusObj)
 			},
-			fontStyleChange(index){
+			fontStyleChange(index) {
 				this.statusObj.bold = this.fontStyle[index].active
 				this.statusObj.underline = this.fontStyle[index].active
 				this.statusObj.italic = this.fontStyle[index].active
@@ -563,9 +564,8 @@
 				this.$http.post('/article/save', {
 					title: this.articleTitle === null ? res.text.substring(0, 10) : this.articleTitle, //标题为空时从简介获取
 					content: res.html, //帖子内容 如果要更新文章的话不能这么写得定义一个变量来存储
-					description: res.text, //简介 如果要更新文章的话不能这么写得定义一个变量来存储
 					sort_id: this.categoryId, //分类ID 
-					collections_id: this.selectedCollect[0].id, //合集id
+					collections_id: this.selectedCollect?this.selectedCollect:'', //合集id
 					tag_id: selectedTagIds, //标签id 如果要更新文章的话不能这么写得定义一个变量来存储
 					opt: JSON.stringify(this.opt), //权限设置
 				}).then(res => {
@@ -594,7 +594,7 @@
 			},
 			editSubAction(item) {
 
-			    this.edit.format(item.format, item.val); // 设置样式
+				this.edit.format(item.format, item.val); // 设置样式
 			},
 			addImage() {
 				this.edit.addImage()
@@ -637,14 +637,7 @@
 				console.log(this.selectedTags);
 			},
 			getCollectInfo(data) {
-				if (this.selectedCollect.length > 0) {
-					// Remove any existing item from the array
-					this.selectedCollect.splice(0, 1);
-				}
-
-				// Add the new item to the array
-				this.selectedCollect.push(data);
-				console.log(this.selectedCollect);
+				this.selectedCollect = data
 			},
 			permissionAction(index) {
 				for (let i = 0; i < this.permission.length; i++) {
