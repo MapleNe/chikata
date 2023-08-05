@@ -1,10 +1,13 @@
 <template>
 	<z-paging ref="paging" @query="getCollectArticle" v-model="content">
 		<template #top>
-			<tn-nav-bar>
-				合集文章列表
+			<tn-nav-bar :alpha="true">
+				合集详情
 			</tn-nav-bar>
 		</template>
+		<!-- <view class="image-wrapper">
+			<image :src="categoryInfo.opt.head_img" mode="aspectFill" style="width: 100%;height: 300rpx;"></image>
+		</view> -->
 		<view v-for="(item,index) in content" :key="index">
 			<view class="tn-margin">
 				<ls-skeleton :skeleton="skeleton" :loading="loading">
@@ -20,7 +23,7 @@
 								<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
 							</view>
 						</view>
-		
+
 					</view>
 					<view @tap.stop="goAticle(index)">
 						<view class="tn-padding tn-no-padding-left">
@@ -48,7 +51,7 @@
 										</image>
 									</tn-grid-item>
 									<!-- #endif-->
-		
+
 									<!-- 微信小程序 -->
 									<!-- #ifdef MP-WEIXIN -->
 									<!-- <tn-grid-item :style="{width: gridItemWidth}">
@@ -71,7 +74,7 @@
 										</image>
 									</tn-grid-item>
 									<!-- #endif-->
-		
+
 									<!-- 微信小程序 -->
 									<!-- #ifdef MP-WEIXIN -->
 									<!-- <tn-grid-item :style="{width: gridItemWidth}">
@@ -87,8 +90,7 @@
 								class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius"
 								@tap.stop="goCategory(category)">
 								<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
-								<text
-									class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
+								<text class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
 							</view>
 							<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-basic-sm">
 								<view class="tn-flex tn-flex-col-center">
@@ -104,7 +106,7 @@
 										:class="item.expand.like.is_like?'tn-text-xl tn-icon-like-fill tn-color-red':'tn-text-xl tn-icon-like'"></text>
 									<text>{{item.expand.like.likes_count}}</text>
 								</view>
-		
+
 							</view>
 						</view>
 					</view>
@@ -130,30 +132,88 @@
 					'circle-sm+line-sm'
 				],
 				id: null,
-				loading:false
+				loading: false
 			}
 		},
 		onLoad(params) {
 			this.id = params.id
 		},
 		methods: {
-			getCollectArticle() {
-				this.$http.get('/collections/postFind', {
+			async getCollectInfo(){
+				await this.$http.get('')
+			},
+			async getCollectArticle() {
+				await this.$http.get('/collections/postFind', {
 					params: {
 						cid: this.id
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
-						this.$refs.paging.complete(res.data.data)
+						this.$refs.paging.complete(res.data.data.data)
 						console.log(res)
 					}
 
 				})
-			}
+			},
+			getDateDiff(data) {
+				// 传进来的data必须是日期格式，不能是时间戳
+				//var str = data;
+				//将字符串转换成时间格式
+				var timePublish = new Date(data);
+				var timeNow = new Date();
+				var minute = 1000 * 60;
+				var hour = minute * 60;
+				var day = hour * 24;
+				var month = day * 30;
+				var result = "2";
+
+				var diffValue = timeNow - timePublish;
+				var diffMonth = diffValue / month;
+				var diffWeek = diffValue / (7 * day);
+				var diffDay = diffValue / day;
+				var diffHour = diffValue / hour;
+				var diffMinute = diffValue / minute;
+
+				// console.log('diffValue：'+diffValue+' ' +'diffMonth：'+diffMonth+' ' +'diffWeek：'+diffWeek+' ' +'diffDay：'+diffDay+' ' +'diffHour：'+diffHour+' ' +'diffMinute：'+diffMinute);
+
+				if (diffValue < 0) {
+					alert("错误时间");
+				} else if (diffMonth > 3) {
+					result = timePublish.getFullYear() + "-";
+					result += timePublish.getMonth() + "-";
+					result += timePublish.getDate();
+					alert(result);
+				} else if (diffMonth > 1) {
+					result = parseInt(diffMonth) + "月前";
+				} else if (diffWeek > 1) {
+					result = parseInt(diffWeek) + "周前";
+				} else if (diffDay > 1) {
+					result = parseInt(diffDay) + "天前";
+				} else if (diffHour > 1) {
+					result = parseInt(diffHour) + "小时前";
+				} else if (diffMinute > 1) {
+					result = parseInt(diffMinute) + "分钟前";
+				} else {
+					result = "刚刚";
+				}
+				return result;
+			},
 		}
 	}
 </script>
 
-<style>
-
+<style scoped>
+	.image-wrapper {
+		position: relative;
+	}
+	
+	.image-wrapper::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
+		background: linear-gradient(to top, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
+	}
 </style>
