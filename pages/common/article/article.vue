@@ -358,7 +358,7 @@
 							icon: 'none',
 							title: '评论' + res.data.msg
 						})
-						this.commentText = null
+						this.commentText = ''
 					}
 					setTimeout(() => {
 						this.commentBoxOpen = false
