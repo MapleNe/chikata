@@ -117,7 +117,6 @@
 											:class="item.expand.like.is_like?'tn-text-xl tn-icon-like-fill tn-color-red':'tn-text-xl tn-icon-like'"></text>
 										<text>{{item.expand.like.likes_count}}</text>
 									</view>
-
 								</view>
 							</view>
 						</view>

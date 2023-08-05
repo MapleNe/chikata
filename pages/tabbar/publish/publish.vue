@@ -27,7 +27,7 @@
 					<view class=" tn-flex tn-flex-row-between tn-bg-gray--light tn-radius">
 						<view v-for="(item,index) in title" :key="item.id" class="tn-text-xl tn-padding"
 							@tap="editSubAction(item)">
-							<text :class="{'ch-color-primary': titleMoreAction === item.id}">{{item.val}}</text>
+							<text :class="{'ch-color-primary': statusObj.header === item.id}">{{item.val}}</text>
 						</view>
 					</view>
 				</view>
@@ -36,7 +36,7 @@
 					<view class=" tn-flex tn-flex-row-between tn-bg-gray--light tn-radius">
 						<view v-for="(item,index) in fontStyle" :key="item.id" class="tn-text-xl tn-padding"
 							@tap="editSubAction(item)">
-							<text :class="{'ch-color-primary': selectAction.includes(item.id)}">{{item.name}}</text>
+							<text :class="{'ch-color-primary': statusObj[item.format]}">{{item.name}}</text>
 						</view>
 					</view>
 				</view>
@@ -46,7 +46,7 @@
 					<text class="tn-icon-down-triangle tn-text-left">字体大小</text>
 					<view class="tn-flex tn-bg-gray--light tn-flex-row-between tn-padding tn-radius">
 						<view v-for="(item,index) in fontSize" :key="item.id" @tap="editSubAction(item)">
-							<text :class="{'ch-color-primary': fontSizeMoreAction === item.id}">{{item.name}}</text>
+							<text :class="{'ch-color-primary': statusObj.fontSize === item.val}">{{item.name}}</text>
 						</view>
 					</view>
 				</view>
@@ -55,7 +55,7 @@
 						class="tn-margin-left-xs tn-text-xs">选择字体背景后一定要更换字体颜色</text>
 					<view class="tn-flex tn-bg-gray--light tn-padding tn-radius tn-flex-row-between">
 						<view class="tn-round tn-padding-xs tn-border-solid tn-bold-border"
-							:class="backgroundColorMoreAction===item.id?'tn-border-bluepurple':'tn-border-white'"
+							:class="statusObj.backgroundColor===item.val?'tn-border-bluepurple':'tn-border-white'"
 							:style="'background-color:'+item.val" v-for="(item ,index) in backgroundColor"
 							:key="item.id" @tap="editSubAction(item)">
 						</view>
@@ -65,7 +65,7 @@
 					<text class="tn-icon-down-triangle tn-text-left">字体颜色</text>
 					<view class="tn-flex tn-bg-gray--light tn-padding tn-radius tn-flex-row-between">
 						<view class="tn-round tn-padding-xs tn-border-solid tn-bold-border"
-							:class="colorMoreAction===item.id?'tn-border-bluepurple':'tn-border-white'"
+							:class="statusObj.color===item.val?'tn-border-bluepurple':'tn-border-white'"
 							:style="'background-color:'+item.val" v-for="(item ,index) in color" :key="item.id"
 							@tap="editSubAction(item)">
 						</view>
@@ -78,7 +78,7 @@
 				<view class="tn-margin-bottom tn-flex tn-bg-gray--light tn-padding tn-radius tn-flex-row-between">
 					<view class="tn-flex tn-flex-direction-column" v-for="(item, index) in align" :key="item.id"
 						@tap="editSubAction(item)">
-						<text :class="[item.icon, {'ch-color-primary': alignMoreAction === item.id}]" class="tn-text-xl">
+						<text :class="[item.icon, {'ch-color-primary': statusObj.align === item.val}]" class="tn-text-xl">
 						</text>
 						<text class="tn-text-sm">
 							{{item.name}}
@@ -276,6 +276,7 @@
 				tagsTabs: ['全部', '关注'],
 				content: null,
 				edit: null,
+				statusObj:{},
 				editList: [{
 						id: 0,
 						name: '标题',
@@ -294,64 +295,57 @@
 
 				],
 				title: [{
-						id: 0,
+						id: 2,
 						format: 'header',
 						val: 'H2'
 					},
 					{
-						id: 1,
+						id: 3,
 						format: 'header',
 						val: 'H3'
 					},
 					{
-						id: 2,
+						id: 4,
 						format: 'header',
 						val: 'H4'
 					},
 					{
-						id: 3,
+						id: 5,
 						format: 'header',
 
 						val: 'H5'
 					},
 					{
-						id: 4,
+						id: 6,
 						format: 'header',
 						val: 'H6'
 					}
 				],
 				color: [{
-						id: 0,
 						format: 'color',
 						val: '#ed5a65'
 					},
 					{
-						id: 1,
 						format: 'color',
 						val: '#813c85'
 					},
 					{
-						id: 2,
 						format: 'color',
 						val: '#2177b8'
 					},
 					{
-						id: 3,
 						format: 'color',
 						val: '#1ba784'
 					},
 					{
-						id: 4,
 						format: 'color',
 						val: '#fcc307'
 					},
 					{
-						id: 5,
 						format: 'color',
 						val: '#1772b4'
 					},
 					{
-						id: 6,
 						format: 'color',
 						val: '#ffffff'
 					}
@@ -406,17 +400,17 @@
 				backgroundColor: [{
 						id: 0,
 						format: 'backgroundColor',
-						val: '#ed5a65'
+						val: '#f1939c'
 					},
 					{
 						id: 1,
 						format: 'backgroundColor',
-						val: '#813c85'
+						val: '#fbda41'
 					},
 					{
 						id: 2,
 						format: 'backgroundColor',
-						val: '#2177b8'
+						val: '#66a9c9'
 					},
 					{
 						id: 3,
@@ -431,42 +425,36 @@
 					{
 						id: 5,
 						format: 'backgroundColor',
-						val: '#1772b4'
+						val: '#57c3c2'
 					},
 					{
 						id: 6,
 						format: 'backgroundColor',
-						val: '#ffffff'
+						val: 'rbga(255,255,255,0)'
 					}
 				],
 				fontStyle: [{
 						id: 0,
 						name: '粗体',
 						format: 'bold',
-						val: ''
+						active:false
 					},
 					{
 						id: 1,
 						name: '斜体',
 						format: 'italic',
-						val: ''
+						active:false
 					},
 					{
 						id: 2,
 						name: '下划线',
 						format: 'underline',
-						val: ''
+						active:false
 					}
 				],
 				moreAction: null,
-				titleMoreAction: null,
-				fontSizeMoreAction: null,
-				colorMoreAction: null,
-				backgroundColorMoreAction: null,
-				fontStyleMoreAction: null,
 				articleTitle: null,
 				alignMoreAction: null,
-				selectAction: [],
 				showCategory: false,
 				showTags: false,
 				showTitleModal: false,
@@ -505,6 +493,7 @@
 		onBackPress(e) {
 			console.log(e)
 		},
+		
 		methods: {
 			editReady(edit) {
 				// 将富文本对象存放到当前页面，便于后续直接操作
@@ -520,11 +509,17 @@
 					// console.log('监听输入', e);
 				});
 				// 演示----监听光标指向不同样式时回调
-				this.edit.$on('edit:statuschange', (e) => {
-					// console.log('监听光标当前位置样式变化',JSON.stringify(e));
-				})
+				this.edit.$on('edit:statuschange', this.statuschange)
 			},
-
+			statuschange(e){
+				this.statusObj = e.detail
+				console.log(this.statusObj)
+			},
+			fontStyleChange(index){
+				this.statusObj.bold = this.fontStyle[index].active
+				this.statusObj.underline = this.fontStyle[index].active
+				this.statusObj.italic = this.fontStyle[index].active
+			},
 			async save() {
 				// 获取插入的图片列表
 				let imgs = await this.edit.getImages()
@@ -549,12 +544,8 @@
 					} = await this.$http.upload('/file/upload', {
 						filePath: img,
 						name: 'file',
-						header: {
-							'Authorization': uni.getStorageSync('token')
-						}
 					})
 
-					console.log(data.data)
 					return data.data
 
 
@@ -602,62 +593,8 @@
 				}
 			},
 			editSubAction(item) {
-				switch (item.format) {
-					case 'color':
-						if (this.colorMoreAction === item.id) {
-							this.colorMoreAction = null;
-						} else {
-							this.colorMoreAction = item.id;
-						}
-						break;
-					case 'backgroundColor':
-						if (this.backgroundColorMoreAction === item.id) {
-							this.backgroundColorMoreAction = null;
-						} else {
-							this.backgroundColorMoreAction = item.id;
-						}
-						break;
-					case 'bold':
-					case 'italic':
-					case 'underline':
-						if (this.selectAction.includes(item.id)) {
-							this.selectAction.splice(this.selectAction.indexOf(item.id), 1);
-						} else {
-							this.selectAction.push(item.id);
-						}
-						break;
-					case 'header':
-						if (this.titleMoreAction === item.id) {
-							this.titleMoreAction = null;
-						} else {
-							this.titleMoreAction = item.id
-						}
-						break;
-					case 'fontSize':
-						if (this.fontSizeMoreAction === item.id) {
-							this.fontSizeMoreAction = null;
-						} else {
-							this.fontSizeMoreAction = item.id
-						}
-						break;
-					case 'align':
-						if (this.alignMoreAction === item.id) {
-							this.alignMoreAction = null;
-						} else {
-							this.alignMoreAction = item.id
-						}
-						break;
-					default:
-						// 默认情况下，不做任何操作
-						break;
-				}
-				if (this.subMoreAction === item.id) {
-					this.subMoreAction = null;
-					this.edit.format(item.format, ''); // 清除样式
-				} else {
-					this.subMoreAction = item.id;
-					this.edit.format(item.format, item.val); // 设置样式
-				}
+
+			    this.edit.format(item.format, item.val); // 设置样式
 			},
 			addImage() {
 				this.edit.addImage()

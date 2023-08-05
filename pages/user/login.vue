@@ -254,7 +254,7 @@
 					console.log(err)
 					uni.showToast({
 						icon: 'none',
-						title: err.msg
+						title: err.data.msg
 					})
 				});
 			},
