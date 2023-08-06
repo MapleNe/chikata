@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<!-- 文章详情 开始 -->
-		<z-paging ref="paging" @query="getComment" v-model="comments" :safe-area-inset-bottom="true">
+		<z-paging ref="paging" @query="getComment" v-model="comments" :safe-area-inset-bottom="true" :auto-scroll-to-top-when-reload="false">
 			<template #top>
 				<tn-nav-bar :zIndex="2">
 					详情
@@ -37,7 +37,7 @@
 					</view>
 					<view class="tn-flex tn-flex-col-center tn-margin-top">
 						<view v-for="(category,index) in article.expand.sort" :key="index"
-							class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius">
+							class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius" @tap.stop="goCategory(category)">
 							<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
 							<text class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
 						</view>
@@ -58,7 +58,11 @@
 							<view class="tn-flex tn-flex-col-center">
 								<tn-avatar :src="item.expand.head_img"></tn-avatar>
 								<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
-									<text class="tn-text-bold">{{item.nickname}}</text>
+									<view class="tn-flex tn-flex-col-center">
+										<text class="tn-text-bold">{{item.nickname}}</text>
+										<text v-if="article.users_id === item.users_id"
+											class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary" style="padding:5rpx 8rpx">UP</text>
+									</view>
 									<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
 								</view>
 							</view>
@@ -77,7 +81,11 @@
 											<view
 												class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
 												<view class="tn-flex tn-flex-col-center">
-													<text class="tn-text-bold">{{subComment.nickname}}</text>
+													<view class="tn-flex tn-flex-col-center">
+														<text class="tn-text-bold">{{subComment.nickname}}</text>
+														<text v-if="article.users_id === subComment.users_id"
+															class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary" style="padding:5rpx 8rpx">UP</text>
+													</view>
 													<!-- 写一段注释 这个是父评论的id不等于子评论的pid里的id才会显示-->
 													<view v-if="item.id !== subComment.expand.pid.id"
 														class="tn-flex tn-flex-col-center">
@@ -244,6 +252,7 @@
 				}).then(res => {
 					if (res.data.code == 200) {
 						this.article = res.data.data
+						console.log(this.article)
 						setTimeout(() => {
 							this.loading = false
 						}, 600)
@@ -264,7 +273,7 @@
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.data)
-
+						console.log(this.comments)
 					}
 				}).catch(err => {
 					this.$refs.paging.complete(false)
@@ -393,6 +402,14 @@
 			},
 			changeTab(index) {
 				this.emojiIndex = index
+			},
+			goCategory(category) {
+				this.$Router.push({
+					path: '/pages/common/category/category',
+					query: {
+						id: category.id
+					}
+				})
 			},
 			//返回上一页
 			back() {

@@ -195,16 +195,16 @@
 		},
 		methods: {
 			async getArticle(page, num) {
-				await this.$http.get('/article/all', {
+				await this.$http.get(this.tabsIndex===2?'/article/focusFind':'/article/all', {
 					params: {
 						limit: num,
 						page: page,
-						order: this.tabsIndex === 1 ? 'views desc' : this.tabsIndex === 2 ?
-							'is_top desc,views desc' : ''
+						order: this.tabsIndex === 1 ? 'views desc' :''
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.data)
+						console.log(res)
 						this.firstLoad = true
 						//骨架屏仅在第一次加载数据时显示
 						setTimeout(() => {

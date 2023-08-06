@@ -16,8 +16,8 @@
 				</view>
 			</view>
 		</view>
-
 	</z-paging>
+	
 </template>
 
 <script>
@@ -39,7 +39,13 @@
 				content: [],
 			};
 		},
-		created() {},
+		created() {
+			uni.$on('createCollect',data=>{
+				if(data){
+					this.$refs.paging.reload()
+				}
+			})
+		},
 		watch: {
 			swiperIndex: {
 				handler(e) {

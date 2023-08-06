@@ -92,6 +92,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/user/createCollect",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"tabBar": {
 		"backgroundColor": "#ffffff",

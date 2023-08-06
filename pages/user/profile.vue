@@ -4,9 +4,15 @@
 			个人信息
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
-		<view class="tn-margin-bottom-lg tn-flex tn-flex-row-center tn-margin-top-xl">
+		<view class="tn-margin-bottom-lg tn-text-center tn-margin-top-xl" style="position: relative;">
 			<tn-avatar size="xl" :src="head_img" @tap="imageChoose(0)"></tn-avatar>
+			<view class="tn-round ch-bg-main"
+				style="position: absolute;right: 41%;bottom: 5%; height: 30rpx;width: 30rpx;line-height: 30rpx;z-index: 4;">
+				<text class="tn-icon-add tn-color-white"></text>
+			</view>
 		</view>
+
+
 		<view class="tn-margin-xs">
 			<tn-list-view :card="true" unlined="all">
 				<tn-list-cell :unlined="true" :arrow="false">
@@ -206,10 +212,11 @@
 				})
 			},
 			upload() {
-				const filePath = this.$isBase64(this.head_img) ? this.head_img : 'file://' + plus.io.convertLocalFileSystemURL(this.head_img)
+				const filePath = this.$isBase64(this.head_img) ? this.head_img : 'file://' + plus.io
+					.convertLocalFileSystemURL(this.head_img)
 				this.$http.upload('/file/upload', {
 					filePath: filePath,
-					name:'file'
+					name: 'file'
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.head_img = res.data.data
@@ -218,10 +225,11 @@
 				})
 			},
 			uploadBackground() {
-				const filePath = this.$isBase64(this.longtext.background_img) ? this.longtext.background_img : 'file://' + plus.io.convertLocalFileSystemURL(this.longtext.background_img)
+				const filePath = this.$isBase64(this.longtext.background_img) ? this.longtext.background_img : 'file://' +
+					plus.io.convertLocalFileSystemURL(this.longtext.background_img)
 				this.$http.upload('/file/upload', {
 					filePath: filePath,
-					name:'file'
+					name: 'file'
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.longtext.background_img = res.data.data

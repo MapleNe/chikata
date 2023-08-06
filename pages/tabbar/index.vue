@@ -60,9 +60,6 @@
 			}
 		},
 		onLoad() {
-			//这个userInfo从全局缓存中获取
-			// this.userInfo = uni.getStorageSync('userInfo')
-			console.log(this.userInfo)
 		},
 		created() {},
 		computed: {
@@ -109,9 +106,6 @@
 					}
 				})
 			}
-
-			// 时间转换，有点长
-
 		}
 	}
 </script>

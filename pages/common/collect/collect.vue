@@ -5,9 +5,9 @@
 				合集详情
 			</tn-nav-bar>
 		</template>
-		<!-- <view class="image-wrapper">
-			<image :src="categoryInfo.opt.head_img" mode="aspectFill" style="width: 100%;height: 300rpx;"></image>
-		</view> -->
+		<view class="image-wrapper">
+			<image :src="collectInfo.image" mode="aspectFill" style="width: 100%;height: 400rpx;"></image>
+		</view>
 		<view v-for="(item,index) in content" :key="index">
 			<view class="tn-margin">
 				<ls-skeleton :skeleton="skeleton" :loading="loading">
@@ -125,6 +125,9 @@
 		data() {
 			return {
 				content: [],
+				collectInfo: {
+					image: null
+				},
 				skeleton: [
 					'circle+line-sm*2',
 					'line-sm*3',
@@ -137,10 +140,17 @@
 		},
 		onLoad(params) {
 			this.id = params.id
+			this.getCollectInfo()
 		},
 		methods: {
-			async getCollectInfo(){
-				await this.$http.get('')
+			async getCollectInfo() {
+				await this.$http.get('/collections/oneFind', {
+					params: {
+						cid: this.id
+					}
+				}).then(res => {
+					this.collectInfo = res.data.data
+				})
 			},
 			async getCollectArticle() {
 				await this.$http.get('/collections/postFind', {
@@ -206,7 +216,7 @@
 	.image-wrapper {
 		position: relative;
 	}
-	
+
 	.image-wrapper::after {
 		content: "";
 		position: absolute;
@@ -214,6 +224,6 @@
 		left: 0;
 		height: 100%;
 		width: 100%;
-		background: linear-gradient(to top, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
+		background: linear-gradient(to top, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.08));
 	}
 </style>
