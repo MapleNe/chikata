@@ -279,7 +279,7 @@
 			},
 			followUser(index) {
 				this.$http.put('/Focus/Record', {
-					fansId: this.content[index].users_id
+					userId: this.content[index].users_id
 				}).then(res => {
 					switch (res.data.code) {
 						case 200:
