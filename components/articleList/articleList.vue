@@ -287,6 +287,7 @@
 								icon: 'none',
 								title: res.data.msg
 							});
+							this.$refs.paging.reload()
 							break;
 						case 400:
 							uni.showToast({
