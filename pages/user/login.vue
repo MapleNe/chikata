@@ -7,10 +7,10 @@
 				<text class="tn-text-xl tn-icon-left"></text>
 			</tn-button>
 			<view class="tn-flex tn-flex-direction-column">
-				<text class="tn-text-bold tn-text-xl-xxl">
-					君
+				<text class="tn-text-bold tn-text-xl-xxl tn-margin-bottom-sm tn-margin-top-lg">
+					Luck Day
 				</text>
-				<text class="tn-color-grey">
+				<text class="tn-color-grey tn-margin-bottom-sm">
 					快来{{loginAction?'登录':'注册'}}吧~
 				</text>
 				<view class="tn-color-grey tn-flex tn-flex-direction-column" style="height: 30rpx;" v-show="hitokoto">
@@ -156,7 +156,7 @@
 			this.timer = null;
 		},
 		methods: {
-			...mapMutations(['logout', 'login', 'setToken']),
+			...mapMutations(['logout', 'login', 'setToken', 'setRefreshToken']),
 			changeLogin() {
 				if (!this.codeLogin) {
 					this.codeLogin = true
@@ -210,8 +210,9 @@
 					code: this.code
 				}).then(res => {
 					if (res.data.code === 200) {
-						let data = res.data;
+						let data = res.data
 						let token = data.data['login-token']
+						this.setRefreshToken(res.data.data.refreshToken)
 						this.setToken(token)
 						// uni.setStorageSync('userInfo', data.data.user)
 						this.login(data.data.user)
@@ -233,13 +234,16 @@
 					password: this.password
 				}).then(res => {
 					if (res.data.code === 200) {
-						let data = res.data;
+						let data = res.data
 						let token = data.data['login-token']
+						this.setRefreshToken(res.data.data.refreshToken)
 						this.setToken(token)
+						uni.setStorageSync('loginExp',res.data.data.loginExp)
+						uni.setStorageSync('refreshExp',res.data.data.refreshExp)
 						// uni.setStorageSync('userInfo', data.data.user)
 						this.login(data.data.user)
 						uni.$emit('loginCompete', true)
-						console.log(data.data.user)
+						console.log(res)
 						uni.showToast({
 							icon: 'none',
 							title: data.msg
@@ -249,9 +253,10 @@
 						}, 800)
 					}
 				}).catch(err => {
+					console.log(err)
 					uni.showToast({
 						icon: 'none',
-						title: err.msg
+						title: err.data.msg
 					})
 				});
 			},
@@ -294,9 +299,9 @@
 						icon: 'none',
 						title: res.data.msg
 					})
-					setTimeout(()=>{
+					setTimeout(() => {
 						this.passwordLogin()
-					},500)
+					}, 500)
 				}).catch(err => {
 					uni.showToast({
 						icon: 'none',

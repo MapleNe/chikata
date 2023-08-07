@@ -1,12 +1,12 @@
 const config = {
 	// API接口，必须是HTTPS开头
-	"api"		 : "http://inis.moec.cc/api",
+	"api"		 : "https://test.harumoe.cn/api",
 	// Token令牌，如果后端开启了，需要修改此项
-	"token"		 : "820b21fffe2b20ba2c0b596e16c64512",
+	"token"		 : "95fb9c89cba09c40010ac075438df212",
 	// 版本号，禁止私自修改，后果自负
 	"version"	 : "1.0.0",
 	// 首页分享处描述
-	"description": "许一人以偏爱，尽此生之慷慨",
+	"description": "Chikata",
 }
 
 // 导出配置

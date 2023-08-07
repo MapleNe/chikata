@@ -137,7 +137,7 @@ export default {
 				
 				// 示例项目可查看解析富文本演示
 				uni.navigateTo({
-					url: '/pages/article/article?data='+escape(res.html)
+					url: '/pages/common/article/article?data='+escape(res.html)
 				});
 			});	
 				

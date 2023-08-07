@@ -21,17 +21,16 @@
 				})
 			})
 			console.log('App Launch')
-
-
 		},
 		onShow: function() {
-			console.log('App Show')
+			const nowtime = Math.round(Date.now()/1000).toString();
+			console.log('App Show',nowtime)
 		},
 		onHide: function() {
 			console.log('App Hide')
 		},
 		methods: {
-			...mapMutations(['login']),
+			...mapMutations(['login', 'logout']),
 		}
 
 	}
@@ -40,4 +39,15 @@
 <style lang="scss">
 	@import './tuniao-ui/index.scss';
 	@import './tuniao-ui/iconfont.css';
+
+	/*APP自定义样式*/
+	.ch-bg-main {
+		background: $ch-color-primary;
+	}
+	.ch-bg-main--light {
+	  background: rgba(lighten($ch-color-primary, 30%), 0.5);
+	}
+	.ch-color-primary {
+		color: $ch-color-primary;
+	}
 </style>

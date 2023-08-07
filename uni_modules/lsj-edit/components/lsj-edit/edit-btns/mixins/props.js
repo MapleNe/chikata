@@ -1,9 +1,5 @@
 module.exports = {
 	props: {
-		edit: {
-			type: Object,
-			required: true,
-		},
 		color: {
 			type: String,
 			default: '#999'

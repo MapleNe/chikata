@@ -1,7 +1,8 @@
 {
 	"easycom": {
-	    "^tn-(.*)": "@/tuniao-ui/components/tn-$1/tn-$1.vue"
-	  },
+		"^tn-(.*)": "@/tuniao-ui/components/tn-$1/tn-$1.vue",
+		"ls-skeleton":"@/components/ls-skeleton/ls-skeleton.nvue"
+	},
 	"pages": [
 		//pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
@@ -11,77 +12,102 @@
 				"enablePullDownRefresh": false
 			}
 		}, {
-			"path": "pages/article/article",
+			"path": "pages/common/article/article",
 			"style": {
 				"navigationBarTitleText": "文章详情",
 				"enablePullDownRefresh": false
 			}
 
-		}
-	    ,{
-            "path" : "pages/search/search",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "文章搜索",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/tabbar/circle",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/tabbar/notice",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/tabbar/mine",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/user/login",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/tabbar/publish/publish",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false,
+		}, {
+			"path": "pages/tabbar/circle",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/tabbar/notice",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/tabbar/mine",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/login",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/tabbar/publish/publish",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
 				"backgroundColor": " #f8f7f8"
+			}
+
+		}
+
+	    ,{
+            "path" : "pages/common/search/search",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
             }
             
         }
-        
+        ,{
+            "path" : "pages/common/category/category",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/user/profile",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/common/collect/collect",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/user/createCollect",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"tabBar": {
 		"backgroundColor": "#ffffff",
 		"color": "#949494",
-		"selectedColor": "#000000",
+		"selectedColor": "#29B7CB",
 		"fontSize": "16px",
-		"list": [
-			{
+		"list": [{
 				"pagePath": "pages/tabbar/index",
 				"text": "首页"
 			},
@@ -95,7 +121,7 @@
 			},
 			{
 				"pagePath": "pages/tabbar/mine",
-				"text":"我的"
+				"text": "我的"
 			}
 		],
 		"midButton": {
@@ -110,7 +136,11 @@
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F7F8",
-		"navigationStyle": "custom"
+		"navigationStyle": "custom",
+		"app-plus": {
+			"animationType": "slide-in-bottom",
+			"animationDuration": 500
+		}
 	},
 	"condition": {
 		//模式配置，仅开发期间生效
@@ -121,6 +151,5 @@
 			"query": "" //启动参数，在页面的onLoad函数里面得到
 		}]
 	}
-	
-}
 
+}
