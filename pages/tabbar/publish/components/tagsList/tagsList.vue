@@ -1,23 +1,13 @@
 <template>
 	<z-paging ref="paging" @query="getTags" v-model="content" :auto="true">
 		<view class="tn-margin">
-			<view v-for="(item,index) in content" :key="index">
-				<view class="ch-bg-main tn-flex tn-flex-col-center tn-margin-bottom-sm"
-					style="border-radius: 10rpx;position: relative;" @tap="pushTagsInfo(item)">
-					<view class="tn-padding-xs">
-						<tn-avatar :border="true" borderColor="#fff" :borderSize="6" size="xl"
-							:src="item.opt.head_img"></tn-avatar>
-					</view>
-					<view class="tn-flex tn-flex-col-center tn-flex-direction-column tn-flex-1">
-						<text>{{item.name}}</text>
-						<text>{{item.description}}</text>
-					</view>
-					<view v-if="isSelected(item)" class="tn-icon-left-triangle tn-text-xl-xxl" style="position: absolute;right: 0;"></view>
+			<view v-for="(item,index) in content" :key="index" class="tn-flex tn-flex-col-center">
+				<view  :class="isSelected(item)?'ch-color-primary':''" @tap.stop="pushTagsInfo(item)">
+					<text class="tn-margin-right-xs">#</text>
+					<text>{{item.name}}</text>
 				</view>
-
 			</view>
 		</view>
-
 	</z-paging>
 </template>
 
@@ -32,6 +22,10 @@
 				type: Array,
 				default: null,
 			},
+			searchKey: {
+				type: String,
+				default: null,
+			}
 		},
 		name: "tagsList",
 		data() {
@@ -46,7 +40,11 @@
 
 		},
 		created() {
-			uni.$emit('getTagsInfo', this.tagsInfo) //废弃
+			uni.$on('searchTag', data => {
+				if(data!==null){
+					this.seacrchTags(data)
+				}
+			}) //废弃
 			console.log('组件加载')
 		},
 		methods: {

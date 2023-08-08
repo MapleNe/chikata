@@ -236,10 +236,10 @@
 					if (res.data.code === 200) {
 						let data = res.data
 						let token = data.data['login-token']
-						this.setRefreshToken(res.data.data.refreshToken)
+						this.setRefreshToken(data.data.refreshToken)
 						this.setToken(token)
-						uni.setStorageSync('loginExp',res.data.data.loginExp)
-						uni.setStorageSync('refreshExp',res.data.data.refreshExp)
+						uni.setStorageSync('loginExp',data.data.loginExp)
+						uni.setStorageSync('refreshExp',data.data.refreshExp)
 						// uni.setStorageSync('userInfo', data.data.user)
 						this.login(data.data.user)
 						uni.$emit('loginCompete', true)

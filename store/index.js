@@ -49,7 +49,7 @@ const store = new Vuex.Store({
 		hasLogin: false,
 		userInfo: {
 			longtext: {
-				background_img: null
+				background_img: ''
 			}
 		},
 	},
@@ -104,7 +104,7 @@ const store = new Vuex.Store({
 		logout(state) {
 			state.userInfo = {
 					longtext: {
-						background_img: null, //必须定义 为什么我也不知道
+						background_img: '', //必须定义 为什么我也不知道
 					}
 				},
 				state.hasLogin = false,
@@ -116,6 +116,12 @@ const store = new Vuex.Store({
 			})
 			uni.removeStorage({
 				key: 'refreshToken',
+			})
+			uni.removeStorage({
+				key: 'loginExp'
+			})
+			uni.removeStorage({
+				key: 'refreshExp'
 			})
 		}
 	},
