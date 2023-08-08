@@ -90,7 +90,6 @@ http.interceptors.request.use((config) => {
 http.interceptors.response.use(async (response) => {
 	const token = uni.getStorageSync('token')
 	const nowtime = Math.round(Date.now() / 1000).toString();
-	console.log(response)
 	if (response.data.code === 403) {
 		if (uni.getStorageSync('refreshToken') <= nowtime) {
 			try {

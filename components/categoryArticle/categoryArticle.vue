@@ -207,7 +207,8 @@
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
-						this.$refs.paging.complete(res.data.data.expand.data)
+						this.$refs.paging.complete(res.data.data.expand.data.data)
+						console.log(res)
 						this.categoryInfo = res.data.data
 						this.firstLoad = true
 						//骨架屏仅在第一次加载数据时显示
