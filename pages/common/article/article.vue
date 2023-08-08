@@ -356,7 +356,13 @@
 				}
 			},
 			commentSend() {
-				
+				if(this.commentText===''){
+					uni.showToast({
+						icon:'none',
+						title:'说点什么吧~'
+					})
+					return
+				}
 				this.$http.post('/comments/add', {
 					article_id: this.article.id,
 					content: this.renderEmoji(this.commentText),
