@@ -116,19 +116,22 @@
  				</view>
  				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center"
  					@tap="showTags = true">
- 					<view class="tn-flex tn-flex-col-center tn-flex-nowrap tn-text-ellipsis">
+ 					<view class="tn-flex tn-flex-col-center tn-flex-basic-sm">
  						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-primary"></text>
  						<text>话题标签</text>
  					</view>
- 					<view class="tn-flex tn-flex-col-center tn-flex-nowrap tn-text-ellipsis" style="overflow: hidden;">
- 						<text v-for="(item,index) in selectedTags" :key="index"
- 							class="tn-bg-gray--light ch-radius tn-margin-left-xs tn-color-grey tn-text-sm tn-padding-xs"
- 							@tap.stop="deleteTags(index)">
- 							{{item.name}}
- 						</text>
- 						<text class="tn-icon-right-triangle">
- 						</text>
- 					</view>
+ 					<scroll-view scroll-x class="tn-flex tn-flex-nowrap tn-text-ellipsis"
+ 						style="overflow: hidden;">
+ 						<view class="tn-flex tn-flex-row tn-flex-col-center tn-flex-nowrap">
+ 							<text v-for="(item, index) in selectedTags" :key="index"
+ 								class="tn-bg-gray--light ch-radius tn-margin-left-xs tn-color-grey tn-text-sm tn-padding-xs"
+ 								@tap.stop="deleteTags(index)">
+ 								{{ item.name }}
+ 							</text>
+ 						</view>
+ 					</scroll-view>
+ 					<text class="tn-icon-right-triangle">
+ 					</text>
  				</view>
  				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center"
  					@tap="showCollect = true">
@@ -181,8 +184,14 @@
  						<view class="tn-flex tn-flex-col-center">
  							<v-tabs v-model="tagsTabsIndex" :tabs="tagsTabs" @change="changeTagsTab" lineHeight="8rpx"
  								lineColor="#29B7CB" :zIndex="2" activeColor="#29B7CB" :lineScale="0.2"></v-tabs>
- 							<view class="tn-flex-basic-sm" @tap.stop="showSearch = true">
- 								<tn-button size="sm" :plain="true" shape="round">搜索</tn-button>
+ 							<view class="tn-margin-xs tn-margin-top-sm tn-flex-basic-xl tn-flex">
+ 								<view class="tn-margin-right-xs">
+ 									<tn-button size="sm" :plain="true" shape="round"
+ 										@tap="showSearch = true">搜索</tn-button>
+ 								</view>
+
+ 								<tn-button size="sm" :plain="true" shape="round"
+ 									@tap="showNewTag = true">创建</tn-button>
  							</view>
  						</view>
 
@@ -190,7 +199,7 @@
  					<swiper class="swiper" :current="tagsTabsIndex" @change="changeTagsSwiper">
  						<swiper-item v-for="(item,index) in tagsTabs" :key="index">
  							<tagsList :tabsIndex="tagsTabsIndex" @getTagsInfo="getTagsInfo"
- 								:selectedTags="selectedTags"></tagsList>
+ 								:selectedTags="selectedTags" :searchKey="tagSearchKey"></tagsList>
  						</swiper-item>
  					</swiper>
  				</z-paging-swiper>
@@ -260,19 +269,33 @@
  					</view>
  				</view>
  			</tn-modal>
-			<tn-modal v-model="showSearch" :radius="10" :custom="true" width="90%">
-				<view class="tn-flex tn-flex-direction-column">
-					<text class="tn-text-bold tn-text-xl tn-margin-bottom-sm">搜索标签</text>
-					<view
-						class="tn-bg-gray--light ch-radius tn-padding-left-sm tn-padding-right-sm tn-margin-bottom-sm">
-						<tn-input :maxLength="20" v-model="tagSearchKey" placeholder="搜索标签"
-							:clearable="false" />
-					</view>
-					<view class="tn-text-right">
-						<tn-button :plain="true" size="sm" shape="round" @tap="showSearch = false;searchTgas()">搜索</tn-button>
-					</view>
-				</view>
-			</tn-modal>
+ 			<!-- 搜索 -->
+ 			<tn-modal v-model="showSearch" :radius="10" :custom="true" width="90%">
+ 				<view class="tn-flex tn-flex-direction-column">
+ 					<text class="tn-text-bold tn-text-xl tn-margin-bottom-sm">搜索标签</text>
+ 					<view
+ 						class="tn-bg-gray--light ch-radius tn-padding-left-sm tn-padding-right-sm tn-margin-bottom-sm">
+ 						<tn-input :maxLength="20" v-model="tagSearchKey" placeholder="搜索标签" :clearable="false" />
+ 					</view>
+ 					<view class="tn-text-right">
+ 						<tn-button :plain="true" size="sm" shape="round" @tap="showSearch = false">搜索</tn-button>
+ 					</view>
+ 				</view>
+ 			</tn-modal>
+ 			<!-- 新增 -->
+ 			<tn-modal v-model="showNewTag" :radius="10" :custom="true" width="90%">
+ 				<view class="tn-flex tn-flex-direction-column">
+ 					<text class="tn-text-bold tn-text-xl tn-margin-bottom-sm">创建标签</text>
+ 					<view
+ 						class="tn-bg-gray--light ch-radius tn-padding-left-sm tn-padding-right-sm tn-margin-bottom-sm">
+ 						<tn-input :maxLength="10" v-model="newTag" placeholder="创建标签" :clearable="false" />
+ 					</view>
+ 					<view class="tn-text-right">
+ 						<tn-button :plain="true" size="sm" shape="round"
+ 							@tap="showNewTag = false;newTagCreate()">创建</tn-button>
+ 					</view>
+ 				</view>
+ 			</tn-modal>
  		</you-touchbox>
  	</view>
  </template>
@@ -508,6 +531,8 @@
  				collectId: null,
  				tagSearchKey: '',
  				showSearch: false,
+ 				showNewTag: false,
+ 				newTag: '',
 
  			}
  		},
@@ -673,9 +698,24 @@
  					}
  				}
  			},
-			searchTgas(){
-				uni.$emit('searchTag',this.tagSearchKey)
-			},
+
+ 			newTagCreate() {
+ 				this.$http.post('/tag/save', {
+ 					name: this.newTag
+ 				}).then(res => {
+ 					if (res.data.code === 200) {
+ 						uni.$emit('createTagcomplete', true)
+ 						this.tagSearchKey = ''
+ 						this.newTag = ''
+ 						uni.showToast({
+ 							icon: 'none',
+ 							title: '创建' + res.data.msg
+ 						})
+ 					}
+ 					this.showNewTag = false
+ 				})
+ 			},
+
  			back() {
  				// 通过判断当前页面的页面栈信息，是否有上一页进行返回，如果没有则跳转到首页
  				const pages = getCurrentPages()

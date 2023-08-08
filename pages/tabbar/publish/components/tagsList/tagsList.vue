@@ -1,8 +1,8 @@
 <template>
 	<z-paging ref="paging" @query="getTags" v-model="content" :auto="true">
 		<view class="tn-margin">
-			<view v-for="(item,index) in content" :key="index" class="tn-flex tn-flex-col-center">
-				<view  :class="isSelected(item)?'ch-color-primary':''" @tap.stop="pushTagsInfo(item)">
+			<view v-for="(item,index) in content" :key="index" class="tn-flex tn-flex-col-center tn-margin-sm tn-no-margin-top tn-no-margin-left">
+				<view :class="isSelected(item)?'ch-color-primary':''" @tap.stop="pushTagsInfo(item)">
 					<text class="tn-margin-right-xs">#</text>
 					<text>{{item.name}}</text>
 				</view>
@@ -34,25 +34,37 @@
 				firstLoad: false,
 				tagsInfo: [],
 				innerSelectedTags: [],
+				tagSearchKey: null
 			};
+		},
+		watch: {
+			searchKey: {
+				handler(e) {
+					this.tagSearchKey = e
+					setTimeout(() => {
+						this.$refs.paging.reload()
+					}, 400)
+
+				}
+			}
 		},
 		onLoad() {
 
 		},
 		created() {
-			uni.$on('searchTag', data => {
-				if(data!==null){
-					this.seacrchTags(data)
+			uni.$on('createTagcomplete',data=>{
+				if(data){
+					this.$refs.paging.reload()
 				}
-			}) //废弃
-			console.log('组件加载')
+			})
 		},
 		methods: {
 			getTags(page, num) {
-				this.$http.get('/tag/all', {
+				this.$http.get('tag/sql', {
 					params: {
 						limit: num,
-						page: page
+						page: page,
+						where: `name like '%${this.searchKey}%'`
 					}
 				}).then(res => {
 					console.log(res)
@@ -66,7 +78,7 @@
 			//是否已选中
 			isSelected(item) {
 				return this.selectedTags.some(tag => tag.id === item.id);
-			}
+			},
 		}
 	}
 </script>
