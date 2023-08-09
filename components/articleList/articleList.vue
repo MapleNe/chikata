@@ -2,10 +2,13 @@
 	<view>
 		<z-paging ref="paging" @query="getArticle" v-model="content" :auto="false" :auto-clean-list-when-reload="false"
 			:auto-scroll-to-top-when-reload="false">
-			<view v-if="tabsIndex===0 &&swiper" class="tn-margin">
-				<tn-swiper :list="swiperList" :height="300" name="img" backgroundColor="tn-bg-gray--light" :radius="10"
-					v-if="isBanner">
-				</tn-swiper>
+			<view v-show="tabsIndex===0">
+				<view class="tn-margin" v-show="swiper">
+					<tn-swiper :list="swiperList" :height="300" name="img" backgroundColor="tn-bg-gray--light"
+						:radius="10" v-show="isBanner" @click="clickSwiper">
+					</tn-swiper>
+				</view>
+
 			</view>
 			<view v-for="(item,index) in content" :key="index" @longpress="getMenuInfo(item)">
 				<view class="tn-margin">
@@ -166,7 +169,8 @@
 				],
 				loading: true,
 				showPop: false,
-				showMenu: false
+				showMenu: false,
+				noticeList: [],
 			};
 		},
 		onReady() {
@@ -176,6 +180,7 @@
 		},
 		created() {
 			this.getBanner()
+			// this.getPlacard()
 			uni.$on('deleteArticleOk', data => {
 				if (data) {
 					this.$refs.paging.reload()
@@ -231,6 +236,15 @@
 					}
 				})
 			},
+			getPlacard() {
+				this.$http.get('/placard/all', {
+
+				}).then(res => {
+					if (res.data.code === 200) {
+						this.noticeList = res.data.data.data
+					}
+				})
+			},
 			likeAction(index) {
 				this.$http.put('/ArticleLike/Record', {
 					article_id: this.content[index].id
@@ -269,6 +283,14 @@
 					path: '/pages/common/article/article',
 					query: {
 						id: this.content[index].id
+					},
+				})
+			},
+			clickSwiper(index) {
+				this.$Router.push({
+					path: '/pages/common/article/article',
+					query: {
+						id: this.swiperList[index].opt.article_id
 					},
 				})
 			},
