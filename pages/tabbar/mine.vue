@@ -44,7 +44,9 @@
 		</template>
 		<swiper class="swiper" :current="tabsIndex" @change="changeSwpier">
 			<swiper-item class="swiper-item">
-				<userArticle :tabsIndex="tabsIndex" :swiperIndex="tabsIndex" v-if="hasLogin"></userArticle>
+				<userArticle :tabsIndex="tabsIndex" :swiperIndex="tabsIndex" v-if="hasLogin" @getComments="getComments"
+					@getMenuInfo="getMenuInfo">
+				</userArticle>
 				<view class="tn-flex tn-flex-row-center tn-margin-top-xl" v-else>
 					<tn-button size="sm" :plain="true" shape="round" @tap="goLogin">去登录</tn-button>
 				</view>
@@ -94,6 +96,10 @@
 			@success="collectHead = $event.url; upload();showTabbar();showClipper = false"
 			@cancel="showTabbar();showClipper = false" :max-width="700" :max-height="700"
 			:is-limit-move="true"></l-clipper>
+		<tn-popup v-model="showComments" mode="bottom" length="60%" :borderRadius="20" :safeAreaInsetBottom="true">
+			<commentList :id="commentId"></commentList>
+		</tn-popup>
+		<articleMenu :showMenu.sync="showMenu" :data="menuData"></articleMenu>
 	</z-paging-swiper>
 
 </template>
@@ -105,12 +111,12 @@
 	} from 'vuex';
 	import userArticle from "@/components/userArticle/userArticle.vue";
 	import collectList from "@/components/collectList/collectList.vue";
-	import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+	import articleMenu from "@/components/aticleMenu/aticleMenu.vue";
 	export default {
-		mixins: [MescrollMixin], // 使用mixin
 		components: {
 			userArticle,
-			collectList
+			collectList,
+			articleMenu,
 		},
 		computed: {
 			...mapState(['hasLogin', 'userInfo']), //从Store获取全局变量
@@ -129,6 +135,11 @@
 				collectDesc: null,
 				showClipper: false,
 				imageUrl: null,
+				commentId: 0,
+				showComments: false,
+				showMenu: false,
+				menuData: null,
+				showMenu: false,
 			}
 		},
 		onLoad() {
@@ -222,6 +233,16 @@
 						this.collectHead = res.data.data
 					}
 				})
+			},
+			getComments(id) {
+				if (id) {
+					this.commentId = id
+					this.showComments = true
+				}
+			},
+			getMenuInfo(data) {
+				this.showMenu = true
+				this.menuData = data
 			},
 
 			// logout() {

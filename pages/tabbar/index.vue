@@ -25,13 +25,14 @@
 		<swiper class="swiper" :current="tabsIndex" @change="changeSwpier">
 			<swiper-item class="swiper-item" v-for="(item, index) in tabs" :key="index">
 				<articleList :tabsIndex="index" :swiperIndex="tabsIndex" :content="content" :swiper="true"
-					@getComments="getComments">
+					@getComments="getComments" @getMenuInfo="getMenuInfo">
 				</articleList>
 			</swiper-item>
 		</swiper>
 		<tn-popup v-model="showComments" mode="bottom" length="60%" :borderRadius="20" :safeAreaInsetBottom="true">
 			<commentList :id="commentId"></commentList>
 		</tn-popup>
+		<articleMenu :showMenu.sync="showMenu" :data="menuData"></articleMenu>
 	</z-paging-swiper>
 </template>
 
@@ -40,14 +41,15 @@
 		mapState,
 		mapMutations
 	} from 'vuex';
+
 	import articleList from "@/components/articleList/articleList.vue";
 	import commentList from '@/components/commentList/commentList.vue';
-	import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+	import articleMenu from '@/components/aticleMenu/aticleMenu.vue';
 	export default {
-		mixins: [MescrollMixin], // 使用mixin
 		components: {
 			articleList,
 			commentList,
+			articleMenu,
 		},
 		data() {
 			return {
@@ -57,10 +59,11 @@
 				content: [],
 				showComments: false,
 				commentId: null,
+				showMenu: false,
+				menuData: null,
 			}
 		},
-		onLoad() {
-		},
+		onLoad() {},
 		created() {},
 		computed: {
 			...mapState(['userInfo', 'hasLogin']),
@@ -75,6 +78,10 @@
 					this.commentId = id
 					this.showComments = true
 				}
+			},
+			getMenuInfo(data) {
+				this.showMenu = true
+				this.menuData = data
 			},
 			changeTab(index) {
 				this.tabsIndex = index

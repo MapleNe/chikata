@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<z-paging ref="paging" @query="getArticle" v-model="content" :auto="false">
-			<view v-for="(item,index) in content" :key="index">
+			<view v-for="(item,index) in content" :key="index" @longpress="getMenuInfo(item)">
 				<view class="tn-margin">
 					<ls-skeleton :skeleton="skeleton" :loading="loading">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
@@ -91,7 +91,7 @@
 										<text class="tn-text-xl tn-icon-fire"></text>
 										<text>{{item.views}}</text>
 									</view>
-									<view class="tn-flex tn-flex-col-center">
+									<view class="tn-flex tn-flex-col-center" @tap.stop="showComments(index)">
 										<text class="tn-text-xl tn-icon-message"></text>
 										<text>{{item.expand.comments.count}}</text>
 									</view>
@@ -110,6 +110,7 @@
 				<view class="tn-bg-gray--light tn-padding-xs"></view>
 				<!-- 间隔结束 -->
 			</view>
+			
 		</z-paging>
 	</view>
 </template>
@@ -147,6 +148,11 @@
 			};
 		},
 		created() {
+			uni.$on('deleteArticleOk',data=>{
+				if(data){
+					this.$refs.paging.reload()
+				}
+			})
 		},
 		watch: {
 			swiperIndex: {
@@ -183,10 +189,6 @@
 			likeAction(index) {
 				this.$http.put('/ArticleLike/Record', {
 					article_id: this.content[index].id
-				}, {
-					header: {
-						Authorization: uni.getStorageSync('token')
-					}
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.content[index].expand.like.is_like = !this.content[index].expand.like.is_like
@@ -210,6 +212,12 @@
 				}).catch(err => {
 					console.log('位于articleList的错误请联系管理')
 				})
+			},
+			showComments(index) {
+				this.$emit('getComments', this.content[index].id)
+			},
+			getMenuInfo(data){
+				this.$emit('getMenuInfo',data)
 			},
 			goAticle(index) {
 				let data = this.content

@@ -7,7 +7,7 @@
 					v-if="isBanner">
 				</tn-swiper>
 			</view>
-			<view v-for="(item,index) in content" :key="index">
+			<view v-for="(item,index) in content" :key="index" @longpress="getMenuInfo(item)">
 				<view class="tn-margin">
 					<ls-skeleton :skeleton="skeleton" :loading="loading">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
@@ -125,16 +125,12 @@
 				<!-- 间隔结束 -->
 			</view>
 		</z-paging>
-
+		
 	</view>
 </template>
 
 <script>
-	import chunLeiPopups from "@/components/chunLei-popups/chunLei-popups.vue";
 	export default {
-		components: {
-			chunLeiPopups
-		},
 		props: {
 			// content: {
 			// 	type: Array,
@@ -167,7 +163,8 @@
 					'circle-sm+line-sm'
 				],
 				loading: true,
-				showPop: false
+				showPop: false,
+				showMenu: false
 			};
 		},
 		onReady() {
@@ -177,7 +174,11 @@
 		},
 		created() {
 			this.getBanner()
-			let pages = getCurrentPages()
+			uni.$on('deleteArticleOk',data=>{
+				if(data){
+					this.$refs.paging.reload()
+				}
+			})
 		},
 		watch: {
 			swiperIndex: {
@@ -195,11 +196,11 @@
 		},
 		methods: {
 			async getArticle(page, num) {
-				await this.$http.get(this.tabsIndex===2?'/article/focusFind':'/article/all', {
+				await this.$http.get(this.tabsIndex === 2 ? '/article/focusFind' : '/article/all', {
 					params: {
 						limit: num,
 						page: page,
-						order: this.tabsIndex === 1 ? 'views desc' :''
+						order: this.tabsIndex === 1 ? 'views desc' : ''
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
@@ -260,6 +261,9 @@
 			},
 			showComments(index) {
 				this.$emit('getComments', this.content[index].id)
+			},
+			getMenuInfo(data){
+				this.$emit('getMenuInfo',data)
 			},
 			goAticle(index) {
 				this.$Router.push({
