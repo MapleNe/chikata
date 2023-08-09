@@ -1,7 +1,8 @@
 <template>
 	<view>
 		<!-- 文章详情 开始 -->
-		<z-paging ref="paging" @query="getComment" v-model="comments" :safe-area-inset-bottom="true" :auto-scroll-to-top-when-reload="false">
+		<z-paging ref="paging" @query="getComment" v-model="comments" :safe-area-inset-bottom="true"
+			:auto-scroll-to-top-when-reload="false">
 			<template #top>
 				<tn-nav-bar :zIndex="2">
 					详情
@@ -27,7 +28,7 @@
 						<view>
 							<tn-button size="sm" :backgroundColor="article.expand.focus?'tn-bg-gray--light':'#29B7CB'"
 								:fontColor="article.expand.focus?'tn-color-grey':'tn-color-white'" shape="round"
-								@tap="followUser()">
+								:blockRepeatClick="true" @tap="followUser()">
 								<text>{{article.expand.focus?'已关注':'关注'}}</text>
 							</tn-button>
 						</view>
@@ -37,7 +38,8 @@
 					</view>
 					<view class="tn-flex tn-flex-col-center tn-margin-top">
 						<view v-for="(category,index) in article.expand.sort" :key="index"
-							class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius" @tap.stop="goCategory(category)">
+							class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius"
+							@tap.stop="goCategory(category)">
 							<tn-avatar size="sm" shape="square" :src="category.opt.head_img"></tn-avatar>
 							<text class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
 						</view>
@@ -61,7 +63,8 @@
 									<view class="tn-flex tn-flex-col-center">
 										<text class="tn-text-bold">{{item.nickname}}</text>
 										<text v-if="article.users_id === item.users_id"
-											class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary" style="padding:5rpx 8rpx">UP</text>
+											class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
+											style="padding:5rpx 8rpx">UP</text>
 									</view>
 									<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
 								</view>
@@ -84,7 +87,8 @@
 													<view class="tn-flex tn-flex-col-center">
 														<text class="tn-text-bold">{{subComment.nickname}}</text>
 														<text v-if="article.users_id === subComment.users_id"
-															class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary" style="padding:5rpx 8rpx">UP</text>
+															class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
+															style="padding:5rpx 8rpx">UP</text>
 													</view>
 													<!-- 写一段注释 这个是父评论的id不等于子评论的pid里的id才会显示-->
 													<view v-if="item.id !== subComment.expand.pid.id"
@@ -154,31 +158,32 @@
 					<text class="tn-text-xl tn-icon-emoji-good" @tap.stop="showEmoji=!showEmoji;getEmojiList()"></text>
 				</view>
 				<view class="">
-					<tn-button shape="round" :plain="true" size="sm" @click="commentCheck">发送~</tn-button>
+					<tn-button shape="round" :plain="true" size="sm" :blockRepeatClick="true" @click="commentCheck">发送~</tn-button>
 				</view>
 			</view>
 			<view v-show="showEmoji">
 				<v-tabs v-model="emojiIndex" :tabs="emojiTabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
 					activeColor="#29B7CB" :lineScale="0.2"></v-tabs>
-					<scroll-view scroll-y style="height: 20vh;" class="tn-margin-top-xs">
-						<tn-grid :col="8">
-							<block v-for="(item, index) in emojiList" :key="index">
-								<!-- H5 -->
-								<!-- #ifndef MP-WEIXIN -->
-								<tn-grid-item>
-									<image :src="item" mode="aspectFill" style="height: 50rpx;width: 50rpx;"  @tap.stop="insertEmoji(index)"></image>
-								</tn-grid-item>
-								<!-- #endif-->
-						
-								<!-- 微信小程序 -->
-								<!-- #ifdef MP-WEIXIN -->
-								<tn-grid-item :style="{width: gridItemWidth}">
-									<view style="padding: 30rpx;">{{ item }}</view>
-								</tn-grid-item>
-								<!-- #endif-->
-							</block>
-						</tn-grid>
-					</scroll-view>
+				<scroll-view scroll-y style="height: 20vh;" class="tn-margin-top-xs">
+					<tn-grid :col="8">
+						<block v-for="(item, index) in emojiList" :key="index">
+							<!-- H5 -->
+							<!-- #ifndef MP-WEIXIN -->
+							<tn-grid-item>
+								<image :src="item" mode="aspectFill" style="height: 50rpx;width: 50rpx;"
+									@tap.stop="insertEmoji(index)"></image>
+							</tn-grid-item>
+							<!-- #endif-->
+
+							<!-- 微信小程序 -->
+							<!-- #ifdef MP-WEIXIN -->
+							<tn-grid-item :style="{width: gridItemWidth}">
+								<view style="padding: 30rpx;">{{ item }}</view>
+							</tn-grid-item>
+							<!-- #endif-->
+						</block>
+					</tn-grid>
+				</scroll-view>
 			</view>
 
 		</tn-popup>
@@ -293,20 +298,20 @@
 						name: this.emojiTabs[this.emojiIndex]
 					}
 				}).then(res => {
-					if(res.data.code===200){
+					if (res.data.code === 200) {
 						this.emojiList = res.data.data
 					}
 				})
 			},
-			insertEmoji(index){
+			insertEmoji(index) {
 				console.log(index)
-				this.commentText +=`[${index}]`
+				this.commentText += `[${index}]`
 			},
 			renderEmoji(content) {
-			  return content.replace(/\[([^\]]+)\]/g, (_, name) => {
-			    const url = this.emojiList[name]
-			    return `<img src="${url}" class="emoji">` 
-			  })
+				return content.replace(/\[([^\]]+)\]/g, (_, name) => {
+					const url = this.emojiList[name]
+					return `<img src="${url}" class="emoji">`
+				})
 			},
 			followUser() {
 				this.$http.put('/Focus/Record', {
@@ -356,10 +361,10 @@
 				}
 			},
 			commentSend() {
-				if(this.commentText===''){
+				if (this.commentText === '') {
 					uni.showToast({
-						icon:'none',
-						title:'说点什么吧~'
+						icon: 'none',
+						title: '说点什么吧~'
 					})
 					return
 				}
@@ -484,10 +489,12 @@
 	page {
 		height: auto;
 	}
+
 	.emoji {
-	  width: 40rpx !important;
-	  height: 40rpx !important;
+		width: 40rpx !important;
+		height: 40rpx !important;
 	}
+
 	.ch-radius {
 		border-radius: 10rpx;
 	}

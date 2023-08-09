@@ -238,8 +238,8 @@
 						let token = data.data['login-token']
 						this.setRefreshToken(data.data.refreshToken)
 						this.setToken(token)
-						uni.setStorageSync('loginExp',data.data.loginExp)
-						uni.setStorageSync('refreshExp',data.data.refreshExp)
+						uni.setStorageSync('loginExp', data.data.loginExp)
+						uni.setStorageSync('refreshExp', data.data.refreshExp)
 						// uni.setStorageSync('userInfo', data.data.user)
 						this.login(data.data.user)
 						uni.$emit('loginCompete', true)
@@ -331,6 +331,13 @@
 				this.tips = text
 			},
 			getCode() {
+				if (this.account === null) {
+					uni.showToast({
+						icon: 'none',
+						title: '请输入账号'
+					})
+					return;
+				}
 				if (this.$refs.verificationCode.canGetCode) {
 					//请求验证码
 					if (!this.loginAction) {
