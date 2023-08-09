@@ -27,7 +27,7 @@
  					<view class=" tn-flex tn-flex-row-between tn-bg-gray--light tn-radius">
  						<view v-for="(item,index) in title" :key="item.id" class="tn-text-xl tn-padding"
  							@tap="editSubAction(item)">
- 							<text :class="{'ch-color-primary': statusObj.header === item.id}">{{item.val}}</text>
+ 							<text :class="{'ch-color-primary': statusObj.header === item.val}">{{item.name}}</text>
  						</view>
  					</view>
  				</view>
@@ -339,30 +339,30 @@
 
  				],
  				title: [{
- 						id: 2,
+ 						name: 'H2',
  						format: 'header',
- 						val: 'H2'
+ 						val: 2
  					},
  					{
- 						id: 3,
+ 						name: 'H3',
  						format: 'header',
- 						val: 'H3'
+ 						val: 3
  					},
  					{
- 						id: 4,
+ 						name: 'H4',
  						format: 'header',
- 						val: 'H4'
+ 						val: 4
  					},
  					{
- 						id: 5,
+ 						name: 'H5',
  						format: 'header',
 
- 						val: 'H5'
+ 						val: 5
  					},
  					{
- 						id: 6,
+ 						name: 'H6',
  						format: 'header',
- 						val: 'H6'
+ 						val: 6
  					}
  				],
  				color: [{
@@ -561,7 +561,6 @@
  			},
  			statuschange(e) {
  				this.statusObj = e.detail
- 				console.log(this.statusObj)
  			},
  			fontStyleChange(index) {
  				this.statusObj.bold = this.fontStyle[index].active
@@ -627,7 +626,7 @@
  				const selectedTagIds = this.selectedTags.map(tag => tag.id).join(",");
  				this.$http.post('/article/save', {
  					title: this.articleTitle === null ? res.text.substring(0, 10) : this
- 						.articleTitle, //标题为空时从简介获取
+ 					.articleTitle, //标题为空时从简介获取
  					content: res.html, //帖子内容 如果要更新文章的话不能这么写得定义一个变量来存储
  					sort_id: this.categoryId, //分类ID 
  					collections_id: this.selectedCollect ? this.selectedCollect : '', //合集id
@@ -658,7 +657,12 @@
  				}
  			},
  			editSubAction(item) {
-
+ 				console.log(this.statusObj)
+ 				if (item.format === 'title') {
+ 					if (this.statusObj.header !== '') {
+ 						this.edit.format(item.format, ''); // 设置样式
+ 					}
+ 				}
  				this.edit.format(item.format, item.val); // 设置样式
  			},
  			addImage() {
