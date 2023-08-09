@@ -1,7 +1,6 @@
 <template>
 	<view>
 		<!-- 头部组件开始 -->
-		
 		<view class="image-wrapper">
 			<image :src="categoryInfo.opt.head_img" mode="aspectFill" style="width: 100%;height: 300rpx;"></image>
 		</view>
@@ -16,7 +15,7 @@
 		</view>
 
 		<z-paging ref="paging" @query="getArticle" v-model="content" use-page-scroll>
-			<view v-for="(item,index) in content" :key="index">
+			<view v-for="(item,index) in content" :key="index" @longpress="getMenuInfo(item)">
 				<view class="tn-margin">
 					<ls-skeleton :skeleton="skeleton" :loading="loading">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
@@ -97,11 +96,14 @@
 							</view>
 							<!-- 点赞控件 -->
 							<view class="tn-flex tn-flex-col-center tn-margin-top-xs tn-flex-row-between">
-								<view v-for="(category,index) in item.expand.sort" :key="index"
-									class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius">
-									<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
-									<text
-										class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
+								<view class="tn-flex tn-flex-row-left">
+									<view v-for="(category,index) in item.expand.sort" :key="index"
+										class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius"
+										@tap.stop="goCategory(category)">
+										<tn-avatar size="sm" :src="category.opt.head_img" shape="square"></tn-avatar>
+										<text
+											class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
+									</view>
 								</view>
 								<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-basic-sm">
 									<view class="tn-flex tn-flex-col-center">
@@ -150,7 +152,7 @@
 				type: Number,
 				default: null
 			},
-			
+
 		},
 		name: "categoryArticle",
 		data() {
@@ -249,8 +251,11 @@
 					console.log('位于articleList的错误请联系管理')
 				})
 			},
-			showComments(index){
-				this.$emit('getComments',this.content[index].id)
+			showComments(index) {
+				this.$emit('getComments', this.content[index].id)
+			},
+			getMenuInfo(data) {
+				this.$emit('getMenuInfo', data)
 			},
 			goAticle(index) {
 				this.$Router.push({

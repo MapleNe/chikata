@@ -38,7 +38,7 @@
 					<view class="tn-flex tn-flex-col-center tn-margin-top">
 						<view v-for="(category,index) in article.expand.sort" :key="index"
 							class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius" @tap.stop="goCategory(category)">
-							<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
+							<tn-avatar size="sm" shape="square" :src="category.opt.head_img"></tn-avatar>
 							<text class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
 						</view>
 					</view>

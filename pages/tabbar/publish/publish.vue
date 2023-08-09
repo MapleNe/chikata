@@ -120,8 +120,7 @@
  						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-primary"></text>
  						<text>话题标签</text>
  					</view>
- 					<scroll-view scroll-x class="tn-flex tn-flex-nowrap tn-text-ellipsis"
- 						style="overflow: hidden;">
+ 					<scroll-view scroll-x class="tn-flex tn-flex-nowrap tn-text-ellipsis" style="overflow: hidden;">
  						<view class="tn-flex tn-flex-row tn-flex-col-center tn-flex-nowrap">
  							<text v-for="(item, index) in selectedTags" :key="index"
  								class="tn-bg-gray--light ch-radius tn-margin-left-xs tn-color-grey tn-text-sm tn-padding-xs"
@@ -608,6 +607,23 @@
  			// 	console.log(data)
  			// },
  			addArtiCle(res) {
+ 				switch (true) {
+ 					case (this.categoryId === null):
+ 						uni.showToast({
+ 							icon: 'none',
+ 							title: '圈子板块未选择'
+ 						})
+ 						return
+ 					case (res.text.length < 10):
+ 						uni.showToast({
+ 							icon: 'none',
+ 							title: '再多说点什么吧'
+ 						})
+ 						return
+ 					default:
+ 						// 其他情况下的代码
+ 						break;
+ 				}
  				const selectedTagIds = this.selectedTags.map(tag => tag.id).join(",");
  				this.$http.post('/article/save', {
  					title: this.articleTitle === null ? res.text.substring(0, 10) : this

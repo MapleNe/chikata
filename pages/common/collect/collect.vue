@@ -8,7 +8,7 @@
 		<view class="image-wrapper">
 			<image :src="collectInfo.image" mode="aspectFill" style="width: 100%;height: 400rpx;"></image>
 		</view>
-		<view v-for="(item,index) in content" :key="index">
+		<view v-for="(item,index) in content" :key="index" @longpress="getMenuInfo(item)">
 			<view class="tn-margin">
 				<ls-skeleton :skeleton="skeleton" :loading="loading">
 					<view class="tn-flex tn-flex-col-center tn-flex-row-between">
@@ -25,7 +25,7 @@
 						</view>
 
 					</view>
-					<view @tap.stop="goAticle(index)">
+					<view @tap="goAticle(index)">
 						<view class="tn-padding tn-no-padding-left">
 							<rich-text :nodes="item.description"></rich-text>
 						</view>
@@ -97,7 +97,7 @@
 									<text class="tn-text-xl tn-icon-fire"></text>
 									<text>{{item.views}}</text>
 								</view>
-								<view class="tn-flex tn-flex-col-center">
+								<view class="tn-flex tn-flex-col-center" @tap.stop="showComments(index)">
 									<text class="tn-text-xl tn-icon-message"></text>
 									<text>{{item.expand.comments.count}}</text>
 								</view>
@@ -112,11 +112,16 @@
 					</view>
 				</ls-skeleton>
 			</view>
+
 			<!-- 间隔开始 -->
 			<view class="tn-bg-gray--light tn-padding-xs"></view>
 			<!-- 间隔结束 -->
 		</view>
+		<tn-popup v-model="showCommentsBox" mode="bottom" length="60%" :borderRadius="20" :safeAreaInsetBottom="true">
+			<commentList :id="commentId"></commentList>
+		</tn-popup>
 	</z-paging>
+
 	</view>
 </template>
 
@@ -135,7 +140,11 @@
 					'circle-sm+line-sm'
 				],
 				id: null,
-				loading: false
+				loading: false,
+				showCommentsBox: false,
+				commentId: null,
+				showMenu: false,
+				menuData: null,
 			}
 		},
 		onLoad(params) {
@@ -163,8 +172,62 @@
 						console.log(res)
 					}
 
+				}).catch(err => {
+					this.$refs.paging.complete(false)
+					console.log(err)
 				})
 			},
+			likeAction(index) {
+				this.$http.put('/ArticleLike/Record', {
+					article_id: this.content[index].id
+				}).then(res => {
+					if (res.data.code === 200) {
+						this.content[index].expand.like.is_like = !this.content[index].expand.like.is_like
+						if (this.content[index].expand.like.is_like) {
+							this.content[index].expand.like.likes_count++
+						} else {
+							this.content[index].expand.like.likes_count--
+						}
+						uni.showToast({
+							icon: 'none',
+							title: res.data.msg
+						})
+					} else {
+						if (res.data.code === 403) {
+							uni.showToast({
+								icon: 'none',
+								title: '令牌失效请重新登录'
+							})
+						}
+					}
+				}).catch(err => {
+
+				})
+			},
+			showComments(index) {
+				this.commentId = this.content[index].id
+				this.showCommentsBox = true
+			},
+			getMenuInfo(data) {
+				this.$emit('getMenuInfo', data)
+			},
+			goAticle(index) {
+				this.$Router.push({
+					path: '/pages/common/article/article',
+					query: {
+						id: this.content[index].id
+					},
+				})
+			},
+			goCategory(category) {
+				this.$Router.push({
+					path: '/pages/common/category/category',
+					query: {
+						id: category.id
+					}
+				})
+			},
+
 			getDateDiff(data) {
 				// 传进来的data必须是日期格式，不能是时间戳
 				//var str = data;

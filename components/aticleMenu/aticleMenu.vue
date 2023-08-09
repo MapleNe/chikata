@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<tn-popup mode="bottom" length="40%" :borderRadius="20" v-model="isShow" @close="closePopup">
+		<tn-popup mode="bottom" length="30%" :borderRadius="20" v-model="isShow" @close="closePopup">
 			<view class="tn-margin">
 				<text>反馈</text>
 				<view class="tn-flex tn-flex-wrap tn-flex-row-between">

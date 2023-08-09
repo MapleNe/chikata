@@ -9,14 +9,28 @@
 						style="height: 500rpx;width: 100%;" mode="aspectFill">
 					</image>
 				</view>
-				<view class="tn-margin tn-flex" style="position: absolute; right: 0;top: 380rpx;" v-if="hasLogin">
-					<view class="tn-margin-right-sm">
-						<tn-button :plain="true" size="sm" shape="round" @tap="goProfile">编辑</tn-button>
+				<view class="tn-padding tn-flex tn-flex-col-center tn-flex-row-between" style="position: absolute;top: 380rpx;width: 100%;"
+					v-if="hasLogin">
+					<view class="tn-flex tn-flex-col-center tn-color-white tn-flex-row-around tn-flex-basic-sm">
+						<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
+							<text class="tn-text-bold tn-text-lg">{{userInfo.expand.focusCount}}</text>
+							<text>关注</text>
+						</view>
+						<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
+							<text class="tn-text-bold tn-text-lg">{{userInfo.expand.likeCount}}</text>
+							<text>喜欢</text>
+						</view>
+						<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
+							<text class="tn-text-bold tn-text-lg">{{userInfo.expand.fansCount}}</text>
+							<text>粉丝</text>
+						</view>
 					</view>
-					<view>
+					<view class="tn-flex">
+						<view class="tn-margin-right-sm">
+							<tn-button :plain="true" size="sm" shape="round" @tap="goProfile">编辑</tn-button>
+						</view>
 						<tn-button :plain="true" size="sm" shape="round" @tap="logout">退出</tn-button>
 					</view>
-
 				</view>
 				<view class="tn-padding" style="position: absolute;top: 100rpx;width: 100%;">
 					<view class="tn-flex tn-flex-col-center">

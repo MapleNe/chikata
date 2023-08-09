@@ -1,19 +1,23 @@
 <template>
 	<view>
 		<tn-nav-bar :backgroundColor="background"></tn-nav-bar>
-		<categoryArticle :id="id" ref="paging" @getComments="getComments"></categoryArticle>
+		<categoryArticle :id="id" ref="paging" @getComments="getComments" @getMenuInfo="getMenuInfo"></categoryArticle>
 		<tn-popup v-model="showComments" mode="bottom" length="60%" :borderRadius="20" :safeAreaInsetBottom="true">
 			<commentList :id="commentId"></commentList>
 		</tn-popup>
+		<articleMenu :showMenu.sync="showMenu" :data="menuData"></articleMenu>
+
 	</view>
 </template>
 
 <script>
 	import ZPMixin from '@/uni_modules/z-paging/components/z-paging/js/z-paging-mixin';
 	import categoryArticle from '../../../components/categoryArticle/categoryArticle.vue';
+	import articleMenu from '@/components/aticleMenu/aticleMenu.vue';
 	export default {
 		components: {
-			categoryArticle
+			categoryArticle,
+			articleMenu,
 		},
 		mixins: [ZPMixin],
 		data() {
@@ -28,7 +32,9 @@
 					}
 				},
 				maxScroll: 200,
-				background: 'rgba(255,255,255,0)'
+				background: 'rgba(255,255,255,0)',
+				showMenu: false,
+				menuData: null,
 			}
 		},
 		onPageScroll(e) {
@@ -65,6 +71,10 @@
 					this.categoryInfo = res.data.data
 					console.log(res)
 				})
+			},
+			getMenuInfo(data) {
+				this.showMenu = true
+				this.menuData = data
 			},
 			changeTab(index) {
 				this.tabsIndex = index
