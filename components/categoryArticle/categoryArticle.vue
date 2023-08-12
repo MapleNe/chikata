@@ -20,7 +20,7 @@
 					<ls-skeleton :skeleton="skeleton" :loading="loading">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 							<view class="tn-flex tn-flex-col-center">
-								<tn-avatar :src="item.expand.author.head_img"></tn-avatar>
+								<tn-avatar :src="item.expand.author.head_img" @tap="goUserProfile(index)"></tn-avatar>
 								<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 									<view class="tn-flex tn-flex-col-center">
 										<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
@@ -269,7 +269,14 @@
 					},
 				})
 			},
-
+			goUserProfile(index){
+				this.$Router.push({
+					path:'/pages/common/userProfile/userProfile',
+					query:{
+						id:this.content[index].users_id
+					}
+				})
+			},
 			followUser(index) {
 				this.$http.put('/Focus/Record', {
 					userId: this.content[index].users_id

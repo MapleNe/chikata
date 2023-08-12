@@ -15,7 +15,7 @@
 					<ls-skeleton :skeleton="skeleton" :loading="loading">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 							<view class="tn-flex tn-flex-col-center">
-								<tn-avatar :src="item.expand.author.head_img"></tn-avatar>
+								<tn-avatar :src="item.expand.author.head_img" @tap="goUserProfile(index)"></tn-avatar>
 								<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 									<view class="tn-flex tn-flex-col-center">
 										<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
@@ -170,7 +170,7 @@
 				loading: true,
 				showPop: false,
 				showMenu: false,
-				noticeList: [],
+				
 			};
 		},
 		onReady() {
@@ -236,15 +236,6 @@
 					}
 				})
 			},
-			getPlacard() {
-				this.$http.get('/placard/all', {
-
-				}).then(res => {
-					if (res.data.code === 200) {
-						this.noticeList = res.data.data.data
-					}
-				})
-			},
 			likeAction(index) {
 				this.$http.put('/ArticleLike/Record', {
 					article_id: this.content[index].id
@@ -284,6 +275,14 @@
 					query: {
 						id: this.content[index].id
 					},
+				})
+			},
+			goUserProfile(index){
+				this.$Router.push({
+					path:'/pages/common/userProfile/userProfile',
+					query:{
+						id:this.content[index].users_id
+					}
 				})
 			},
 			clickSwiper(index) {

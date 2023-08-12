@@ -101,6 +101,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/common/userProfile/userProfile",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"tabBar": {
 		"backgroundColor": "#ffffff",
