@@ -45,9 +45,11 @@
 				</view>
 			</view>
 		</view>
+		<view style="z-index: 100;position: sticky;top :0;">
 		<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB" :zIndex="2"
 			activeColor="#29B7CB" :lineScale="0.2" style="position: relative;bottom: 20rpx;border-radius: 20rpx;">
 		</v-tabs>
+		</view>
 		<view v-for="(item,index) in content" :key="index" @longpress="getMenuInfo(item)">
 			<view class="tn-margin">
 				<ls-skeleton :skeleton="skeleton" :loading="loading">

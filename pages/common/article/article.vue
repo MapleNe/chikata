@@ -351,23 +351,18 @@
 				console.log(item.id)
 			},
 			commentCheck() {
-				if (this.commentText === null) {
+				if (this.commentText === '') {
 					uni.showToast({
 						icon: 'none',
 						title: '不说点什么？'
 					})
+					return
 				} else {
 					this.commentSend()
 				}
 			},
 			commentSend() {
-				if (this.commentText === '') {
-					uni.showToast({
-						icon: 'none',
-						title: '说点什么吧~'
-					})
-					return
-				}
+				
 				this.$http.post('/comments/add', {
 					article_id: this.article.id,
 					content: this.renderEmoji(this.commentText),
@@ -387,6 +382,7 @@
 					}, 800)
 
 				}).catch(err => {
+					console.log(err)
 					uni.showToast({
 						icon: "none",
 						title: err.data.msg

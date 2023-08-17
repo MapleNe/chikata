@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<z-paging ref="paging" v-model="messages">
+		<z-paging ref="paging" v-model="messages" @query="getChatter">
 			<template #top>
 				<tn-nav-bar :isBack="false">消息</tn-nav-bar>
 				<!-- 页面内容 -->
@@ -8,35 +8,46 @@
 				</view>
 				<view class="tn-margin tn-flex tn-flex-row-between">
 					<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
-						<view class="tn-bg-red tn-shadow-blur tn-round tn-padding-sm">
+						<view class="tn-bg-purplered--disabled tn-shadow-blur tn-radius tn-padding-sm"
+							style="position:relative">
 							<text class="tn-icon-like tn-text-xxl tn-color-white">
 							</text>
+							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
+								v-show="notice.commnet_count>0"></tn-badge>
 						</view>
 						<text class="tn-margin-top-sm">回复我的</text>
 					</view>
+
 					<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
-						<view class="tn-bg-red tn-shadow-blur tn-round tn-padding-sm">
+						<view class="tn-bg-purplered--disabled tn-shadow-blur tn-radius tn-padding-sm">
 							<text class="tn-icon-like tn-text-xxl tn-color-white">
 							</text>
+							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
+								v-show="notice.article_like_count"></tn-badge>
 						</view>
 						<text class="tn-margin-top-sm">收到的赞</text>
 					</view>
 					<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
-						<view class="tn-bg-red tn-shadow-blur tn-round tn-padding-sm">
+						<view class="tn-bg-purplered--disabled tn-shadow-blur tn-radius tn-padding-sm">
 							<text class="tn-icon-like tn-text-xxl tn-color-white">
 							</text>
+							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
+								v-show="notice.placard_count"></tn-badge>
 						</view>
 						<text class="tn-margin-top-sm">
 							系统通知
 						</text>
+
 					</view>
 					<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
-						<view class="tn-bg-red tn-shadow-blur tn-round tn-padding-sm">
+						<view class="tn-bg-purplered--disabled tn-shadow-blur tn-radius tn-padding-sm">
 							<text class="tn-icon-like tn-text-xxl tn-color-white">
 							</text>
+							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
+								v-show="notice.focus_count"></tn-badge>
 						</view>
 						<text class="tn-margin-top-sm">
-							@我的
+							关注我的
 						</text>
 					</view>
 				</view>
@@ -66,10 +77,26 @@
 		data() {
 			return {
 				messages: [],
+				notice: {},
 			}
 		},
+		onLoad() {
+			this.getNoticeNum()
+		},
 		methods: {
-			
+			getChatter(page, num) {
+				this.$http.get('/chat/chatter').then(res => {
+					console.log(res)
+				})
+			},
+			getNoticeNum() {
+				this.$http.get('/push/count').then(res => {
+					if (res.data.code === 200) {
+						this.notice = res.data.data
+					}
+					console.log(res, '消息红点')
+				})
+			}
 		}
 	}
 </script>

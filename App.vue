@@ -25,6 +25,7 @@
 		onShow: function() {
 			const nowtime = Math.round(Date.now()/1000).toString();
 			console.log('App Show',nowtime)
+			console.log(uni.getStorageSync('token'))
 		},
 		onHide: function() {
 			console.log('App Hide')
