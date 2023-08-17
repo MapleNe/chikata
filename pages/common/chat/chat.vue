@@ -71,7 +71,14 @@
 		},
 		onLoad(params) {
 			this.chatInfo = params.query.params
+			const callback2 = res => {
+				const data = JSON.parse(res.data)
+				this.$refs.paging.addChatRecordData(data)
+				console.log(data)
+			}
+			uni.onSocketMessage(callback2)
 		},
+
 		computed: {
 			...mapState(['userInfo'])
 		},

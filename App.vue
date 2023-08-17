@@ -86,7 +86,6 @@
 					if (data.type !== 'ping' || data.type !== 'bind') {
 						this.$store.commit('updateNotice', data.type)
 					}
-					console.log(res.data)
 				});
 			},
 			sendWebSocketMessage(message) {
@@ -96,7 +95,7 @@
 						console.log('聊天WS绑定OK');
 					},
 					fail: (err) => {
-						console.error('聊天绑定失败:', err);
+						console.error('绑定失败:', err);
 					}
 				});
 			}
