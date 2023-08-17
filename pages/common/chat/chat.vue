@@ -73,8 +73,9 @@
 			this.chatInfo = params.query.params
 			const callback2 = res => {
 				const data = JSON.parse(res.data)
-				this.$refs.paging.addChatRecordData(data)
-				console.log(data)
+				if (data.sendId === this.chatInfo.users_id) {
+					this.$refs.paging.addChatRecordData(data)
+				}
 			}
 			uni.onSocketMessage(callback2)
 		},
