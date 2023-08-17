@@ -70,7 +70,7 @@
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 							<view class="tn-flex tn-flex-direction-column">
 								<text class="tn-text-lg">{{item.nickname}}</text>
-								<view class="tn-text-ellipsis" style="width: 500rpx; height: 30rpx;">
+								<view class="tn-text-ellipsis" style="width: 500rpx; height: 38rpx;">
 									<text class="tn-color-grey tn-text-sm">{{item.last_message}}</text>
 								</view>
 							</view>

@@ -41,8 +41,8 @@
 			<view class="tn-bg-white tn-padding-sm tn-border-solid tn-border-solid-top">
 				<view class=" tn-flex tn-flex-col-center tn-flex-row-between">
 					<view class="tn-bg-gray--light tn-flex-basic-lg ch-radius tn-padding-xs tn-no-padding-bottom">
-						<tn-input type="textarea" v-model="chatText" :height="40" :autoHeight='true' :clearable="false"
-							@input="showSendBtn" />
+						<tn-input type="textarea" v-model="chatText" :height="40" :autoHeight='true'
+							:clearable="false" />
 					</view>
 					<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-left tn-flex-1">
 						<text class="tn-icon-emoji-good tn-text-xxl"></text>
@@ -71,6 +71,7 @@
 		},
 		onLoad(params) {
 			this.chatInfo = params.query.params
+			// 监听websocket
 			const callback2 = res => {
 				const data = JSON.parse(res.data)
 				if (data.sendId === this.chatInfo.users_id) {
@@ -180,7 +181,7 @@
 	}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 	page {
 		background-color: #f7f8f7;
 	}
