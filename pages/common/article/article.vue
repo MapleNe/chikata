@@ -390,7 +390,7 @@
 				})
 			},
 			likeAction(index) {
-				this.$http.put('/ArticleLike/Record', {
+				this.$http.put('/Article-like/Record', {
 					article_id: this.article.id
 				}).then(res => {
 					if (res.data.code === 200) {

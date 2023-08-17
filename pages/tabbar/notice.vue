@@ -2,7 +2,13 @@
 	<view>
 		<z-paging ref="paging" v-model="chatList" @query="getChatter">
 			<template #top>
-				<tn-nav-bar :isBack="false">消息</tn-nav-bar>
+				<tn-nav-bar :customBack="true">
+
+					<text>消息</text>
+					<view slot="right" class="tn-padding">
+						<text class="tn-icon-clear tn-text-lg" @tap.stop="clearNotice()"></text>
+					</view>
+				</tn-nav-bar>
 				<!-- 页面内容 -->
 				<view :style="{paddingTop: vuex_custom_bar_height + 'px'}">
 				</view>
@@ -13,7 +19,7 @@
 							<text class="tn-icon-like tn-text-xxl tn-color-white">
 							</text>
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
-								v-show="notice.commnet_count>0"></tn-badge>
+								v-show="noticeNum.commnet_count>0"></tn-badge>
 						</view>
 						<text class="tn-margin-top-sm">回复我的</text>
 					</view>
@@ -23,7 +29,7 @@
 							<text class="tn-icon-like tn-text-xxl tn-color-white">
 							</text>
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
-								v-show="notice.article_like_count"></tn-badge>
+								v-show="noticeNum.article_like_count"></tn-badge>
 						</view>
 						<text class="tn-margin-top-sm">收到的赞</text>
 					</view>
@@ -32,7 +38,7 @@
 							<text class="tn-icon-like tn-text-xxl tn-color-white">
 							</text>
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
-								v-show="notice.placard_count"></tn-badge>
+								v-show="noticeNum.placard_count"></tn-badge>
 						</view>
 						<text class="tn-margin-top-sm">
 							系统通知
@@ -57,14 +63,21 @@
 			<view class="tn-margin">
 				<view class="tn-flex tn-flex-col-center tn-margin-bottom" v-for="(item,index) in chatList" :key="index"
 					@tap="goChat(index)">
-					<tn-avatar :src="item.head_img"></tn-avatar>
+					<view>
+						<tn-avatar :src="item.head_img"></tn-avatar>
+					</view>
 					<view class="tn-margin-left-sm tn-flex-1">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 							<view class="tn-flex tn-flex-direction-column">
 								<text class="tn-text-lg">{{item.nickname}}</text>
-								<text class="tn-color-grey tn-text-sm">{{item.last_message}}</text>
+								<view class="tn-text-ellipsis" style="width: 500rpx; height: 30rpx;">
+									<text class="tn-color-grey tn-text-sm">{{item.last_message}}</text>
+								</view>
 							</view>
-							<text class="tn-color-grey tn-text-sm">{{formatDate(item.last_message_time)}}</text>
+							<view>
+								<text class="tn-color-grey tn-text-sm">{{formatDate(item.last_message_time)}}</text>
+							</view>
+							
 						</view>
 					</view>
 				</view>
@@ -75,6 +88,9 @@
 </template>
 
 <script>
+	import {
+		mapState,
+	} from 'vuex';
 	export default {
 		data() {
 			return {
@@ -84,6 +100,9 @@
 		},
 		onLoad() {
 			this.getNoticeNum()
+		},
+		computed: {
+			...mapState(['noticeNum'])
 		},
 		methods: {
 			getChatter(page, num) {
@@ -98,7 +117,7 @@
 			getNoticeNum() {
 				this.$http.get('/push/count').then(res => {
 					if (res.data.code === 200) {
-						this.notice = res.data.data
+						this.$store.commit('setNotice', res.data.data)
 					}
 					console.log(res, '消息红点')
 				})
@@ -108,6 +127,16 @@
 					path: '/pages/common/chat/chat',
 					query: {
 						params: this.chatList[index],
+					}
+				})
+			},
+			clearNotice() {
+				this.$http.post('/push/read', {
+					type: 'all',
+
+				}).then(res => {
+					if (res.data.code === 200) {
+						this.$store.commit('clearNotice')
 					}
 				})
 			},

@@ -52,6 +52,12 @@ const store = new Vuex.Store({
 				background_img: ''
 			}
 		},
+		noticeNum: {
+			commnet_count: 0,
+			article_like_count: 0,
+			placard_count: 0,
+			focus_count: 0,
+		}
 	},
 	mutations: {
 		$tStore(state, payload) {
@@ -101,6 +107,35 @@ const store = new Vuex.Store({
 				data: token
 			})
 		},
+		setNotice(state, noticeNum) {
+			state.noticeNum = noticeNum
+		},
+		clearNotice(state) {
+			state.noticeNum = {
+				commnet_count: 0,
+				article_like_count: 0,
+				placard_count: 0,
+				focus_count: 0,
+			}
+		},
+		updateNotice(state, type) {
+			switch (type) {
+				case 'comment':
+					state.noticeNum.commnet_count += 1;
+					break;
+				case 'like':
+					state.noticeNum.article_like_count += 1;
+					break;
+				case 'placard':
+					state.noticeNum.placard_count += 1;
+					break;
+				case 'focus':
+					state.noticeNum.focus_count += 1;
+					break;
+				default:
+					break;
+			}
+		},
 		logout(state) {
 			state.userInfo = {
 					longtext: {
@@ -123,6 +158,7 @@ const store = new Vuex.Store({
 			uni.removeStorage({
 				key: 'refreshExp'
 			})
+			uni.closeSocket()
 		}
 	},
 	actions: {}
