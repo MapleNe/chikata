@@ -180,6 +180,7 @@
 				],
 				loading: true,
 				navcolor: null,
+				isLongTap: true,
 			};
 
 		},
@@ -259,7 +260,9 @@
 				this.$emit('getComments', this.content[index].id)
 			},
 			getMenuInfo(data) {
-				this.$emit('getMenuInfo', data)
+				if (this.isLongTap) {
+					this.$emit('getMenuInfo', data)
+				}
 			},
 			goAticle(index) {
 				this.$Router.push({
@@ -269,13 +272,20 @@
 					},
 				})
 			},
-			goUserProfile(index){
+			goUserProfile(index) {
 				this.$Router.push({
-					path:'/pages/common/userProfile/userProfile',
-					query:{
-						id:this.content[index].users_id
+					path: '/pages/common/userProfile/userProfile',
+					query: {
+						id: this.content[index].users_id
 					}
 				})
+			},
+			touchEnd() {
+				this.isLongTap = true;
+			},
+			touchMove(e) {
+				// 手指触摸后的移动事件
+				this.isLongTap = false;
 			},
 			followUser(index) {
 				this.$http.put('/Focus/Record', {

@@ -216,7 +216,7 @@
 						this.setToken(token)
 						// uni.setStorageSync('userInfo', data.data.user)
 						this.login(data.data.user)
-						uni.$emit('loginCompete', true)
+						uni.$emit('loginComplete', true)
 						console.log(data.data.user)
 						uni.showToast({
 							icon: 'none',
@@ -242,7 +242,7 @@
 						uni.setStorageSync('refreshExp', data.data.refreshExp)
 						// uni.setStorageSync('userInfo', data.data.user)
 						this.login(data.data.user)
-						uni.$emit('loginCompete', true)
+						uni.$emit('loginComplete', true)
 						console.log(res)
 						uni.showToast({
 							icon: 'none',

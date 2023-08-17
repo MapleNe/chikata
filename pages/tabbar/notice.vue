@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<z-paging ref="paging" v-model="messages" @query="getChatter">
+		<z-paging ref="paging" v-model="chatList" @query="getChatter">
 			<template #top>
 				<tn-nav-bar :isBack="false">消息</tn-nav-bar>
 				<!-- 页面内容 -->
@@ -37,7 +37,6 @@
 						<text class="tn-margin-top-sm">
 							系统通知
 						</text>
-
 					</view>
 					<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
 						<view class="tn-bg-purplered--disabled tn-shadow-blur tn-radius tn-padding-sm">
@@ -51,19 +50,22 @@
 						</text>
 					</view>
 				</view>
+				<view class="tn-margin tn-no-margin-bottom">
+					<text class="tn-text-bold tn-text-xxl">Messages</text>
+				</view>
 			</template>
 			<view class="tn-margin">
-				<text class="tn-text-bold tn-text-xxl">Messages</text>
-			</view>
-			<view class="tn-margin">
-				<view class="tn-flex tn-flex-col-center ">
-					<tn-avatar src="/static/img/search.png"></tn-avatar>
+				<view class="tn-flex tn-flex-col-center tn-margin-bottom" v-for="(item,index) in chatList" :key="index"
+					@tap="goChat(index)">
+					<tn-avatar :src="item.head_img"></tn-avatar>
 					<view class="tn-margin-left-sm tn-flex-1">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-							<text class="tn-text-lg">这是昵称</text>
-							<text class="tn-color-grey">这是时间</text>
+							<view class="tn-flex tn-flex-direction-column">
+								<text class="tn-text-lg">{{item.nickname}}</text>
+								<text class="tn-color-grey tn-text-sm">{{item.last_message}}</text>
+							</view>
+							<text class="tn-color-grey tn-text-sm">{{formatDate(item.last_message_time)}}</text>
 						</view>
-						<text class="tn-color-grey">这是消息</text>
 					</view>
 				</view>
 			</view>
@@ -76,8 +78,8 @@
 	export default {
 		data() {
 			return {
-				messages: [],
 				notice: {},
+				chatList: [],
 			}
 		},
 		onLoad() {
@@ -86,7 +88,11 @@
 		methods: {
 			getChatter(page, num) {
 				this.$http.get('/chat/chatter').then(res => {
-					console.log(res)
+					if (res.data.code === 200) {
+						this.$refs.paging.complete(res.data.data)
+					}
+				}).catch(err => {
+
 				})
 			},
 			getNoticeNum() {
@@ -96,7 +102,43 @@
 					}
 					console.log(res, '消息红点')
 				})
+			},
+			goChat(index) {
+				this.$Router.push({
+					path: '/pages/common/chat/chat',
+					query: {
+						params: this.chatList[index],
+					}
+				})
+			},
+			formatDate(dateString) {
+				const date = new Date(dateString);
+				const now = new Date();
+				const year = date.getFullYear();
+				const month = ("0" + (date.getMonth() + 1)).slice(-2);
+				const day = ("0" + date.getDate()).slice(-2);
+				const hour = ("0" + date.getHours()).slice(-2);
+				const minute = ("0" + date.getMinutes()).slice(-2);
+
+				// 计算时间差（单位：毫秒）
+				const timeDiff = now - date;
+				const oneDay = 24 * 60 * 60 * 1000;
+
+				if (timeDiff < oneDay && date.getDate() === now.getDate()) {
+					// 当天的时间，只显示小时和分钟
+					return `${hour}:${minute}`;
+				} else if (timeDiff < oneDay * 2) {
+					// 昨天的时间
+					return "昨天";
+				} else if (timeDiff < oneDay * 3) {
+					// 前天的时间
+					return "前天";
+				} else {
+					// 其他时间，显示月、日
+					return `${month}-${day}`;
+				}
 			}
+
 		}
 	}
 </script>

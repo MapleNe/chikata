@@ -99,7 +99,8 @@
 					}
 				],
 				isShow: false,
-				showDelete: false
+				showDelete: false,
+				ifLongtap: true,
 			};
 		},
 		watch: {
@@ -113,7 +114,7 @@
 		methods: {
 			closePopup() {
 				this.isShow = false;
-				this.$emit("update:showMenu", false);
+				this.$emit("close", false);
 			},
 			manageAction(item) {
 				switch (item.type) {
@@ -131,6 +132,7 @@
 						break;
 				}
 			},
+			
 			deleteArticle() {
 				this.$http.delete('/article/remove', {
 					id: this.data.id

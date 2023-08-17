@@ -32,7 +32,7 @@
 		<tn-popup v-model="showComments" mode="bottom" length="60%" :borderRadius="20" :safeAreaInsetBottom="true">
 			<commentList :id="commentId"></commentList>
 		</tn-popup>
-		<articleMenu :showMenu.sync="showMenu" :data="menuData"></articleMenu>
+		<articleMenu :showMenu="showMenu" :data="menuData" @close="showMenu = false"></articleMenu>
 	</z-paging-swiper>
 </template>
 

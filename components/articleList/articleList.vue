@@ -10,7 +10,8 @@
 				</view>
 
 			</view>
-			<view v-for="(item,index) in content" :key="index" @longpress="getMenuInfo(item)">
+			<view v-for="(item,index) in content" :key="index" @longpress="getMenuInfo(item)" @touchend="touchEnd"
+				@touchmove="touchMove">
 				<view class="tn-margin">
 					<ls-skeleton :skeleton="skeleton" :loading="loading">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
@@ -170,7 +171,8 @@
 				loading: true,
 				showPop: false,
 				showMenu: false,
-				
+				isLongTap: true,
+
 			};
 		},
 		onReady() {
@@ -267,7 +269,9 @@
 				this.$emit('getComments', this.content[index].id)
 			},
 			getMenuInfo(data) {
-				this.$emit('getMenuInfo', data)
+				if (this.isLongTap) {
+					this.$emit('getMenuInfo', data)
+				}
 			},
 			goAticle(index) {
 				this.$Router.push({
@@ -277,11 +281,11 @@
 					},
 				})
 			},
-			goUserProfile(index){
+			goUserProfile(index) {
 				this.$Router.push({
-					path:'/pages/common/userProfile/userProfile',
-					query:{
-						id:this.content[index].users_id
+					path: '/pages/common/userProfile/userProfile',
+					query: {
+						id: this.content[index].users_id
 					}
 				})
 			},
@@ -300,6 +304,13 @@
 						id: category.id
 					}
 				})
+			},
+			touchEnd() {
+				this.isLongTap = true;
+			},
+			touchMove(e) {
+				// 手指触摸后的移动事件
+				this.isLongTap = false;
 			},
 			followUser(index) {
 				this.$http.put('/Focus/Record', {
