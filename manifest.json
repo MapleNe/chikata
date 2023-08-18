@@ -18,7 +18,14 @@
         },
         /* 模块配置 */
         "modules" : {
-            "Camera" : {}
+            "Camera" : {},
+            "Push" : {
+                "igexin" : {
+                    "appid" : "NenmOSucoo9VRHvhl4sl6A",
+                    "appkey" : "kNxzSuLGQU8WF1fRTl4RX9",
+                    "appsecret" : "dEWh3rZci99UJCC4dGnej4"
+                }
+            }
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -50,7 +57,10 @@
             },
             /* SDK配置 */
             "sdkConfigs" : {
-                "ad" : {}
+                "ad" : {},
+                "push" : {
+                    "unipush" : {}
+                }
             },
             "icons" : {
                 "android" : {
@@ -122,3 +132,5 @@
         "appid" : "1109913473"
     }
 }
+/* 应用发布信息 *//* android打包配置 *//* ios打包配置 *//* SDK配置 */
+

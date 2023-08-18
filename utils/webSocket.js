@@ -122,7 +122,6 @@ class WebSocketClass {
 		 * 收到服务器数据后的回调函数
 		 */
 
-
 		this.ws.onMessage(event => {
 			if (isJSON(event.data)) {
 				const jsonobject = JSON.parse(event.data)

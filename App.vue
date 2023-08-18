@@ -31,6 +31,7 @@
 					path: '/pages/tabbar/publish/publish'
 				})
 			})
+			// 这是websocket
 			uni.$on('loginComplete', data => {
 				this.isLogin = true
 				this.connectWebSocket()
@@ -38,6 +39,35 @@
 			if (uni.getStorageSync('token') || this.isLogin) {
 				this.connectWebSocket()
 			}
+			uni.$on('logoutComplete', data => {
+				this.ws.closeSocket()
+			})
+			// 消息通知
+			// #ifdef APP-PLUS
+			let timer = false;
+			plus.push.addEventListener("click", (msg) => {
+				clearTimeout(timer);
+				timer = setTimeout(() => {
+					console.log(1111, msg);
+					if (msg.payload) {
+						uni.navigateTo({
+							url: msg.payload
+						})
+					}
+				}, 1500)
+			}, false)
+			plus.push.addEventListener("receive", (msg) => {
+				if ("LocalMSG" == msg.payload) {} else {
+					if (msg.type == 'receive') {
+						var options = {
+							cover: false,
+							title: msg.title
+						};
+						plus.push.createMessage(msg.content, msg.payload, options);
+					}
+				}
+			}, false)
+			// #endif
 
 			console.log('App 启动')
 		},
@@ -64,13 +94,13 @@
 				const message = JSON.stringify(msg)
 				setTimeout(() => {
 					this.ws.webSocketSendMsg(message)
-				}, 1000)
+				}, 1500)
 
 				this.ws.getWebSocketMsg(data => {
 					const dataJson = data;
-					console.log('data', dataJson);
+					// console.log('data', dataJson);
 					if (typeof(dataJson) == "object") {
-						console.log("wsObject", dataJson);
+						// console.log("wsObject", dataJson);
 						if (data.type === 'like' || data.type === 'focus' || data.type === 'comment' || data
 							.type === 'placard') {
 							this.$store.commit('updateNotice', data.type)
@@ -79,7 +109,7 @@
 						}
 
 					} else {
-						console.log(dataJson);
+						// console.log(dataJson);
 					}
 				});
 			}

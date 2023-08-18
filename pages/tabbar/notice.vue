@@ -110,6 +110,7 @@
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data)
 					}
+					this.getNoticeNum()
 				}).catch(err => {
 
 				})
@@ -132,7 +133,6 @@
 			clearNotice() {
 				this.$http.post('/push/read', {
 					type: 'all',
-
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.$store.commit('clearNotice')

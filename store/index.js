@@ -162,7 +162,7 @@ const store = new Vuex.Store({
 			uni.removeStorage({
 				key: 'refreshExp'
 			})
-			uni.closeSocket()
+			uni.$emit('logoutComplete')
 		}
 	},
 	actions: {}
