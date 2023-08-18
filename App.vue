@@ -45,7 +45,6 @@
 					this.ws.webSocketSendMsg(message)
 				}, 1000)
 
-
 				this.ws.getWebSocketMsg(data => {
 					const dataJson = data;
 					console.log('data', dataJson);

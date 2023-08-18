@@ -9,7 +9,10 @@ class WebSocketClass {
 		this.globalCallback = null; // 回调方法
 		this.userClose = false; // 是否主动关闭
 		this.createWebSocket(url);
+		// #ifdef APP-PLUS
 		this.initEventHandle();
+		// #endif
+
 	}
 
 	createWebSocket(url) {
@@ -118,6 +121,8 @@ class WebSocketClass {
 		/**
 		 * 收到服务器数据后的回调函数
 		 */
+
+
 		this.ws.onMessage(event => {
 			if (isJSON(event.data)) {
 				const jsonobject = JSON.parse(event.data)
