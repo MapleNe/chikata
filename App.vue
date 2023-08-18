@@ -41,10 +41,10 @@
 					uid: userInfo.id
 				}
 				const message = JSON.stringify(msg)
-				console.log(message)
 				setTimeout(() => {
 					this.ws.webSocketSendMsg(message)
 				}, 1000)
+
 
 				this.ws.getWebSocketMsg(data => {
 					const dataJson = data;

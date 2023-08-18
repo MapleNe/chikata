@@ -32,7 +32,12 @@ class WebSocketClass {
 			// 创建一个this.ws对象【发送、接收、关闭socket都由这个对象操作】
 
 			// #ifdef H5
-			this.ws = new WebSocket(this.wsUrl);
+			this.ws = uni.connectSocket({
+				url: this.wsUrl,
+				success(data) {
+					console.log("websocket连接成功H5");
+				},
+			});
 			this.initEventHandle();
 			// #endif
 
@@ -57,13 +62,13 @@ class WebSocketClass {
 
 		// #ifdef H5
 		this.ws.onopen = (event) => {
-			console.log("WebSocket连接打开");
+			console.log("WebSocket连接打开H5");
 		};
 		// #endif
 
 		// #ifdef APP-PLUS
 		this.ws.onOpen(res => {
-			console.log('WebSocket连接打开');
+			console.log('WebSocket连接打开APP');
 		});
 		// #endif
 
@@ -113,20 +118,6 @@ class WebSocketClass {
 		/**
 		 * 收到服务器数据后的回调函数
 		 */
-
-		// #ifdef H5
-		this.ws.onmessage = (event) => {
-			if (isJSON(event.data)) {
-				const jsonobject = JSON.parse(event.data)
-
-				this.globalCallback(jsonobject)
-			} else {
-				this.globalCallback(event.data)
-			}
-		};
-		// #endif
-
-		// #ifdef APP-PLUS
 		this.ws.onMessage(event => {
 			if (isJSON(event.data)) {
 				const jsonobject = JSON.parse(event.data)
@@ -136,7 +127,6 @@ class WebSocketClass {
 				this.globalCallback(event.data)
 			}
 		});
-		// #endif
 	}
 
 	// 关闭ws连接回调
@@ -151,6 +141,7 @@ class WebSocketClass {
 	}
 
 	// 发送信息方法
+	// #ifdef APP-PLUS
 	webSocketSendMsg(msg) {
 		this.ws && this.ws.send({
 			data: msg,
@@ -158,10 +149,26 @@ class WebSocketClass {
 				console.log("消息发送成功");
 			},
 			fail(err) {
-				console.log("关闭失败", err)
+				console.log("消息发送失败", err)
 			}
 		});
 	}
+	// #endif
+	// #ifdef H5
+	webSocketSendMsg(msg) {
+		uni.sendSocketMessage({
+			data: msg,
+			success() {
+				console.log("消息发送成功");
+			},
+			fail(err) {
+				console.log("消息发送失败", err)
+			}
+		})
+	}
+	// #endif
+
+
 
 	// 获取ws返回的数据方法
 	getWebSocketMsg(callback) {

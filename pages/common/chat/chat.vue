@@ -157,6 +157,7 @@
 							text: msg,
 							create_time: this.getNowTime(),
 						});
+						this.scrollToBottom()
 					},
 
 					fail: (err) => {
@@ -170,6 +171,17 @@
 				} else {
 					this.isFoucs = false
 				}
+			},
+
+			scrollToBottom() {
+				this.$nextTick(function() {
+					setTimeout(() => {
+						uni.pageScrollTo({
+							scrollTop: 99999,
+							duration: 0
+						})
+					}, 200) // 要加点延迟, 不然有可能不生效
+				});
 			},
 			back() {
 				// 通过判断当前页面的页面栈信息，是否有上一页进行返回，如果没有则跳转到首页
