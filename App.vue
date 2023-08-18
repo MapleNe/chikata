@@ -11,11 +11,13 @@
 			return {
 				ws: null,
 				isLogin: false,
+				id: null,
 			}
 		},
 		onLaunch: function() {
 			//启动APP时判断是否已有用户数据
 			let userInfo = uni.getStorageSync('userInfo') || ''
+			this.id = userInfo.id
 			if (userInfo.id) {
 				uni.getStorage({
 					key: 'userInfo',
@@ -31,14 +33,33 @@
 			})
 			uni.$on('loginComplete', data => {
 				this.isLogin = true
+				this.connectWebSocket()
 			})
 			if (uni.getStorageSync('token') || this.isLogin) {
+				this.connectWebSocket()
+			}
+
+			console.log('App 启动')
+		},
+		beforeDestroy() {
+			this.ws && this.ws.closeSocket();
+		},
+		onShow: function() {},
+		onHide: function() {
+			console.log('App 隐藏')
+		},
+		computed: {
+			...mapState(['hasLogin'])
+		},
+		methods: {
+			...mapMutations(['login', 'logout', 'updateNotice']),
+			connectWebSocket() {
 				this.ws && this.ws.closeSocket();
 				this.ws = new WS(config.wss) // xxx 表示接口地址URL
 				// 发送数据
 				const msg = {
 					type: 'bind',
-					uid: userInfo.id
+					uid: this.id
 				}
 				const message = JSON.stringify(msg)
 				setTimeout(() => {
@@ -62,21 +83,6 @@
 					}
 				});
 			}
-
-			console.log('App 启动')
-		},
-		beforeDestroy() {
-			this.ws && this.ws.closeSocket();
-		},
-		onShow: function() {},
-		onHide: function() {
-			console.log('App 隐藏')
-		},
-		computed: {
-			...mapState(['hasLogin'])
-		},
-		methods: {
-			...mapMutations(['login', 'logout', 'updateNotice']),
 		}
 	}
 </script>
