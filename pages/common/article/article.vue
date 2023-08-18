@@ -257,7 +257,6 @@
 				}).then(res => {
 					if (res.data.code == 200) {
 						this.article = res.data.data
-						console.log(this.article)
 						setTimeout(() => {
 							this.loading = false
 						}, 600)
@@ -378,7 +377,6 @@
 					setTimeout(() => {
 						this.commentBoxOpen = false
 						this.$refs.paging.reload()
-						console.log(this.comments.length)
 					}, 800)
 
 				}).catch(err => {

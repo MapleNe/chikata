@@ -5,7 +5,13 @@
 		mapState
 	} from 'vuex';
 	import config from './static/config.js'
+	import WS from "@/utils/webSocket.js";
 	export default {
+		data() {
+			return {
+				ws: null
+			}
+		},
 		onLaunch: function() {
 			//启动APP时判断是否已有用户数据
 			let userInfo = uni.getStorageSync('userInfo') || ''
@@ -22,31 +28,28 @@
 					path: '/pages/tabbar/publish/publish'
 				})
 			})
-			// 每次APP启动检擦是否为登录状态 打开WS链接
-			if (this.hasLogin) {
-				let users_id = uni.getStorageSync('userInfo').id
-				this.connectWebSocket()
-				setTimeout(() => {
-					const message = {
-						type: 'bind',
-						uid: users_id
-					}
-					this.sendWebSocketMessage(JSON.stringify(message))
-				}, 1000)
+			this.ws && this.ws.closeSocket();
+			this.ws = new WS(config.wss) // xxx 表示接口地址URL
+			// 发送数据
+			const msg = {
+				type: 'bind',
+				uid: userInfo.id
 			}
-			// 只监听登录状态
-			uni.$on('loginComplete', data => {
-				let users_id = uni.getStorageSync('userInfo').id
-				this.connectWebSocket()
-				setTimeout(() => {
-					const message = {
-						type: 'bind',
-						uid: users_id
-					}
-					console.log(JSON.stringify(message))
-					this.sendWebSocketMessage(JSON.stringify(message))
-				}, 1000)
-			})
+			setTimeout(() => {
+				this.ws.webSocketSendMsg(JSON.stringify(msg))
+			}, 1000)
+
+			this.ws.getWebSocketMsg(data => {
+				const dataJson = data;
+				console.log('data', dataJson);
+				if (typeof(dataJson) == "object") {
+					
+					console.log("wsObject", dataJson);
+					console.log('wsObject', dataJson.type)
+				} else {
+					console.log(dataJson);
+				}
+			});
 			console.log('App 启动')
 		},
 		onShow: function() {},
@@ -58,47 +61,6 @@
 		},
 		methods: {
 			...mapMutations(['login', 'logout', 'updateNotice']),
-			connectWebSocket() {
-				uni.connectSocket({
-					url: config.wss, // WebSocket 服务器地址
-					success: () => {
-						console.log('WebSocket 连接成功');
-					},
-					fail: (err) => {
-						console.error('WebSocket 连接失败:', err);
-					}
-				});
-
-				uni.onSocketOpen(() => {
-					console.log('WebSocket 已打开');
-				});
-
-				uni.onSocketClose(() => {
-					console.log('WebSocket 已关闭');
-				});
-
-				uni.onSocketError((err) => {
-					console.error('WebSocket 错误:', err);
-				});
-
-				uni.onSocketMessage((res) => {
-					let data = JSON.parse(res.data)
-					if (data.type !== 'ping' || data.type !== 'bind') {
-						this.$store.commit('updateNotice', data.type)
-					}
-				});
-			},
-			sendWebSocketMessage(message) {
-				uni.sendSocketMessage({
-					data: message,
-					success: () => {
-						console.log('聊天WS绑定OK');
-					},
-					fail: (err) => {
-						console.error('绑定失败:', err);
-					}
-				});
-			}
 		}
 	}
 </script>

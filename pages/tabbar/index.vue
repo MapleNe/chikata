@@ -41,7 +41,8 @@
 		mapState,
 		mapMutations
 	} from 'vuex';
-
+	
+	import config from "@/static/config.js";
 	import articleList from "@/components/articleList/articleList.vue";
 	import commentList from '@/components/commentList/commentList.vue';
 	import articleMenu from '@/components/aticleMenu/aticleMenu.vue';
@@ -61,9 +62,12 @@
 				commentId: null,
 				showMenu: false,
 				menuData: null,
+				ws: null,
 			}
 		},
-		onLoad() {},
+		onLoad() {
+		},
+
 		created() {},
 		computed: {
 			...mapState(['userInfo', 'hasLogin']),
