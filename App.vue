@@ -9,7 +9,8 @@
 	export default {
 		data() {
 			return {
-				ws: null
+				ws: null,
+				isLogin: false,
 			}
 		},
 		onLaunch: function() {
@@ -28,29 +29,45 @@
 					path: '/pages/tabbar/publish/publish'
 				})
 			})
-			this.ws && this.ws.closeSocket();
-			this.ws = new WS(config.wss) // xxx 表示接口地址URL
-			// 发送数据
-			const msg = {
-				type: 'bind',
-				uid: userInfo.id
-			}
-			setTimeout(() => {
-				this.ws.webSocketSendMsg(JSON.stringify(msg))
-			}, 1000)
-
-			this.ws.getWebSocketMsg(data => {
-				const dataJson = data;
-				console.log('data', dataJson);
-				if (typeof(dataJson) == "object") {
-					
-					console.log("wsObject", dataJson);
-					console.log('wsObject', dataJson.type)
-				} else {
-					console.log(dataJson);
+			uni.$on('loginComplete', data => {
+				this.isLogin = true
+			})
+			if (uni.getStorageSync('token') || this.isLogin) {
+				this.ws && this.ws.closeSocket();
+				this.ws = new WS(config.wss) // xxx 表示接口地址URL
+				// 发送数据
+				const msg = {
+					type: 'bind',
+					uid: userInfo.id
 				}
-			});
+				const message = JSON.stringify(msg)
+				console.log(message)
+				setTimeout(() => {
+					this.ws.webSocketSendMsg(message)
+				}, 1000)
+
+				this.ws.getWebSocketMsg(data => {
+					const dataJson = data;
+					console.log('data', dataJson);
+					if (typeof(dataJson) == "object") {
+						console.log("wsObject", dataJson);
+						if (data.type === 'like' || data.type === 'focus' || data.type === 'comment' || data
+							.type === 'placard') {
+							this.$store.commit('updateNotice', data.type)
+						} else if (data.type === 'chat') {
+							uni.$emit('getNewChat', data)
+						}
+
+					} else {
+						console.log(dataJson);
+					}
+				});
+			}
+
 			console.log('App 启动')
+		},
+		beforeDestroy() {
+			this.ws && this.ws.closeSocket();
 		},
 		onShow: function() {},
 		onHide: function() {

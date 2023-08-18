@@ -6,7 +6,7 @@
 				<view slot="back" class="tn-margin-top" @tap.stop="back">
 					<text class="tn-icon-left tn-text-xl"></text>
 				</view>
-				<text>
+				<text v-if="chatInfo">
 					{{chatInfo.nickname}}
 				</text>
 				<view slot="right" class="tn-padding">
@@ -15,9 +15,9 @@
 			</tn-nav-bar>
 			<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 		</template>
-		<view class="tn-margin-sm">
-			<view class="tn-margin-bottom" v-for="(item,index) in chatList" :key="index">
-				<view class="tn-flex tn-flex-start" v-if="chatInfo.users_id === item.sendId">
+		<view class="tn-margin-sm" v-if="this.chatList">
+			<view class="tn-margin-bottom" v-for="(item,index) in chatList" :key="index" :id="`z-paging-${index}`">
+				<view class="tn-flex tn-flex-start" v-if="!isMine(item.sendId)">
 					<view>
 						<tn-avatar :src="chatInfo.head_img"></tn-avatar>
 					</view>
@@ -26,7 +26,7 @@
 						<text style="line-break: anywhere;">{{item.text}}</text>
 					</view>
 				</view>
-				<view v-else class="tn-flex tn-flex-start tn-flex-direction-row-reverse">
+				<view v-if="isMine(item.sendId)" class="tn-flex tn-flex-start tn-flex-direction-row-reverse">
 					<view>
 						<tn-avatar :src="userInfo.head_img"></tn-avatar>
 					</view>
@@ -60,6 +60,7 @@
 	import {
 		mapState
 	} from 'vuex';
+	import WS from "@/utils/webSocket.js";
 	export default {
 		data() {
 			return {
@@ -67,20 +68,39 @@
 				chatInfo: {},
 				chatText: null,
 				isFoucs: false,
+				ws: null,
 			};
 		},
 		onLoad(params) {
 			this.chatInfo = params.query.params
+			uni.$on('getNewChat', data => {
+				if (data) {
+					this.$refs.paging.addChatRecordData({
+						type: 'chat',
+						text: data.text,
+						sendId: data.sendId,
+						receId: data.receId,
+						create_time: data.create_time,
+					})
+
+				}
+			})
 		},
 
 		computed: {
-			...mapState(['userInfo'])
+			...mapState(['userInfo']),
+			isMine() {
+				return function(sendId) {
+					return sendId === this.userInfo.id
+				}
+			}
 		},
 		onPageScroll(e) {
 			//如果滚动到顶部，触发加载更多聊天记录
 			if (e.scrollTop < 10) {
 				this.$refs.paging.doChatRecordLoadMore();
 			}
+
 		},
 		methods: {
 			getChatList(page, num) {
@@ -88,10 +108,9 @@
 					params: {
 						page: page,
 						limit: 20,
-						id: this.chatInfo.users_id
+						id: this.chatInfo.users_id ? this.chatInfo.users_id : ''
 					}
 				}).then(res => {
-					console.log(res)
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data)
 					}
@@ -128,6 +147,7 @@
 					receId: this.chatInfo.users_id
 				}
 				const message = JSON.stringify(data)
+				// this.ws.webSocketSendMsg('发送信息')
 				uni.sendSocketMessage({
 					data: message,
 					success: (res) => {
@@ -135,7 +155,7 @@
 							id: '',
 							sendId: this.userInfo.id,
 							text: msg,
-							create_time: this.getNowTime()
+							create_time: this.getNowTime(),
 						});
 					},
 

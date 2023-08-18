@@ -42,9 +42,6 @@ class WebSocketClass {
 				success(data) {
 					console.log("websocket连接成功");
 				},
-				fail(res) {
-					console.log("websocket连接失败")
-				}
 			});
 			// #endif
 		} catch (e) {
@@ -161,7 +158,7 @@ class WebSocketClass {
 				console.log("消息发送成功");
 			},
 			fail(err) {
-				console.log("消息发送失败", err)
+				console.log("关闭失败", err)
 			}
 		});
 	}

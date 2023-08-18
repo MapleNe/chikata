@@ -57,7 +57,8 @@ const store = new Vuex.Store({
 			article_like_count: 0,
 			placard_count: 0,
 			focus_count: 0,
-		}
+		},
+		chatData: null,
 	},
 	mutations: {
 		$tStore(state, payload) {
@@ -135,6 +136,9 @@ const store = new Vuex.Store({
 				default:
 					break;
 			}
+		},
+		setChatData(state, data) {
+			state.chatData = data
 		},
 		logout(state) {
 			state.userInfo = {

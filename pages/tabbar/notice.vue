@@ -119,7 +119,6 @@
 					if (res.data.code === 200) {
 						this.$store.commit('setNotice', res.data.data)
 					}
-					console.log(res, '消息红点')
 				})
 			},
 			goChat(index) {
