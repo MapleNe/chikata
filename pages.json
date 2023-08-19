@@ -106,7 +106,16 @@
 			}
 
 		}
-	],
+	    ,{
+            "path" : "pages/user/vip",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
 	"tabBar": {
 		"backgroundColor": "#ffffff",
 		"color": "#949494",
@@ -141,11 +150,7 @@
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F7F8",
-		"navigationStyle": "custom",
-		"app-plus": {
-			"animationType": "slide-in-bottom",
-			"animationDuration": 500
-		}
+		"navigationStyle": "custom"
 	},
 	"condition": {
 		//模式配置，仅开发期间生效

@@ -36,7 +36,7 @@
 				this.isLogin = true
 				this.connectWebSocket()
 			})
-			if (uni.getStorageSync('token') || this.isLogin) {
+			if (uni.getStorageSync('token')) {
 				this.connectWebSocket()
 			}
 			uni.$on('logoutComplete', data => {
@@ -74,7 +74,16 @@
 		beforeDestroy() {
 			this.ws && this.ws.closeSocket();
 		},
-		onShow: function() {},
+		onShow() {
+			// #ifdef APP-PLUS
+			// 切入后台会导致WS断开连接重新打开时重新连接
+			if (this.hasLogin) {
+				this.connectWebSocket()
+			}
+
+			// #endif
+
+		},
 		onHide: function() {
 			console.log('App 隐藏')
 		},

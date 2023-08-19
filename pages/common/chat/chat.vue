@@ -73,20 +73,14 @@
 		},
 		onLoad(params) {
 			this.chatInfo = params.query.params
+		},
+		created() {
 			uni.$on('getNewChat', data => {
 				if (data) {
-					this.$refs.paging.addChatRecordData({
-						type: 'chat',
-						text: data.text,
-						sendId: data.sendId,
-						receId: data.receId,
-						create_time: data.create_time,
-					})
-
+					this.addNewChat(data)
 				}
 			})
 		},
-
 		computed: {
 			...mapState(['userInfo']),
 			isMine() {
@@ -103,6 +97,11 @@
 
 		},
 		methods: {
+			addNewChat(msg) {
+				if (this.$refs.paging && this.$refs.paging.addChatRecordData) {
+					this.$refs.paging.addChatRecordData(msg)
+				}
+			},
 			getChatList(page, num) {
 				this.$http.get('/Chat/history', {
 					params: {

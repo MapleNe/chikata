@@ -8,10 +8,11 @@ class WebSocketClass {
 		this.wsUrl = ""; // ws 地址
 		this.globalCallback = null; // 回调方法
 		this.userClose = false; // 是否主动关闭
+		//心跳检测
+		this.timeout = 45000 //多少秒执行检测
+		this.timeoutObj = null //检测服务器端是否还活着
 		this.createWebSocket(url);
-		// #ifdef APP-PLUS
-		this.initEventHandle();
-		// #endif
+
 
 	}
 
@@ -48,9 +49,10 @@ class WebSocketClass {
 			this.ws = uni.connectSocket({
 				url: this.wsUrl,
 				success(data) {
-					console.log("websocket连接成功");
+					console.log("websocket连接成功APP");
 				},
 			});
+			this.initEventHandle();
 			// #endif
 		} catch (e) {
 			this.reconnect(url);
@@ -65,13 +67,15 @@ class WebSocketClass {
 
 		// #ifdef H5
 		this.ws.onopen = (event) => {
-			console.log("WebSocket连接打开H5");
+			console.log("WebSocket连接打开H5"); //打开连接
+			this.start()
 		};
 		// #endif
 
 		// #ifdef APP-PLUS
 		this.ws.onOpen(res => {
-			console.log('WebSocket连接打开APP');
+			console.log('WebSocket连接打开APP'); //打开连接
+			this.start()
 		});
 		// #endif
 
@@ -121,7 +125,6 @@ class WebSocketClass {
 		/**
 		 * 收到服务器数据后的回调函数
 		 */
-
 		this.ws.onMessage(event => {
 			if (isJSON(event.data)) {
 				const jsonobject = JSON.parse(event.data)
@@ -137,6 +140,7 @@ class WebSocketClass {
 	reconnect(url) {
 		if (this.lockReconnect) return;
 		this.ws.close();
+		clearInterval(this.timeoutObj)
 		this.lockReconnect = true; // 关闭重连，没连接上会一直重连，设置延迟避免请求过多
 		setTimeout(() => {
 			this.createWebSocket(url);
@@ -172,7 +176,16 @@ class WebSocketClass {
 	}
 	// #endif
 
-
+	//心跳
+	start() {
+		this.timeoutObj = setInterval(() => {
+			//这里发送一个心跳，后端收到后，返回一个心跳消息，
+			//onmessage拿到返回的心跳就说明连接正常
+			this.ws && this.ws.send({
+				data: '{"type":"ping"}',
+			});
+		}, this.timeout)
+	}
 
 	// 获取ws返回的数据方法
 	getWebSocketMsg(callback) {
@@ -183,6 +196,7 @@ class WebSocketClass {
 	closeSocket() {
 		if (this.ws) {
 			this.userClose = true;
+			clearInterval(this.timeoutObj)
 			this.ws.close({
 				success(res) {
 					console.log("关闭成功", res)

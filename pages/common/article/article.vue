@@ -277,7 +277,6 @@
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.data)
-						console.log(this.comments)
 					}
 				}).catch(err => {
 					this.$refs.paging.complete(false)

@@ -60,7 +60,7 @@
 					<text class="tn-text-bold tn-text-xxl">Messages</text>
 				</view>
 			</template>
-			<view class="tn-margin">
+			<view class="tn-margin" v-if="hasLogin">
 				<view class="tn-flex tn-flex-col-center tn-margin-bottom" v-for="(item,index) in chatList" :key="index"
 					@tap="goChat(index)">
 					<view>
@@ -77,7 +77,7 @@
 							<view>
 								<text class="tn-color-grey tn-text-sm">{{formatDate(item.last_message_time)}}</text>
 							</view>
-							
+
 						</view>
 					</view>
 				</view>
@@ -101,8 +101,18 @@
 		onLoad() {
 			this.getNoticeNum()
 		},
+		created() {
+			uni.$on('loginComplete', data => {
+				if (data) {
+					setTimeout(() => {
+						this.$refs.paging.reload()
+					}, 500)
+
+				}
+			})
+		},
 		computed: {
-			...mapState(['noticeNum'])
+			...mapState(['noticeNum', 'hasLogin'])
 		},
 		methods: {
 			getChatter(page, num) {
