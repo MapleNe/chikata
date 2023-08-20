@@ -40,8 +40,9 @@
 						<view v-for="(category,index) in article.expand.sort" :key="index"
 							class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius"
 							@tap.stop="goCategory(category)">
-							<tn-avatar size="sm" shape="square" :src="category.opt.head_img"></tn-avatar>
-							<text class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
+							<image :src="category.opt.head_img" mode="aspectFill" style="height: 34rpx;width: 34rpx;border-radius: 10rpx;"></image>
+							<text
+								class="tn-margin-left-xs tn-margin-right-xs tn-text-xs tn-color-grey">{{category.name}}</text>
 						</view>
 					</view>
 				</ls-skeleton>
