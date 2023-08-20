@@ -40,14 +40,15 @@
 							</tn-avatar>
 						</view>
 
-						<view class="tn-flex tn-flex-direction-column tn-flex-1 tn-margin-left">
+						<view class="tn-flex tn-flex-direction-column tn-flex-1 tn-margin-left" v-if="hasLogin">
 							<view class="tn-flex tn-flex-col-center">
 								<text :class="userInfo.level==='admin'?'ch-color-primary':'tn-color-white'"
 									class="tn-text-bold tn-text-xl">{{userInfo.nickname}}</text>
-								<text class="tn-text-xl tn-icon-trusty-fill tn-color-white tn-margin-left-xs"></text>
+								<text v-if="userInfo.level==='admin'"
+									class="tn-text-xl tn-icon-trusty-fill tn-color-white tn-margin-left-xs"></text>
 							</view>
 							<view class="tn-flex tn-flex-col-center tn-margin-top-sm">
-								<text style="color: #c3c3c3;">UID：{{userInfo.id}}</text>
+								<text style="color: #999999;">UID：{{userInfo.id}}</text>
 							</view>
 
 						</view>
@@ -118,7 +119,7 @@
 		<tn-popup v-model="showComments" mode="bottom" length="60%" :borderRadius="20" :safeAreaInsetBottom="true">
 			<commentList :id="commentId"></commentList>
 		</tn-popup>
-		<articleMenu :showMenu.sync="showMenu" :data="menuData"></articleMenu>
+		<articleMenu :showMenu="showMenu" :data="menuData" @close="showMenu = false"></articleMenu>
 		<tn-popup mode="right" length="60%" v-model="showProfileMenu" safeAreaInsetBottom @close="showTabbar()">
 			<image :src="userInfo.longtext.background_img" mode="aspectFit" style="height: 285rpx;width: 100%;"></image>
 			<view class="tn-margin-bottom-sm" v-for="(item,index) in btnList" :key="item.page" @tap.stop="goPage(item)">
@@ -135,11 +136,10 @@
 					<text class="tn-icon-set tn-text-bold"></text>
 				</tn-button>
 				<view @tap.stop="scanQrcode()">
-
+					<tn-button shape="icon" backgroundColor="tn-bg-gray--light" size="lg">
+						<text class="tn-icon-scan tn-text-bold"></text>
+					</tn-button>
 				</view>
-				<tn-button shape="icon" backgroundColor="tn-bg-gray--light" size="lg">
-					<text class="tn-icon-scan tn-text-bold"></text>
-				</tn-button>
 				<view @tap.stop="logout">
 					<tn-button shape="icon" backgroundColor="tn-bg-gray--light" size="lg">
 						<text class="tn-icon-logout tn-text-bold tn-color-red"></text>

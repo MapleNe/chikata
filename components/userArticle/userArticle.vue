@@ -1,7 +1,8 @@
 <template>
 	<view>
 		<z-paging ref="paging" @query="getArticle" v-model="content" :auto="false">
-			<view v-for="(item,index) in content" :key="index" @longpress="getMenuInfo(item)">
+			<view v-for="(item,index) in content" :key="index" @longpress="getMenuInfo(item)" @touchend="touchEnd"
+				@touchmove="touchMove">
 				<view class="tn-margin">
 					<ls-skeleton :skeleton="skeleton" :loading="loading">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
@@ -147,6 +148,7 @@
 					'circle-sm+line-sm'
 				],
 				loading: true,
+				isLongTap: true,
 			};
 		},
 		created() {
@@ -219,7 +221,9 @@
 				this.$emit('getComments', this.content[index].id)
 			},
 			getMenuInfo(data){
-				this.$emit('getMenuInfo',data)
+				if (this.isLongTap) {
+					this.$emit('getMenuInfo', data)
+				}
 			},
 			goAticle(index) {
 				let data = this.content
@@ -237,6 +241,13 @@
 						id: category.id
 					}
 				})
+			},
+			touchEnd() {
+				this.isLongTap = true;
+			},
+			touchMove(e) {
+				// 手指触摸后的移动事件
+				this.isLongTap = false;
 			},
 			followUser() {
 				console.log('点击了关注')

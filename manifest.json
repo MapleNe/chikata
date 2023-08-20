@@ -25,7 +25,8 @@
                     "appkey" : "kNxzSuLGQU8WF1fRTl4RX9",
                     "appsecret" : "dEWh3rZci99UJCC4dGnej4"
                 }
-            }
+            },
+            "Barcode" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
