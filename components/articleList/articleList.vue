@@ -28,7 +28,7 @@
 							</view>
 							<view>
 								<tn-button size="sm" :backgroundColor="item.expand.focus?'tn-bg-gray--light':'#29B7CB'"
-									:fontColor="item.expand.focus?'tn-color-grey':'tn-color-white'" shape="round"
+									:fontColor="item.expand.focus?'tn-color-gray':'tn-color-white'" shape="round"
 									:blockRepeatClick="true" @tap="followUser(index)">
 									<text>{{item.expand.focus?'已关注':'关注'}}</text>
 								</tn-button>
@@ -100,7 +100,8 @@
 									<view v-for="(category,index) in item.expand.sort" :key="index"
 										class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius"
 										@tap.stop="goCategory(category)">
-										<image :src="category.opt.head_img" mode="aspectFill" style="height: 34rpx;width: 34rpx;border-radius: 10rpx;"></image>
+										<image :src="category.opt.head_img" mode="aspectFill"
+											style="height: 34rpx;width: 34rpx;border-radius: 10rpx;"></image>
 										<text
 											class="tn-margin-left-xs tn-margin-right-xs tn-text-xs tn-color-grey">{{category.name}}</text>
 									</view>
@@ -209,12 +210,12 @@
 					params: {
 						limit: num,
 						page: page,
-						order: this.tabsIndex === 1 ? 'views desc' : ''
+						order: this.tabsIndex === 1 ? 'views desc create_time desc' : ''
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.data)
-						
+
 						this.firstLoad = true
 						//骨架屏仅在第一次加载数据时显示
 						setTimeout(() => {

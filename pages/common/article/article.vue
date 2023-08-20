@@ -27,7 +27,7 @@
 						</view>
 						<view>
 							<tn-button size="sm" :backgroundColor="article.expand.focus?'tn-bg-gray--light':'#29B7CB'"
-								:fontColor="article.expand.focus?'tn-color-grey':'tn-color-white'" shape="round"
+								:fontColor="article.expand.focus?'tn-color-gray':'tn-color-white'" shape="round"
 								:blockRepeatClick="true" @tap="followUser()">
 								<text>{{article.expand.focus?'已关注':'关注'}}</text>
 							</tn-button>

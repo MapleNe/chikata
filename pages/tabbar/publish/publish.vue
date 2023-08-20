@@ -17,7 +17,7 @@
  				<text class="tn-icon-image" @tap="addImage"></text>
  				<!-- 循环控件 -->
  				<view v-for="(item ,index) in editList" :key="item.id" @tap="editAction(item)">
- 					<text :class="[item.icon, {'ch-color-primary': moreAction === item.id}]"></text>
+ 					<text :class="[item.icon, {'ch-color-primary': moreAction == item.id}]"></text>
  				</view>
  			</view>
  			<!-- 展开面板 -->
@@ -27,7 +27,7 @@
  					<view class=" tn-flex tn-flex-row-between tn-bg-gray--light tn-radius">
  						<view v-for="(item,index) in title" :key="item.id" class="tn-text-xl tn-padding"
  							@tap="editSubAction(item)">
- 							<text :class="{'ch-color-primary': statusObj.header === item.val}">{{item.name}}</text>
+ 							<text :class="{'ch-color-primary': statusObj.header == item.val}">{{item.name}}</text>
  						</view>
  					</view>
  				</view>
@@ -46,7 +46,7 @@
  					<text class="tn-icon-down-triangle tn-text-left">字体大小</text>
  					<view class="tn-flex tn-bg-gray--light tn-flex-row-between tn-padding tn-radius">
  						<view v-for="(item,index) in fontSize" :key="item.id" @tap="editSubAction(item)">
- 							<text :class="{'ch-color-primary': statusObj.fontSize === item.val}">{{item.name}}</text>
+ 							<text :class="{'ch-color-primary': statusObj.fontSize == item.val}">{{item.name}}</text>
  						</view>
  					</view>
  				</view>
@@ -55,7 +55,7 @@
  						class="tn-margin-left-xs tn-text-xs">选择字体背景后一定要更换字体颜色</text>
  					<view class="tn-flex tn-bg-gray--light tn-padding tn-radius tn-flex-row-between">
  						<view class="tn-round tn-padding-xs tn-border-solid tn-bold-border"
- 							:class="statusObj.backgroundColor===item.val?'tn-border-bluepurple':'tn-border-white'"
+ 							:class="statusObj.backgroundColor==item.val?'tn-border-bluepurple':'tn-border-white'"
  							:style="'background-color:'+item.val" v-for="(item ,index) in backgroundColor"
  							:key="item.id" @tap="editSubAction(item)">
  						</view>
@@ -78,7 +78,7 @@
  				<view class="tn-margin-bottom tn-flex tn-bg-gray--light tn-padding tn-radius tn-flex-row-between">
  					<view class="tn-flex tn-flex-direction-column" v-for="(item, index) in align" :key="item.id"
  						@tap="editSubAction(item)">
- 						<text :class="[item.icon, {'ch-color-primary': statusObj.align === item.val}]"
+ 						<text :class="[item.icon, {'ch-color-primary': statusObj.align == item.val}]"
  							class="tn-text-xl">
  						</text>
  						<text class="tn-text-sm">

@@ -89,8 +89,9 @@
 							<view v-for="(category,index) in item.expand.sort" :key="index"
 								class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius"
 								@tap.stop="goCategory(category)">
-								<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
-								<text class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
+								<image :src="category.opt.head_img" mode="aspectFill" style="height: 34rpx;width: 34rpx;border-radius: 10rpx;"></image>
+								<text
+									class="tn-margin-left-xs tn-margin-right-xs tn-text-xs tn-color-grey">{{category.name}}</text>
 							</view>
 							<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-basic-sm">
 								<view class="tn-flex tn-flex-col-center">

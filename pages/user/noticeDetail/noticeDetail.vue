@@ -7,20 +7,25 @@
 			<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 		</template>
 		<view class="tn-margin">
-			<viwe class="tn-flex tn-flex-col-center">
+			<view class="tn-flex tn-flex-col-center">
 				<view>
 					<tn-avatar></tn-avatar>
 				</view>
 				<view class="tn-margin-left-sm">
 					<view class="tn-flex tn-flex-direction-column">
 						<text>昵称</text>
-						<text class="tn-color-gray tn-text-sm">时间</text>
+						<text class="tn-color-gray tn-text-sm">2023-5-18</text>
 					</view>
 				</view>
-			</viwe>
-			<view class="tn-margin-left-xl tn-margin tn-padding-left-lg">
-				<text>这是评论</text>
 			</view>
+			<view class="tn-margin tn-no-margin-right">
+				<view class="tn-margin-left-xl tn-bg-gray--light" style="border-radius: 20rpx;">
+					<view class="tn-padding-sm">
+						<text>这是评论</text>
+					</view>
+				</view>
+			</view>
+
 
 		</view>
 	</z-paging>
