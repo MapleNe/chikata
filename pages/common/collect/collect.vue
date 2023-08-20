@@ -161,9 +161,11 @@
 					this.collectInfo = res.data.data
 				})
 			},
-			async getCollectArticle() {
+			async getCollectArticle(page, num) {
 				await this.$http.get('/collections/postFind', {
 					params: {
+						page: page,
+						limit: num,
 						cid: this.id
 					}
 				}).then(res => {

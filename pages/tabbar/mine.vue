@@ -47,8 +47,8 @@
 								<text v-if="userInfo.level==='admin'"
 									class="tn-text-xl tn-icon-trusty-fill tn-color-white tn-margin-left-xs"></text>
 							</view>
-							<view class="tn-flex tn-flex-col-center tn-margin-top-sm">
-								<text style="color: #999999;">UID：{{userInfo.id}}</text>
+							<view class="tn-flex tn-flex-col-center tn-margin-top-xs">
+								<text class="tn-color-gray">UID：{{userInfo.id}}</text>
 							</view>
 
 						</view>

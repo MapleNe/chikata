@@ -19,8 +19,8 @@
 					<view class="tn-padding" style="position: absolute;bottom: 0;width: 100%;">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 							<text class="tn-color-orangeyellow">新人大礼包邀请免费领取</text>
-							<tn-button size="sm" shape="round"
-								backgroundColor="tn-main-gradient-orangeyellow" fontColor="tn-color-black">立即开通</tn-button>
+							<tn-button size="sm" shape="round" backgroundColor="tn-main-gradient-orangeyellow"
+								fontColor="tn-color-black" @tap="showBuyVip = true">立即开通</tn-button>
 						</view>
 					</view>
 
@@ -52,12 +52,11 @@
 
 				</view>
 				<view class="tn-margin-top">
-					<text class="tn-margin-left-xs">已成功邀请{{invite.length}}/5位</text>
-					<view class="tn-flex tn-flex-direction-column tn-margin-left-xs tn-text-xs tn-padding-bottom-xs"
-						style="color: #999999;">
-						<text>1、点击邀请好友生成海报</text>
-						<text>2、好友扫码下载APP注册填写邀请码</text>
-						<text>3、邀请好友成功</text>
+					<text class="tn-margin-left-xs tn-margin-bottom">已成功邀请{{invite.length}}/5位</text>
+					<view class="tn-flex tn-flex-direction-column tn-margin-left-xs tn-text-sm" style="color: #999999;">
+						<text class="tn-margin-bottom-sm">1、点击邀请好友生成海报</text>
+						<text class="tn-margin-bottom-sm">2、好友扫码下载APP注册填写邀请码</text>
+						<text class="tn-margin-bottom-sm">3、邀请好友成功</text>
 					</view>
 				</view>
 			</view>
@@ -186,12 +185,140 @@
 			</view>
 		</view>
 		<!-- 海报弹窗 -->
-		<tn-popup mode="center" length="90%" v-model="showPoster" :borderRadius="20">
+		<tn-popup mode="center" length="90%" v-model="showPoster" :borderRadius="20" safeAreaInsetBottom>
 			<l-painter>
 				<l-painter-view css="background-color:#333;height:300rpx">
-					
+
 				</l-painter-view>
 			</l-painter>
+		</tn-popup>
+		<!-- 充值弹窗 -->
+		<tn-popup mode="bottom" v-model="showBuyVip" :borderRadius="20" safeAreaInsetBottom>
+			<view class="tn-margin">
+				<view class="tn-flex tn-flex-row-center">
+					<text class="tn-text-center tn-color-orange--dark">会员套餐推荐</text>
+				</view>
+			</view>
+			<tn-grid align="center" :col="3" hoverClass='none'>
+				<block v-for="(item, index) in vipPrice" :key="index">
+					<!-- H5 -->
+					<!-- #ifndef MP-WEIXIN -->
+					<tn-grid-item>
+						<view class="tn-border-solid tn-padding" style="border-radius: 20rpx;"
+							:class="selectedPackage ===index?'tn-border-cyan--dark tn-color-cyan--dark':'tn-border-black'"
+							@tap.stop="selectPackage(index)">
+							<view class="tn-flex tn-flex-direction-column tn-flex-col-center ">
+								<text>{{item.day}}天</text>
+								<view class="tn-flex tn-margin-top-sm">
+									<text class="tn-text-xs">￥</text>
+									<text class="tn-text-xxl tn-text-bold">{{item.price}}</text>
+								</view>
+								<text class="tn--margin-top-sm tn-text-sm tn-color-gray"
+									style="text-decoration:line-through;">￥{{item.oPrice}}</text>
+							</view>
+							<view class="tn-margin-top tn-flex tn-flex-col-center tn-text-sm">
+								<text class="tn-icon-gift tn-margin-right-sm"></text>
+								<text>赠送{{item.gift}}天</text>
+							</view>
+						</view>
+
+					</tn-grid-item>
+					<!-- #endif-->
+					<!-- 微信小程序 -->
+					<!-- #ifdef MP-WEIXIN -->
+					<tn-grid-item :style="{width: gridItemWidth}">
+						<view class="tn-border-solid tn-padding" style="border-radius: 20rpx;"
+							:class="selectedPackage ===index?'tn-border-cyan--dark tn-color-cyan--dark':'tn-border-black'"
+							@tap.stop="selectPackage(item.id)">
+							<view class="tn-flex tn-flex-direction-column tn-flex-col-center ">
+								<text>{{item.day}}天</text>
+								<view class="tn-flex tn-margin-top-sm">
+									<text class="tn-text-xs">￥</text>
+									<text class="tn-text-xxl tn-text-bold">{{item.price}}</text>
+								</view>
+								<text class="tn--margin-top-sm tn-text-sm tn-color-gray"
+									style="text-decoration:line-through;">￥{{item.oPrice}}</text>
+							</view>
+							<view class="tn-margin-top tn-flex tn-flex-col-center tn-text-sm">
+								<text class="tn-icon-gift tn-margin-right-sm"></text>
+								<text>赠送{{item.gift}}天</text>
+							</view>
+						</view>
+					</tn-grid-item>
+					<!-- #endif-->
+				</block>
+			</tn-grid>
+			<view class="tn-margin">
+				<view class="tn-flex tn-flex-row-center tn-bg-cyan--dark tn-color-white tn-padding-sm tn-round"
+					hover-class="tn-hover" hover-stay-time="150" @tap.stop="showPay = true">
+					<text class="">立即开通</text>
+				</view>
+			</view>
+			<view class="tn-margin">
+				<view class="tn-color-gray tn-flex tn-flex-direction-column">
+					<text class="tn-margin-bottom-sm">购买须知</text>
+					<view class="tn-text-sm tn-flex tn-flex-direction-column">
+						<view class="tn-margin-bottom-sm">
+							<text>1、购买会员则代表您同意</text>
+							<text class="tn-color-cyan--dark">《会员协议》</text>
+						</view>
+						<text class="tn-margin-bottom-sm">2、购买后即享受会员特权，非特殊情况不允许退款</text>
+						<text>3、最终解释权归软件方所有</text>
+
+					</view>
+				</view>
+			</view>
+		</tn-popup>
+		<!-- 充值弹窗 -->
+		<tn-popup v-model="showPay" mode="bottom" :borderRadius="20">
+			<view class="tn-margin">
+				<view class="tn-flex tn-flex-row-center">
+					<text class="tn-text-bold">选择支付方式</text>
+				</view>
+			</view>
+			<view class="tn-margin">
+				<view class="tn-flex">
+					<tn-radio-group activeColor="#29B7CB" v-model="paymentSelect" @change="radioGroupChange"
+						class="tn-flex-1 tn-flex tn-flex-direction-column">
+						<view class="tn-flex tn-flex-row-between tn-flex-col-flex tn-margin-bottom">
+							<view class="tn-flex tn-flex-col-center">
+								<text
+									class="tn-icon-funds tn-text-xxl tn-bg-cyan--dark tn-padding-xs tn-round tn-color-white"></text>
+								<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
+									<text>余额支付</text>
+									<text class="tn-text-sm tn-color-gray">推荐使用余额支付</text>
+								</view>
+							</view>
+							<tn-radio @change="radioChange" name="money"></tn-radio>
+						</view>
+						<view class="tn-flex tn-flex-row-between tn-flex-col-flex tn-margin-bottom">
+							<view class="tn-flex tn-flex-col-center">
+								<text
+									class="tn-icon-payment-wechat tn-text-xxl tn-bg-cyan--dark tn-padding-xs tn-round tn-color-white"></text>
+								<text class="tn-margin-left-sm">微信支付</text>
+							</view>
+							<tn-radio @change="radioChange" name="wechatpay"></tn-radio>
+						</view>
+						<view class="tn-flex tn-flex-row-between tn-flex-col-flex tn-margin-bottom">
+							<view class="tn-flex tn-flex-col-center">
+								<text
+									class="tn-icon-alipay tn-text-xxl tn-bg-blue tn-padding-xs tn-round tn-color-white"></text>
+								<text class="tn-margin-left-sm">支付宝支付</text>
+							</view>
+							<tn-radio @change="radioChange" name="alipay"></tn-radio>
+						</view>
+					</tn-radio-group>
+				</view>
+				<view class="tn-margin-top-xl tn-padding-top-xl">
+					<view class="tn-margin-top-xl tn-padding-sm tn-flex tn-flex-row-center tn-round tn-bg-cyan--dark tn-shadow"
+						hover-class="tn-hover" hover-stay-time="150">
+						<text class="tn-color-white">确认支付</text>
+					</view>
+				</view>
+
+
+
+			</view>
 		</tn-popup>
 	</view>
 
@@ -206,6 +333,9 @@
 		data() {
 			return {
 				showPoster: false,
+				showBuyVip: false,
+				selectedPackage: 0,
+				showPay: false,
 				invite: [{
 						head_img: 'https://img.harumoe.cn/uploads/20230630/3bb7c3b581168627d64f2602227e4e40.png',
 						id: 1
@@ -266,7 +396,31 @@
 						name: '动态头像',
 						icon: 'tn-icon-tailor'
 					}
-				]
+				],
+				vipPrice: [{
+						id: 1,
+						day: 30,
+						price: 15,
+						oPrice: 30,
+						gift: 5
+					},
+					{
+						id: 2,
+						day: 90,
+						price: 60,
+						oPrice: 90,
+						gift: 5
+					},
+					{
+						id: 3,
+						day: 180,
+						price: 80,
+						oPrice: 180,
+						gift: 5
+					},
+				],
+				paymentSelect: 'money',
+
 			};
 		},
 		computed: {
@@ -275,6 +429,18 @@
 				return 100 / this.col + '%'
 			},
 			...mapState(['userInfo'])
+		},
+		methods: {
+			selectPackage(id) {
+				this.selectedPackage = id
+			},
+			radioChange(e) {
+				console.log(e);
+			},
+			// 选中任一radio时，由radio-group触发
+			radioGroupChange(e) {
+				console.log(e);
+			}
 		}
 	}
 </script>

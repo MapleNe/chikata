@@ -3,7 +3,6 @@
 		<z-paging ref="paging" v-model="chatList" @query="getChatter">
 			<template #top>
 				<tn-nav-bar :customBack="true">
-
 					<text>消息</text>
 					<view slot="right" class="tn-padding">
 						<text class="tn-icon-clear tn-text-lg" @tap.stop="clearNotice()"></text>
@@ -12,28 +11,28 @@
 				<!-- 页面内容 -->
 				<view :style="{paddingTop: vuex_custom_bar_height + 'px'}">
 				</view>
-				<view class="tn-margin tn-flex tn-flex-row-between">
-					<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
-						<view class="tn-bg-purplered--disabled tn-shadow-blur tn-radius tn-padding-sm"
-							style="position:relative">
-							<text class="tn-icon-like tn-text-xxl tn-color-white">
+				<view class="tn-margin tn-flex tn-flex-row-around">
+					<view class="tn-flex tn-flex-direction-column tn-flex-col-center"
+						@tap.stop="goNoticeDetail('comment')">
+						<view class="tn-bg-blue--disabled tn-round tn-padding-sm" style="position:relative">
+							<text class="tn-icon-comment-fill tn-text-xxl tn-color-white">
 							</text>
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
 								v-show="noticeNum.commnet_count>0"></tn-badge>
 						</view>
-						<text class="tn-margin-top-sm">回复我的</text>
+						<text class="tn-margin-top-sm">评论和@</text>
 					</view>
-
-					<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
-						<view class="tn-bg-purplered--disabled tn-shadow-blur tn-radius tn-padding-sm">
-							<text class="tn-icon-like tn-text-xxl tn-color-white">
+					<view class="tn-flex tn-flex-direction-column tn-flex-col-center"
+						@tap.stop="goNoticeDetail('articlelike')">
+						<view class="tn-bg-orangered--disabled tn-round tn-padding-sm">
+							<text class="tn-icon-praise-simple-fill tn-text-xxl tn-color-white">
 							</text>
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
 								v-show="noticeNum.article_like_count"></tn-badge>
 						</view>
-						<text class="tn-margin-top-sm">收到的赞</text>
+						<text class="tn-margin-top-sm">赞和收藏</text>
 					</view>
-					<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
+					<!-- <view class="tn-flex tn-flex-direction-column tn-flex-col-center">
 						<view class="tn-bg-purplered--disabled tn-shadow-blur tn-radius tn-padding-sm">
 							<text class="tn-icon-like tn-text-xxl tn-color-white">
 							</text>
@@ -43,10 +42,11 @@
 						<text class="tn-margin-top-sm">
 							系统通知
 						</text>
-					</view>
-					<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
-						<view class="tn-bg-purplered--disabled tn-shadow-blur tn-radius tn-padding-sm">
-							<text class="tn-icon-like tn-text-xxl tn-color-white">
+					</view> -->
+					<view class="tn-flex tn-flex-direction-column tn-flex-col-center"
+						@tap.stop="goNoticeDetail('focus')">
+						<view class="tn-bg-purplered--disabled tn-round tn-padding-sm">
+							<text class="tn-icon-like-fill tn-text-xxl tn-color-white">
 							</text>
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
 								v-show="notice.focus_count"></tn-badge>
@@ -56,9 +56,7 @@
 						</text>
 					</view>
 				</view>
-				<view class="tn-margin tn-no-margin-bottom">
-					<text class="tn-text-bold tn-text-xxl">Messages</text>
-				</view>
+
 			</template>
 			<view class="tn-margin" v-if="hasLogin">
 				<view class="tn-flex tn-flex-col-center tn-margin-bottom" v-for="(item,index) in chatList" :key="index"
@@ -137,6 +135,14 @@
 					path: '/pages/common/chat/chat',
 					query: {
 						params: this.chatList[index],
+					}
+				})
+			},
+			goNoticeDetail(type) {
+				this.$Router.push({
+					path: '/pages/user/noticeDetail/noticeDetail',
+					query: {
+						type: type
 					}
 				})
 			},

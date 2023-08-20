@@ -48,13 +48,16 @@
 						<text class="tn-margin-right">{{longtext.birthday}}</text>
 					</view>
 				</tn-list-cell>
-				<tn-list-cell :unlined="true" :arrow="true" @tap="imageChoose(1)">
+				<tn-list-cell :unlined="true" :arrow="false" @tap="imageChoose(1)">
 					<view class="tn-flex tn-flex-row-between tn-flex-col-center">
 						<text>背景</text>
-						<image class="tn-margin-right" :src="longtext.background_img" mode="aspectFill"
-							style="border-radius: 20rpx; height: 40rpx; width: 80rpx;"></image>
 					</view>
 				</tn-list-cell>
+				<view class="tn-margin-sm">
+					<image :src="longtext.background_img" mode="aspectFill" style="height: 350rpx;width: 100%;"
+						@tap="imageChoose(1)"></image>
+				</view>
+
 
 			</tn-list-view>
 		</view>

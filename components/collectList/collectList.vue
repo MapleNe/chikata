@@ -17,7 +17,7 @@
 			</view>
 		</view>
 	</z-paging>
-	
+
 </template>
 
 <script>
@@ -40,8 +40,8 @@
 			};
 		},
 		created() {
-			uni.$on('createCollect',data=>{
-				if(data){
+			uni.$on('createCollect', data => {
+				if (data) {
 					this.$refs.paging.reload()
 				}
 			})
@@ -61,8 +61,13 @@
 			}
 		},
 		methods: {
-			getCollect() {
-				this.$http.get('/collections/Find').then(res => {
+			getCollect(page, num) {
+				this.$http.get('/collections/Find',{
+					params:{
+						page:page,
+						limit:num,
+					}
+				}).then(res => {
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data)
 						this.firstLoad = true
@@ -70,9 +75,9 @@
 					console.log(res)
 				})
 			},
-			goCollect(index){
+			goCollect(index) {
 				this.$Router.push({
-					path:'/pages/common/collect/collect',
+					path: '/pages/common/collect/collect',
 					query: {
 						id: this.content[index].id
 					}
