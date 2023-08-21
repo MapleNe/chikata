@@ -51,8 +51,8 @@
 		onReachBottom() {
 			this.$refs.paging.pageReachBottom();
 		},
-		onLoad(option) {
-			this.id = Number(option.id)
+		onLoad(params) {
+			this.id = Number(params.id)
 			this.getcategoryInfo()
 		},
 		methods: {

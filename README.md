@@ -1,5 +1,7 @@
 # Chikata
 	Powered By Chikata
+# ISSUE
+	- 获取分类文章异常
 # Todo
  - [x] 关注 （后端）
  - 用户统计 （后端）

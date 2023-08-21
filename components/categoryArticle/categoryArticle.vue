@@ -108,28 +108,28 @@
 								</tn-grid>
 							</view>
 							<!-- 点赞控件 -->
-							<view class="tn-flex tn-flex-col-center tn-margin-top-xs tn-flex-row-between">
+							<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top">
 								<view class="tn-flex tn-flex-row-left">
 									<view v-for="(category,index) in item.expand.sort" :key="index"
-										class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius"
-										@tap.stop="goCategory(category)">
-										<tn-avatar size="sm" :src="category.opt.head_img" shape="square"></tn-avatar>
-										<text
-											class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
+										class="tn-padding-right tn-round tn-border-solid tn-flex tn-flex-col-center">
+										<view class="tn-margin-right-sm">
+											<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
+										</view>
+										<text class="tn-text-sm">{{category.name}}</text>
 									</view>
 								</view>
-								<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-basic-sm">
+								<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-1">
 									<view class="tn-flex tn-flex-col-center">
-										<text class="tn-text-xl tn-icon-fire"></text>
+										<text class="tn-text-xxl tn-icon-fireworks tn-color-red"></text>
 										<text>{{item.views}}</text>
 									</view>
 									<view class="tn-flex tn-flex-col-center" @tap.stop="showComments(index)">
-										<text class="tn-text-xl tn-icon-message"></text>
+										<text class="tn-text-xxl tn-color-orangered tn-icon-comment-fill"></text>
 										<text>{{item.expand.comments.count}}</text>
 									</view>
 									<view class="tn-flex tn-flex-col-center" @tap.stop="likeAction(index)">
-										<text
-											:class="item.expand.like.is_like?'tn-text-xl tn-icon-like-fill tn-color-red':'tn-text-xl tn-icon-like'"></text>
+										<text class="tn-text-xxl"
+											:class="item.expand.like.is_like?' tn-icon-like-fill tn-color-red':'tn-icon-like'"></text>
 										<text>{{item.expand.like.likes_count}}</text>
 									</view>
 								</view>
@@ -212,14 +212,12 @@
 		},
 
 		methods: {
-			async getArticle(page, num) {
-				await this.$http.get('/article-sort/article', {
+			getArticle(page, num) {
+				this.$http.get('/article-sort/article', {
 					params: {
-						id: this.id,
-						limit: num,
 						page: page,
-						order: this.tabsIndex === 1 ? 'create_time desc' : this.tabsIndex === 2 ?
-							'is_top desc,views desc' : ''
+						limit: num,
+						id: this.id,
 					}
 				}).then(res => {
 					if (res.data.code === 200) {

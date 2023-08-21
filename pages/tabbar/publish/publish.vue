@@ -18,7 +18,7 @@
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 		<lsj-edit ref="lsjEdit" placeholder="输入正文" @onReady="editReady"
-			:styles="{'overflow':'hidden','height':'60vh'}"></lsj-edit>
+			:styles="{'overflow':'hidden','height':'50vh'}"></lsj-edit>
 		<you-touchbox :minTop="0.08" :maxTop="0.85" :auto="false" :initTop="0.45"
 			customStyle="border-radius:20rpx 20rpx 0 0">
 			<view class="tn-flex tn-flex-col-center tn-margin tn-flex-row-between">
@@ -134,7 +134,7 @@
 				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 					<text @tap.stop.prevent="showSetting = !showSetting">取消</text>
 					<text class="tn-text-bold">选择分区和话题</text>
-					<text>确定</text>
+					<text @tap.stop.prevent="showSetting = !showSetting">确定</text>
 				</view>
 				<view class="tn-flex tn-flex-col-center tn-bg-white tn-flex-row-between tn-padding-sm tn-margin-top"
 					style="border-radius: 10rpx;" @tap.stop.prevent="showCategory =!showCategory">
@@ -204,7 +204,8 @@
 						<text>选择分区</text>
 						<view class="tn-margin-top tn-flex tn-flex-direction-column">
 							<view class="tn-flex tn-margin-top" v-for="(item,index) in category" :key="index"
-								hover-class="tn-hover" hover-stay-time="150">
+								hover-class="tn-hover" hover-stay-time="150"
+								@tap.stop.prevent="selectedCategory = item">
 								<view>
 									<image :src="item.opt.head_img" mode="aspectFill" class="tn-round"
 										style="height: 60rpx;width: 60rpx;"></image>
@@ -655,28 +656,35 @@
 				}
 			},
 			createTag(name) {
-				if (!name || this.selectedTagsList.length >= 10) {
-					if (this.selectedTagsList.length >= 10) {
-						uni.showToast({
-							icon: 'none',
-							title: '至多选择10个标签'
-						})
-						return
-					}
-				};
-				const exist = this.selectedTagsList.some(tag => tag.name === name)
-				if (exist) {
+				// 检查是否已存在于 tags 
+				if (this.selectedTagsList.length >= 10) {
 					uni.showToast({
 						icon: 'none',
-						title: '已有相同的标签'
+						title: '至多添加10个标签'
 					})
 					return
 				}
+				if (this.tags.some(t => t.name === name)) {
+					// 获取已存在的标签数据
+					const tag = this.tags.find(t => t.name === name)
+
+					// 检查是否已在 selectedTagsList 中
+					if (!this.selectedTagsList.includes(tag)) {
+						// 仅当不存在时才添加 
+						this.selectedTagsList.push(tag)
+					}
+					return
+				}
+				// 新建标签
 				const newTag = {
-					name: name,
+					name,
 					new: true
 				}
-				this.selectedTagsList.push(newTag)
+				// 检查是否已在 selectedTagsList 中 
+				if (!this.selectedTagsList.includes(newTag)) {
+					this.selectedTagsList.push(newTag)
+				}
+
 			},
 			tagsTap(item) {
 				const index = this.selectedTagsList.findIndex(tag => tag.id === item.id)

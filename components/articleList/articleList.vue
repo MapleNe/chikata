@@ -103,15 +103,14 @@
 								</tn-grid>
 							</view>
 							<!-- 点赞控件 -->
-							<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top-xs">
+							<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top">
 								<view class="tn-flex tn-flex-row-left">
-									<view v-for="(category,index) in item.expand.sort" :key="index"
-										class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius"
+									<view v-for="(category,index) in item.expand.sort" :key="index" class="tn-padding-right tn-round tn-border-solid tn-flex tn-flex-col-center"
 										@tap.stop="goCategory(category)">
-										<image :src="category.opt.head_img" mode="aspectFill"
-											style="height: 34rpx;width: 34rpx;border-radius: 10rpx;"></image>
-										<text
-											class="tn-margin-left-xs tn-margin-right-xs tn-text-xs tn-color-grey">{{category.name}}</text>
+										<view class="tn-margin-right-sm">
+											<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
+										</view>
+										<text class="tn-text-sm">{{category.name}}</text>
 									</view>
 								</view>
 								<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-1">

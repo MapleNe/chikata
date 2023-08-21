@@ -25,7 +25,7 @@ refresh.setConfig((config) => {
 	config.baseURL = inisHelper.customProcessApi(inisENV.api)
 	config.header = {
 		'Content-Type': 'application/x-www-form-urlencoded',
-		
+
 	}
 	config.timeout = 60 * 1000
 	return config
@@ -66,7 +66,7 @@ http.interceptors.request.use((config) => {
 							title: '登录失效请重新登录'
 						})
 						this.$router.push({
-							path:'/pages/user/login'
+							path: '/pages/user/login'
 						})
 					}
 				})
@@ -77,10 +77,10 @@ http.interceptors.request.use((config) => {
 
 	}
 	if (config.method == 'GET') config.params.token = inisENV.token
-
 	if (token) {
 		config.header['Authorization'] = uni.getStorageSync('token');
 	}
+
 	return config
 }, (config) => {
 	return Promise.reject(config)
@@ -114,7 +114,7 @@ http.interceptors.response.use(async (response) => {
 						title: '登录失效请重新登录'
 					})
 					this.$router.push({
-						path:'/pages/user/login'
+						path: '/pages/user/login'
 					})
 				}
 			} catch (e) {
