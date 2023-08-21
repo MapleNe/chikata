@@ -1,774 +1,688 @@
- <template>
- 	<view class="tn-bg-gray--light">
- 		<tn-nav-bar fiexd :zIndex="2">
- 			编辑
- 			<view slot="right" class="tn-margin">
- 				<tn-button size="sm" shape="round" :plain="true" @tap="save">保存</tn-button>
- 			</view>
- 		</tn-nav-bar>
- 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
- 		<lsj-edit ref="lsjEdit" placeholder="啊~灵感在迸发~" @onReady="editReady"
- 			:styles="{'overflow':'hidden','height':'75vh'}">
- 		</lsj-edit>
- 		<!-- 上拉组件 -->
- 		<you-touchbox :auto="false" :maxTop="0.85" :minTop="0.08" :initTop="0.5"
- 			customStyle="border-radius:20rpx 20rpx 0 0">
- 			<view class="tn-margin tn-flex tn-flex-row-between tn-text-xxl">
- 				<text class="tn-icon-image" @tap="addImage"></text>
- 				<!-- 循环控件 -->
- 				<view v-for="(item ,index) in editList" :key="item.id" @tap="editAction(item)">
- 					<text :class="[item.icon, {'ch-color-primary': moreAction == item.id}]"></text>
- 				</view>
- 			</view>
- 			<!-- 展开面板 -->
- 			<view v-show="moreAction === 0" class="tn-margin">
- 				<view class="tn-margin-bottom">
- 					<text class="tn-icon-down-triangle">标题大小</text>
- 					<view class=" tn-flex tn-flex-row-between tn-bg-gray--light tn-radius">
- 						<view v-for="(item,index) in title" :key="item.id" class="tn-text-xl tn-padding"
- 							@tap="editSubAction(item)">
- 							<text :class="{'ch-color-primary': statusObj.header == item.val}">{{item.name}}</text>
- 						</view>
- 					</view>
- 				</view>
- 				<view class="tn-margin-bottom">
- 					<text class="tn-icon-down-triangle">字体样式</text>
- 					<view class=" tn-flex tn-flex-row-between tn-bg-gray--light tn-radius">
- 						<view v-for="(item,index) in fontStyle" :key="item.id" class="tn-text-xl tn-padding"
- 							@tap="editSubAction(item)">
- 							<text :class="{'ch-color-primary': statusObj[item.format]}">{{item.name}}</text>
- 						</view>
- 					</view>
- 				</view>
- 			</view>
- 			<view v-show="moreAction === 1" class="tn-margin tn-flex tn-flex-direction-column">
- 				<view class="tn-margin-bottom">
- 					<text class="tn-icon-down-triangle tn-text-left">字体大小</text>
- 					<view class="tn-flex tn-bg-gray--light tn-flex-row-between tn-padding tn-radius">
- 						<view v-for="(item,index) in fontSize" :key="item.id" @tap="editSubAction(item)">
- 							<text :class="{'ch-color-primary': statusObj.fontSize == item.val}">{{item.name}}</text>
- 						</view>
- 					</view>
- 				</view>
- 				<view class="tn-margin-bottom">
- 					<text class="tn-icon-down-triangle tn-text-left">字体背景</text><text
- 						class="tn-margin-left-xs tn-text-xs">选择字体背景后一定要更换字体颜色</text>
- 					<view class="tn-flex tn-bg-gray--light tn-padding tn-radius tn-flex-row-between">
- 						<view class="tn-round tn-padding-xs tn-border-solid tn-bold-border"
- 							:class="statusObj.backgroundColor==item.val?'tn-border-bluepurple':'tn-border-white'"
- 							:style="'background-color:'+item.val" v-for="(item ,index) in backgroundColor"
- 							:key="item.id" @tap="editSubAction(item)">
- 						</view>
- 					</view>
- 				</view>
- 				<view class="tn-margin-bottom">
- 					<text class="tn-icon-down-triangle tn-text-left">字体颜色</text>
- 					<view class="tn-flex tn-bg-gray--light tn-padding tn-radius tn-flex-row-between">
- 						<view class="tn-round tn-padding-xs tn-border-solid tn-bold-border"
- 							:class="statusObj.color===item.val?'tn-border-bluepurple':'tn-border-white'"
- 							:style="'background-color:'+item.val" v-for="(item ,index) in color" :key="item.id"
- 							@tap="editSubAction(item)">
- 						</view>
- 					</view>
- 				</view>
-
- 			</view>
- 			<view v-show="moreAction === 2" class="tn-margin tn-flex tn-flex-direction-column">
- 				<text class="tn-icon-down-triangle tn-text-left">文字方向</text>
- 				<view class="tn-margin-bottom tn-flex tn-bg-gray--light tn-padding tn-radius tn-flex-row-between">
- 					<view class="tn-flex tn-flex-direction-column" v-for="(item, index) in align" :key="item.id"
- 						@tap="editSubAction(item)">
- 						<text :class="[item.icon, {'ch-color-primary': statusObj.align == item.val}]"
- 							class="tn-text-xl">
- 						</text>
- 						<text class="tn-text-sm">
- 							{{item.name}}
- 						</text>
- 					</view>
- 				</view>
- 			</view>
- 			<!-- 面板展开结束 -->
- 			<!-- 文章属性开始 -->
- 			<view class="tn-margin tn-margin-top-xl">
- 				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center"
- 					@tap="showCategory = true">
- 					<view class="tn-flex tn-flex-col-center">
- 						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-primary"></text>
- 						<text>圈子板块</text>
- 					</view>
- 					<view class="tn-flex tn-flex-col-center">
- 						<text>{{categoryTitle}}</text> <!-- 点击出现Popup -->
- 						<text class="tn-icon-right-triangle">
- 						</text>
- 					</view>
- 				</view>
- 				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center"
- 					@tap="showTitleModal = true">
- 					<view class="tn-flex tn-flex-col-center">
- 						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-primary"></text>
- 						<text>帖子标题</text>
- 					</view>
- 					<view class="tn-flex tn-flex-col-center">
- 						<text>{{articleTitle}}</text>
- 						<text class="tn-icon-right-triangle">
- 						</text>
- 					</view>
- 				</view>
- 				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center"
- 					@tap="showTags = true">
- 					<view class="tn-flex tn-flex-col-center tn-flex-basic-sm">
- 						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-primary"></text>
- 						<text>话题标签</text>
- 					</view>
- 					<scroll-view scroll-x class="tn-flex tn-flex-nowrap tn-text-ellipsis" style="overflow: hidden;">
- 						<view class="tn-flex tn-flex-row tn-flex-col-center tn-flex-nowrap">
- 							<text v-for="(item, index) in selectedTags" :key="index"
- 								class="tn-bg-gray--light ch-radius tn-margin-left-xs tn-color-grey tn-text-sm tn-padding-xs"
- 								@tap.stop="deleteTags(index)">
- 								{{ item.name }}
- 							</text>
- 						</view>
- 					</scroll-view>
- 					<text class="tn-icon-right-triangle">
- 					</text>
- 				</view>
- 				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center"
- 					@tap="showCollect = true">
- 					<view class="tn-flex tn-flex-col-center tn-flex-nowrap tn-text-ellipsis">
- 						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-primary"></text>
- 						<text>文章合集</text>
- 					</view>
- 					<view class="tn-flex tn-flex-col-center tn-flex-nowrap tn-text-ellipsis">
- 						<text>
- 						</text>
- 						<text class="tn-icon-right-triangle">
- 						</text>
- 					</view>
- 				</view>
- 				<view class="tn-margin-bottom-xl tn-flex tn-flex-row-between tn-flex-col-center"
- 					@tap="showPermission = true">
- 					<view class="tn-flex tn-flex-col-center">
- 						<text class="tn-icon-circle-fill tn-margin-right-xs ch-color-primary"></text>
- 						<text>权限设置</text>
- 					</view>
- 					<view class="tn-flex tn-flex-col-center">
- 						<text>{{permission.auth}}</text> <!-- 点击出现Popup -->
- 						<text class="tn-icon-right-triangle">
- 						</text>
- 					</view>
- 				</view>
- 			</view>
- 			<!-- 文章属性结束 -->
- 			<!-- Popup组件开始 -->
- 			<!-- 圈子板块组件 -->
- 			<tn-popup mode="bottom" length="50%" v-model="showCategory" :borderRadius="20" :closeBtn="true">
- 				<z-paging-swiper>
- 					<template #top>
- 						<v-tabs v-model="cateTabsIndex" :tabs="categoryTabs" @change="changeTab" lineHeight="8rpx"
- 							lineColor="#29B7CB" :zIndex="2" activeColor="#29B7CB" :lineScale="0.2"></v-tabs>
- 					</template>
- 					<swiper class="swiper" :current="cateTabsIndex" @change="changeSwpier">
- 						<swiper-item v-for="(item, index) in categoryTabs" :key="index">
- 							<categoryList :tabsIndex="cateTabsIndex" @getCategoryInfo="getCategoryInfo"
- 								:selectedCategory="selectedCategory"></categoryList>
- 						</swiper-item>
- 					</swiper>
-
- 				</z-paging-swiper>
- 			</tn-popup>
- 			<!-- 标签tag组件 -->
- 			<tn-popup mode="bottom" length="50%" v-model="showTags" :borderRadius="20" :closeBtn="true">
- 				<z-paging-swiper>
- 					<template #top>
- 						<view class="tn-flex tn-flex-col-center">
- 							<v-tabs v-model="tagsTabsIndex" :tabs="tagsTabs" @change="changeTagsTab" lineHeight="8rpx"
- 								lineColor="#29B7CB" :zIndex="2" activeColor="#29B7CB" :lineScale="0.2"></v-tabs>
- 							<view class="tn-margin-xs tn-margin-top-sm tn-flex-basic-xl tn-flex">
- 								<view class="tn-margin-right-xs">
- 									<tn-button size="sm" :plain="true" shape="round"
- 										@tap="showSearch = true">搜索</tn-button>
- 								</view>
-
- 								<tn-button size="sm" :plain="true" shape="round"
- 									@tap="showNewTag = true">创建</tn-button>
- 							</view>
- 						</view>
-
- 					</template>
- 					<swiper class="swiper" :current="tagsTabsIndex" @change="changeTagsSwiper">
- 						<swiper-item v-for="(item,index) in tagsTabs" :key="index">
- 							<tagsList :tabsIndex="tagsTabsIndex" @getTagsInfo="getTagsInfo"
- 								:selectedTags="selectedTags" :searchKey="tagSearchKey"></tagsList>
- 						</swiper-item>
- 					</swiper>
- 				</z-paging-swiper>
- 			</tn-popup>
- 			<!-- 权限组件 -->
- 			<tn-popup mode="bottom" length="50%" v-model="showPermission" :borderRadius="20" :closeBtn="true">
- 				<view class="tn-margin tn-flex tn-flex-direction-column">
- 					<view class="tn-flex tn-flex-col-center  tn-margin-top-xl">
- 						<text class="tn-text-lg tn-text-bold">文章权限</text>
- 						<text class="tn-icon-down-triangle"></text>
- 					</view>
- 					<view class="tn-margin">
- 						<view v-for="(item,index) in permission" :key="index"
- 							class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-bottom-sm"
- 							@tap="permissionAction(index)">
- 							<text>{{item.name}}</text>
- 							<text class="tn-icon-success" v-if="item.active"></text>
- 						</view>
- 					</view>
- 					<view class="tn-flex tn-flex-col-center">
- 						<text class="tn-text-lg tn-text-bold">评论权限</text>
- 						<text class="tn-icon-down-triangle"></text>
- 					</view>
- 					<view class="tn-margin">
- 						<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-bottom-sm"
- 							@tap="opt.comments.allow = !opt.comments.allow">
- 							<text>允许评论</text>
- 							<text class="tn-icon-success" v-if="opt.comments.allow"></text>
- 						</view>
- 						<view class="tn-flex tn-flex-row-between tn-flex-col-center"
- 							@tap="opt.comments.show = !opt.comments.show">
- 							<text>评论可见</text>
- 							<text class="tn-icon-success" v-if="opt.comments.show"></text>
- 						</view>
-
- 					</view>
- 				</view>
- 			</tn-popup>
- 			<!-- 合集popup -->
- 			<tn-popup mode="bottom" length="50%" v-model="showCollect" :borderRadius="20" :closeBtn="true">
- 				<z-paging-swiper>
- 					<template #top>
- 						<v-tabs :tabs="['全部']" lineHeight="8rpx" lineColor="#29B7CB" :zIndex="2" activeColor="#29B7CB"
- 							:lineScale="0.2"></v-tabs>
- 					</template>
- 					<swiper class="swiper">
- 						<swiper-item>
- 							<collectList @getCollectInfo="getCollectInfo" :selectedCollect="selectedCollect">
- 							</collectList>
- 						</swiper-item>
- 					</swiper>
-
- 				</z-paging-swiper>
- 			</tn-popup>
- 			<!-- popup组件结束 -->
- 			<!-- modal开始 -->
- 			<tn-modal v-model="showTitleModal" :radius="10" :custom="true" width="90%">
- 				<view class="tn-flex tn-flex-direction-column">
- 					<text class="tn-text-bold tn-text-xl tn-margin-bottom-sm">标题</text>
- 					<view
- 						class="tn-bg-gray--light ch-radius tn-padding-left-sm tn-padding-right-sm tn-margin-bottom-sm">
- 						<tn-input :maxLength="20" v-model="articleTitle" placeholder="帖子标题不超过20字符"
- 							:clearable="false" />
- 					</view>
- 					<view class="tn-text-right">
- 						<tn-button :plain="true" size="sm" shape="round" @tap="showTitleModal = false">Get！</tn-button>
- 					</view>
- 				</view>
- 			</tn-modal>
- 			<!-- 搜索 -->
- 			<tn-modal v-model="showSearch" :radius="10" :custom="true" width="90%">
- 				<view class="tn-flex tn-flex-direction-column">
- 					<text class="tn-text-bold tn-text-xl tn-margin-bottom-sm">搜索标签</text>
- 					<view
- 						class="tn-bg-gray--light ch-radius tn-padding-left-sm tn-padding-right-sm tn-margin-bottom-sm">
- 						<tn-input :maxLength="20" v-model="tagSearchKey" placeholder="搜索标签" :clearable="false" />
- 					</view>
- 					<view class="tn-text-right">
- 						<tn-button :plain="true" size="sm" shape="round" @tap="showSearch = false">搜索</tn-button>
- 					</view>
- 				</view>
- 			</tn-modal>
- 			<!-- 新增 -->
- 			<tn-modal v-model="showNewTag" :radius="10" :custom="true" width="90%">
- 				<view class="tn-flex tn-flex-direction-column">
- 					<text class="tn-text-bold tn-text-xl tn-margin-bottom-sm">创建标签</text>
- 					<view
- 						class="tn-bg-gray--light ch-radius tn-padding-left-sm tn-padding-right-sm tn-margin-bottom-sm">
- 						<tn-input :maxLength="10" v-model="newTag" placeholder="创建标签" :clearable="false" />
- 					</view>
- 					<view class="tn-text-right">
- 						<tn-button :plain="true" size="sm" shape="round"
- 							@tap="showNewTag = false;newTagCreate()">创建</tn-button>
- 					</view>
- 				</view>
- 			</tn-modal>
- 		</you-touchbox>
- 	</view>
- </template>
-
- <script>
- 	import categoryList from './components/categoryList/categoryList.vue';
- 	import tagsList from './components/tagsList/tagsList.vue';
- 	import collectList from './components/collectList/collectList.vue';
- 	export default {
- 		components: {
- 			categoryList,
- 			tagsList,
- 			collectList,
- 		},
- 		data() {
- 			return {
- 				categoryTabs: ['全部', '关注'],
- 				collectTabs: ['全部'],
- 				cateTabsIndex: 0, //用来接收设置用
- 				categoryTitle: null,
- 				categoryId: null,
- 				tagsTabsIndex: 0,
- 				tagsTabs: ['全部', '关注'],
- 				content: null,
- 				edit: null,
- 				statusObj: {},
- 				editList: [{
- 						id: 0,
- 						name: '标题',
- 						icon: 'tn-icon-font'
- 					},
- 					{
- 						id: 1,
- 						name: '字号',
- 						icon: 'tn-icon-theme'
- 					},
- 					{
- 						id: 2,
- 						name: '对齐',
- 						icon: 'tn-icon-align'
- 					}
-
- 				],
- 				title: [{
- 						name: 'H2',
- 						format: 'header',
- 						val: 2
- 					},
- 					{
- 						name: 'H3',
- 						format: 'header',
- 						val: 3
- 					},
- 					{
- 						name: 'H4',
- 						format: 'header',
- 						val: 4
- 					},
- 					{
- 						name: 'H5',
- 						format: 'header',
-
- 						val: 5
- 					},
- 					{
- 						name: 'H6',
- 						format: 'header',
- 						val: 6
- 					}
- 				],
- 				color: [{
- 						format: 'color',
- 						val: '#ed5a65'
- 					},
- 					{
- 						format: 'color',
- 						val: '#813c85'
- 					},
- 					{
- 						format: 'color',
- 						val: '#2177b8'
- 					},
- 					{
- 						format: 'color',
- 						val: '#1ba784'
- 					},
- 					{
- 						format: 'color',
- 						val: '#fcc307'
- 					},
- 					{
- 						format: 'color',
- 						val: '#1772b4'
- 					},
- 					{
- 						format: 'color',
- 						val: '#ffffff'
- 					}
- 				],
- 				align: [{
- 						id: 0,
- 						name: '左对齐',
- 						format: 'align',
- 						val: 'left',
- 						icon: 'tn-icon-align-left'
- 					},
- 					{
- 						id: 1,
- 						name: '居中',
- 						format: 'align',
- 						val: 'center',
- 						icon: 'tn-icon-align-center'
- 					},
- 					{
- 						id: 2,
- 						name: '右对齐',
- 						format: 'align',
- 						val: 'right',
- 						icon: 'tn-icon-align-right'
- 					}
- 				],
- 				fontSize: [{
- 						id: 0,
- 						name: '默认',
- 						format: 'fontSize',
- 						val: ''
- 					},
- 					{
- 						id: 1,
- 						name: '小',
- 						format: 'fontSize',
- 						val: '14px'
- 					},
- 					{
- 						id: 2,
- 						name: '中',
- 						format: 'fontSize',
- 						val: '18px'
- 					},
- 					{
- 						id: 3,
- 						name: '大',
- 						format: 'fontSize',
- 						val: '28px'
- 					}
- 				],
- 				backgroundColor: [{
- 						id: 0,
- 						format: 'backgroundColor',
- 						val: '#f1939c'
- 					},
- 					{
- 						id: 1,
- 						format: 'backgroundColor',
- 						val: '#fbda41'
- 					},
- 					{
- 						id: 2,
- 						format: 'backgroundColor',
- 						val: '#66a9c9'
- 					},
- 					{
- 						id: 3,
- 						format: 'backgroundColor',
- 						val: '#1ba784'
- 					},
- 					{
- 						id: 4,
- 						format: 'backgroundColor',
- 						val: '#fcc307'
- 					},
- 					{
- 						id: 5,
- 						format: 'backgroundColor',
- 						val: '#57c3c2'
- 					},
- 					{
- 						id: 6,
- 						format: 'backgroundColor',
- 						val: 'rbga(255,255,255,0)'
- 					}
- 				],
- 				fontStyle: [{
- 						id: 0,
- 						name: '粗体',
- 						format: 'bold',
- 						active: false
- 					},
- 					{
- 						id: 1,
- 						name: '斜体',
- 						format: 'italic',
- 						active: false
- 					},
- 					{
- 						id: 2,
- 						name: '下划线',
- 						format: 'underline',
- 						active: false
- 					}
- 				],
- 				moreAction: null,
- 				articleTitle: null,
- 				alignMoreAction: null,
- 				showCategory: false,
- 				showTags: false,
- 				showTitleModal: false,
- 				selectedTags: [],
- 				selectedCategory: {},
- 				selectedCollect: null,
- 				showPermission: false,
- 				opt: {
- 					password: "",
- 					auth: "anyone",
- 					comments: {
- 						show: true,
- 						allow: true,
- 					}
- 				},
- 				permission: [{
- 						name: '公开可见',
- 						permission: 'anyone',
- 						active: true
- 					},
- 					{
- 						name: '自己可见',
- 						permission: 'private',
- 						active: false
- 					},
-
- 				],
- 				showCollect: false,
- 				collectId: null,
- 				tagSearchKey: '',
- 				showSearch: false,
- 				showNewTag: false,
- 				newTag: '',
-
- 			}
- 		},
- 		onLoad() {
- 			// console.log(uni.getStorageSync('token'))
- 		},
- 		onBackPress(e) {
- 			console.log(e)
- 		},
-
- 		methods: {
- 			editReady(edit) {
- 				// 将富文本对象存放到当前页面，便于后续直接操作
- 				this.edit = edit;
- 				// 演示----监听光标进入
- 				this.edit.$on('edit:focus', (e) => {
- 					// console.log('监听光标进入',e);
-
- 				});
- 				// 演示----监听输入
- 				this.edit.$on('edit:input', (e) => {
-
- 					// console.log('监听输入', e);
- 				});
- 				// 演示----监听光标指向不同样式时回调
- 				this.edit.$on('edit:statuschange', this.statuschange)
- 			},
- 			statuschange(e) {
- 				this.statusObj = e.detail
- 			},
- 			fontStyleChange(index) {
- 				this.statusObj.bold = this.fontStyle[index].active
- 				this.statusObj.underline = this.fontStyle[index].active
- 				this.statusObj.italic = this.fontStyle[index].active
- 			},
- 			async save() {
- 				// 获取插入的图片列表
- 				let imgs = await this.edit.getImages()
- 				// 判断是否允许提交
- 				if (!this.edit.textCount && !imgs.length) {
- 					uni.showToast({
- 						icon: 'none',
- 						title: '啊哦~你好像还没说什么？'
- 					});
- 				}
- 				// 将所有未上传的本地图片上传到服务器并替换到编辑器
- 				this.edit.replaceImage(async (img) => {
- 					// 已上传的无需再上传
- 					// img.indexOf('http') = 0说明这个图片已经是网络地址，无需替换就直接跳过
- 					if (img.indexOf('http') === 0) {
- 						return img;
- 					}
-
- 					// 上传并替换图片
- 					let {
- 						data
- 					} = await this.$http.upload('/file/upload', {
- 						filePath: img,
- 						name: 'file',
- 					})
-
- 					return data.data
+<template>
+	<view>
+		<tn-nav-bar backTitle="">
+			{{update?'编辑':'发布'}}
+		</tn-nav-bar>
+		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
+		<lsj-edit ref="lsjEdit" placeholder="输入正文" @onReady="editReady"
+			:styles="{'overflow':'hidden','height':'60vh'}"></lsj-edit>
+		<you-touchbox :minTop="0.08" :maxTop="0.85" :auto="false" :initTop="0.45"
+			customStyle="border-radius:20rpx 20rpx 0 0">
+			<view class="tn-flex tn-flex-col-center tn-margin tn-flex-row-between">
+				<text v-for="(item,index) in btnList" :key="index"
+					:class="[item.icon,item.type==='format'&&format?'tn-color-cyan--dark':'']" class="tn-text-xxl"
+					@tap.stop.prevent="switchBtn(item)"></text>
+			</view>
+			<view v-show="!format">
+				<view class="tn-margin">
+					<view class="tn-flex tn-flex-col-center">
+						<text class="tn-icon-set tn-text-bold"></text>
+						<text class="tn-margin-left-sm">发布设置</text>
+					</view>
+					<view class="tn-border-solid-bottom">
+						<tn-input v-model="aticleTitle" :maxLength="40" placeholder="请输入标题(可选:建议填写)"
+							:clearable="false" />
+					</view>
+					<tn-list-view :card="true" unlined="all">
+						<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx" @click="showSetting = true">
+							<view class="tn-flex -tn-flex-col-center">
+								<text>分区和标签</text>
+								<text class="tn-margin-left-sm tn-color-gray">(必填)</text>
+							</view>
+						</tn-list-cell>
+						<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx"
+							@click="showDescription = !showDescription">简介</tn-list-cell>
+					</tn-list-view>
+				</view>
+				<view class="tn-bg-gray--light" style="padding:6rpx"></view>
+				<view class="tn-margin">
+					<text>帖子设置</text>
+				</view>
+			</view>
 
 
- 				}).then(res => {
- 					// console.log('替换完成,最终内容为', JSON.stringify(res.html));
- 					this.addArtiCle(res)
- 				});
- 			},
- 			// async getContent(){
- 			// 	let data = await this.edit.getContents()
- 			// 	console.log(data)
- 			// },
- 			addArtiCle(res) {
- 				switch (true) {
- 					case (this.categoryId === null):
- 						uni.showToast({
- 							icon: 'none',
- 							title: '圈子板块未选择'
- 						})
- 						return
- 					case (res.text.length < 10):
- 						uni.showToast({
- 							icon: 'none',
- 							title: '再多说点什么吧'
- 						})
- 						return
- 					default:
- 						// 其他情况下的代码
- 						break;
- 				}
- 				const selectedTagIds = this.selectedTags.map(tag => tag.id).join(",");
- 				this.$http.post('/article/save', {
- 					title: this.articleTitle === null ? res.text.substring(0, 10) : this
- 					.articleTitle, //标题为空时从简介获取
- 					content: res.html, //帖子内容 如果要更新文章的话不能这么写得定义一个变量来存储
- 					sort_id: this.categoryId, //分类ID 
- 					collections_id: this.selectedCollect ? this.selectedCollect : '', //合集id
- 					tag_id: selectedTagIds, //标签id 如果要更新文章的话不能这么写得定义一个变量来存储
- 					opt: JSON.stringify(this.opt), //权限设置
- 				}).then(res => {
- 					if (res.data.code === 200) {
- 						uni.showToast({
- 							icon: 'none',
- 							title: '发布' + res.data.msg
- 						})
- 						setTimeout(() => {
- 							this.back()
- 						}, 1000)
- 					}
- 				}).catch(err => {
- 					console.log(err)
- 				})
- 			},
- 			updateArticle() {
+			<view v-show="format">
+				<v-tabs v-model="tabsIndex" :tabs="tabsList" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
+					activeColor="#29B7CB" :lineScale="0.2"></v-tabs>
+				<view class="tn-margin">
+					<!-- 格式 -->
+					<view v-show="tabsIndex===0">
+						<view class="tn-bg-gray--light tn-padding-sm tn-flex tn-flex-wrap tn-flex-row-between"
+							style="border-radius: 20rpx;">
+							<text v-for="(item,index) in fontFormat" :key="index "
+								class="tn-margin-sm tn-flex-basic tn-text-xxl"
+								:class="[item.icon,{'tn-color-cyan--dark':(formatObj && formatObj.hasOwnProperty(item.type) && formatObj[item.type]==item.id)}]"
+								@tap.stop.prevent="formatTap(item)"></text>
+						</view>
+						<view class="tn-flex tn-flex-col-center">
+							<slider v-model="fontSize" min="10" max="50" showValue activeColor="darkcyan"
+								backgroundColor="#d8d8d8" blockColor="darkcyan" blockSize="15"
+								@change="fontSliderChange" class="tn-flex-1" />
+							<tn-number-box v-model="fontSize" :min="10" :max="50"></tn-number-box>
+						</view>
+					</view>
+					<!-- 颜色 -->
+					<view v-show="tabsIndex===1">
+						<view class="tn-margin-bottom">
+							<view class=" tn-margin-bottom">
+								<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+									<view>
+										<text class="tn-text-bold editor icon-font-colors"></text>
+										<text class="tn-margin-left-sm">文字颜色</text>
+									</view>
+									<text>自定义</text>
+								</view>
+							</view>
+							<view class="tn-bg-gray--light tn-padding-sm tn-flex tn-flex-wrap tn-flex-row-between"
+								style="border-radius: 20rpx;">
+								<text v-for="(item,index) in fontColor" :key="index" :style="{backgroundColor:item}"
+									class="tn-padding-sm tn-round"
+									:class="[{'tn-shadow':formatObj && formatObj.color ==item.toLowerCase()}]"
+									@tap.stop.prevent="colorTap('color',item)"></text>
+							</view>
+						</view>
+						<view>
+							<view class=" tn-margin-bottom">
+								<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+									<view>
+										<text class="tn-text-bold editor icon-bg-colors"></text>
+										<text class="tn-margin-left-sm">背景</text>
+									</view>
+									<text>自定义</text>
+								</view>
 
- 			},
- 			editAction(item) {
- 				if (this.moreAction === item.id) {
- 					this.moreAction = null;
- 				} else {
- 					this.moreAction = item.id;
- 				}
- 			},
- 			editSubAction(item) {
- 				console.log(this.statusObj)
- 				if (item.format === 'title') {
- 					if (this.statusObj.header !== '') {
- 						this.edit.format(item.format, ''); // 设置样式
- 					}
- 				}
- 				this.edit.format(item.format, item.val); // 设置样式
- 			},
- 			addImage() {
- 				this.edit.addImage()
+							</view>
+							<view class="tn-bg-gray--light tn-padding-sm tn-flex tn-flex-wrap tn-flex-row-between"
+								style="border-radius: 20rpx;">
+								<text v-for="(item,index) in bgColor" :key="index" :style="{backgroundColor:item}"
+									class="tn-padding-sm tn-round"
+									:class="[{'tn-shadow':formatObj && formatObj.backgroundColor ==item.toLowerCase()}]"
+									@tap.stop.prevent="colorTap('backgroundColor',item)"></text>
+							</view>
+						</view>
 
- 			},
- 			changeTab(index) {
- 				this.cateTabsIndex = index
- 			},
- 			changeTagsTab(index) {
- 				this.tagsTabsIndex = index
- 			},
- 			changeSwpier(event) {
- 				this.cateTabsIndex = event.detail.current
- 			},
- 			changeTagsSwiper(event) {
- 				this.tagsTabsIndex = event.detail.current
- 			},
- 			getCategoryInfo(data) {
- 				this.categoryTitle = data.name;
- 				this.categoryId = data.id;
- 				this.selectedCategory = data
- 				//获取到板块信息后关闭弹出层
- 				setTimeout(() => {
- 					this.showCategory = false
- 				}, 100)
- 			},
- 			deleteTags(index) {
- 				this.selectedTags.splice(index, 1);
- 			},
- 			//从自定义组件的emit事件监听中获取到TAG的信息
- 			getTagsInfo(data) {
- 				const index = this.selectedTags.findIndex(tag => tag.id === data.id);
- 				if (index !== -1) {
- 					// 如果数据已经存在，从数组中删除
- 					this.selectedTags.splice(index, 1);
- 				} else {
- 					// 如果数据不存在，将其添加到数组中
- 					this.selectedTags.push(data);
- 				}
- 				console.log(this.selectedTags);
- 			},
- 			getCollectInfo(data) {
- 				this.selectedCollect = data
- 			},
- 			permissionAction(index) {
- 				for (let i = 0; i < this.permission.length; i++) {
- 					if (i !== index) {
- 						this.permission[i].active = false; // 关闭其他项
- 					} else {
- 						this.permission[i].active = true; // 打开当前项
- 						this.opt.auth = this.permission[i].permission; // 设置opt的auth值
- 					}
- 				}
- 			},
+					</view>
 
- 			newTagCreate() {
- 				this.$http.post('/tag/save', {
- 					name: this.newTag
- 				}).then(res => {
- 					if (res.data.code === 200) {
- 						uni.$emit('createTagcomplete', true)
- 						this.tagSearchKey = ''
- 						this.newTag = ''
- 						uni.showToast({
- 							icon: 'none',
- 							title: '创建' + res.data.msg
- 						})
- 					}
- 					this.showNewTag = false
- 				})
- 			},
+				</view>
 
- 			back() {
- 				// 通过判断当前页面的页面栈信息，是否有上一页进行返回，如果没有则跳转到首页
- 				const pages = getCurrentPages()
- 				if (pages && pages.length > 0) {
- 					const firstPage = pages[0]
- 					if (pages.length == 1 && (!firstPage.route || firstPage.route != 'pages/tabbar/index')) {
- 						this.$Router.replaceAll({
- 							path: '/pages/tabbar/index'
- 						})
- 					} else {
- 						this.$Router.back(1)
- 					}
- 				} else {
- 					this.$Router.replaceAll({
- 						path: '/pages/tabbar/index'
- 					})
- 				}
- 			},
+			</view>
+		</you-touchbox>
+		<!-- 文章设置 -->
+		<tn-popup mode="bottom" :borderRadius="20" v-model="showSetting" backgroundColor="#f8f8f8" safeAreaInsetBottom>
+			<view class="tn-margin">
+				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+					<text @tap.stop.prevent="showSetting = !showSetting">取消</text>
+					<text class="tn-text-bold">选择分区和话题</text>
+					<text>确定</text>
+				</view>
+				<view class="tn-flex tn-flex-col-center tn-bg-white tn-flex-row-between tn-padding-sm tn-margin-top"
+					style="border-radius: 10rpx;" @tap.stop.prevent="showCategory =!showCategory">
+					<text>分区</text>
+					<view class="tn-flex tn-col-center tn-color-gray tn-text-sm">
+						<text class="tn-margin-right-sm">{{categoryName}}</text>
+						<text class="tn-icon-right"></text>
+					</view>
+				</view>
+				<view class="tn-bg-white tn-padding-sm tn-margin-top" style="border-radius: 10rpx;"
+					v-show="!showCategory">
+					<scroll-view scroll-y style="height: 450rpx;">
+						<view v-show="selectedTagsList.length>0">
+							<view class="tn-margin-bottom-sm">
+								<text class="tn-text-sm tn-color-gray">还可添加{{10-selectedTagsList.length}}个标签</text>
+							</view>
+							<view class="tn-flex tn-flex-col-center tn-flex-wrap">
+								<view
+									class="tn-padding-xs tn-round tn-margin-right-sm tn-margin-bottom-sm tn-color-white tagsbg"
+									style="position: relative;" v-for="(item,index) in selectedTagsList" :key="index"
+									@tap.stop.prevent="tagsTap(item)">
+									<text class="tn-padding-xs">{{item.name}}</text>
+									<text class="tn-icon-close-fill tn-color-black"
+										style="position: absolute;top:-10rpx; right: -10rpx;"></text>
+								</view>
+							</view>
 
- 		}
- 	}
- </script>
+						</view>
+						<view class="tn-flex tn-flex-col-center tn-flex-row-between"
+							v-show="selectedTagsList.length==0">
+							<text>推荐标签</text>
+							<text class="tn-color-gray tn-text-xs">可添加10个标签</text>
+						</view>
+						<view class="tn-flex tn-flex-col-center">
+							<view class="tn-padding-xs tn-round tn-margin-right-sm"
+								:class="selectedTagsList && selectedTagsList.map(tags => tags.name).includes(item.name)?'tagsbg':'tn-bg-gray--light tn-color-gray--dark'"
+								v-for="(item,index) in tags" :key="index" v-if="index < 2"
+								@tap.stop.prevent="tagsTap(item)">
+								<text class="tn-padding-xs">{{item.name}}</text>
+							</view>
+							<tn-button plain shape="round" size="sm" @click="showTagCreate= true">
+								<view class=" tn-flex tn-flex-col-center">
+									<text class="tn-icon-add"></text>
+									<text>自定义标签</text>
+								</view>
+							</tn-button>
+						</view>
+						<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-top tn-margin-bottom-sm">
+							<text>所有标签</text>
+							<tn-button plain size="sm" shape="round">搜索</tn-button>
+						</view>
+						<view class="tn-flex tn-flex-col-center tn-flex-wrap">
+							<view
+								class="tn-flex tn-margin-bottom-sm tn-margin-right-sm tn-flex-col-center tn-round tn-padding-xs"
+								:class="selectedTagsList && selectedTagsList.map(tags => tags.name).includes(item.name)?'tagsbg':'tn-bg-gray--light tn-color-gray--dark'"
+								v-for="(item,index) in tags" :key="index" @tap.stop.prevent="tagsTap(item)">
+								<text class="tn-icon-topic"
+									:class="{'ch-color':!selectedTagsList.map(tags => tags.name).includes(item.name)}"></text>
+								<text class="tn-margin-left-xs">{{item.name}}</text>
+							</view>
+						</view>
+					</scroll-view>
+				</view>
+				<view class="tn-bg-white tn-padding-sm tn-margin-top" style="border-radius: 10rpx;"
+					v-show="showCategory">
+					<scroll-view scroll-y style="height: 450rpx;">
+						<text>选择分区</text>
+						<view class="tn-margin-top tn-flex tn-flex-direction-column">
+							<view class="tn-flex tn-margin-top" v-for="(item,index) in category" :key="index"
+								hover-class="tn-hover" hover-stay-time="150">
+								<view>
+									<image :src="item.opt.head_img" mode="aspectFill" class="tn-round"
+										style="height: 60rpx;width: 60rpx;"></image>
+								</view>
+								<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
+									<text class="tn-text-bold">{{item.name}}</text>
+									<view class="tn-bg-gray--light tn-padding-xs tn-margin-top-xs tn-text-ellipsis-2"
+										style="border-radius: 20rpx;">
+										<text class="tn-padding-xs tn-color-gray">{{item.description}}</text>
+									</view>
+								</view>
+							</view>
+						</view>
+					</scroll-view>
+				</view>
+			</view>
+		</tn-popup>
+		<!-- 创建标签 -->
+		<tn-popup mode="bottom" v-model="showTagCreate">
+			<view class="tn-margin">
+				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+					<text @tap.stop.prevent="showTagCreate = !showTagCreate">取消</text>
+					<text>
+						填写标签
+					</text>
+					<text @tap.stop.prevent="createTag(tagName)">
+						确定
+					</text>
+				</view>
+				<view class="tn-bg-gray--light tn-margin-top tn-padding-sm tn-padding-top-xs"
+					style="border-radius: 10rpx;">
+					<tn-input type="text" confirmType="完成" v-model="tagName" :clearable="false"
+						placeholder="输入标签,至多20个字符" :maxLength="20" />
+				</view>
+			</view>
+		</tn-popup>
+		<!-- 填写简介 -->
+		<tn-popup mode="bottom" v-model="showDescription">
+			<view class="tn-margin">
+				<view class="tn-flex tn-flex-row-between tn-flex-col-center">
+					<text @tap.stop.prevent="showDescription = !showDescription">取消</text>
+					<text>填写简介</text>
+					<text @tap.stop.prevent="setDescription">确定</text>
+				</view>
+				<view class="tn-bg-gray--light tn-margin-top tn-padding-sm tn-padding-top-xs"
+					style="border-radius: 10rpx;">
+					<tn-input type="textarea" confirmType="完成" v-model="tmpDes" focus :clearable="false"
+						placeholder="输入简介,至多1000个字符" :maxLength="1000" />
+				</view>
+			</view>
+		</tn-popup>
+	</view>
+</template>
 
- <style lang="scss">
- 	page {
- 		background-color: #f8f7f8;
- 	}
+<script>
+	export default {
+		data() {
+			return {
+				update: false,
+				edit: null,
+				formatObj: null,
+				tabsIndex: 0,
+				tabsList: ['格式', '颜色'],
+				format: false,
+				btnList: [{
+						name: '图片',
+						type: 'pictrue',
+						icon: 'tn-icon-image',
 
- 	.swiper {
- 		height: 100%;
- 	}
+					},
+					{
+						name: '视频',
+						type: 'video',
+						icon: 'tn-icon-play',
 
- 	.ch-color-primary {
- 		color: $ch-color-primary;
- 	}
- </style>
+					},
+					{
+						name: '格式',
+						type: 'format',
+						icon: 'tn-icon-font',
+					},
+					{
+						name: '链接',
+						type: 'link',
+						icon: 'tn-icon-link',
+
+					},
+					{
+						name: '商品',
+						type: 'good',
+						icon: 'tn-icon-shop',
+
+					},
+					{
+						name: '撤回',
+						type: 'undo',
+						icon: 'editor icon-undo',
+						customFn: 'tool'
+					}
+				],
+				fontFormat: [{
+						type: 'header',
+						value: 'H2',
+						id: 2,
+						icon: 'editor icon-h2'
+					},
+					{
+						type: 'header',
+						value: 'H3',
+						id: 3,
+						icon: 'editor icon-h3'
+					},
+					{
+						type: 'header',
+						value: 'H4',
+						id: 4,
+						icon: 'editor icon-h4'
+					},
+					{
+						type: 'header',
+						value: 'H5',
+						id: 5,
+						icon: 'editor icon-h5'
+					},
+					{
+						type: 'header',
+						value: 'H6',
+						id: 6,
+						icon: 'editor icon-h6'
+					},
+					{
+						type: 'bold',
+						value: '粗体',
+						id: true,
+						icon: 'editor icon-bold'
+					},
+					{
+						type: 'italic',
+						value: '斜体',
+						id: true,
+						icon: 'editor icon-italic'
+					},
+					{
+						type: 'underline',
+						value: '下划线',
+						id: true,
+						icon: 'editor icon-underline'
+					},
+					{
+						type: 'strike',
+						value: '删除线',
+						id: true,
+						icon: 'editor icon-strikethrough'
+					},
+					{
+						type: 'marginTop',
+						value: '10px',
+						id: '10px',
+						icon: 'editor icon-to-top'
+					},
+					{
+						type: 'marginBottom',
+						value: '10px',
+						id: '10px',
+						icon: 'editor icon-to-bottom'
+					},
+					{
+						type: 'align',
+						value: 'left',
+						id: 'left',
+						icon: 'editor icon-align-left'
+					},
+					{
+						type: 'align',
+						value: 'center',
+						id: 'center',
+						icon: 'editor icon-align-center'
+					},
+					{
+						type: 'align',
+						value: 'right',
+						id: 'right',
+						icon: 'editor icon-align-right'
+					},
+					{
+						type: 'indent',
+						value: '-1',
+						id: 'indent',
+						icon: 'editor icon-menu-unfold'
+					},
+					{
+						type: 'indent',
+						value: '+1',
+						id: 'indent',
+						icon: 'editor icon-menu-fold'
+					},
+					{
+						type: 'direction',
+						value: 'rtl',
+						id: 'rtl',
+						icon: 'editor icon-layout'
+					},
+					{
+						type: 'lineHeight',
+						value: '2',
+						id: '2',
+						icon: 'editor icon-line-height'
+					},
+					{
+						type: 'letterSpacing',
+						value: '2em',
+						id: '2em',
+						icon: 'editor icon-expand'
+					},
+					{
+						type: 'script',
+						value: 'sub',
+						id: 'sub',
+						icon: 'editor icon-caret-down'
+					},
+					{
+						type: 'script',
+						value: 'super',
+						id: 'super',
+						icon: 'editor icon-caret-up'
+					},
+					{
+						type: 'list',
+						value: 'check',
+						id: 'check',
+						icon: 'editor icon-check-square'
+					},
+					{
+						type: 'list',
+						value: 'ordered',
+						id: 'ordered',
+						icon: 'editor icon-ordered-list'
+					},
+					{
+						type: 'list',
+						value: 'bullet',
+						id: 'bullet',
+						icon: 'editor icon-unordered-list'
+					},
+					{
+						type: 'insertDivider',
+						value: '',
+						id: true,
+						icon: 'editor icon-minus',
+						customFn: 'tool'
+					},
+					{
+						type: 'removeFormat',
+						value: '',
+						id: true,
+						icon: 'editor icon-eraser',
+						customFn: 'tool'
+					},
+					{
+						type: 'clear',
+						value: '',
+						id: 'clear',
+						icon: 'editor icon-delete',
+						customFn: 'tool'
+					},
+				],
+				fontColor: [
+					'#303133',
+					'#666666',
+					'#999999',
+					'#E93423',
+					'#ED6940',
+					'#E7B23E',
+					'#59C780',
+					'#4EA9FA',
+					'#2B61F5',
+					'#675BED',
+				],
+				bgColor: [
+					'#E8E8E8',
+					'#FED0D0',
+					'#FBF0B8',
+					'#C3ECDA',
+					'#B2D1FF',
+					'#E0C4FF',
+				],
+				fontSize: 16,
+				aticleTitle: null,
+				category: [],
+				categoryName: null,
+				categoryId: null,
+				collect: null,
+				description: null,
+				tmpDes: null,
+				showCategory: false,
+				tags: [],
+				showTagCreate: false,
+				tagName: null,
+				showSetting: false,
+				selectedTagsList: [],
+				showDescription: false
+			};
+		},
+		onLoad(params) {
+			this.update = params.update
+			this.getTags()
+			this.getCategory()
+		},
+		computed: {
+
+		},
+
+		methods: {
+			getTags() {
+				this.$http.get('tag/all', {
+					params: {
+						page: 1,
+						limit: 20,
+					}
+				}).then(res => {
+					if (res.data.code === 200) {
+						this.tags = res.data.data.data
+					}
+				})
+			},
+
+			getCategory() {
+				this.$http.get('article-sort/all', {
+					params: {
+						page: 1,
+						limit: 20,
+					}
+				}).then(res => {
+					if (res.data.code === 200) {
+						this.category = res.data.data.data
+					}
+				})
+			},
+			// 编辑器初始化完毕，返回edit对象
+			editReady(edit) {
+				// 将富文本对象存放到当前页面，便于后续直接操作
+				this.edit = edit;
+				// 监听光标进入
+				this.edit.$on('edit:focus', (e) => {
+					console.log('监听光标进入', e);
+
+				});
+				// 监听输入
+				this.edit.$on('edit:input', (e) => {
+
+					console.log('监听输入', e);
+				});
+				// 监听光标指向不同样式时回调
+				this.edit.$on('edit:statuschange', this.statuschange)
+			},
+			statuschange(e) {
+				this.formatObj = e.detail
+				if (this.formatObj.hasOwnProperty('fontSize')) {
+					this.fontSize = parseInt(this.formatObj['fontSize']);
+				} else {
+					this.fontSize = 16;
+				}
+			},
+			switchBtn(item) {
+				switch (item.type) {
+					case 'pictrue':
+						this.edit.addImage()
+						break;
+					case 'video':
+						break;
+					case 'format':
+						this.format = !this.format
+						break;
+					case 'link':
+						break;
+					case 'good':
+						break;
+					case 'undo':
+						this.formatTap(item)
+						break;
+					default:
+						break;
+				}
+			},
+			changeTab(index) {
+				this.tabsIndex = index
+			},
+			formatTap(item) {
+				this.edit[item.customFn ? item.customFn : 'format'](item.type, item.value);
+			},
+			colorTap(type, color) {
+				this.edit.format(type, color);
+			},
+			setDescription() {
+				this.description = this.tmpDes
+				this.showDescription = !this.showDescription
+			},
+			createTag(name) {
+				if (!name || this.selectedTagsList.length >= 10) {
+					if (this.selectedTagsList.length >= 10) {
+						uni.showToast({
+							icon: 'none',
+							title: '至多选择10个标签'
+						})
+						return
+					}
+				};
+				const exist = this.selectedTagsList.some(tag => tag.name === name)
+				if (exist) {
+					uni.showToast({
+						icon: 'none',
+						title: '已有相同的标签'
+					})
+					return
+				}
+
+				const newTag = {
+					name: name,
+					id: 'new'
+				}
+				this.selectedTagsList.push(newTag)
+			},
+			tagsTap(item) {
+				const index = this.selectedTagsList.findIndex(tag => tag.id === item.id)
+				if (index === -1) {
+					if (this.selectedTagsList.length >= 10) {
+						uni.showToast({
+							icon: 'none',
+							title: '至多选择10个标签'
+						})
+						// 已达到最大标签数,禁止添加
+						return
+					} else {
+						this.selectedTagsList = this.selectedTagsList.concat(item)
+					}
+				} else {
+					// 如果存在,则删除该标签
+					this.selectedTagsList.splice(index, 1)
+				}
+			},
+			async save() {
+				// 获取插入的图片列表
+				let imgs = await this.edit.getImages()
+				// 判断是否允许提交
+				if (!this.edit.textCount && !imgs.length) {
+					uni.showToast({
+						icon: 'none',
+						title: '啊哦~你好像还没说什么？'
+					});
+				}
+				// 将所有未上传的本地图片上传到服务器并替换到编辑器
+				this.edit.replaceImage(async (img) => {
+					// 已上传的无需再上传
+					// img.indexOf('http') = 0说明这个图片已经是网络地址，无需替换就直接跳过
+					if (img.indexOf('http') === 0) {
+						return img;
+					}
+
+					// 上传并替换图片
+					let {
+						data
+					} = await this.$http.upload('/file/upload', {
+						filePath: img,
+						name: 'file',
+					})
+					return data.data
+				}).then(res => {
+					// console.log('替换完成,最终内容为', JSON.stringify(res.html));
+					this.addArtiCle(res)
+				});
+			},
+			// 字号滑动条
+			fontSliderChange({
+				detail
+			}) {
+				this.fontsize = detail.value;
+				this.edit.format('fontSize', detail.value + 'px');
+			},
+		}
+	}
+</script>
+
+<style lang="scss">
+	@import './static/iconfont.css';
+
+	page {
+		background-color: #f7f8f7;
+	}
+
+	.swiper {
+		height: 100%;
+	}
+
+	.tagsbg {
+		background-color: $ch-color-primary;
+		color: white !important;
+	}
+
+	.ch-color {
+		color: $ch-color-primary;
+	}
+</style>

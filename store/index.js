@@ -59,6 +59,7 @@ const store = new Vuex.Store({
 			focus_count: 0,
 		},
 		chatData: null,
+		cid: null
 	},
 	mutations: {
 		$tStore(state, payload) {
@@ -80,6 +81,9 @@ const store = new Vuex.Store({
 			}
 			// 保存变量到本地中
 			saveLifeData(saveKey, state[saveKey])
+		},
+		setCID(state, cid) {
+			state.cid = cid
 		},
 		login(state, user) {
 			state.hasLogin = true

@@ -1,0 +1,159 @@
+@font-face {
+  font-family: "editor"; /* Project id 4217950 */
+  src: url('./static/iconfont.woff2?t=1692549649993') format('woff2'),
+       url('./static/iconfont.woff?t=1692549649993') format('woff'),
+       url('./static/iconfont.ttf?t=1692549649993') format('truetype');
+}
+
+.editor {
+  font-family: "editor" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-layout:before {
+  content: "\e619";
+}
+
+.icon-caret-up:before {
+  content: "\e63b";
+}
+
+.icon-expand:before {
+  content: "\e63c";
+}
+
+.icon-caret-down:before {
+  content: "\e63d";
+}
+
+.icon-menu-unfold:before {
+  content: "\e639";
+}
+
+.icon-menu-fold:before {
+  content: "\e63a";
+}
+
+.icon-minus:before {
+  content: "\e638";
+}
+
+.icon-redo:before {
+  content: "\e626";
+}
+
+.icon-eraser:before {
+  content: "\e627";
+}
+
+.icon-strikethrough:before {
+  content: "\e628";
+}
+
+.icon-h2:before {
+  content: "\e629";
+}
+
+.icon-h5:before {
+  content: "\e62a";
+}
+
+.icon-ordered-list:before {
+  content: "\e62b";
+}
+
+.icon-h3:before {
+  content: "\e62c";
+}
+
+.icon-h1:before {
+  content: "\e62d";
+}
+
+.icon-undo:before {
+  content: "\e62e";
+}
+
+.icon-h6:before {
+  content: "\e62f";
+}
+
+.icon-bg-colors:before {
+  content: "\e630";
+}
+
+.icon-to-bottom:before {
+  content: "\e631";
+}
+
+.icon-to-right:before {
+  content: "\e632";
+}
+
+.icon-to-left:before {
+  content: "\e633";
+}
+
+.icon-to-top:before {
+  content: "\e634";
+}
+
+.icon-check:before {
+  content: "\e635";
+}
+
+.icon-check-square:before {
+  content: "\e636";
+}
+
+.icon-list:before {
+  content: "\e637";
+}
+
+.icon-line-height:before {
+  content: "\e61b";
+}
+
+.icon-underline:before {
+  content: "\e61c";
+}
+
+.icon-align-center:before {
+  content: "\e61d";
+}
+
+.icon-align-right:before {
+  content: "\e61e";
+}
+
+.icon-italic:before {
+  content: "\e61f";
+}
+
+.icon-font-colors:before {
+  content: "\e620";
+}
+
+.icon-unordered-list:before {
+  content: "\e621";
+}
+
+.icon-bold:before {
+  content: "\e622";
+}
+
+.icon-align-left:before {
+  content: "\e623";
+}
+
+.icon-delete:before {
+  content: "\e624";
+}
+
+.icon-h4:before {
+  content: "\e625";
+}
+

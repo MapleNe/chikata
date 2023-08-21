@@ -143,6 +143,14 @@
 						this.password = value;
 					}
 				}
+			},
+			cid: {
+				get() {
+					return this.$store.state.cid
+				},
+				set(value) {
+
+				}
 			}
 		},
 		onShow() {
@@ -207,7 +215,8 @@
 			vclLogin() {
 				this.$http.post('/users/vcl', {
 					account: this.account,
-					code: this.code
+					code: this.code,
+					cid: this.cid
 				}).then(res => {
 					if (res.data.code === 200) {
 						let data = res.data
@@ -231,7 +240,11 @@
 			passwordLogin() {
 				this.$http.post('/users/login', {
 					account: this.account,
-					password: this.password
+					password: this.password,
+					//#ifdef APP-PLUS
+					cid: this.cid,
+					//#endif
+
 				}).then(res => {
 					if (res.data.code === 200) {
 						let data = res.data

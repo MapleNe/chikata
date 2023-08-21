@@ -42,6 +42,12 @@
 			uni.$on('logoutComplete', data => {
 				this.ws.closeSocket()
 			})
+			// 获取客户端ID
+			// #ifdef APP-PLUS
+			const clientInfo = plus.push.getClientInfo()
+			this.$store.commit('setCID', clientInfo.clientid)
+			// #endif
+
 			// 消息通知
 			// #ifdef APP-PLUS
 			let timer = false;
@@ -107,9 +113,8 @@
 
 				this.ws.getWebSocketMsg(data => {
 					const dataJson = data;
-					// console.log('data', dataJson);
 					if (typeof(dataJson) == "object") {
-						// console.log("wsObject", dataJson);
+						console.log("wsObject", dataJson);
 						if (data.type === 'like' || data.type === 'focus' || data.type === 'comment' || data
 							.type === 'placard') {
 							this.$store.commit('updateNotice', data.type)

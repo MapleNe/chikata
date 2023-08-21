@@ -124,6 +124,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/tabbar/publish/publish",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"tabBar": {
 		"backgroundColor": "#ffffff",
