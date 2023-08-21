@@ -17,115 +17,78 @@
 			</view>
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
-		<lsj-edit ref="lsjEdit" placeholder="输入正文" @onReady="editReady"
+
+		<lsj-edit ref="lsjEdit" placeholder="输入正文" @onReady="editReady" id="editorv"
 			:styles="{'overflow':'hidden','height':'60vh'}"></lsj-edit>
+		<view v-show="format" style="position: fixed;" :style="'bottom:'+bottom+'px'">
+			<scroll-view scroll-x="true" class="toolbar tn-bg-white tn-padding-xs">
+				<view class="tn-flex">
+					<text v-for="(item,index) in fontFormat" :key="index "
+						class="tn-margin-sm tn-flex-basic tn-text-xxl"
+						:class="[item.icon,{'tn-color-cyan--dark':(formatObj && formatObj.hasOwnProperty(item.type) && formatObj[item.type]==item.id)}]"
+						@tap.stop.prevent="formatTap(item)"></text>
+				</view>
+			</scroll-view>
+		</view>
+		<!-- 颜色 -->
+		<view v-show="formatColor" style="position: fixed;" :style="'bottom:'+bottom+'px'">
+			<scroll-view scroll-x="true" class="toolbar tn-bg-white tn-padding-xs">
+				<view class="tn-padding-xs tn-flex tn-flex-col-center">
+					<text class="tn-margin-right">文字</text>
+					<text v-for="(item,index) in fontColor" :key="index" :style="{backgroundColor:item}"
+						class="tn-round tn-margin-right-sm tn-padding-xs"
+						:class="[{'tn-shadow':formatObj && formatObj.color ==item.toLowerCase()}]"
+						@tap.stop.prevent="colorTap('color',item)"></text>
+				</view>
+				<view class="tn-padding-xs tn-flex tn-flex-col-center">
+					<text class="tn-margin-right">背景</text>
+					<text v-for="(item,index) in bgColor" :key="index" :style="{backgroundColor:item}"
+						class="tn-padding-xs tn-margin-right-sm tn-round"
+						:class="[{'tn-shadow':formatObj && formatObj.backgroundColor ==item.toLowerCase()}]"
+						@tap.stop.prevent="colorTap('backgroundColor',item)"></text>
+				</view>
+
+			</scroll-view>
+		</view>
+
+
 		<you-touchbox :minTop="0.08" :maxTop="0.85" :auto="false" :initTop="0.45"
-			customStyle="border-radius:20rpx 20rpx 0 0">
+			customStyle="border-radius:20rpx 20rpx 0 0" @get-end-detail="getBoxDetail">
 			<view class="tn-flex tn-flex-col-center tn-margin tn-flex-row-between">
 				<text v-for="(item,index) in btnList" :key="index"
-					:class="[item.icon,item.type==='format'&&format?'tn-color-cyan--dark':'']" class="tn-text-xxl"
-					@tap.stop.prevent="switchBtn(item)"></text>
+					:class="[item.icon,item.type==='format'&&format||item.type==='color'&& formatColor?'tn-color-cyan--dark':'']"
+					class="tn-text-xxl" @tap.stop.prevent="switchBtn(item)"></text>
 			</view>
-			<view v-show="!format">
-				<view class="tn-margin">
-					<view class="tn-flex tn-flex-col-center">
-						<text class="tn-icon-set tn-text-bold"></text>
-						<text class="tn-margin-left-sm">发布设置</text>
-					</view>
-					<view class="tn-border-solid-bottom">
-						<tn-input v-model="articleTitle" :maxLength="40" placeholder="请输入标题(可选:建议填写)"
-							:clearable="false" />
-					</view>
-					<tn-list-view :card="true" unlined="all">
-						<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx" @click="showSetting = true">
-							<view class="tn-flex tn-flex-row-between tn-flex-col-center">
-								<view class="tn-flex -tn-flex-col-center">
-									<text>分区和标签</text>
-									<text class="tn-margin-left-sm tn-color-gray">(必填)</text>
-								</view>
-								<text class="tn-color-gray--dark">{{selectedCategory.name}}</text>
-							</view>
-
-						</tn-list-cell>
-						<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx"
-							@click="showDescription = !showDescription">简介</tn-list-cell>
-					</tn-list-view>
+			<view class="tn-margin">
+				<view class="tn-flex tn-flex-col-center">
+					<text class="tn-icon-set tn-text-bold"></text>
+					<text class="tn-margin-left-sm">发布设置</text>
 				</view>
-				<view class="tn-bg-gray--light" style="padding:6rpx"></view>
-				<view class="tn-margin">
-					<view class="tn-margin-bottom-sm">
-						<text>帖子设置</text>
-					</view>
+				<view class="tn-border-solid-bottom">
+					<tn-input v-model="articleTitle" :maxLength="40" placeholder="请输入标题(可选:建议填写)" :clearable="false" />
+				</view>
+				<tn-list-view :card="true" unlined="all">
+					<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx" @click="showSetting = true">
+						<view class="tn-flex tn-flex-row-between tn-flex-col-center">
+							<view class="tn-flex -tn-flex-col-center">
+								<text>分区和标签</text>
+								<text class="tn-margin-left-sm tn-color-gray">(必填)</text>
+							</view>
+							<text class="tn-color-gray--dark">{{selectedCategory.name}}</text>
+						</view>
+
+					</tn-list-cell>
 					<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx"
-						@click="showPermission = !showPermission">权限</tn-list-cell>
-				</view>
+						@click="showDescription = !showDescription">简介</tn-list-cell>
+				</tn-list-view>
 			</view>
-
-
-			<view v-show="format">
-				<v-tabs v-model="tabsIndex" :tabs="tabsList" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
-					activeColor="#29B7CB" :lineScale="0.2"></v-tabs>
-				<view class="tn-margin">
-					<!-- 格式 -->
-					<view v-show="tabsIndex===0">
-						<view class="tn-bg-gray--light tn-padding-sm tn-flex tn-flex-wrap"
-							style="border-radius: 20rpx;">
-							<text v-for="(item,index) in fontFormat" :key="index "
-								class="tn-margin-sm tn-flex-basic tn-text-xxl"
-								:class="[item.icon,{'tn-color-cyan--dark':(formatObj && formatObj.hasOwnProperty(item.type) && formatObj[item.type]==item.id)}]"
-								@tap.stop.prevent="formatTap(item)"></text>
-						</view>
-						<view class="tn-flex tn-flex-col-center">
-							<slider v-model="fontSize" min="10" max="50" showValue activeColor="darkcyan"
-								backgroundColor="#d8d8d8" blockColor="darkcyan" blockSize="15"
-								@change="fontSliderChange" class="tn-flex-1" />
-							<tn-number-box v-model="fontSize" :min="10" :max="50"></tn-number-box>
-						</view>
-					</view>
-					<!-- 颜色 -->
-					<view v-show="tabsIndex===1">
-						<view class="tn-margin-bottom">
-							<view class=" tn-margin-bottom">
-								<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-									<view>
-										<text class="tn-text-bold editor icon-font-colors"></text>
-										<text class="tn-margin-left-sm">文字颜色</text>
-									</view>
-									<text>自定义</text>
-								</view>
-							</view>
-							<view class="tn-bg-gray--light tn-padding-sm tn-flex tn-flex-wrap tn-flex-row-between"
-								style="border-radius: 20rpx;">
-								<text v-for="(item,index) in fontColor" :key="index" :style="{backgroundColor:item}"
-									class="tn-padding-sm tn-round"
-									:class="[{'tn-shadow':formatObj && formatObj.color ==item.toLowerCase()}]"
-									@tap.stop.prevent="colorTap('color',item)"></text>
-							</view>
-						</view>
-						<view>
-							<view class=" tn-margin-bottom">
-								<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-									<view>
-										<text class="tn-text-bold editor icon-bg-colors"></text>
-										<text class="tn-margin-left-sm">背景</text>
-									</view>
-									<text>自定义</text>
-								</view>
-
-							</view>
-							<view class="tn-bg-gray--light tn-padding-sm tn-flex tn-flex-wrap tn-flex-row-between"
-								style="border-radius: 20rpx;">
-								<text v-for="(item,index) in bgColor" :key="index" :style="{backgroundColor:item}"
-									class="tn-padding-sm tn-round"
-									:class="[{'tn-shadow':formatObj && formatObj.backgroundColor ==item.toLowerCase()}]"
-									@tap.stop.prevent="colorTap('backgroundColor',item)"></text>
-							</view>
-						</view>
-
-					</view>
-
+			<view class="tn-bg-gray--light" style="padding:6rpx"></view>
+			<view class="tn-margin">
+				<view class="tn-margin-bottom-sm">
+					<text>帖子设置</text>
 				</view>
-
+				<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx"
+					@click="showPermission = !showPermission">权限</tn-list-cell>
 			</view>
 		</you-touchbox>
 		<!-- 文章设置 -->
@@ -297,6 +260,8 @@
 				tabsIndex: 0,
 				tabsList: ['格式', '颜色'],
 				format: false,
+				formatColor: false,
+				curTop: 0,
 				btnList: [{
 						name: '图片',
 						type: 'pictrue',
@@ -313,6 +278,11 @@
 						name: '格式',
 						type: 'format',
 						icon: 'tn-icon-font',
+					},
+					{
+						name: '颜色',
+						type: 'color',
+						icon: 'tn-icon-theme',
 					},
 					{
 						name: '链接',
@@ -492,21 +462,24 @@
 						allow: true,
 					}
 				},
-				keyHeight: null,
+				keyHeight: 0,
+				bottom: 0,
 			};
 		},
 		onLoad(params) {
-			// #ifdef APP-PLUS
 			uni.onKeyboardHeightChange((res) => {
 				// 监听软键盘的高度，页面隐藏后一定要取消监听键盘
-				this.keyHeight = res.height
-				console.log(this.keyHeight)
+				if (res.height !== 0) this.bottom = 0;
+
+				if (res.height === 0) {
+					this.bottom = this.curTop
+				}
 			})
-			// #endif
 			this.update = params.update
 			this.getTags()
 			this.getCategory()
 		},
+		mounted() {},
 		computed: {
 
 		},
@@ -572,6 +545,11 @@
 						break;
 					case 'format':
 						this.format = !this.format
+
+						break;
+					case 'color':
+						this.formatColor = !this.formatColor
+
 						break;
 					case 'link':
 						break;
@@ -610,6 +588,10 @@
 					default:
 						break;
 				}
+			},
+			getBoxDetail(e) {
+				this.curTop = uni.getSystemInfoSync().windowHeight - e.curTop
+				this.bottom = this.curTop
 			},
 			createTag(name) {
 				// 检查是否已存在于 tags 
@@ -766,5 +748,9 @@
 
 	.ch-color {
 		color: $ch-color-primary;
+	}
+
+	.toolbar {
+		width: 100vw;
 	}
 </style>

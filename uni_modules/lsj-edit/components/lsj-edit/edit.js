@@ -282,9 +282,9 @@ export class Edit extends Observer {
 				complete:()=>{
 					this.input();
 					// #ifdef APP-PLUS
-					// setTimeout(()=>{
-					// 	this.upKeyboard();
-					// },200)
+					setTimeout(()=>{
+						this.upKeyboard();
+					},200)
 					// #endif
 				}
 			})
