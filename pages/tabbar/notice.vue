@@ -24,7 +24,7 @@
 					</view>
 					<view class="tn-flex tn-flex-direction-column tn-flex-col-center"
 						@tap.stop="goNoticeDetail('articlelike')">
-						<view class="tn-bg-orangered--disabled tn-round tn-padding-sm">
+						<view class="tn-bg-orangered--disabled tn-round tn-padding-sm" style="position: relative;">
 							<text class="tn-icon-praise-simple-fill tn-text-xxl tn-color-white">
 							</text>
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
@@ -45,11 +45,11 @@
 					</view> -->
 					<view class="tn-flex tn-flex-direction-column tn-flex-col-center"
 						@tap.stop="goNoticeDetail('focus')">
-						<view class="tn-bg-purplered--disabled tn-round tn-padding-sm">
+						<view class="tn-bg-purplered--disabled tn-round tn-padding-sm" style="position: relative;">
 							<text class="tn-icon-like-fill tn-text-xxl tn-color-white">
 							</text>
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
-								v-show="notice.focus_count"></tn-badge>
+								v-show="noticeNum.focus_count>0"></tn-badge>
 						</view>
 						<text class="tn-margin-top-sm">
 							关注我的

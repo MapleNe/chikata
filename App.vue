@@ -86,7 +86,6 @@
 			if (this.hasLogin) {
 				this.connectWebSocket()
 			}
-
 			// #endif
 
 		},
@@ -121,7 +120,6 @@
 						} else if (data.type === 'chat') {
 							uni.$emit('getNewChat', data)
 						}
-
 					} else {
 						// console.log(dataJson);
 					}
