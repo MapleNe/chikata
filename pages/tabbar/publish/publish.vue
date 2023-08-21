@@ -1,7 +1,20 @@
 <template>
 	<view>
-		<tn-nav-bar backTitle="">
+		<tn-nav-bar backTitle="" :zIndex="5">
 			{{update?'编辑':'发布'}}
+			<view slot="right" class="tn-padding tn-flex tn-flex-col-center">
+				<view class="tn-margin-right-sm" v-show="!update">
+					<tn-button size="sm" shape="round" plain>
+						存草稿
+					</tn-button>
+				</view>
+				<view @tap.stop.prevent="update?'':publish()">
+					<tn-button size="sm" shape="round" backgroundColor="#29B7CB" fontColor="tn-color-white">
+						{{update?'更新':'发布'}}
+					</tn-button>
+				</view>
+
+			</view>
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 		<lsj-edit ref="lsjEdit" placeholder="输入正文" @onReady="editReady"
@@ -20,15 +33,19 @@
 						<text class="tn-margin-left-sm">发布设置</text>
 					</view>
 					<view class="tn-border-solid-bottom">
-						<tn-input v-model="aticleTitle" :maxLength="40" placeholder="请输入标题(可选:建议填写)"
+						<tn-input v-model="articleTitle" :maxLength="40" placeholder="请输入标题(可选:建议填写)"
 							:clearable="false" />
 					</view>
 					<tn-list-view :card="true" unlined="all">
 						<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx" @click="showSetting = true">
-							<view class="tn-flex -tn-flex-col-center">
-								<text>分区和标签</text>
-								<text class="tn-margin-left-sm tn-color-gray">(必填)</text>
+							<view class="tn-flex tn-flex-row-between tn-flex-col-center">
+								<view class="tn-flex -tn-flex-col-center">
+									<text>分区和标签</text>
+									<text class="tn-margin-left-sm tn-color-gray">(必填)</text>
+								</view>
+								<text class="tn-color-gray--dark">{{selectedCategory.name}}</text>
 							</view>
+
 						</tn-list-cell>
 						<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx"
 							@click="showDescription = !showDescription">简介</tn-list-cell>
@@ -36,7 +53,11 @@
 				</view>
 				<view class="tn-bg-gray--light" style="padding:6rpx"></view>
 				<view class="tn-margin">
-					<text>帖子设置</text>
+					<view class="tn-margin-bottom-sm">
+						<text>帖子设置</text>
+					</view>
+					<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx"
+						@click="showPermission = !showPermission">权限</tn-list-cell>
 				</view>
 			</view>
 
@@ -119,7 +140,7 @@
 					style="border-radius: 10rpx;" @tap.stop.prevent="showCategory =!showCategory">
 					<text>分区</text>
 					<view class="tn-flex tn-col-center tn-color-gray tn-text-sm">
-						<text class="tn-margin-right-sm">{{categoryName}}</text>
+						<text class="tn-margin-right-sm">{{selectedCategory.name}}</text>
 						<text class="tn-icon-right"></text>
 					</view>
 				</view>
@@ -232,6 +253,33 @@
 					style="border-radius: 10rpx;">
 					<tn-input type="textarea" confirmType="完成" v-model="tmpDes" focus :clearable="false"
 						placeholder="输入简介,至多1000个字符" :maxLength="1000" />
+				</view>
+			</view>
+		</tn-popup>
+		<!-- 权限设置 -->
+		<tn-popup mode="bottom" v-model="showPermission">
+			<view class="tn-margin">
+				<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-bottom-xl">
+					<text></text>
+					<text>设置权限</text>
+					<text @tap.stop.prevent="showPermission = !showPermission">确定</text>
+				</view>
+				<view class="tn-flex tn-flex-direction-column">
+					<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-bottom"
+						@click="changePermission('auth')">
+						<text>谁人可见</text>
+						<text>{{articleOpt.auth=='anyone'?'已公开':'已私有'}}</text>
+					</view>
+					<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-bottom"
+						@click="changePermission('comments','allow')">
+						<text>允许评论</text>
+						<text>{{articleOpt.comments.allow?'已允许':'不允许'}}</text>
+					</view>
+					<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-bottom"
+						@click="changePermission('comments','show')">
+						<text>评论可见</text>
+						<text>{{articleOpt.comments.show?'已允许':'不允许'}}</text>
+					</view>
 				</view>
 			</view>
 		</tn-popup>
@@ -471,8 +519,9 @@
 					'#E0C4FF',
 				],
 				fontSize: 16,
-				aticleTitle: null,
+				articleTitle: null,
 				category: [],
+				selectedCategory: {},
 				categoryName: null,
 				categoryId: null,
 				collect: null,
@@ -484,7 +533,16 @@
 				tagName: null,
 				showSetting: false,
 				selectedTagsList: [],
-				showDescription: false
+				showDescription: false,
+				showPermission: false,
+				articleOpt: {
+					password: '',
+					auth: 'anyone',
+					comments: {
+						show: true,
+						allow: true,
+					}
+				}
 			};
 		},
 		onLoad(params) {
@@ -519,6 +577,7 @@
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.category = res.data.data.data
+						this.selectedCategory = res.data.data.data[0]
 					}
 				})
 			},
@@ -581,6 +640,20 @@
 				this.description = this.tmpDes
 				this.showDescription = !this.showDescription
 			},
+			changePermission(type, subType) {
+				switch (type) {
+					case 'auth':
+						this.articleOpt.auth = this.articleOpt.auth == 'anyone' ? 'private' : 'anyone';
+						console.log(this.articleOpt.auth)
+						break;
+					case 'comments':
+						if (subType == 'show') this.articleOpt.comments.show = !this.articleOpt.comments.show;
+						if (subType == 'allow') this.articleOpt.comments.allow = !this.articleOpt.comments.allow;
+						break;
+					default:
+						break;
+				}
+			},
 			createTag(name) {
 				if (!name || this.selectedTagsList.length >= 10) {
 					if (this.selectedTagsList.length >= 10) {
@@ -599,10 +672,9 @@
 					})
 					return
 				}
-
 				const newTag = {
 					name: name,
-					id: 'new'
+					new: true
 				}
 				this.selectedTagsList.push(newTag)
 			},
@@ -624,14 +696,16 @@
 					this.selectedTagsList.splice(index, 1)
 				}
 			},
-			async save() {
+			async publish() {
+				uni.showLoading({
+					title: '发布中...'
+				})
 				// 获取插入的图片列表
 				let imgs = await this.edit.getImages()
 				// 判断是否允许提交
 				if (!this.edit.textCount && !imgs.length) {
 					uni.showToast({
-						icon: 'none',
-						title: '啊哦~你好像还没说什么？'
+						title: '再多说点吧~'
 					});
 				}
 				// 将所有未上传的本地图片上传到服务器并替换到编辑器
@@ -641,7 +715,6 @@
 					if (img.indexOf('http') === 0) {
 						return img;
 					}
-
 					// 上传并替换图片
 					let {
 						data
@@ -654,6 +727,51 @@
 					// console.log('替换完成,最终内容为', JSON.stringify(res.html));
 					this.addArtiCle(res)
 				});
+			},
+			addArtiCle(res) {
+				const idTags = this.selectedTagsList.filter(t => t.id)
+				const newTags = this.selectedTagsList.filter(t => t.new)
+				const idList = idTags.map(t => t.id)
+				const newNameList = newTags.map(t => t.name)
+				this.$http.post('/article/save', {
+					title: this.articleTitle ? this.articleTitle : res.text.substring(0, 10),
+					content: res.html,
+					description: this.description ? this.description : '',
+					sort_id: this.selectedCategory.id,
+					tag_id: idList,
+					tag_name: newNameList,
+					opt: JSON.stringify(this.articleOpt),
+				}).then(res => {
+					if (res.data.code === 200) {
+						console.log(res)
+						uni.hideLoading()
+						uni.showToast({
+							icon: 'none',
+							title: '发布' + res.data.msg
+						})
+						setTimeout(() => {
+							this.$Router.replace({
+								path: '/pages/common/article/article',
+								query: {
+									id: res.data.data
+								}
+							})
+						}, 2000)
+
+					} else {
+						uni.hideLoading()
+						uni.showToast({
+							icon: 'none',
+							title: res.data.msg
+						})
+					}
+				}).catch(err => {
+					console.log(err)
+					uni.showToast({
+						icon: 'none',
+						title: res.data.msg
+					})
+				})
 			},
 			// 字号滑动条
 			fontSliderChange({

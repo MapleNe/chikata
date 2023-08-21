@@ -10,7 +10,6 @@
 				<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 			</template>
 			<!-- 页面内容 -->
-
 			<view class="tn-margin">
 				<ls-skeleton :skeleton="articleSk" :loading="loading">
 					<view class="tn-flex tn-flex-col-center tn-flex-row-between">
@@ -36,11 +35,21 @@
 					<view class="tn-margin-top" style="max-width: 100%;">
 						<mp-html :content="article.content" :selectable="true" />
 					</view>
-					<view class="tn-flex tn-flex-col-center tn-margin-top">
+					<view class="tn-margin-top-xs" v-if="article.expand.tag && article.expand.tag.length>0">
+						<view class="tn-flex tn-flex-col-center tn-flex-wrap">
+							<view v-for="(tags,index) in article.expand.tag" :key="tags.id"
+								class="tn-margin-right-sm tn-bg-gray--light tn-margin-bottom-xs tn-round tn-padding-xs">
+								<text class="tn-icon-topic"></text>
+								<text class="tn-color-gray--dark">{{tags.name}}</text>
+							</view>
+						</view>
+					</view>
+					<view class="tn-flex tn-flex-col-center tn-margin-top-sm">
 						<view v-for="(category,index) in article.expand.sort" :key="index"
 							class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius"
 							@tap.stop="goCategory(category)">
-							<image :src="category.opt.head_img" mode="aspectFill" style="height: 34rpx;width: 34rpx;border-radius: 10rpx;"></image>
+							<image :src="category.opt.head_img" mode="aspectFill"
+								style="height: 34rpx;width: 34rpx;border-radius: 10rpx;"></image>
 							<text
 								class="tn-margin-left-xs tn-margin-right-xs tn-text-xs tn-color-grey">{{category.name}}</text>
 						</view>
@@ -125,16 +134,16 @@
 					</view>
 					<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-1">
 						<view class="tn-flex tn-flex-col-center">
-							<text class="tn-text-xl tn-icon-fire"></text>
+							<text class="tn-text-xxl tn-icon-fireworks tn-color-red"></text>
 							<text>{{article.views}}</text>
 						</view>
 						<view class="tn-flex tn-flex-col-center">
-							<text class="tn-text-xl tn-icon-message"></text>
+							<text class="tn-text-xxl tn-color-orangered tn-icon-comment-fill"></text>
 							<text>{{article.expand.comments.count}}</text>
 						</view>
 						<view class="tn-flex tn-flex-col-center" @tap="likeAction">
-							<text
-								:class="article.expand.like.is_like?'tn-text-xl tn-icon-like-fill tn-color-red':'tn-text-xl tn-icon-like'"></text>
+							<text class="tn-text-xxl"
+								:class="article.expand.like.is_like?' tn-icon-like-fill tn-color-red':'tn-icon-like'"></text>
 							<text>{{article.expand.like.likes_count}}</text>
 						</view>
 					</view>
@@ -159,7 +168,8 @@
 					<text class="tn-text-xl tn-icon-emoji-good" @tap.stop="showEmoji=!showEmoji;getEmojiList()"></text>
 				</view>
 				<view class="">
-					<tn-button shape="round" :plain="true" size="sm" :blockRepeatClick="true" @click="commentCheck">发送~</tn-button>
+					<tn-button shape="round" :plain="true" size="sm" :blockRepeatClick="true"
+						@click="commentCheck">发送~</tn-button>
 				</view>
 			</view>
 			<view v-show="showEmoji">
@@ -361,7 +371,7 @@
 				}
 			},
 			commentSend() {
-				
+
 				this.$http.post('/comments/add', {
 					article_id: this.article.id,
 					content: this.renderEmoji(this.commentText),

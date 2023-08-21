@@ -40,8 +40,17 @@
 
 						</view>
 						<view @tap.stop="goAticle(index)">
-							<view class="tn-padding tn-no-padding-left">
+							<view class="tn-padding tn-no-padding-left tn-padding-bottom-xs">
 								<rich-text :nodes="item.description"></rich-text>
+							</view>
+							<view class="tn-margin-bottom-xs" v-if="item.expand.tag.length>0">
+								<view class="tn-flex tn-flex-col-center tn-flex-wrap ch-color-primary">
+									<view v-for="(tags,index) in item.expand.tag" :key="tags.id"
+										class="tn-margin-right-xs">
+										<text class="tn-icon-topic"></text>
+										<text>{{tags.name}}</text>
+									</view>
+								</view>
 							</view>
 							<!-- 单张图片 -->
 							<view v-if="item.expand.images.length===1">

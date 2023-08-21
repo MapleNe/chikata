@@ -35,9 +35,17 @@
 							</view>
 						</view>
 						<view @tap="goAticle(index)">
-
-							<view class="tn-padding tn-no-padding-left">
+							<view class="tn-padding tn-no-padding-left tn-padding-bottom-sm">
 								<rich-text :nodes="item.description"></rich-text>
+							</view>
+							<view class="tn-margin-bottom-xs" v-if="item.expand.tag.length>0">
+								<view class="tn-flex tn-flex-col-center tn-flex-wrap ch-color-primary">
+									<view v-for="(tags,index) in item.expand.tag" :key="tags.id"
+										class="tn-margin-right-xs">
+										<text class="tn-icon-topic"></text>
+										<text>{{tags.name}}</text>
+									</view>
+								</view>
 							</view>
 							<!-- 单张图片 -->
 							<view v-if="item.expand.images.length===1">
@@ -106,27 +114,27 @@
 											class="tn-margin-left-xs tn-margin-right-xs tn-text-xs tn-color-grey">{{category.name}}</text>
 									</view>
 								</view>
-								<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-basic-sm">
+								<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-1">
 									<view class="tn-flex tn-flex-col-center">
-										<text class="tn-text-xl tn-icon-fire"></text>
+										<text class="tn-text-xxl tn-icon-fireworks tn-color-red"></text>
 										<text>{{item.views}}</text>
 									</view>
 									<view class="tn-flex tn-flex-col-center" @tap.stop="showComments(index)">
-										<text class="tn-text-xl tn-icon-message"></text>
+										<text class="tn-text-xxl tn-color-orangered tn-icon-comment-fill"></text>
 										<text>{{item.expand.comments.count}}</text>
 									</view>
 									<view class="tn-flex tn-flex-col-center" @tap.stop="likeAction(index)">
-										<text
-											:class="item.expand.like.is_like?'tn-text-xl tn-icon-like-fill tn-color-red':'tn-text-xl tn-icon-like'"></text>
+										<text class="tn-text-xxl"
+											:class="item.expand.like.is_like?' tn-icon-like-fill tn-color-red':'tn-icon-like'"></text>
 										<text>{{item.expand.like.likes_count}}</text>
 									</view>
 								</view>
+
 
 							</view>
 						</view>
 					</ls-skeleton>
 				</view>
-
 				<!-- 间隔开始 -->
 				<view class="tn-bg-gray--light tn-padding-xs"></view>
 				<!-- 间隔结束 -->
