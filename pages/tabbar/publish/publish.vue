@@ -18,7 +18,7 @@
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 		<lsj-edit ref="lsjEdit" placeholder="输入正文" @onReady="editReady"
-			:styles="{'overflow':'hidden','height':'50vh'}"></lsj-edit>
+			:styles="{'overflow':'hidden','height':'60vh'}"></lsj-edit>
 		<you-touchbox :minTop="0.08" :maxTop="0.85" :auto="false" :initTop="0.45"
 			customStyle="border-radius:20rpx 20rpx 0 0">
 			<view class="tn-flex tn-flex-col-center tn-margin tn-flex-row-between">
@@ -68,7 +68,7 @@
 				<view class="tn-margin">
 					<!-- 格式 -->
 					<view v-show="tabsIndex===0">
-						<view class="tn-bg-gray--light tn-padding-sm tn-flex tn-flex-wrap tn-flex-row-between"
+						<view class="tn-bg-gray--light tn-padding-sm tn-flex tn-flex-wrap"
 							style="border-radius: 20rpx;">
 							<text v-for="(item,index) in fontFormat" :key="index "
 								class="tn-margin-sm tn-flex-basic tn-text-xxl"
@@ -141,7 +141,7 @@
 					<text>分区</text>
 					<view class="tn-flex tn-col-center tn-color-gray tn-text-sm">
 						<text class="tn-margin-right-sm">{{selectedCategory.name}}</text>
-						<text class="tn-icon-right"></text>
+						<text :class="showCategory? 'tn-icon-down':'tn-icon-right'"></text>
 					</view>
 				</view>
 				<view class="tn-bg-white tn-padding-sm tn-margin-top" style="border-radius: 10rpx;"
@@ -238,7 +238,7 @@
 				<view class="tn-bg-gray--light tn-margin-top tn-padding-sm tn-padding-top-xs"
 					style="border-radius: 10rpx;">
 					<tn-input type="text" confirmType="完成" v-model="tagName" :clearable="false"
-						placeholder="输入标签,至多20个字符" :maxLength="20" />
+						placeholder="输入标签,至多20个字符" focus :maxLength="20" />
 				</view>
 			</view>
 		</tn-popup>
@@ -351,18 +351,7 @@
 						id: 4,
 						icon: 'editor icon-h4'
 					},
-					{
-						type: 'header',
-						value: 'H5',
-						id: 5,
-						icon: 'editor icon-h5'
-					},
-					{
-						type: 'header',
-						value: 'H6',
-						id: 6,
-						icon: 'editor icon-h6'
-					},
+
 					{
 						type: 'bold',
 						value: '粗体',
@@ -388,18 +377,6 @@
 						icon: 'editor icon-strikethrough'
 					},
 					{
-						type: 'marginTop',
-						value: '10px',
-						id: '10px',
-						icon: 'editor icon-to-top'
-					},
-					{
-						type: 'marginBottom',
-						value: '10px',
-						id: '10px',
-						icon: 'editor icon-to-bottom'
-					},
-					{
 						type: 'align',
 						value: 'left',
 						id: 'left',
@@ -417,35 +394,12 @@
 						id: 'right',
 						icon: 'editor icon-align-right'
 					},
-					{
-						type: 'indent',
-						value: '-1',
-						id: 'indent',
-						icon: 'editor icon-menu-unfold'
-					},
-					{
-						type: 'indent',
-						value: '+1',
-						id: 'indent',
-						icon: 'editor icon-menu-fold'
-					},
-					{
-						type: 'direction',
-						value: 'rtl',
-						id: 'rtl',
-						icon: 'editor icon-layout'
-					},
+
 					{
 						type: 'lineHeight',
 						value: '2',
 						id: '2',
 						icon: 'editor icon-line-height'
-					},
-					{
-						type: 'letterSpacing',
-						value: '2em',
-						id: '2em',
-						icon: 'editor icon-expand'
 					},
 					{
 						type: 'script',
@@ -458,12 +412,6 @@
 						value: 'super',
 						id: 'super',
 						icon: 'editor icon-caret-up'
-					},
-					{
-						type: 'list',
-						value: 'check',
-						id: 'check',
-						icon: 'editor icon-check-square'
 					},
 					{
 						type: 'list',
@@ -543,10 +491,18 @@
 						show: true,
 						allow: true,
 					}
-				}
+				},
+				keyHeight: null,
 			};
 		},
 		onLoad(params) {
+			// #ifdef APP-PLUS
+			uni.onKeyboardHeightChange((res) => {
+				// 监听软键盘的高度，页面隐藏后一定要取消监听键盘
+				this.keyHeight = res.height
+				console.log(this.keyHeight)
+			})
+			// #endif
 			this.update = params.update
 			this.getTags()
 			this.getCategory()
@@ -684,7 +640,7 @@
 				if (!this.selectedTagsList.includes(newTag)) {
 					this.selectedTagsList.push(newTag)
 				}
-
+				this.tagName = null
 			},
 			tagsTap(item) {
 				const index = this.selectedTagsList.findIndex(tag => tag.id === item.id)

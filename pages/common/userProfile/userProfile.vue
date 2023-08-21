@@ -1,7 +1,7 @@
 <template>
-	<z-paging ref="paging" @query="getUserArticle" v-model="content">
+	<z-paging ref="paging" @query="getUserArticle" v-model="content" use-page-scroll>
 		<template #top>
-			<tn-nav-bar alpha></tn-nav-bar>
+			<tn-nav-bar :backgroundColor="background" backTitle=""></tn-nav-bar>
 		</template>
 		<view class="image-wrapper" style="position: relative;">
 			<image :src="profile.longtext.background_img?profile.longtext.background_img:'/static/logo.png'"
@@ -28,7 +28,7 @@
 		<view class="tn-padding" style="position: absolute;top: 100rpx;width: 100%;">
 			<view class="tn-flex tn-flex-col-center">
 				<tn-avatar :src="profile.head_img" size="xl" :border="true" backgroundColor="#f8f7f8"
-					borderColor="#ffffff" :borderSize="6" @tap="hasLogin ? goProfile() : goLogin()">
+					borderColor="#ffffff" :borderSize="6">
 				</tn-avatar>
 				<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-flex-1 tn-margin-left-sm">
 					<view class="tn-flex tn-flex-col-center">
@@ -45,17 +45,19 @@
 				</view>
 			</view>
 		</view>
-		<view style="z-index: 100;position: sticky;top :0;">
-		<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB" :zIndex="2"
-			activeColor="#29B7CB" :lineScale="0.2" style="position: relative;bottom: 20rpx;border-radius: 20rpx;">
-		</v-tabs>
-		</view>
+		<tn-sticky>
+			<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
+				:zIndex="2" activeColor="#29B7CB" :lineScale="0.2"
+				style="position: relative;bottom: 20rpx;border-radius: 20rpx;">
+			</v-tabs>
+		</tn-sticky>
+
 		<view v-for="(item,index) in content" :key="index" @longpress="getMenuInfo(item)">
 			<view class="tn-margin">
 				<ls-skeleton :skeleton="skeleton" :loading="loading">
 					<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 						<view class="tn-flex tn-flex-col-center">
-							<tn-avatar :src="item.expand.author.head_img" @tap="goUserProfile(index)"></tn-avatar>
+							<tn-avatar :src="item.expand.author.head_img"></tn-avatar>
 							<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 								<view class="tn-flex tn-flex-col-center">
 									<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
@@ -128,28 +130,29 @@
 							</tn-grid>
 						</view>
 						<!-- 点赞控件 -->
-						<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top-xs">
+						<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top">
 							<view class="tn-flex tn-flex-row-left">
 								<view v-for="(category,index) in item.expand.sort" :key="index"
-									class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius"
+									class="tn-padding-right tn-round tn-border-solid tn-flex tn-flex-col-center"
 									@tap.stop="goCategory(category)">
-									<tn-avatar size="sm" :src="category.opt.head_img" shape="square"></tn-avatar>
-									<text
-										class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
+									<view class="tn-margin-right-sm">
+										<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
+									</view>
+									<text class="tn-text-sm">{{category.name}}</text>
 								</view>
 							</view>
-							<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-basic-sm">
+							<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-1">
 								<view class="tn-flex tn-flex-col-center">
-									<text class="tn-text-xl tn-icon-fire"></text>
+									<text class="tn-text-xxl tn-icon-fireworks tn-color-red"></text>
 									<text>{{item.views}}</text>
 								</view>
 								<view class="tn-flex tn-flex-col-center" @tap.stop="showComments(index)">
-									<text class="tn-text-xl tn-icon-message"></text>
+									<text class="tn-text-xxl tn-color-orangered tn-icon-comment-fill"></text>
 									<text>{{item.expand.comments.count}}</text>
 								</view>
 								<view class="tn-flex tn-flex-col-center" @tap.stop="likeAction(index)">
-									<text
-										:class="item.expand.like.is_like?'tn-text-xl tn-icon-like-fill tn-color-red':'tn-text-xl tn-icon-like'"></text>
+									<text class="tn-text-xxl"
+										:class="item.expand.like.is_like?' tn-icon-like-fill tn-color-red':'tn-icon-like'"></text>
 									<text>{{item.expand.like.likes_count}}</text>
 								</view>
 							</view>
@@ -163,6 +166,9 @@
 			<view class="tn-bg-gray--light tn-padding-xs"></view>
 			<!-- 间隔结束 -->
 		</view>
+		<tn-popup v-model="showCommentsBox" mode="bottom" length="60%" :borderRadius="20" :safeAreaInsetBottom="true">
+			<commentList :id="commentId"></commentList>
+		</tn-popup>
 	</z-paging>
 </template>
 
@@ -191,7 +197,22 @@
 						background_img: ''
 					}
 				},
+				commentId: null,
+				showCommentsBox: false,
+				background: 'rgba(255,255,255,0)',
+				maxScroll: 200,
 			}
+		},
+		onPageScroll(e) {
+			this.$refs.paging.updatePageScrollTop(e.scrollTop);
+			// 获取页面滚动距离
+			const scrollTop = e.scrollTop;
+			// 计算当前透明度
+			const opacity = scrollTop <= this.maxScroll ? scrollTop / this.maxScroll : 1;
+
+			// 根据透明度设置导航栏背景颜色
+			this.background = `rgba(255, 255, 255, ${opacity})`;
+
 		},
 		onLoad(params) {
 			this.id = params.id
@@ -256,7 +277,8 @@
 				})
 			},
 			showComments(index) {
-				this.$emit('getComments', this.content[index].id)
+				this.commentId = this.content[index].id
+				this.showCommentsBox = !this.showCommentsBox
 			},
 			getMenuInfo(data) {
 				this.$emit('getMenuInfo', data)

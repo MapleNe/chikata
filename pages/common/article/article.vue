@@ -11,50 +11,52 @@
 			</template>
 			<!-- 页面内容 -->
 			<view class="tn-margin">
-				<ls-skeleton :skeleton="articleSk" :loading="loading">
-					<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-						<view class="tn-flex tn-flex-col-center">
-							<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
-							<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
-								<view class="tn-flex tn-flex-col-center">
-									<text class="tn-text-bold">{{article.expand.author.nickname}}</text>
-									<text v-if="article.expand.author.level==='admin'"
-										class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
-								</view>
-								<text class="tn-text-xs">{{getDateDiff(article.create_time)}}</text>
+
+				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+					<view class="tn-flex tn-flex-col-center">
+						<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
+						<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
+							<view class="tn-flex tn-flex-col-center">
+								<text class="tn-text-bold">{{article.expand.author.nickname}}</text>
+								<text v-if="article.expand.author.level==='admin'"
+									class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
 							</view>
-						</view>
-						<view>
-							<tn-button size="sm" :backgroundColor="article.expand.focus?'tn-bg-gray--light':'#29B7CB'"
-								:fontColor="article.expand.focus?'tn-color-gray':'tn-color-white'" shape="round"
-								:blockRepeatClick="true" @tap="followUser()">
-								<text>{{article.expand.focus?'已关注':'关注'}}</text>
-							</tn-button>
+							<text class="tn-text-xs">{{getDateDiff(article.create_time)}}</text>
 						</view>
 					</view>
-					<view class="tn-margin-top" style="max-width: 100%;">
-						<mp-html :content="article.content" :selectable="true" />
+					<view>
+						<tn-button size="sm" :backgroundColor="article.expand.focus?'tn-bg-gray--light':'#29B7CB'"
+							:fontColor="article.expand.focus?'tn-color-gray':'tn-color-white'" shape="round"
+							:blockRepeatClick="true" @tap="followUser()">
+							<text>{{article.expand.focus?'已关注':'关注'}}</text>
+						</tn-button>
 					</view>
-					<view class="tn-margin-top-xs" v-if="article.expand.tag && article.expand.tag.length>0">
-						<view class="tn-flex tn-flex-col-center tn-flex-wrap">
-							<view v-for="(tags,index) in article.expand.tag" :key="tags.id"
-								class="tn-margin-right-sm tn-bg-gray--light tn-margin-bottom-xs tn-round tn-padding-xs">
-								<text class="tn-icon-topic"></text>
-								<text class="tn-color-gray--dark">{{tags.name}}</text>
-							</view>
+				</view>
+				<view class="tn-margin-top" style="max-width: 100%;">
+					<mp-html :content="article.content" :selectable="true" />
+				</view>
+				<view class="tn-margin-top-xs" v-if="article.expand.tag && article.expand.tag.length>0">
+					<view class="tn-flex tn-flex-col-center tn-flex-wrap">
+						<view v-for="(tags,index) in article.expand.tag" :key="tags.id"
+							class="tn-margin-right-sm tn-bg-gray--light tn-margin-bottom-xs tn-round tn-padding-xs">
+							<text class="tn-icon-topic"></text>
+							<text class="tn-color-gray--dark">{{tags.name}}</text>
 						</view>
 					</view>
-					<view class="tn-flex tn-flex-col-center tn-margin-top-sm">
+				</view>
+				<view class="tn-flex tn-flex-col-center tn-margin-top-sm">
+					<view class="tn-flex tn-flex-row-left">
 						<view v-for="(category,index) in article.expand.sort" :key="index"
-							class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius"
+							class="tn-padding-right tn-round tn-border-solid tn-flex tn-flex-col-center"
 							@tap.stop="goCategory(category)">
-							<image :src="category.opt.head_img" mode="aspectFill"
-								style="height: 34rpx;width: 34rpx;border-radius: 10rpx;"></image>
-							<text
-								class="tn-margin-left-xs tn-margin-right-xs tn-text-xs tn-color-grey">{{category.name}}</text>
+							<view class="tn-margin-right-sm">
+								<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
+							</view>
+							<text class="tn-text-sm">{{category.name}}</text>
 						</view>
 					</view>
-				</ls-skeleton>
+				</view>
+
 			</view>
 
 			<view class="tn-padding-xs tn-bg-gray--light"></view><!-- 间隔 -->
@@ -66,63 +68,61 @@
 				</view>
 				<view class="tn-margin-top">
 					<view v-for="(item,index) in comments" :key="index">
-						<ls-skeleton :skeleton="commentSk" :loading="loading">
-							<view class="tn-flex tn-flex-col-center">
-								<tn-avatar :src="item.expand.head_img"></tn-avatar>
-								<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
-									<view class="tn-flex tn-flex-col-center">
-										<text class="tn-text-bold">{{item.nickname}}</text>
-										<text v-if="article.users_id === item.users_id"
-											class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
-											style="padding:5rpx 8rpx">UP</text>
-									</view>
-									<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
-								</view>
-							</view>
-							<view class="tn-margin tn-padding-left-xl" style="overflow: hidden;word-wrap: break-word"
-								@tap="subReply(item)">
-								<!-- {{item.content}} -->
-								<mp-html :content="item.content"></mp-html>
-							</view>
-							<!-- 子评论 -->
-							<view class="tn-margin">
-								<view class="tn-margin-left-xl tn-padding-sm tn-bg-gray--light ch-radius"
-									v-if="item.son.length>0">
-									<view v-for="(subComment, index) in item.son" :key="index">
-										<view class="tn-flex tn-flex-col-center">
-											<tn-avatar :src="subComment.expand.head_img"></tn-avatar>
-											<view
-												class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
-												<view class="tn-flex tn-flex-col-center">
-													<view class="tn-flex tn-flex-col-center">
-														<text class="tn-text-bold">{{subComment.nickname}}</text>
-														<text v-if="article.users_id === subComment.users_id"
-															class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
-															style="padding:5rpx 8rpx">UP</text>
-													</view>
-													<!-- 写一段注释 这个是父评论的id不等于子评论的pid里的id才会显示-->
-													<view v-if="item.id !== subComment.expand.pid.id"
-														class="tn-flex tn-flex-col-center">
-														<text class="tn-icon-right-triangle"></text>
-														<text
-															class="tn-text-bold">{{subComment.expand.pid.nickname}}</text>
-													</view>
 
+						<view class="tn-flex tn-flex-col-center">
+							<tn-avatar :src="item.expand.head_img"></tn-avatar>
+							<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
+								<view class="tn-flex tn-flex-col-center">
+									<text class="tn-text-bold">{{item.nickname}}</text>
+									<text v-if="article.users_id === item.users_id"
+										class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
+										style="padding:5rpx 8rpx">UP</text>
+								</view>
+								<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
+							</view>
+						</view>
+						<view class="tn-margin tn-padding-left-xl" style="overflow: hidden;word-wrap: break-word"
+							@tap="subReply(item)">
+							<!-- {{item.content}} -->
+							<mp-html :content="item.content"></mp-html>
+						</view>
+						<!-- 子评论 -->
+						<view class="tn-margin">
+							<view class="tn-margin-left-xl tn-padding-sm tn-bg-gray--light ch-radius"
+								v-if="item.son.length>0">
+								<view v-for="(subComment, index) in item.son" :key="index">
+									<view class="tn-flex tn-flex-col-center">
+										<tn-avatar :src="subComment.expand.head_img"></tn-avatar>
+										<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
+											<view class="tn-flex tn-flex-col-center">
+												<view class="tn-flex tn-flex-col-center">
+													<text class="tn-text-bold">{{subComment.nickname}}</text>
+													<text v-if="article.users_id === subComment.users_id"
+														class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
+														style="padding:5rpx 8rpx">UP</text>
+												</view>
+												<!-- 写一段注释 这个是父评论的id不等于子评论的pid里的id才会显示-->
+												<view v-if="item.id !== subComment.expand.pid.id"
+													class="tn-flex tn-flex-col-center">
+													<text class="tn-icon-right-triangle"></text>
+													<text class="tn-text-bold">{{subComment.expand.pid.nickname}}</text>
 												</view>
 
-												<text class="tn-text-xs">{{getDateDiff(subComment.create_time)}}</text>
 											</view>
-										</view>
-										<view class="tn-margin tn-padding-left-xl"
-											style="overflow: hidden;word-wrap: break-word" @tap="subReply(subComment)">
-											<mp-html :content="subComment.content" :selectable="true"></mp-html>
-										</view>
 
+											<text class="tn-text-xs">{{getDateDiff(subComment.create_time)}}</text>
+										</view>
 									</view>
-								</view>
+									<view class="tn-margin tn-padding-left-xl"
+										style="overflow: hidden;word-wrap: break-word" @tap="subReply(subComment)">
+										<mp-html :content="subComment.content" :selectable="true"></mp-html>
+									</view>
 
+								</view>
 							</view>
-						</ls-skeleton>
+
+						</view>
+
 					</view>
 				</view>
 			</view>
@@ -268,10 +268,6 @@
 				}).then(res => {
 					if (res.data.code == 200) {
 						this.article = res.data.data
-						setTimeout(() => {
-							this.loading = false
-						}, 600)
-
 					}
 				}).catch(err => {
 					this.$refs.paging.complete(false)

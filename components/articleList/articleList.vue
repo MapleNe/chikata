@@ -38,10 +38,10 @@
 							<view class="tn-padding tn-no-padding-left tn-padding-bottom-sm">
 								<rich-text :nodes="item.description"></rich-text>
 							</view>
-							<view class="tn-margin-bottom-xs" v-if="item.expand.tag.length>0">
+							<view v-if="item.expand.tag.length>0">
 								<view class="tn-flex tn-flex-col-center tn-flex-wrap ch-color-primary">
 									<view v-for="(tags,index) in item.expand.tag" :key="tags.id"
-										class="tn-margin-right-xs">
+										class="tn-margin-right-xs tn-margin-bottom-sm">
 										<text class="tn-icon-topic"></text>
 										<text>{{tags.name}}</text>
 									</view>
@@ -105,7 +105,8 @@
 							<!-- 点赞控件 -->
 							<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top">
 								<view class="tn-flex tn-flex-row-left">
-									<view v-for="(category,index) in item.expand.sort" :key="index" class="tn-padding-right tn-round tn-border-solid tn-flex tn-flex-col-center"
+									<view v-for="(category,index) in item.expand.sort" :key="index"
+										class="tn-padding-right tn-round tn-border-solid tn-flex tn-flex-col-center"
 										@tap.stop="goCategory(category)">
 										<view class="tn-margin-right-sm">
 											<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
@@ -128,8 +129,6 @@
 										<text>{{item.expand.like.likes_count}}</text>
 									</view>
 								</view>
-
-
 							</view>
 						</view>
 					</ls-skeleton>
