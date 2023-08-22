@@ -85,9 +85,9 @@ export class Edit extends Observer {
 				if (isNext > -1) {
 					let newObj = {
 						attributes: {
-							"link": `https://app${this.queryParams(data)}`,
+							"link": `${this.queryParams(data)}`,
 							"textDecoration": "none",
-							"color": "#4569d7"
+							"color": "#FB7299"
 						},
 						insert: name
 					};

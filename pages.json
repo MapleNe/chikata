@@ -133,6 +133,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/tabbar/publish/searchTag",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"tabBar": {
 		"backgroundColor": "#ffffff",

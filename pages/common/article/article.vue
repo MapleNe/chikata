@@ -4,14 +4,13 @@
 		<z-paging ref="paging" @query="getComment" v-model="comments" :safe-area-inset-bottom="true"
 			:auto-scroll-to-top-when-reload="false">
 			<template #top>
-				<tn-nav-bar :zIndex="2">
+				<tn-nav-bar :zIndex="2" backTitle="">
 					详情
 				</tn-nav-bar>
 				<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 			</template>
 			<!-- 页面内容 -->
-			<view class="tn-margin">
-
+			<view class="tn-margin" v-if="article">
 				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 					<view class="tn-flex tn-flex-col-center">
 						<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
@@ -24,10 +23,10 @@
 							<text class="tn-text-xs">{{getDateDiff(article.create_time)}}</text>
 						</view>
 					</view>
-					<view>
+					<view @tap.stop.prevent="followUser()">
 						<tn-button size="sm" :backgroundColor="article.expand.focus?'tn-bg-gray--light':'#29B7CB'"
 							:fontColor="article.expand.focus?'tn-color-gray':'tn-color-white'" shape="round"
-							:blockRepeatClick="true" @tap="followUser()">
+							:blockRepeatClick="true" >
 							<text>{{article.expand.focus?'已关注':'关注'}}</text>
 						</tn-button>
 					</view>

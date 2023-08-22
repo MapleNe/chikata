@@ -32,7 +32,6 @@
 		<tn-popup v-model="showComments" mode="bottom" length="60%" :borderRadius="20" :safeAreaInsetBottom="true">
 			<commentList :id="commentId"></commentList>
 		</tn-popup>
-		<articleMenu :showMenu="showMenu" :data="menuData" @close="showMenu = false"></articleMenu>
 	</z-paging-swiper>
 </template>
 
@@ -41,7 +40,7 @@
 		mapState,
 		mapMutations
 	} from 'vuex';
-	
+
 	import config from "@/static/config.js";
 	import articleList from "@/components/articleList/articleList.vue";
 	import commentList from '@/components/commentList/commentList.vue';
@@ -63,11 +62,18 @@
 				showMenu: false,
 				menuData: null,
 				ws: null,
+				backButtonPress: 0
 			}
 		},
-		onLoad() {
+		onLoad() {},
+		onBackPress(e) {
+			console.log(e)
+			// 评论相关弹窗
+			if (this.showComments) {
+				this.showComments = false;
+				return true;
+			}
 		},
-
 		created() {},
 		computed: {
 			...mapState(['userInfo', 'hasLogin']),

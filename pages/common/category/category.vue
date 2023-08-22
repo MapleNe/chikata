@@ -1,12 +1,10 @@
 <template>
 	<view>
-		<tn-nav-bar :backgroundColor="background"></tn-nav-bar>
+		<tn-nav-bar :backgroundColor="background" backTitle=""></tn-nav-bar>
 		<categoryArticle :id="id" ref="paging" @getComments="getComments" @getMenuInfo="getMenuInfo"></categoryArticle>
 		<tn-popup v-model="showComments" mode="bottom" length="60%" :borderRadius="20" :safeAreaInsetBottom="true">
 			<commentList :id="commentId"></commentList>
 		</tn-popup>
-		<articleMenu :showMenu="showMenu" :data="menuData" @close="showMenu =false"></articleMenu>
-
 	</view>
 </template>
 
