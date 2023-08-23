@@ -23,36 +23,48 @@
 							<text class="tn-text-xs">{{getDateDiff(article.create_time)}}</text>
 						</view>
 					</view>
-					<view @tap.stop.prevent="followUser()">
-						<tn-button size="sm" :backgroundColor="article.expand.focus?'tn-bg-gray--light':'#29B7CB'"
-							:fontColor="article.expand.focus?'tn-color-gray':'tn-color-white'" shape="round"
-							:blockRepeatClick="true">
-							<text>{{article.expand.focus?'已关注':'关注'}}</text>
+					<view>
+						<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29B7CB" fontColor="#29B7CB"
+							v-if="!article.expand.focus" @click="followUser()">
+							<view class="tn-flex tn-flex-col-center">
+								<text class="tn-icon-add tn-margin-right-xs"></text>
+								<text>关注</text>
+							</view>
+						</tn-button>
+						<tn-button size="sm" padding="0 20rpx" backgroundColor="tn-bg-gray--light"
+							fontColor="tn-color-gray" @click="followUser()" v-else>
+							<text>已关注</text>
 						</tn-button>
 					</view>
+				</view>
+				<view class="tn-margin-top tn-flex tn-flex-direction-column">
+					<text class="tn-text-bold tn-text-xl">{{article.title}}</text>
+					<text class="tn-color-grey--disabled tn-text-sm tn-text-center tn-margin-top-sm">帖子发表：{{getDateDiff(article.create_time)}} | 最后编辑：{{getDateDiff(article.last_update_time)}}</text>
 				</view>
 				<view class="tn-margin-top" style="max-width: 100%;">
 					<mp-html :content="article.content" :selectable="true" />
 				</view>
-				<view class="tn-margin-top-xs" v-if="article.expand.tag && article.expand.tag.length>0">
-					<view class="tn-flex tn-flex-col-center tn-flex-wrap">
-						<view v-for="(tags,index) in article.expand.tag" :key="tags.id"
-							class="tn-margin-right-sm tn-bg-gray--light tn-margin-bottom-xs tn-round tn-padding-xs">
-							<text class="tn-icon-topic"></text>
-							<text class="tn-color-gray--dark">{{tags.name}}</text>
-						</view>
-					</view>
-				</view>
-				<view class="tn-flex tn-flex-col-center tn-margin-top-sm">
-					<view class="tn-flex tn-flex-row-left">
-						<view v-for="(category,index) in article.expand.sort" :key="index"
-							class="tn-padding-right tn-round tn-border-solid tn-flex tn-flex-col-center"
-							@tap.stop="goCategory(category)">
-							<view class="tn-margin-right-sm">
-								<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
+				<view class="tn-margin-top-sm">
+					<view class="tn-margin-top-xs" v-if="article.expand.tag && article.expand.tag.length>0">
+						<view class="tn-flex tn-flex-col-center tn-flex-wrap">
+							<view
+								class="tn-bg-grey--light tn-text-sm tn-margin-bottom-xs tn-color-gray--dark tn-margin-right-sm tn-padding-xs"
+								style="border-radius: 10rpx;" v-for="tags in article.expand.tag" :key="tags.id">
+								<text>{{tags.name}}</text>
 							</view>
-							<text class="tn-text-sm">{{category.name}}</text>
 						</view>
+						<view class="tn-flex tn-flex-col-center tn-text-sm tn-color-grey--disabled tn-margin-top-sm">
+							<view class="tn-flex tn-flex-col-center  tn-margin-right">
+								<text class="tn-icon-fire tn-margin-right-xs"></text>
+								<text class="tn-margin-right-xs">浏览数：</text>
+								<text>{{article.views}}</text>
+							</view>
+							<view>
+								<text class="tn-icon-tip"></text>
+								<text>已开启创作声明，允许规范转载</text>
+							</view>
+						</view>
+
 					</view>
 				</view>
 
@@ -61,13 +73,13 @@
 			<view class="tn-padding-xs tn-bg-gray--light"></view><!-- 间隔 -->
 			<!-- 文章详情 结束 -->
 			<!-- 评论区 开始 -->
+			<view class="tn-color-grey">
+				<v-tabs :tabs="tabs" v-model="tabsIndex" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
+					activeColor="#29B7CB" :lineScale="0.2" color="#AAA"></v-tabs>
+			</view>
 			<view class="tn-margin">
-				<view class="tn-color-grey">
-					<text>评论：{{article.expand.comments.count}}</text>
-				</view>
 				<view class="tn-margin-top">
 					<view v-for="(item,index) in comments" :key="index">
-
 						<view class="tn-flex tn-flex-col-center">
 							<tn-avatar :src="item.expand.head_img"></tn-avatar>
 							<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
@@ -131,18 +143,20 @@
 					<view class="tn-bg-gray--light tn-padding-left tn-round">
 						<tn-input :disabled="true" :placeholder="commentBoxText" @click="commentAction"></tn-input>
 					</view>
-					<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-1">
-						<view class="tn-flex tn-flex-col-center">
-							<text class="tn-text-xxl tn-icon-fireworks tn-color-red"></text>
+					<view class="tn-flex  tn-flex-col-center tn-color-gray--dark tn-flex-basic-sm tn-flex-row-between"
+						style="margin-left: auto;">
+						<view class="tn-flex tn-flex-col-center tn-flex-direction-column">
+							<text class="tn-text-xxl tn-icon-star "></text>
 							<text>{{article.views}}</text>
 						</view>
-						<view class="tn-flex tn-flex-col-center">
-							<text class="tn-text-xxl tn-color-orangered tn-icon-comment-fill"></text>
+						<view class="tn-flex tn-flex-col-center tn-flex-direction-column">
+							<text class="tn-text-xxl tn-icon-comment"></text>
 							<text>{{article.expand.comments.count}}</text>
 						</view>
-						<view class="tn-flex tn-flex-col-center" @tap="likeAction">
-							<text class="tn-text-xxl"
-								:class="article.expand.like.is_like?' tn-icon-like-fill tn-color-red':'tn-icon-like'"></text>
+						<view class="tn-flex tn-flex-col-center tn-flex-direction-column"
+							:class="article.expand.like.is_like?'tn-color-red':''" @tap.stop="likeAction">
+							<text class=" tn-text-xxl"
+								:class="article.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
 							<text>{{article.expand.like.likes_count}}</text>
 						</view>
 					</view>
@@ -208,6 +222,8 @@
 		mixins: [MescrollMixin], // 使用mixin
 		data() {
 			return {
+				tabs: ['全部评论', '只看楼主'],
+				tabsIndex: 0,
 				commentBoxText: '我想说...', //底部盒子显示的信息
 				commentText: '', //这个才是回复的信息
 				commentBoxOpen: false, //控制弹出层
@@ -223,7 +239,7 @@
 
 						},
 						comments: {
-							count: 0,
+							
 						}
 					}
 				},
@@ -263,7 +279,7 @@
 			} else {
 				this.commentBoxOpen = false
 				//将路由锁解除 否则无法跳转
-				this.$Router.$lockStatus = false; 
+				this.$Router.$lockStatus = false;
 				next(false)
 			}
 		},
@@ -337,6 +353,7 @@
 								icon: 'none',
 								title: res.data.msg
 							});
+							this.article.expand.focus = !this.article.expand.focus
 							break;
 						case 400:
 							uni.showToast({
@@ -449,6 +466,9 @@
 						path: '/pages/tabbar/index'
 					})
 				}
+			},
+			changeTab(index) {
+				this.tabsIndex = index
 			},
 			getDateDiff(data) {
 				// 传进来的data必须是日期格式，不能是时间戳

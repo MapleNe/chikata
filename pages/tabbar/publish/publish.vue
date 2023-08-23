@@ -49,14 +49,14 @@
 
 			</scroll-view>
 		</view>
-		<view class="tn-flex tn-flex-col-center tn-padding tn-flex-row-between" style="width: 100%; position: absolute;"
-			:style="'bottom:'+bottom+'px'">
+		<view class="tn-flex tn-flex-col-center tn-bg-white tn-padding tn-flex-row-between"
+			style="width: 100%; position: absolute;" :style="'bottom:'+bottom+'px'">
 			<text v-for="(item,index) in btnList" :key="index"
 				:class="[item.icon,item.type==='format'&&format||item.type==='color'&& formatColor?'tn-color-cyan--dark':'']"
 				class="tn-text-xxl" @tap.stop.prevent="switchBtn(item)"></text>
 		</view>
 		<!-- 发布设置 -->
-		<tn-modal v-model="showArticleSet" custom padding="0rpx" width="90%" showCloseBtn>
+		<tn-modal v-model="showArticleSet" custom padding="0rpx" width="90%" showCloseBtn :zIndex="10">
 			<view @touchmove.stop.prevent>
 				<view class="tn-margin">
 					<view class="tn-flex tn-flex-col-center">
@@ -64,8 +64,7 @@
 						<text class="tn-margin-left-sm">发布设置</text>
 					</view>
 					<view class="tn-border-solid-bottom">
-						<tn-input v-model="articleTitle" :maxLength="40" placeholder="请输入标题(可选:建议填写)"
-							:clearable="false" />
+						<tn-input v-model="articleTitle" :maxLength="40" placeholder="请输入标题(必填)" :clearable="false" />
 					</view>
 					<tn-list-view :card="true" unlined="all">
 						<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx" @click="showSetting = true">
@@ -76,10 +75,15 @@
 								</view>
 								<text class="tn-color-gray--dark tn-margin-right-xl">{{selectedCategory.name}}</text>
 							</view>
-
 						</tn-list-cell>
 						<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx"
-							@click="showDescription = !showDescription">简介</tn-list-cell>
+							@click="showDescription = !showDescription">
+							<view class="tn-flex tn-flex-col-center">
+								<text class="tn-margin-right-sm tn-flex-nowrap" style="flex-shrink: 0;">简介</text>
+								<text
+									class="tn-color-gray--dark tn-flex-1 tn-margin-right tn-text-ellipsis">{{description}}</text>
+							</view>
+						</tn-list-cell>
 					</tn-list-view>
 				</view>
 				<view class="tn-bg-gray--light" style="padding:6rpx"></view>
@@ -89,15 +93,15 @@
 					</view>
 					<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx" @click="showCollect = !showCollect">
 						<view class="tn-flex tn-flex-row-between tn-flex-col-center">
-							<text>合集</text>
+							<text>加入合集</text>
 							<text
 								class="tn-color-gray--dark tn-margin-right-xl">{{selectedCollect&& selectedCollect.name}}</text>
 						</view>
 					</tn-list-cell>
 					<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx"
-						@click="showPermission = !showPermission">权限</tn-list-cell>
+						@click="showPermission = !showPermission">设置权限</tn-list-cell>
 					<view class="tn-margin-top-xl">
-						<view class="tn-flex-col-center tn-flex tn-flex-row-center">
+						<view class="tn-flex-col-center tn-flex tn-flex-row-center" @tap.stop.prevent="publish()">
 							<tn-button shape="round" backgroundColor="#29B7CB" fontColor="tn-color-white"
 								style="width: 100%;">确认发布</tn-button>
 						</view>
@@ -552,6 +556,7 @@
 				keyHeight: 0,
 				bottom: 0,
 				showDraft: false,
+				showSaveDraft: false,
 				draft: null,
 				showAddLink: false,
 			};
@@ -575,6 +580,25 @@
 			this.getCategory()
 			if (uni.getStorageSync('draft')) {
 				this.showDraft = true
+			}
+		},
+		beforeRouteLeave(to, from, next) {
+			if (this.edit.textCount) {
+				uni.showModal({
+					title: '是否保存为草稿',
+					confirmText: '保存',
+					cancelText: '不保存',
+					success: (res) => {
+						if (res.confirm) {
+							this.saveDraft()
+							next()
+						} else {
+							next()
+						}
+					}
+				})
+			} else {
+				next()
 			}
 		},
 		created() {
@@ -783,6 +807,13 @@
 				// 获取插入的图片列表
 				let imgs = await this.edit.getImages()
 				// 判断是否允许提交
+				if (!this.articleTitle) {
+					uni.showToast({
+						icon: 'none',
+						title: '标题未填写~'
+					});
+					return;
+				}
 				if (!this.edit.textCount && !imgs.length) {
 					uni.showToast({
 						icon: 'none',
@@ -790,6 +821,7 @@
 					});
 					return;
 				}
+				this.showArticleSet = !this.showArticleSet
 				uni.showLoading({
 					title: '发布中...'
 				})
@@ -885,6 +917,9 @@
 				}
 				this.edit.addLink(link)
 				this.showAddLink = !this.showAddLink
+			},
+			showTip() {
+
 			},
 			// 字号滑动条
 			fontSliderChange({

@@ -28,10 +28,16 @@
 								</view>
 							</view>
 							<view v-show="type!=='user'">
-								<tn-button size="sm" :backgroundColor="item.expand.focus?'tn-bg-gray--light':'#29B7CB'"
-									:fontColor="item.expand.focus?'tn-color-gray':'tn-color-white'" shape="round"
-									:blockRepeatClick="true" @tap="followUser(index)">
-									<text>{{item.expand.focus?'已关注':'关注'}}</text>
+								<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29B7CB"
+									fontColor="#29B7CB" v-if="!item.expand.focus" @click="followUser(index)">
+									<view class="tn-flex tn-flex-col-center">
+										<text class="tn-icon-add tn-margin-right-xs"></text>
+										<text>关注</text>
+									</view>
+								</tn-button>
+								<tn-button size="sm" padding="0 20rpx" backgroundColor="tn-bg-gray--light"
+									fontColor="tn-color-gray" @click="followUser(index)" v-else>
+									<text>已关注</text>
 								</tn-button>
 							</view>
 						</view>
@@ -39,15 +45,7 @@
 							<view class="tn-padding tn-no-padding-left tn-padding-bottom-sm">
 								<rich-text :nodes="item.description"></rich-text>
 							</view>
-							<view v-if="item.expand.tag.length>0">
-								<view class="tn-flex tn-flex-col-center tn-flex-wrap ch-color-primary">
-									<view v-for="(tags,index) in item.expand.tag" :key="tags.id"
-										class="tn-margin-right-xs tn-margin-bottom-sm">
-										<text class="tn-icon-topic"></text>
-										<text>{{tags.name}}</text>
-									</view>
-								</view>
-							</view>
+
 							<!-- 单张图片 -->
 							<view v-if="item.expand.images.length===1">
 								<image v-for="(images,index) in item.expand.images" :key="index" :src="images.src"
@@ -57,7 +55,7 @@
 							</view>
 							<!-- 单张结束 -->
 							<!-- 复数开始 -->
-							<view v-if="item.expand.images.length===2||item.expand.images.length===4">
+							<view v-if="item.expand.images.length===2 || item.expand.images.length===4">
 								<tn-grid align="left" :col="item.expand.images.length" hoverClass="none">
 									<block v-for="(images, index) in item.expand.images" :key="index">
 										<!-- H5 -->
@@ -84,9 +82,9 @@
 									</block>
 								</tn-grid>
 							</view>
-							<view v-if="item.expand.images.length>=3">
+							<view v-if="item.expand.images.length===3|| item.expand.images.length>4">
 								<tn-grid align="left" :col="3" hoverClass="none">
-									<block v-for="(images, index) in item.expand.images" :key="index">
+									<block v-for="(images, index) in item.expand.images" :key="index" v-if="index<9">
 										<!-- H5 -->
 										<!-- #ifndef MP-WEIXIN -->
 										<tn-grid-item
@@ -113,28 +111,29 @@
 							</view>
 							<!-- 点赞控件 -->
 							<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top">
-								<view class="tn-flex tn-flex-row-left">
-									<view v-for="(category,index) in item.expand.sort" :key="index"
-										class="tn-padding-right tn-round tn-border-solid tn-flex tn-flex-col-center"
-										@tap.stop="goCategory(category)">
-										<view class="tn-margin-right-sm">
-											<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
-										</view>
-										<text class="tn-text-sm">{{category.name}}</text>
+								<!-- 只取第一个tag -->
+								<view v-if="item.expand.tag.length>0">
+									<view
+										class="tn-bg-grey--light tn-text-sm tn-color-gray--dark tn-margin-right-sm tn-padding-xs"
+										style="border-radius: 10rpx;">
+										<text>{{item.expand.tag[0].name}}</text>
 									</view>
 								</view>
-								<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-1">
+								<view
+									class="tn-flex  tn-flex-col-center tn-color-gray tn-flex-basic-sm tn-flex-row-between" style="margin-left: auto;">
 									<view class="tn-flex tn-flex-col-center">
-										<text class="tn-text-xxl tn-icon-fireworks tn-color-red"></text>
+										<text class="tn-text-xxl tn-icon-fire "></text>
 										<text>{{item.views}}</text>
 									</view>
 									<view class="tn-flex tn-flex-col-center" @tap.stop="showComments(index)">
-										<text class="tn-text-xxl tn-color-orangered tn-icon-comment-fill"></text>
+										<text class="tn-text-xxl tn-icon-comment"></text>
 										<text>{{item.expand.comments.count}}</text>
 									</view>
-									<view class="tn-flex tn-flex-col-center" @tap.stop="likeAction(index)">
+									<view class="tn-flex tn-flex-col-center"
+										:class="item.expand.like.is_like?'tn-color-red':''"
+										@tap.stop="likeAction(index)">
 										<text class="tn-text-xxl"
-											:class="item.expand.like.is_like?' tn-icon-like-fill tn-color-red':'tn-icon-like'"></text>
+											:class="item.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
 										<text>{{item.expand.like.likes_count}}</text>
 									</view>
 								</view>
@@ -372,7 +371,7 @@
 								icon: 'none',
 								title: res.data.msg
 							});
-							this.$refs.paging.reload()
+							this.content[index].expand.focus = !this.content[index].expand.focus
 							break;
 						case 400:
 							uni.showToast({
@@ -407,8 +406,7 @@
 
 				// console.log('diffValue：'+diffValue+' ' +'diffMonth：'+diffMonth+' ' +'diffWeek：'+diffWeek+' ' +'diffDay：'+diffDay+' ' +'diffHour：'+diffHour+' ' +'diffMinute：'+diffMinute);
 
-				if (diffValue < 0) {
-				} else if (diffMonth > 3) {
+				if (diffValue < 0) {} else if (diffMonth > 3) {
 					result = timePublish.getFullYear() + "-";
 					result += timePublish.getMonth() + "-";
 					result += timePublish.getDate();

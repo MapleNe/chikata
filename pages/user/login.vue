@@ -24,7 +24,8 @@
 						class="tn-bg-gray--light tn-round tn-padding-xs tn-padding-left tn-flex tn-flex-col-center tn-margin-bottom-lg">
 						<text class="tn-text-xxl tn-icon-email tn-padding-right"></text>
 						<view class="tn-padding-right tn-flex-1">
-							<tn-input type="text" placeholder="邮箱/账号" v-model="account" :clearable="false" />
+							<tn-input type="text" :placeholder="codeLogin?'手机号码':'账号'" v-model="account"
+								:clearable="false" />
 						</view>
 					</view>
 					<view
@@ -44,7 +45,7 @@
 					</view>
 					<view class="tn-margin-left-sm tn-flex tn-flex-row-between">
 						<text @tap.stop.prevent="changeLogin">
-							{{codeLogin?'密码登录':'验证码登录'}}
+							{{codeLogin?'密码登录':'手机登录'}}
 						</text>
 						<text @tap="fogetPassword">忘记密码？</text>
 					</view>
@@ -166,11 +167,7 @@
 		methods: {
 			...mapMutations(['logout', 'login', 'setToken', 'setRefreshToken']),
 			changeLogin() {
-				if (!this.codeLogin) {
-					this.codeLogin = true
-				} else {
-					this.codeLogin = false
-				}
+				this.codeLogin = !this.codeLogin
 			},
 			loginCheck() {
 				if (this.account && this.password) {
@@ -218,6 +215,7 @@
 					code: this.code,
 					cid: this.cid
 				}).then(res => {
+					console.log(res)
 					if (res.data.code === 200) {
 						let data = res.data
 						let token = data.data['login-token']
@@ -226,7 +224,7 @@
 						// uni.setStorageSync('userInfo', data.data.user)
 						this.login(data.data.user)
 						uni.$emit('loginComplete', true)
-						console.log(data.data.user)
+
 						uni.showToast({
 							icon: 'none',
 							title: data.msg
