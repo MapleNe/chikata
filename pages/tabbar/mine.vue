@@ -25,7 +25,7 @@
 							<text class="tn-text-bold tn-text-lg">{{userInfo.expand.likeCount}}</text>
 							<text>喜欢</text>
 						</view>
-						<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
+						<view class="tn-flex tn-flex-direction-column tn-flex-col-center" @tap.stop.prevent="goFans">
 							<text class="tn-text-bold tn-text-lg">{{userInfo.expand.fansCount}}</text>
 							<text>粉丝</text>
 						</view>
@@ -64,9 +64,9 @@
 		</template>
 		<swiper class="swiper" :current="tabsIndex" @change="changeSwpier">
 			<swiper-item class="swiper-item">
-				<userArticle :tabsIndex="tabsIndex" :swiperIndex="tabsIndex" v-if="hasLogin" @getComments="getComments"
-					@getMenuInfo="getMenuInfo">
-				</userArticle>
+				<articleList :tabsIndex="tabsIndex" :swiperIndex="tabsIndex" :content="content" :swiper="true" type="user"
+					@getComments="getComments" @getMenuInfo="getMenuInfo" v-if="hasLogin">
+				</articleList>
 				<view class="tn-flex tn-flex-row-center tn-margin-top-xl" v-else>
 					<tn-button size="sm" :plain="true" shape="round" @tap="goLogin">去登录</tn-button>
 				</view>
@@ -156,12 +156,12 @@
 		mapState,
 		mapMutations
 	} from 'vuex';
-	import userArticle from "@/components/userArticle/userArticle.vue";
+	import articleList from "@/components/articleList/articleList.vue";
 	import collectList from "@/components/collectList/collectList.vue";
 	import articleMenu from "@/components/aticleMenu/aticleMenu.vue";
 	export default {
 		components: {
-			userArticle,
+			articleList,
 			collectList,
 			articleMenu,
 		},
@@ -282,6 +282,11 @@
 					path: '/pages/user/vip',
 				})
 			},
+			goFans(){
+				this.$Router.push({
+					path: '/pages/user/userFans/userFans',
+				})
+			},
 			goPage(item) {
 				switch (item.page) {
 					case 'profile':
@@ -295,6 +300,7 @@
 					case 'focus':
 						break;
 					case 'fans':
+						this.goFans()
 						break
 					default:
 						break;

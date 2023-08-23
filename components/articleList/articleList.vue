@@ -2,7 +2,7 @@
 	<view>
 		<z-paging ref="paging" @query="getArticle" v-model="content" :auto="false" :auto-clean-list-when-reload="false"
 			:auto-scroll-to-top-when-reload="false">
-			<view v-show="tabsIndex===0">
+			<view v-show="tabsIndex===0&&type!=='user'">
 				<view class="tn-margin" v-show="swiper">
 					<tn-swiper :list="swiperList" :height="350" name="img" backgroundColor="tn-bg-gray--light"
 						:radius="10" v-show="isBanner" @click="clickSwiper">
@@ -16,7 +16,8 @@
 					<ls-skeleton :skeleton="skeleton" :loading="loading">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 							<view class="tn-flex tn-flex-col-center">
-								<tn-avatar :src="item.expand.author.head_img" @tap="goUserProfile(index)"></tn-avatar>
+								<tn-avatar :src="item.expand.author.head_img"
+									@tap="type!=='user'?goUserProfile(index):''"></tn-avatar>
 								<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 									<view class="tn-flex tn-flex-col-center">
 										<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
@@ -26,7 +27,7 @@
 									<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
 								</view>
 							</view>
-							<view>
+							<view v-show="type!=='user'">
 								<tn-button size="sm" :backgroundColor="item.expand.focus?'tn-bg-gray--light':'#29B7CB'"
 									:fontColor="item.expand.focus?'tn-color-gray':'tn-color-white'" shape="round"
 									:blockRepeatClick="true" @tap="followUser(index)">
@@ -72,9 +73,13 @@
 
 										<!-- 微信小程序 -->
 										<!-- #ifdef MP-WEIXIN -->
-										<!-- <tn-grid-item :style="{width: gridItemWidth}">
-									<view style="padding: 30rpx;">{{ item }}</view>
-								</tn-grid-item> -->
+										<tn-grid-item :style="{width: gridItemWidth,height:gridItemWidth}"
+											style="margin-right: 6rpx;margin-bottom: 6rpx;">
+											<image :src="images.src" mode="aspectFill"
+												style="height: 256rpx;width: 256rpx;border-radius: 10rpx;"
+												@tap.stop="previewImage(item.expand.images,index)">
+											</image>
+										</tn-grid-item>
 										<!-- #endif-->
 									</block>
 								</tn-grid>
@@ -95,9 +100,13 @@
 
 										<!-- 微信小程序 -->
 										<!-- #ifdef MP-WEIXIN -->
-										<!-- <tn-grid-item :style="{width: gridItemWidth}">
-									<view style="padding: 30rpx;">{{ item }}</view>
-								</tn-grid-item> -->
+										<tn-grid-item :style="{width: gridItemWidth,height:gridItemWidth}"
+											style="margin-right: 6rpx;margin-bottom: 6rpx">
+											<image :src="images.src" mode="aspectFill"
+												style="height: 220rpx;width: 220rpx;border-radius: 10rpx;"
+												@tap.stop="previewImage(item.expand.images,index)">
+											</image>
+										</tn-grid-item>
 										<!-- #endif-->
 									</block>
 								</tn-grid>
@@ -156,6 +165,18 @@
 				type: Number,
 				default: null
 			},
+			type: {
+				type: String,
+				default: 'index'
+			},
+			id: {
+				type: Number,
+				default: null,
+			},
+			order: {
+				type: String,
+				default: ''
+			},
 			swiperIndex: {
 				type: Number,
 				default: null
@@ -179,6 +200,7 @@
 				showPop: false,
 				showMenu: false,
 				isLongTap: true,
+				api: null,
 
 			};
 		},
@@ -210,18 +232,39 @@
 				immediate: true
 			}
 		},
+		computed: {
+			// 兼容小程序
+			gridItemWidth() {
+				return 100 / this.col + '%'
+			}
+		},
 		methods: {
 			async getArticle(page, num) {
-				await this.$http.get(this.tabsIndex === 2 ? '/article/focusFind' : '/article/all', {
+				switch (this.type) {
+					case 'index':
+						this.api = '/article/all'
+						break;
+					case 'focus':
+						this.api = '/article/focusFind'
+						break;
+					case 'user':
+						this.api = '/article/userFind'
+						break;
+					default:
+						this.api = '/article/all'
+						break;
+				}
+				await this.$http.get(this.api, {
 					params: {
 						limit: num,
 						page: page,
+						id: this.id ? this.id : '',
 						order: this.tabsIndex === 1 ? 'views desc create_time desc' : ''
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.data)
-
+						console.log(res)
 						this.firstLoad = true
 						//骨架屏仅在第一次加载数据时显示
 						setTimeout(() => {
@@ -365,7 +408,6 @@
 				// console.log('diffValue：'+diffValue+' ' +'diffMonth：'+diffMonth+' ' +'diffWeek：'+diffWeek+' ' +'diffDay：'+diffDay+' ' +'diffHour：'+diffHour+' ' +'diffMinute：'+diffMinute);
 
 				if (diffValue < 0) {
-					alert("错误时间");
 				} else if (diffMonth > 3) {
 					result = timePublish.getFullYear() + "-";
 					result += timePublish.getMonth() + "-";

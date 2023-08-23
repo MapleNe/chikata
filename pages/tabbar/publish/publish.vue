@@ -8,18 +8,18 @@
 						存草稿
 					</tn-button>
 				</view>
-				<view @tap.stop.prevent="update?'':publish()">
+				<view @tap.stop.prevent="update?'':showArticleSet = !showArticleSet">
 					<tn-button size="sm" shape="round" backgroundColor="#29B7CB" fontColor="tn-color-white">
 						{{update?'更新':'发布'}}
 					</tn-button>
 				</view>
-
 			</view>
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 		<lsj-edit ref="lsjEdit" placeholder="输入正文" @onReady="editReady" id="editorv"
 			:styles="{'overflow':'hidden','height':'60vh'}" :html="draft"></lsj-edit>
-		<view v-show="format" style="position: fixed;" :style="'bottom:'+bottom+'px'">
+
+		<view v-show="format" style="position: absolute;" :style="'bottom:'+bottom+40+'px'">
 			<scroll-view scroll-x="true" class="toolbar tn-bg-white tn-padding-xs">
 				<view class="tn-flex">
 					<text v-for="(item,index) in fontFormat" :key="index "
@@ -30,7 +30,7 @@
 			</scroll-view>
 		</view>
 		<!-- 颜色 -->
-		<view v-show="formatColor" style="position: fixed;" :style="'bottom:'+bottom+'px'">
+		<view v-show="formatColor" style="position: absolute;" :style="'bottom:'+bottom+40+'px'" id="formartBar">
 			<scroll-view scroll-x="true" class="toolbar tn-bg-white tn-padding-xs">
 				<view class="tn-padding-xs tn-flex tn-flex-col-center">
 					<text class="tn-margin-right">文字</text>
@@ -49,55 +49,62 @@
 
 			</scroll-view>
 		</view>
-
-
-		<you-touchbox :minTop="0.08" :maxTop="0.85" :auto="false" :initTop="0.45"
-			customStyle="border-radius:20rpx 20rpx 0 0" @get-end-detail="getBoxDetail">
-			<view class="tn-flex tn-flex-col-center tn-margin tn-flex-row-between">
-				<text v-for="(item,index) in btnList" :key="index"
-					:class="[item.icon,item.type==='format'&&format||item.type==='color'&& formatColor?'tn-color-cyan--dark':'']"
-					class="tn-text-xxl" @tap.stop.prevent="switchBtn(item)"></text>
-			</view>
-			<view class="tn-margin">
-				<view class="tn-flex tn-flex-col-center">
-					<text class="tn-icon-set tn-text-bold"></text>
-					<text class="tn-margin-left-sm">发布设置</text>
-				</view>
-				<view class="tn-border-solid-bottom">
-					<tn-input v-model="articleTitle" :maxLength="40" placeholder="请输入标题(可选:建议填写)" :clearable="false" />
-				</view>
-				<tn-list-view :card="true" unlined="all">
-					<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx" @click="showSetting = true">
-						<view class="tn-flex tn-flex-row-between tn-flex-col-center">
-							<view class="tn-flex -tn-flex-col-center">
-								<text>分区和标签</text>
-								<text class="tn-margin-left-sm tn-color-gray">(必填)</text>
+		<view class="tn-flex tn-flex-col-center tn-padding tn-flex-row-between" style="width: 100%; position: absolute;"
+			:style="'bottom:'+bottom+'px'">
+			<text v-for="(item,index) in btnList" :key="index"
+				:class="[item.icon,item.type==='format'&&format||item.type==='color'&& formatColor?'tn-color-cyan--dark':'']"
+				class="tn-text-xxl" @tap.stop.prevent="switchBtn(item)"></text>
+		</view>
+		<!-- 发布设置 -->
+		<tn-modal v-model="showArticleSet" custom padding="0rpx" width="90%" showCloseBtn>
+			<view @touchmove.stop.prevent>
+				<view class="tn-margin">
+					<view class="tn-flex tn-flex-col-center">
+						<text class="tn-icon-set tn-text-bold"></text>
+						<text class="tn-margin-left-sm">发布设置</text>
+					</view>
+					<view class="tn-border-solid-bottom">
+						<tn-input v-model="articleTitle" :maxLength="40" placeholder="请输入标题(可选:建议填写)"
+							:clearable="false" />
+					</view>
+					<tn-list-view :card="true" unlined="all">
+						<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx" @click="showSetting = true">
+							<view class="tn-flex tn-flex-row-between tn-flex-col-center">
+								<view class="tn-flex -tn-flex-col-center">
+									<text>分区和标签</text>
+									<text class="tn-margin-left-sm tn-color-gray">(必填)</text>
+								</view>
+								<text class="tn-color-gray--dark tn-margin-right-xl">{{selectedCategory.name}}</text>
 							</view>
-							<text class="tn-color-gray--dark tn-margin-right-xl">{{selectedCategory.name}}</text>
-						</view>
 
+						</tn-list-cell>
+						<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx"
+							@click="showDescription = !showDescription">简介</tn-list-cell>
+					</tn-list-view>
+				</view>
+				<view class="tn-bg-gray--light" style="padding:6rpx"></view>
+				<view class="tn-margin">
+					<view class="tn-margin-bottom-sm">
+						<text>帖子设置</text>
+					</view>
+					<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx" @click="showCollect = !showCollect">
+						<view class="tn-flex tn-flex-row-between tn-flex-col-center">
+							<text>合集</text>
+							<text
+								class="tn-color-gray--dark tn-margin-right-xl">{{selectedCollect&& selectedCollect.name}}</text>
+						</view>
 					</tn-list-cell>
 					<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx"
-						@click="showDescription = !showDescription">简介</tn-list-cell>
-				</tn-list-view>
-			</view>
-			<view class="tn-bg-gray--light" style="padding:6rpx"></view>
-			<view class="tn-margin">
-				<view class="tn-margin-bottom-sm">
-					<text>帖子设置</text>
-				</view>
-				<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx" @click="showCollect = !showCollect">
-					<view class="tn-flex tn-flex-row-between tn-flex-col-center">
-						<text>合集</text>
-						<text
-							class="tn-color-gray--dark tn-margin-right-xl">{{selectedCollect&& selectedCollect.name}}</text>
+						@click="showPermission = !showPermission">权限</tn-list-cell>
+					<view class="tn-margin-top-xl">
+						<view class="tn-flex-col-center tn-flex tn-flex-row-center">
+							<tn-button shape="round" backgroundColor="#29B7CB" fontColor="tn-color-white"
+								style="width: 100%;">确认发布</tn-button>
+						</view>
 					</view>
-				</tn-list-cell>
-				<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx"
-					@click="showPermission = !showPermission">权限</tn-list-cell>
-
+				</view>
 			</view>
-		</you-touchbox>
+		</tn-modal>
 		<!-- 文章设置 -->
 		<tn-popup mode="bottom" :borderRadius="20" v-model="showSetting" backgroundColor="#f8f8f8" safeAreaInsetBottom>
 			<view class="tn-margin">
@@ -333,6 +340,7 @@
 				linkName: null,
 				update: false,
 				edit: null,
+				showArticleSet: false,
 				formatObj: null,
 				tabsIndex: 0,
 				tabsList: ['格式', '颜色'],
@@ -549,6 +557,10 @@
 			};
 		},
 		onLoad(params) {
+			let formartBar = uni.createSelectorQuery().select('#formartBar')
+			formartBar.boundingClientRect(function(data) {
+				console.log('元素信息：', data)
+			}).exec()
 			uni.onKeyboardHeightChange((res) => {
 				// 监听软键盘的高度，页面隐藏后一定要取消监听键盘
 				if (res.height !== 0) this.bottom = 0;
@@ -812,7 +824,7 @@
 					description: this.description ? this.description : '',
 					sort_id: this.selectedCategory.id,
 					tag_id: idList,
-					collections_id: this.selectedCollect&&this.selectedCollect.id?this.selectedCollect.id:'',
+					collections_id: this.selectedCollect && this.selectedCollect.id ? this.selectedCollect.id : '',
 					tag_name: newNameList,
 					opt: JSON.stringify(this.articleOpt),
 				}).then(res => {
@@ -851,8 +863,8 @@
 				const contents = await this.edit.getContents()
 				uni.setStorageSync('draft', contents.html)
 				uni.showToast({
-					icon:'none',
-					title:'已保存草稿'
+					icon: 'none',
+					title: '已保存草稿'
 				})
 			},
 			deleteDraft() {
@@ -867,8 +879,8 @@
 				const link = {
 					name: this.linkName,
 					data: {
-						type:'link',
-						url:this.link
+						type: 'link',
+						url: this.link
 					}
 				}
 				this.edit.addLink(link)

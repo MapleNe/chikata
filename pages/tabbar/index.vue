@@ -18,13 +18,13 @@
 			</tn-nav-bar>
 			<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 			<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
-				activeColor="#29B7CB" :lineScale="0.2"></v-tabs>
+				activeColor="#29B7CB" field="name" :lineScale="0.2"></v-tabs>
 		</template>
 		<!-- swiper必须设置height:100%，因为swiper有默认的高度，只有设置高度100%才可以铺满页面  -->
 
 		<swiper class="swiper" :current="tabsIndex" @change="changeSwpier">
 			<swiper-item class="swiper-item" v-for="(item, index) in tabs" :key="index">
-				<articleList :tabsIndex="index" :swiperIndex="tabsIndex" :content="content" :swiper="true"
+				<articleList :tabsIndex="index" :swiperIndex="tabsIndex" :content="content" :swiper="true" :type="item.type"
 					@getComments="getComments" @getMenuInfo="getMenuInfo">
 				</articleList>
 			</swiper-item>
@@ -55,7 +55,23 @@
 			return {
 				isBanner: false,
 				tabsIndex: 0,
-				tabs: ['首页', '热门', '关注'],
+				tabs: [{
+						id: 1,
+						name: '首页',
+						type: 'index',
+					},
+					{
+						id: 2,
+						name: '热门',
+						type: 'index',
+
+					},
+					{
+						id: 3,
+						name: '关注',
+						type: 'focus',
+					}
+				],
 				content: [],
 				showComments: false,
 				commentId: null,
@@ -63,15 +79,6 @@
 				menuData: null,
 				ws: null,
 				backButtonPress: 0
-			}
-		},
-		onLoad() {},
-		onBackPress(e) {
-			console.log(e)
-			// 评论相关弹窗
-			if (this.showComments) {
-				this.showComments = false;
-				return true;
 			}
 		},
 		created() {},

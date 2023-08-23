@@ -26,7 +26,7 @@
 					<view @tap.stop.prevent="followUser()">
 						<tn-button size="sm" :backgroundColor="article.expand.focus?'tn-bg-gray--light':'#29B7CB'"
 							:fontColor="article.expand.focus?'tn-color-gray':'tn-color-white'" shape="round"
-							:blockRepeatClick="true" >
+							:blockRepeatClick="true">
 							<text>{{article.expand.focus?'已关注':'关注'}}</text>
 						</tn-button>
 					</view>
@@ -248,6 +248,7 @@
 				emojiTabs: [],
 				emojiIndex: 0,
 				emojiList: [],
+				isBackCount: 0
 			}
 		},
 
@@ -256,7 +257,16 @@
 			this.getArticle()
 			this.token = uni.getStorageSync('token')
 		},
-
+		beforeRouteLeave(to, from, next) {
+			if (!this.commentBoxOpen) {
+				next()
+			} else {
+				this.commentBoxOpen = false
+				//将路由锁解除 否则无法跳转
+				this.$Router.$lockStatus = false; 
+				next(false)
+			}
+		},
 		methods: {
 			async getArticle() {
 				await this.$http.get('/article/one', {
