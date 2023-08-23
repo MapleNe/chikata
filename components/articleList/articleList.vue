@@ -25,7 +25,7 @@
 											class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
 									</view>
 									<text
-										class="tn-text-xs tn-color-grey--disabled">{{getDateDiff(item.create_time)}}</text>
+										class="tn-text-xs tn-color-gray">{{getDateDiff(item.create_time)}}</text>
 								</view>
 							</view>
 							<view v-show="type!=='user'">

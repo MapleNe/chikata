@@ -43,7 +43,7 @@
 								<text v-if="article.expand.author.level==='admin'"
 									class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
 							</view>
-							<text class="tn-text-xs">{{getDateDiff(article.create_time)}}</text>
+							<text class="tn-text-xs tn-color-gray">{{getDateDiff(article.create_time)}}</text>
 						</view>
 					</view>
 					<view>
