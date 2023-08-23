@@ -2,12 +2,35 @@
 	<view>
 		<!-- 文章详情 开始 -->
 		<z-paging ref="paging" @query="getComment" v-model="comments" :safe-area-inset-bottom="true"
-			:auto-scroll-to-top-when-reload="false">
+			:auto-scroll-to-top-when-reload="false" :auto-clean-list-when-reload="false" @scroll="onScroll">
 			<template #top>
-				<tn-nav-bar :zIndex="2" backTitle="">
-					详情
+				<tn-nav-bar :zIndex="5" backTitle="" :fixed="false">
+					<text v-show="!navAuthor" v-if="article.expand.sort">{{article.expand.sort[0].name}}</text>
+					<view class="tn-flex tn-flex-1 tn-flex-col-center tn-flex-row-between" v-show="navAuthor">
+						<view class="tn-flex tn-flex-col-center">
+							<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
+							<text class="tn-margin-left-sm">{{article.expand.author.nickname}}</text>
+						</view>
+
+						<view>
+							<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29B7CB" fontColor="#29B7CB"
+								v-if="!article.expand.focus" @click="followUser()">
+								<view class="tn-flex tn-flex-col-center">
+									<text class="tn-icon-add tn-margin-right-xs"></text>
+									<text>关注</text>
+								</view>
+							</tn-button>
+							<tn-button size="sm" padding="0 20rpx" backgroundColor="tn-bg-gray--light"
+								fontColor="tn-color-gray" @click="followUser()" v-else>
+								<text>已关注</text>
+							</tn-button>
+						</view>
+					</view>
+					<view slot="right" class="tn-padding">
+						<text class="tn-text-bold tn-text-lg tn-icon-more-horizontal"></text>
+					</view>
 				</tn-nav-bar>
-				<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
+
 			</template>
 			<!-- 页面内容 -->
 			<view class="tn-margin" v-if="article">
@@ -39,8 +62,13 @@
 				</view>
 				<view class="tn-margin-top tn-flex tn-flex-direction-column">
 					<text class="tn-text-bold tn-text-xl">{{article.title}}</text>
-					<text class="tn-color-grey--disabled tn-text-sm tn-text-center tn-margin-top-sm">帖子发表：{{getDateDiff(article.create_time)}} | 最后编辑：{{getDateDiff(article.last_update_time)}}</text>
+					<view class="tn-flex tn-flex-row-center tn-color-grey--disabled tn-text-sm tn-margin-top-sm">
+						<text>帖子发表：{{getDateDiff(article.create_time)}}</text>
+						<text class="tn-margin-left-sm tn-margin-right-sm">|</text>
+						<text>最后编辑：{{getDateDiff(article.last_update_time)}}</text>
+					</view>
 				</view>
+
 				<view class="tn-margin-top" style="max-width: 100%;">
 					<mp-html :content="article.content" :selectable="true" />
 				</view>
@@ -60,21 +88,20 @@
 								<text>{{article.views}}</text>
 							</view>
 							<view>
-								<text class="tn-icon-tip"></text>
+								<text class="tn-icon-tip tn-margin-right-xs"></text>
 								<text>已开启创作声明，允许规范转载</text>
 							</view>
 						</view>
 
 					</view>
 				</view>
-
 			</view>
 
 			<view class="tn-padding-xs tn-bg-gray--light"></view><!-- 间隔 -->
 			<!-- 文章详情 结束 -->
 			<!-- 评论区 开始 -->
-			<view class="tn-color-grey">
-				<v-tabs :tabs="tabs" v-model="tabsIndex" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
+			<view class="tn-color-grey" style="position: sticky;top: 0;z-index: 9999;">
+				<v-tabs :tabs="tabs" v-model="tabsIndex" @change="changeComentTab" lineHeight="8rpx" lineColor="#29B7CB"
 					activeColor="#29B7CB" :lineScale="0.2" color="#AAA"></v-tabs>
 			</view>
 			<view class="tn-margin">
@@ -87,7 +114,7 @@
 									<text class="tn-text-bold">{{item.nickname}}</text>
 									<text v-if="article.users_id === item.users_id"
 										class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
-										style="padding:5rpx 8rpx">UP</text>
+										style="padding:5rpx 8rpx">楼主</text>
 								</view>
 								<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
 							</view>
@@ -141,7 +168,8 @@
 				<!-- 底部开始 -->
 				<view class="tn-padding tn-bg-white tn-flex tn-flex-col-center">
 					<view class="tn-bg-gray--light tn-padding-left tn-round">
-						<tn-input :disabled="true" :placeholder="commentBoxText" @click="commentAction"></tn-input>
+						<tn-input :disabled="true" :placeholder="commentBoxText"
+							@click="commentAllow?commentAction():''"></tn-input>
 					</view>
 					<view class="tn-flex  tn-flex-col-center tn-color-gray--dark tn-flex-basic-sm tn-flex-row-between"
 						style="margin-left: auto;">
@@ -239,7 +267,7 @@
 
 						},
 						comments: {
-							
+
 						}
 					}
 				},
@@ -264,14 +292,17 @@
 				emojiTabs: [],
 				emojiIndex: 0,
 				emojiList: [],
-				isBackCount: 0
+				isBackCount: 0,
+				navAuthor: false,
+				authorComments: [],
+				commentAllow: true,
 			}
 		},
-
+		onPageScroll(e) {
+			console.log(e)
+		},
 		onLoad(params) {
 			this.params = params
-			this.getArticle()
-			this.token = uni.getStorageSync('token')
 		},
 		beforeRouteLeave(to, from, next) {
 			if (!this.commentBoxOpen) {
@@ -283,6 +314,10 @@
 				next(false)
 			}
 		},
+		created() {
+			this.getArticle()
+		},
+		computed: {},
 		methods: {
 			async getArticle() {
 				await this.$http.get('/article/one', {
@@ -293,9 +328,11 @@
 				}).then(res => {
 					if (res.data.code == 200) {
 						this.article = res.data.data
+						this.commentDisAllow = res.data.data.opt.comments.allow
+						if (!res.data.data.opt.comments.allow) this.commentBoxText = '作者关闭了评论...';
 					}
 				}).catch(err => {
-					this.$refs.paging.complete(false)
+
 				})
 			},
 			async getComment(page, num) {
@@ -309,6 +346,16 @@
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.data)
+						setTimeout(() => {
+							const author = res.data.data.data.filter(item => item.users_id === this
+								.article.users_id);
+							const uniqueAuthor = author.filter(item => !this.authorComments.some(
+								comment => comment.id === item.id));
+							this.authorComments = this.authorComments.concat(uniqueAuthor);
+
+						}, 500)
+
+
 					}
 				}).catch(err => {
 					this.$refs.paging.complete(false)
@@ -399,6 +446,7 @@
 					content: this.renderEmoji(this.commentText),
 					pid: this.pid,
 				}).then(res => {
+					console.log(res)
 					if (res.data.code === 200) {
 						uni.showToast({
 							icon: 'none',
@@ -410,7 +458,6 @@
 						this.commentBoxOpen = false
 						this.$refs.paging.reload()
 					}, 800)
-
 				}).catch(err => {
 					console.log(err)
 					uni.showToast({
@@ -467,8 +514,17 @@
 					})
 				}
 			},
-			changeTab(index) {
+			changeComentTab(index) {
 				this.tabsIndex = index
+				if (this.tabsIndex) {
+					this.$refs.paging.complete(this.authorComments)
+				} else {
+					this.$refs.paging.reload()
+				}
+			},
+			onScroll(e) {
+				const scrollTop = e.detail.scrollTop
+				this.navAuthor = scrollTop >= 60 ? true : false
 			},
 			getDateDiff(data) {
 				// 传进来的data必须是日期格式，不能是时间戳
@@ -480,8 +536,7 @@
 				var hour = minute * 60;
 				var day = hour * 24;
 				var month = day * 30;
-				var result = "2";
-
+				var result = "";
 				var diffValue = timeNow - timePublish;
 				var diffMonth = diffValue / month;
 				var diffWeek = diffValue / (7 * day);

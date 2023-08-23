@@ -158,7 +158,7 @@
             const width = (this.customBackStyleInfo.width + this.customBackStyleInfo.left) * 2
             style.width = `calc(100% - ${width}px)`
           } else {
-            style.width = 'calc(100% - 340rpx)'
+            style.width = 'calc(100% - 180rpx)'
           }
         } else {
           style.width = '100%'

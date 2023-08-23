@@ -151,6 +151,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/common/comments/comments",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"tabBar": {
 		"backgroundColor": "#ffffff",
@@ -187,7 +196,10 @@
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F7F8",
-		"navigationStyle": "custom"
+		"navigationStyle": "custom",
+		"app-plus": {
+			"animationDuration": 200
+		}
 	},
 	"condition": {
 		//模式配置，仅开发期间生效

@@ -64,7 +64,7 @@
 		</template>
 		<swiper class="swiper" :current="tabsIndex" @change="changeSwpier">
 			<swiper-item class="swiper-item">
-				<articleList :tabsIndex="tabsIndex" :swiperIndex="tabsIndex" :content="content" :swiper="true" type="user"
+				<articleList :tabsIndex="tabsIndex" :swiperIndex="tabsIndex" :content="content" :swiper="false" type="user"
 					@getComments="getComments" @getMenuInfo="getMenuInfo" v-if="hasLogin">
 				</articleList>
 				<view class="tn-flex tn-flex-row-center tn-margin-top-xl" v-else>

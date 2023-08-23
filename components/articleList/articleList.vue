@@ -2,7 +2,7 @@
 	<view>
 		<z-paging ref="paging" @query="getArticle" v-model="content" :auto="false" :auto-clean-list-when-reload="false"
 			:auto-scroll-to-top-when-reload="false">
-			<view v-show="tabsIndex===0&&type!=='user'">
+			<view v-show="tabsIndex===0">
 				<view class="tn-margin" v-show="swiper">
 					<tn-swiper :list="swiperList" :height="350" name="img" backgroundColor="tn-bg-gray--light"
 						:radius="10" v-show="isBanner" @click="clickSwiper">
@@ -24,7 +24,8 @@
 										<text v-if="item.expand.author.level==='admin'"
 											class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
 									</view>
-									<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
+									<text
+										class="tn-text-xs tn-color-grey--disabled">{{getDateDiff(item.create_time)}}</text>
 								</view>
 							</view>
 							<view v-show="type!=='user'">
@@ -110,7 +111,8 @@
 								</tn-grid>
 							</view>
 							<!-- 点赞控件 -->
-							<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top">
+							<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top"
+								v-if="type!=='circle'">
 								<!-- 只取第一个tag -->
 								<view v-if="item.expand.tag.length>0">
 									<view
@@ -120,21 +122,50 @@
 									</view>
 								</view>
 								<view
-									class="tn-flex  tn-flex-col-center tn-color-gray tn-flex-basic-sm tn-flex-row-between" style="margin-left: auto;">
+									class="tn-flex  tn-flex-col-center tn-color-gray tn-flex-basic-sm tn-flex-row-between"
+									style="margin-left: auto;">
 									<view class="tn-flex tn-flex-col-center">
 										<text class="tn-text-xxl tn-icon-fire "></text>
-										<text>{{item.views}}</text>
+										<text class="tn-margin-left-xs">{{item.views}}</text>
 									</view>
 									<view class="tn-flex tn-flex-col-center" @tap.stop="showComments(index)">
 										<text class="tn-text-xxl tn-icon-comment"></text>
-										<text>{{item.expand.comments.count}}</text>
+										<text class="tn-margin-left-xs">{{item.expand.comments.count}}</text>
 									</view>
 									<view class="tn-flex tn-flex-col-center"
 										:class="item.expand.like.is_like?'tn-color-red':''"
 										@tap.stop="likeAction(index)">
 										<text class="tn-text-xxl"
 											:class="item.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
-										<text>{{item.expand.like.likes_count}}</text>
+										<text class="tn-margin-left-xs">{{item.expand.like.likes_count}}</text>
+									</view>
+								</view>
+							</view>
+							<!-- 动态页面 -->
+							<view v-else>
+								<view class="tn-flex tn-flex-col-center tn-flex-wrap tn-margin-top">
+									<view v-for="tags in item.expand.tag" :key="tags.id"
+										class="tn-bg-grey--light tn-text-sm tn-color-gray--dark tn-margin-right-sm tn-margin-bottom-sm tn-padding-xs"
+										style="border-radius: 10rpx;">
+										<text>{{tags.name}}</text>
+									</view>
+								</view>
+								<view
+									class="tn-flex  tn-flex-col-center tn-color-gray tn-flex-basic-sm tn-flex-row-around">
+									<view class="tn-flex tn-flex-col-center">
+										<text class="tn-text-xxl tn-icon-share-square "></text>
+										<text class="tn-margin-left-xs">{{item.views}}</text>
+									</view>
+									<view class="tn-flex tn-flex-col-center" @tap.stop="showComments(index)">
+										<text class="tn-text-xxl tn-icon-comment"></text>
+										<text class="tn-margin-left-xs">{{item.expand.comments.count}}</text>
+									</view>
+									<view class="tn-flex tn-flex-col-center"
+										:class="item.expand.like.is_like?'tn-color-red':''"
+										@tap.stop="likeAction(index)">
+										<text class="tn-text-xxl"
+											:class="item.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
+										<text class="tn-margin-left-xs">{{item.expand.like.likes_count}}</text>
 									</view>
 								</view>
 							</view>
@@ -151,6 +182,9 @@
 </template>
 
 <script>
+	import {
+		mapState
+	} from 'vuex';
 	export default {
 		props: {
 			// content: {
@@ -232,6 +266,7 @@
 			}
 		},
 		computed: {
+			...mapState(['hasLogin']),
 			// 兼容小程序
 			gridItemWidth() {
 				return 100 / this.col + '%'
@@ -245,6 +280,9 @@
 						break;
 					case 'focus':
 						this.api = '/article/focusFind'
+						break;
+					case 'circle':
+						this.api = this.hasLogin ? '/article/focusFind' : '/article/all'
 						break;
 					case 'user':
 						this.api = '/article/userFind'

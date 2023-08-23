@@ -2,7 +2,7 @@
 	<!-- 使用z-paging-swiper为根节点可以免计算高度 -->
 	<z-paging-swiper>
 		<template #top>
-			<tn-nav-bar :isBack="false" customBack :zIndex="2">
+			<tn-nav-bar :isBack="false" customBack :zIndex="2" :fixed="false">
 				<view class="tn-margin-sm tn-no-margin-top">
 					<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 						<tn-avatar :src="userInfo.head_img" @tap="hasLogin?goMine():goLogin()"></tn-avatar>
@@ -16,7 +16,7 @@
 					</view>
 				</view>
 			</tn-nav-bar>
-			<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
+			
 			<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
 				activeColor="#29B7CB" field="name" :lineScale="0.2"></v-tabs>
 		</template>

@@ -11,9 +11,18 @@
 					<tn-avatar size="lg" :src="item.head_img"></tn-avatar>
 					<text class="tn-margin-left-sm tn-text-bold">{{item.nickname}}</text>
 				</view>
-				<view @tap.stop.prevent="followUser(index)">
-					<tn-button shape="round" size="sm" :backgroundColor="item.is_focus?'tn-bg-gray--light':'#29B7CB'"
-						:fontColor="item.is_focus?'tn-color-gray--dark':'tn-color-white'">{{item.is_focus?'已互关':'回关'}}</tn-button>
+				<view>
+					<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29B7CB" fontColor="#29B7CB"
+						v-show="!item.is_focus" @click="followUser(index)">
+						<view class="tn-flex tn-flex-col-center">
+							<text class="tn-icon-add tn-margin-right-xs"></text>
+							<text>回关</text>
+						</view>
+					</tn-button>
+					<tn-button size="sm" padding="0 20rpx" backgroundColor="tn-bg-gray--light" fontColor="tn-color-gray"
+						@click="followUser(index)" v-show="item.is_focus">
+						<text>已关注</text>
+					</tn-button>
 				</view>
 			</view>
 		</view>
