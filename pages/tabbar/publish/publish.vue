@@ -30,7 +30,7 @@
 			</scroll-view>
 		</view>
 		<!-- 颜色 -->
-		<view v-show="formatColor" style="position: absolute;" :style="'bottom:'+bottom+40+'px'" id="formartBar">
+		<view v-show="formatColor" style="position: absolute;" :style="'bottom:'+bottom+40+'px'" id="formatBar">
 			<scroll-view scroll-x="true" class="toolbar tn-bg-white tn-padding-xs">
 				<view class="tn-padding-xs tn-flex tn-flex-col-center">
 					<text class="tn-margin-right">文字</text>
@@ -562,10 +562,12 @@
 			};
 		},
 		onLoad(params) {
-			let formartBar = uni.createSelectorQuery().select('#formartBar')
-			formartBar.boundingClientRect(function(data) {
-				console.log('元素信息：', data)
-			}).exec()
+			let formatBar = uni.createSelectorQuery().select('#formatBar')
+			this.$nextTick(() => {
+				formatBar.boundingClientRect(function(data) {
+					console.log('元素信息：', data)
+				}).exec()
+			})
 			uni.onKeyboardHeightChange((res) => {
 				// 监听软键盘的高度，页面隐藏后一定要取消监听键盘
 				if (res.height !== 0) this.bottom = 0;

@@ -24,8 +24,14 @@
 										<text v-if="item.expand.author.level==='admin'"
 											class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
 									</view>
-									<text
-										class="tn-text-xs tn-color-gray">{{getDateDiff(item.create_time)}}</text>
+									<view class="tn-flex tn-flex-col-center tn-text-xs tn-color-gray">
+										<text>{{getDateDiff(item.create_time)}}</text>
+										<view class="tn-flex tn-flex-col-center" v-if="item.expand.sort.length && type!=='index'">
+											<text class="tn-margin-right-xs tn-margin-left-xs">·</text>
+											<text>在{{item.expand.sort[0].name}}发了帖子</text>
+										</view>
+									</view>
+
 								</view>
 							</view>
 							<view v-show="type!=='user'">
@@ -43,7 +49,10 @@
 							</view>
 						</view>
 						<view @tap="goAticle(index)">
-							<view class="tn-padding tn-no-padding-left tn-padding-bottom-sm">
+							<view class="tn-margin-top">
+								<text class="tn-text-bold tn-text-lg">{{item.title}}</text>
+							</view>
+							<view class="tn-padding-sm tn-no-padding-left tn-padding-bottom-sm">
 								<rich-text :nodes="item.description"></rich-text>
 							</view>
 

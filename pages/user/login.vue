@@ -58,7 +58,7 @@
 				</view>
 				<view class="tn-padding-xl tn-margin-xl">
 					<view class="tn-margin-top-xl tn-text-xxl tn-flex tn-flex-row-around tn-padding-xl">
-						<text class="tn-icon-qq tn-bg-blue tn-round tn-padding-xs tn-color-white"></text>
+						<text class="tn-icon-qq tn-bg-blue tn-round tn-padding-xs tn-color-white" @tap.stop.prevent="qqLogin()"></text>
 						<text class="tn-icon-wechat tn-bg-green tn-round tn-padding-xs tn-color-white"></text>
 					</view>
 				</view>
@@ -337,6 +337,20 @@
 						path: '/pages/tabbar/index'
 					})
 				}
+			},
+			qqLogin() {
+				uni.login({
+					provider: 'qq',
+					success: (res) => {
+						console.log(res)
+						uni.getUserInfo({
+							provider:'qq',
+							success: (info) => {
+								console.log(info)
+							}
+						})
+					}
+				})
 			},
 			codeChange(text) {
 				this.tips = text

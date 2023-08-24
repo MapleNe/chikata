@@ -26,14 +26,14 @@
 							</tn-button>
 						</view>
 					</view>
-					<view slot="right" class="tn-padding">
+					<view slot="right" class="tn-padding" @tap.stop.prevent="showShare = !showShare">
 						<text class="tn-text-bold tn-text-lg tn-icon-more-horizontal"></text>
 					</view>
 				</tn-nav-bar>
 
 			</template>
 			<!-- 页面内容 -->
-			<view class="tn-margin" v-if="article">
+			<view class="tn-margin" v-if="article" id="article">
 				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 					<view class="tn-flex tn-flex-col-center">
 						<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
@@ -64,8 +64,11 @@
 					<text class="tn-text-bold tn-text-xl">{{article.title}}</text>
 					<view class="tn-flex tn-flex-row-center tn-color-grey--disabled tn-text-sm tn-margin-top-sm">
 						<text>帖子发表：{{getDateDiff(article.create_time)}}</text>
-						<text class="tn-margin-left-sm tn-margin-right-sm">|</text>
-						<text>最后编辑：{{getDateDiff(article.last_update_time)}}</text>
+						<view v-if="article.create_time!==article.last_update_time">
+							<text class="tn-margin-left-sm tn-margin-right-sm">|</text>
+							<text>最后编辑：{{getDateDiff(article.last_update_time)}}</text>
+						</view>
+
 					</view>
 				</view>
 
@@ -73,8 +76,9 @@
 					<mp-html :content="article.content" :selectable="true" />
 				</view>
 				<view class="tn-margin-top-sm">
-					<view class="tn-margin-top-xs" v-if="article.expand.tag && article.expand.tag.length>0">
-						<view class="tn-flex tn-flex-col-center tn-flex-wrap">
+					<view class="tn-margin-top-xs">
+						<view class="tn-flex tn-flex-col-center tn-flex-wrap"
+							v-if="article.expand.tag && article.expand.tag.length>0">
 							<view
 								class="tn-bg-grey--light tn-text-sm tn-margin-bottom-xs tn-color-gray--dark tn-margin-right-sm tn-padding-xs"
 								style="border-radius: 10rpx;" v-for="tags in article.expand.tag" :key="tags.id">
@@ -239,6 +243,35 @@
 			</view>
 
 		</tn-popup>
+		<!-- 分享 -->
+		<tn-popup mode="bottom" :borderRadius="30" v-model="showShare">
+			<view class="tn-margin">
+				<view class="tn-flex tn-flex-row-center tn-margin-bottom">
+					<text class="tn-text-sm tn-color-gray">分享到</text>
+				</view>
+				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+					<view class="tn-flex tn-flex-col-center tn-color-gray--dark tn-flex-direction-column"
+						v-for="item in shareProvider" :key="item.provider">
+						<view :class="[item.icon,item.color]" class="tn-round tn-color-white tn-text-xxl tn-padding">
+						</view>
+						<text class="tn-margin-top-sm">{{item.name}}</text>
+					</view>
+				</view>
+				<view class="tn-margin-top">
+					<view class="tn-flex tn-flex-col-center">
+						<view class="tn-color-gray--dark tn-flex tn-flex-direction-column tn-flex-col-center">
+							<view class="tn-padding tn-round tn-bg-gray--light">
+								<text class="tn-icon-xxl tn-color-gray-dark tn-icon-warning"></text>
+							</view>
+							<text class="tn-margin-top-sm">举报</text>
+						</view>
+					</view>
+				</view>
+			</view>
+			<view class="tn-bg-gray--light tn-text-center tn-padding-sm" @tap.stop.prevent="showShare = !showShare">
+				<text class="tn-text-bold">取消</text>
+			</view>
+		</tn-popup>
 
 	</view>
 
@@ -256,6 +289,38 @@
 				commentText: '', //这个才是回复的信息
 				commentBoxOpen: false, //控制弹出层
 				comments: [], //获取到的评论列表
+				showShare: false,
+				shareProvider: [{
+						provider: 'wechat',
+						icon: 'tn-icon-wechat-fill',
+						color: 'tn-bg-green',
+						name: '微信'
+					},
+					{
+						provider: 'friend',
+						icon: 'tn-icon-moments',
+						color: 'tn-bg-teal',
+						name: '朋友圈'
+					},
+					{
+						provider: 'qq',
+						icon: 'tn-icon-qq',
+						color: 'tn-bg-blue',
+						name: 'QQ'
+					},
+					{
+						provider: 'qqZone',
+						icon: 'tn-icon-star-fill',
+						color: 'tn-bg-orangeyellow',
+						name: 'QQ空间'
+					},
+					{
+						provider: 'link',
+						icon: 'tn-icon-link',
+						color: 'tn-bg-grey--disabled',
+						name: '复制链接'
+					}
+				],
 				//为什么要定义这堆东西？我也不知道 不定义就报错 但是不影响正常使用草
 				article: {
 					title: '',
@@ -296,6 +361,7 @@
 				navAuthor: false,
 				authorComments: [],
 				commentAllow: true,
+
 			}
 		},
 		onPageScroll(e) {
@@ -331,6 +397,7 @@
 						this.commentDisAllow = res.data.data.opt.comments.allow
 						if (!res.data.data.opt.comments.allow) this.commentBoxText = '作者关闭了评论...';
 					}
+
 				}).catch(err => {
 
 				})
@@ -353,7 +420,7 @@
 								comment => comment.id === item.id));
 							this.authorComments = this.authorComments.concat(uniqueAuthor);
 
-						}, 500)
+						}, 10)
 
 
 					}
@@ -525,6 +592,13 @@
 			onScroll(e) {
 				const scrollTop = e.detail.scrollTop
 				this.navAuthor = scrollTop >= 60 ? true : false
+			},
+			getElementHeight(element) {
+				let query = uni.createSelectorQuery().in(this);
+				query.select(element).boundingClientRect(data => {
+					console.log(data.height);
+					this.articleHeight = data.height;
+				}).exec()
 			},
 			getDateDiff(data) {
 				// 传进来的data必须是日期格式，不能是时间戳

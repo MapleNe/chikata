@@ -20,7 +20,8 @@
         "modules" : {
             "Camera" : {},
             "Push" : {},
-            "Barcode" : {}
+            "Barcode" : {},
+            "OAuth" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -55,6 +56,12 @@
                 "ad" : {},
                 "push" : {
                     "unipush" : {}
+                },
+                "oauth" : {
+                    "qq" : {
+                        "appid" : "102065878",
+                        "UniversalLinks" : ""
+                    }
                 }
             },
             "icons" : {

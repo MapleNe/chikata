@@ -1,23 +1,22 @@
 <template>
-	<z-paging ref="paging" v-model="content" @query="getUserArticle">
+	<z-paging ref="paging" refresher-only @onRefresh="onRefresh" @scroll="getScroll">
 		<template #top>
-			<tn-nav-bar backTitle="" alpha>
+			<tn-nav-bar backTitle="" :backgroundColor="background">
 				<view class="tn-flex tn-flex-1 tn-flex-col-center tn-flex-row-between" v-show="navAuthor">
 					<view class="tn-flex tn-flex-col-center">
 						<tn-avatar :src="profile.head_img"></tn-avatar>
 						<text class="tn-margin-left-sm">{{profile.nickname}}</text>
 					</view>
-
-					<view>
+					<view class="tn-margin-right-xl">
 						<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29B7CB" fontColor="#29B7CB"
-							v-if="!profile.focus" @click="followUser()">
+							v-show="!profile.expand.is_focus" @click="followUser()">
 							<view class="tn-flex tn-flex-col-center">
 								<text class="tn-icon-add tn-margin-right-xs"></text>
 								<text>关注</text>
 							</view>
 						</tn-button>
 						<tn-button size="sm" padding="0 20rpx" backgroundColor="tn-bg-gray--light"
-							fontColor="tn-color-gray" @click="followUser()" v-else>
+							fontColor="tn-color-gray" @click="followUser()" v-show="profile.expand.is_focus">
 							<text>已关注</text>
 						</tn-button>
 					</view>
@@ -29,11 +28,11 @@
 				</view>
 			</tn-nav-bar>
 		</template>
-		<view style="position: relative;">
-			<image :src="profile.longtext.background_img" mode="aspectFill" style="width: 100%;height: 400rpx;"></image>
+		<view style="position: relative;" id="userview">
+			<image :src="profile.longtext.background_img" mode="aspectFill" style="width: 100%;height: 420rpx;"></image>
 			<!-- 第一层 -->
 			<view class="tn-bg-white tn-padding"
-				style="position: absolute;top:300rpx;width: 100%; border-radius: 45rpx 45rpx 0 0">
+				style="position: absolute;top:320rpx;width: 100%; border-radius: 45rpx 45rpx 0 0">
 				<view style="position: absolute;top: -70rpx;" class="tn-margin-left-sm">
 					<tn-avatar :src="profile.head_img" size="xl" border borderColor="#fff" :borderSize="6"></tn-avatar>
 				</view>
@@ -44,9 +43,11 @@
 							<tn-button plain backgroundColor="#29B7CB" fontColor="#29B7CB">私信</tn-button>
 						</view>
 						<view>
-							<tn-button backgroundColor="#29B7CB" fontColor="tn-color-white">
+							<tn-button :backgroundColor="profile.expand.is_focus?'#29b7cb69':'#29B7CB'"
+								:fontColor="profile.expand.is_focus?'#29B7CB':'tn-color-white'" @click="followUser()">
 								<view class="tn-flex tn-flex-col-center tn-flex-row-between" style="width: 150rpx;">
-									<text class="tn-text-center" style="margin-left: auto;margin-right: auto;">关注</text>
+									<text class="tn-text-center"
+										style="margin-left: auto;margin-right: auto;">{{profile.expand.is_focus?'已关注':'关注'}}</text>
 									<text class="tn-icon-up-triangle"></text>
 								</view>
 							</tn-button>
@@ -88,14 +89,17 @@
 			<view class="tn-padding-xs tn-bg-gray--light"></view>
 		</view>
 		<!-- 定位结束 -->
-		<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
-			activeColor="#29B7CB" :lineScale="0.2" color="#AAA" :scroll="false"></v-tabs>
-		<swiper :current="tabsIndex" @animationfinish="swiperChange" :style="[{height: swiperHeight+ 'px'}]">
+		<view :style="{'z-index': 100,'position': 'sticky','top' :vuex_custom_bar_height+'px'}">
+			<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
+				activeColor="#29B7CB" :lineScale="0.2" color="#AAA" :scroll="false"></v-tabs>
+		</view>
+		<swiper :current="tabsIndex" @animationfinish="swiperChange" class="swiper">
 			<swiper-item>
-				<view id="article">
+				<z-paging @query="getUserArticle" v-model="content" ref="article" :auto-clean-list-when-reload="false"
+					:auto-scroll-to-top-when-reload="false" :refresher-enabled="false" :use-page-scroll="swiperAction">
 					<block v-for="(item,index) in content" :key="index">
 						<view class="tn-margin">
-							<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-color-gray tn-text-xs">
+							<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-color-gray tn-text-sm">
 								<view class="tn-flex tn-flex-col-center">
 									<text
 										class="tn-text-bold tn-color-gray tn-text-xl">{{getDate(item.create_time).day}}</text>
@@ -140,7 +144,6 @@
 													</image>
 												</tn-grid-item>
 												<!-- #endif-->
-
 												<!-- 微信小程序 -->
 												<!-- #ifdef MP-WEIXIN -->
 												<tn-grid-item :style="{width: gridItemWidth,height:gridItemWidth}"
@@ -168,7 +171,6 @@
 													</image>
 												</tn-grid-item>
 												<!-- #endif-->
-
 												<!-- 微信小程序 -->
 												<!-- #ifdef MP-WEIXIN -->
 												<tn-grid-item :style="{width: gridItemWidth,height:gridItemWidth}"
@@ -213,8 +215,42 @@
 								</view>
 							</view>
 						</view>
+						<view class="tn-padding-xs tn-bg-gray--light">
+
+						</view>
 					</block>
-				</view>
+				</z-paging>
+
+			</swiper-item>
+			<swiper-item :id="`viewcontent${this.tabsIndex}`">
+				<z-paging @query="getComments" v-model="comments" ref="comments" :auto-clean-list-when-reload="false"
+					:auto-scroll-to-top-when-reload="false" :refresher-enabled="false" :use-page-scroll="swiperAction">
+					<view class="tn-margin">
+						<block v-for="(item,index) in comments" :key="index">
+							<view class="tn-margin-bottom-sm">
+								<view class="tn-flex tn-flex-col-center tn-color-gray tn-text-sm">
+									<text class="tn-text-bold tn-text-lg tn-corlor-gray">6</text>
+									<text class="tn-margin-left-xs">小时前</text>
+									<text class="tn-margin-left-xs tn-margin-right-xs">·</text>
+									<text>原神</text>
+								</view>
+								<view class="tn-margin-top-sm">
+									<mp-html :content="item.content"></mp-html>
+								</view>
+								<view class="tn-margin-top-sm tn-margin-bottom-sm">
+									<view class="tn-bg-gray--light tn-color-gray--dark tn-padding-sm">
+										<view class="tn-text-ellipsis-2">
+											<text>回复评论：</text>
+											<text>这是介绍这是介绍这这是介绍这是介绍这是介绍这是介绍这是介绍这这是介绍这是介绍这是介绍这是介绍这是介绍这这是介绍这是介绍这是介绍</text>
+										</view>
+									</view>
+								</view>
+								<view class="tn-border-solid tn-border-gray--light tn-margin-bottom-sm"></view>
+							</view>
+						</block>
+					</view>
+				</z-paging>
+
 			</swiper-item>
 		</swiper>
 
@@ -223,6 +259,12 @@
 
 <script>
 	export default {
+		props: {
+			users_id: {
+				type: Number,
+				default: 0,
+			}
+		},
 		data() {
 			return {
 				content: [],
@@ -250,24 +292,23 @@
 				showCommentsBox: false,
 				background: 'rgba(255,255,255,0)',
 				swiperHeight: 1080,
+				comments: [],
+				pageMethod: 'paging',
+				userviewHeight: 328,
 				navAuthor: false,
-				date: null,
+				swiperAction: true
 			}
-		},
-		onPageScroll(e) {
-			console.log(e)
-
 		},
 		onLoad(params) {
 			this.id = params.id
 			this.getUserInfo()
-
 		},
-		// onReady() {
-		// 	setTimeout(() => {
-		// 		this.getElementHeight('#user')
-		// 	}, 500)
-		// },
+		onReady() {
+			let query = uni.createSelectorQuery().in(this);
+			query.select('#userview').boundingClientRect(data => {
+				this.userviewHeight = data.height;
+			}).exec()
+		},
 		created() {
 
 		},
@@ -286,6 +327,22 @@
 					this.swiperHeight = data.height + 50;
 				}).exec()
 			},
+			getComments(page, num) {
+				this.$http.get('/comments/sql', {
+					params: {
+						page: page,
+						limit: num,
+						where: `users_id = ${this.id}`
+					}
+				}).then(res => {
+					if (res.data.code === 200) {
+						this.$refs.comments.complete(res.data.data.data)
+
+
+					}
+					console.log(res, '评论')
+				})
+			},
 			getUserArticle(page, num) {
 				this.$http.get('/article/sql', {
 					params: {
@@ -295,14 +352,8 @@
 					}
 				}).then(res => {
 					console.log(res)
-					this.$refs.paging.complete(res.data.data.data)
+					this.$refs.article.complete(res.data.data.data)
 
-					setTimeout(() => {
-						this.loading = false
-						this.$nextTick(() => {
-							this.getElementHeight('#article')
-						})
-					}, 10)
 				}).catch(err => {
 					this.$refs.paging.complete(false)
 				})
@@ -314,7 +365,7 @@
 					}
 
 				}).then(res => {
-					console.log(res)
+
 					this.profile = res.data.data
 				}).catch(err => {
 
@@ -384,9 +435,34 @@
 					},
 				})
 			},
+			// 下拉刷新被触发
+			onRefresh() {
+				switch (this.tabsIndex) {
+					case 0:
+						this.$refs.article.reload()
+						break;
+					case 1:
+						this.$refs.comments.reload()
+						break;
+					default:
+						break;
+				}
+				// 告知z-paging下拉刷新结束，这样才可以开始下一次的下拉刷新
+				setTimeout(() => {
+					//1.5秒之后停止刷新动画
+					this.$refs.paging.complete();
+				}, 500)
+			},
 			getScroll(e) {
-				console.log(e)
-				this.$refs.paging.updatePageScrollTop(e.detail.scrollTop)
+				const scrollTop = e.detail.scrollTop;
+				if (scrollTop > 150) this.navAuthor = true
+				else this.navAuthor = false
+				if (scrollTop > this.userviewHeight) this.swiperAction = false
+				else this.swiperAction = true
+				// 计算当前透明度
+				const opacity = scrollTop <= 200 ? scrollTop / 200 : 1;
+				// 根据透明度设置导航栏背景颜色
+				this.background = `rgba(255, 255, 255, ${opacity})`;
 			},
 			goCategory(category) {
 				this.$Router.push({
@@ -406,7 +482,7 @@
 								icon: 'none',
 								title: res.data.msg
 							});
-							this.$refs.paging.reload()
+							this.profile.expand.is_focus = !this.profile.expand.is_focus
 							break;
 						case 400:
 							uni.showToast({
@@ -436,7 +512,6 @@
 			},
 			swiperChange(e) {
 				this.tabsIndex = e.detail.current
-				this.getCurrentSwiperHeight('.swiper-item-content');
 			},
 			previewImage(images, index) {
 				let data = [];
@@ -468,6 +543,31 @@
 	}
 
 	.swiper {
-		height: 100%;
+		height: 100vh;
+	}
+
+	.topfixed-active {
+		width: 100%;
+		padding: 0 25upx;
+		position: fixed;
+		top: var(--window-top);
+		/* 顶部导航栏位置 */
+		/* top: calc(9.3vh + var(--window-top)); */
+		/* 顶部导航栏还有其他盒子 使用  */
+		left: 0;
+		background: #fff;
+		z-index: 9;
+		box-sizing: border-box;
+	}
+
+	.tagTop {
+		height: 80upx;
+		line-height: 80upx;
+		background-color: #eeeeee;
+		text-align: center;
+	}
+
+	.paTop80 {
+		padding-top: 80upx;
 	}
 </style>
