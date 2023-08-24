@@ -126,7 +126,7 @@ export default {
     },
     fontSize: {
       type: String,
-      default: '28rpx'
+      default: '32rpx'
     },
     activeFontSize: {
       type: String,

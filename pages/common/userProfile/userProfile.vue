@@ -48,7 +48,7 @@
 								<view class="tn-flex tn-flex-col-center tn-flex-row-between" style="width: 150rpx;">
 									<text class="tn-text-center"
 										style="margin-left: auto;margin-right: auto;">{{profile.expand.is_focus?'已关注':'关注'}}</text>
-									<text class="tn-icon-up-triangle"></text>
+									<text class="tn-icon-up-triangle" @tap="fuck"></text>
 								</view>
 							</tn-button>
 						</view>
@@ -69,7 +69,7 @@
 					</view>
 				</view>
 				<view class="tn-margin-top-xl tn-margin-bottom-lg">
-					<view class="tn-flex tn-flex-col-center">
+					<view class="tn-flex tn-flex-col-center tn-text-sm">
 						<view class="tn-flex tn-flex-col-center tn-margin-right">
 							<text class="tn-text-bold tn-text-xl tn-margin-right-xs">{{profile.expand.fansCount}}</text>
 							<text class="tn-color-grey--disabled">粉丝</text>
@@ -100,7 +100,7 @@
 					<block v-for="(item,index) in content" :key="index">
 						<view class="tn-margin">
 							<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-color-gray tn-text-sm">
-								<view class="tn-flex tn-flex-col-center">
+								<view class="tn-flex tn-flex-col-bottom">
 									<text
 										class="tn-text-bold tn-color-gray tn-text-xl">{{getDate(item.create_time).day}}</text>
 									<text
@@ -115,7 +115,7 @@
 							<view class="tn-margin-top-xs">
 								<view @tap="goAticle(index)">
 									<view>
-										<text class="tn-text-bold tn-text-lg">{{item.title}}</text>
+										<text class="tn-text-xl">{{item.title}}</text>
 									</view>
 									<view class="tn-margin-top-xs tn-color-gray--dark tn-margin-bottom-sm">
 										<rich-text :nodes="item.description"></rich-text>
@@ -265,6 +265,7 @@
 				default: 0,
 			}
 		},
+		name: 'userProfile',
 		data() {
 			return {
 				content: [],
@@ -302,22 +303,16 @@
 		onLoad(params) {
 			this.id = params.id
 			this.getUserInfo()
+			console.log(params)
 		},
-		onReady() {
-			let query = uni.createSelectorQuery().in(this);
-			query.select('#userview').boundingClientRect(data => {
-				this.userviewHeight = data.height;
-			}).exec()
-		},
+		onReady() {},
 		created() {
-
-		},
-
-		computed: {
-			dates() {
-				return this.data.map(item => this.getDate(item.date));
+			if (this.users_id != 0) {
+				this.id = this.users_id
+				this.getUserInfo()
 			}
 		},
+		computed: {},
 
 		methods: {
 			getElementHeight(element) {
@@ -337,8 +332,6 @@
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.$refs.comments.complete(res.data.data.data)
-
-
 					}
 					console.log(res, '评论')
 				})
@@ -415,7 +408,8 @@
 				this.$Router.push({
 					path: '/pages/common/article/article',
 					query: {
-						id: this.content[index].id
+						id: this.content[index].id,
+						users_id: this.users_id ? this.users_id : this.profile.users_id,
 					},
 				})
 			},

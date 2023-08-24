@@ -8,7 +8,6 @@
 						:radius="10" v-show="isBanner" @click="clickSwiper">
 					</tn-swiper>
 				</view>
-
 			</view>
 			<view v-for="(item,index) in content" :key="index" @longpress="getMenuInfo(item)" @touchend="touchEnd"
 				@touchmove="touchMove">
@@ -24,25 +23,24 @@
 										<text v-if="item.expand.author.level==='admin'"
 											class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
 									</view>
-									<view class="tn-flex tn-flex-col-center tn-text-xs tn-color-gray">
+									<view class="tn-flex tn-flex-col-center tn-text-sm tn-color-grey--disabled">
 										<text>{{getDateDiff(item.create_time)}}</text>
-										<view class="tn-flex tn-flex-col-center" v-if="item.expand.sort.length && type!=='index'">
+										<view class="tn-flex tn-flex-col-center" v-if="item.expand.sort.length && type==='circle'">
 											<text class="tn-margin-right-xs tn-margin-left-xs">·</text>
 											<text>在{{item.expand.sort[0].name}}发了帖子</text>
 										</view>
 									</view>
-
 								</view>
 							</view>
 							<view v-show="type!=='user'">
-								<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29B7CB"
+								<tn-button plain size="sm" :fontSize="30" padding="0 15rpx" backgroundColor="#29B7CB"
 									fontColor="#29B7CB" v-if="!item.expand.focus" @click="followUser(index)">
 									<view class="tn-flex tn-flex-col-center">
 										<text class="tn-icon-add tn-margin-right-xs"></text>
 										<text>关注</text>
 									</view>
 								</tn-button>
-								<tn-button size="sm" padding="0 20rpx" backgroundColor="tn-bg-gray--light"
+								<tn-button size="sm" :fontSize="30" padding="0 20rpx" backgroundColor="tn-bg-gray--light"
 									fontColor="tn-color-gray" @click="followUser(index)" v-else>
 									<text>已关注</text>
 								</tn-button>
@@ -50,9 +48,9 @@
 						</view>
 						<view @tap="goAticle(index)">
 							<view class="tn-margin-top">
-								<text class="tn-text-bold tn-text-lg">{{item.title}}</text>
+								<text class="tn-text-xl">{{item.title}}</text>
 							</view>
-							<view class="tn-padding-sm tn-no-padding-left tn-padding-bottom-sm">
+							<view class="tn-padding-sm tn-no-padding-left tn-color-gray--dark tn-padding-bottom-sm">
 								<rich-text :nodes="item.description"></rich-text>
 							</view>
 
@@ -131,17 +129,17 @@
 									</view>
 								</view>
 								<view
-									class="tn-flex  tn-flex-col-center tn-color-gray tn-flex-basic-sm tn-flex-row-between"
+									class="tn-flex tn-text-sm tn-flex-col-center tn-color-grey--disabled tn-flex-basic-sm tn-flex-row-between"
 									style="margin-left: auto;">
-									<view class="tn-flex tn-flex-col-center">
+									<view class="tn-flex tn-flex-col-bottom">
 										<text class="tn-text-xxl tn-icon-fire "></text>
 										<text class="tn-margin-left-xs">{{item.views}}</text>
 									</view>
-									<view class="tn-flex tn-flex-col-center" @tap.stop="showComments(index)">
+									<view class="tn-flex tn-flex-col-bottom" @tap.stop="showComments(index)">
 										<text class="tn-text-xxl tn-icon-comment"></text>
 										<text class="tn-margin-left-xs">{{item.expand.comments.count}}</text>
 									</view>
-									<view class="tn-flex tn-flex-col-center"
+									<view class="tn-flex tn-flex-col-bottom"
 										:class="item.expand.like.is_like?'tn-color-red':''"
 										@tap.stop="likeAction(index)">
 										<text class="tn-text-xxl"
@@ -160,21 +158,21 @@
 									</view>
 								</view>
 								<view
-									class="tn-flex  tn-flex-col-center tn-color-gray tn-flex-basic-sm tn-flex-row-around">
-									<view class="tn-flex tn-flex-col-center">
+									class="tn-flex  tn-flex-col-center tn-text-sm tn-color-grey--disabled tn-flex-basic-sm tn-flex-row-around">
+									<view class="tn-flex tn-flex-col-bottom">
 										<text class="tn-text-xxl tn-icon-share-square "></text>
-										<text class="tn-margin-left-xs">{{item.views}}</text>
+										<text class="tn-margin-left-xs ">{{item.views}}</text>
 									</view>
-									<view class="tn-flex tn-flex-col-center" @tap.stop="showComments(index)">
+									<view class="tn-flex tn-flex-col-bottom" @tap.stop="showComments(index)">
 										<text class="tn-text-xxl tn-icon-comment"></text>
-										<text class="tn-margin-left-xs">{{item.expand.comments.count}}</text>
+										<text class="tn-margin-left-xs ">{{item.expand.comments.count}}</text>
 									</view>
-									<view class="tn-flex tn-flex-col-center"
+									<view class="tn-flex tn-flex-col-bottom"
 										:class="item.expand.like.is_like?'tn-color-red':''"
 										@tap.stop="likeAction(index)">
 										<text class="tn-text-xxl"
 											:class="item.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
-										<text class="tn-margin-left-xs">{{item.expand.like.likes_count}}</text>
+										<text class="tn-margin-left-xs ">{{item.expand.like.likes_count}}</text>
 									</view>
 								</view>
 							</view>
@@ -373,7 +371,8 @@
 				this.$Router.push({
 					path: '/pages/common/article/article',
 					query: {
-						id: this.content[index].id
+						id: this.content[index].id,
+						users_id: this.content[index].users_id
 					},
 				})
 			},

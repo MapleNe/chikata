@@ -1,286 +1,304 @@
 <template>
-	<view>
-		<!-- 文章详情 开始 -->
-		<z-paging ref="paging" @query="getComment" v-model="comments" :safe-area-inset-bottom="true"
-			:auto-scroll-to-top-when-reload="false" :auto-clean-list-when-reload="false" @scroll="onScroll">
-			<template #top>
-				<tn-nav-bar :zIndex="5" backTitle="" :fixed="false">
-					<text v-show="!navAuthor" v-if="article.expand.sort">{{article.expand.sort[0].name}}</text>
-					<view class="tn-flex tn-flex-1 tn-flex-col-center tn-flex-row-between" v-show="navAuthor">
-						<view class="tn-flex tn-flex-col-center">
-							<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
-							<text class="tn-margin-left-sm">{{article.expand.author.nickname}}</text>
-						</view>
-
-						<view>
-							<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29B7CB" fontColor="#29B7CB"
-								v-if="!article.expand.focus" @click="followUser()">
+	<z-paging-swiper>
+		<swiper class="swiper">
+			<swiper-item>
+				<z-paging ref="paging" @query="getComment" v-model="comments" :safe-area-inset-bottom="true"
+					:auto-scroll-to-top-when-reload="false" :auto-clean-list-when-reload="false" @scroll="onScroll">
+					<template #top>
+						<tn-nav-bar :zIndex="5" backTitle="" :fixed="false">
+							<text v-show="!navAuthor" v-if="article.expand.sort">{{article.expand.sort[0].name}}</text>
+							<view class="tn-flex tn-flex-1 tn-flex-col-center tn-flex-row-between" v-show="navAuthor">
 								<view class="tn-flex tn-flex-col-center">
-									<text class="tn-icon-add tn-margin-right-xs"></text>
-									<text>关注</text>
+									<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
+									<text class="tn-margin-left-sm">{{article.expand.author.nickname}}</text>
 								</view>
-							</tn-button>
-							<tn-button size="sm" padding="0 20rpx" backgroundColor="tn-bg-gray--light"
-								fontColor="tn-color-gray" @click="followUser()" v-else>
-								<text>已关注</text>
-							</tn-button>
-						</view>
-					</view>
-					<view slot="right" class="tn-padding" @tap.stop.prevent="showShare = !showShare">
-						<text class="tn-text-bold tn-text-lg tn-icon-more-horizontal"></text>
-					</view>
-				</tn-nav-bar>
 
-			</template>
-			<!-- 页面内容 -->
-			<view class="tn-margin" v-if="article" id="article">
-				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-					<view class="tn-flex tn-flex-col-center">
-						<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
-						<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
+								<view>
+									<tn-button plain :fontSize="30" size="sm" padding="0 15rpx"
+										backgroundColor="#29B7CB" fontColor="#29B7CB" v-if="!article.expand.focus"
+										@click="followUser()">
+										<view class="tn-flex tn-flex-col-center">
+											<text class="tn-icon-add tn-margin-right-xs"></text>
+											<text>关注</text>
+										</view>
+									</tn-button>
+									<tn-button :fontSize="30" size="sm" padding="0 20rpx"
+										backgroundColor="tn-bg-gray--light" fontColor="tn-color-gray"
+										@click="followUser()" v-else>
+										<text>已关注</text>
+									</tn-button>
+								</view>
+							</view>
+							<view slot="right" class="tn-padding" @tap.stop.prevent="showShare = !showShare">
+								<text class="tn-text-bold tn-text-lg tn-icon-more-horizontal"></text>
+							</view>
+						</tn-nav-bar>
+
+					</template>
+					<!-- 页面内容 -->
+					<view class="tn-margin" v-if="article" id="article">
+						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 							<view class="tn-flex tn-flex-col-center">
-								<text class="tn-text-bold">{{article.expand.author.nickname}}</text>
-								<text v-if="article.expand.author.level==='admin'"
-									class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
-							</view>
-							<text class="tn-text-xs tn-color-gray">{{getDateDiff(article.create_time)}}</text>
-						</view>
-					</view>
-					<view>
-						<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29B7CB" fontColor="#29B7CB"
-							v-if="!article.expand.focus" @click="followUser()">
-							<view class="tn-flex tn-flex-col-center">
-								<text class="tn-icon-add tn-margin-right-xs"></text>
-								<text>关注</text>
-							</view>
-						</tn-button>
-						<tn-button size="sm" padding="0 20rpx" backgroundColor="tn-bg-gray--light"
-							fontColor="tn-color-gray" @click="followUser()" v-else>
-							<text>已关注</text>
-						</tn-button>
-					</view>
-				</view>
-				<view class="tn-margin-top tn-flex tn-flex-direction-column">
-					<text class="tn-text-bold tn-text-xl">{{article.title}}</text>
-					<view class="tn-flex tn-flex-row-center tn-color-grey--disabled tn-text-sm tn-margin-top-sm">
-						<text>帖子发表：{{getDateDiff(article.create_time)}}</text>
-						<view v-if="article.create_time!==article.last_update_time">
-							<text class="tn-margin-left-sm tn-margin-right-sm">|</text>
-							<text>最后编辑：{{getDateDiff(article.last_update_time)}}</text>
-						</view>
-
-					</view>
-				</view>
-
-				<view class="tn-margin-top" style="max-width: 100%;">
-					<mp-html :content="article.content" :selectable="true" />
-				</view>
-				<view class="tn-margin-top-sm">
-					<view class="tn-margin-top-xs">
-						<view class="tn-flex tn-flex-col-center tn-flex-wrap"
-							v-if="article.expand.tag && article.expand.tag.length>0">
-							<view
-								class="tn-bg-grey--light tn-text-sm tn-margin-bottom-xs tn-color-gray--dark tn-margin-right-sm tn-padding-xs"
-								style="border-radius: 10rpx;" v-for="tags in article.expand.tag" :key="tags.id">
-								<text>{{tags.name}}</text>
-							</view>
-						</view>
-						<view class="tn-flex tn-flex-col-center tn-text-sm tn-color-grey--disabled tn-margin-top-sm">
-							<view class="tn-flex tn-flex-col-center  tn-margin-right">
-								<text class="tn-icon-fire tn-margin-right-xs"></text>
-								<text class="tn-margin-right-xs">浏览数：</text>
-								<text>{{article.views}}</text>
+								<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
+								<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
+									<view class="tn-flex tn-flex-col-center">
+										<text class="tn-text-bold">{{article.expand.author.nickname}}</text>
+										<text v-if="article.expand.author.level==='admin'"
+											class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
+									</view>
+									<text class="tn-text-xs tn-color-gray">{{getDateDiff(article.create_time)}}</text>
+								</view>
 							</view>
 							<view>
-								<text class="tn-icon-tip tn-margin-right-xs"></text>
-								<text>已开启创作声明，允许规范转载</text>
-							</view>
-						</view>
-
-					</view>
-				</view>
-			</view>
-
-			<view class="tn-padding-xs tn-bg-gray--light"></view><!-- 间隔 -->
-			<!-- 文章详情 结束 -->
-			<!-- 评论区 开始 -->
-			<view class="tn-color-grey" style="position: sticky;top: 0;z-index: 9999;">
-				<v-tabs :tabs="tabs" v-model="tabsIndex" @change="changeComentTab" lineHeight="8rpx" lineColor="#29B7CB"
-					activeColor="#29B7CB" :lineScale="0.2" color="#AAA"></v-tabs>
-			</view>
-			<view class="tn-margin">
-				<view class="tn-margin-top">
-					<view v-for="(item,index) in comments" :key="index">
-						<view class="tn-flex tn-flex-col-center">
-							<tn-avatar :src="item.expand.head_img"></tn-avatar>
-							<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
-								<view class="tn-flex tn-flex-col-center">
-									<text class="tn-text-bold">{{item.nickname}}</text>
-									<text v-if="article.users_id === item.users_id"
-										class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
-										style="padding:5rpx 8rpx">楼主</text>
-								</view>
-								<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
-							</view>
-						</view>
-						<view class="tn-margin tn-padding-left-xl" style="overflow: hidden;word-wrap: break-word"
-							@tap="subReply(item)">
-							<!-- {{item.content}} -->
-							<mp-html :content="item.content"></mp-html>
-						</view>
-						<!-- 子评论 -->
-						<view class="tn-margin">
-							<view class="tn-margin-left-xl tn-padding-sm tn-bg-gray--light ch-radius"
-								v-if="item.son.length>0">
-								<view v-for="(subComment, index) in item.son" :key="index">
+								<tn-button plain :fontSize="30" size="sm" padding="0 15rpx" backgroundColor="#29B7CB"
+									fontColor="#29B7CB" v-if="!article.expand.focus" @click="followUser()">
 									<view class="tn-flex tn-flex-col-center">
-										<tn-avatar :src="subComment.expand.head_img"></tn-avatar>
-										<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
-											<view class="tn-flex tn-flex-col-center">
-												<view class="tn-flex tn-flex-col-center">
-													<text class="tn-text-bold">{{subComment.nickname}}</text>
-													<text v-if="article.users_id === subComment.users_id"
-														class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
-														style="padding:5rpx 8rpx">UP</text>
-												</view>
-												<!-- 写一段注释 这个是父评论的id不等于子评论的pid里的id才会显示-->
-												<view v-if="item.id !== subComment.expand.pid.id"
-													class="tn-flex tn-flex-col-center">
-													<text class="tn-icon-right-triangle"></text>
-													<text class="tn-text-bold">{{subComment.expand.pid.nickname}}</text>
-												</view>
+										<text class="tn-icon-add tn-margin-right-xs"></text>
+										<text>关注</text>
+									</view>
+								</tn-button>
+								<tn-button :fontSize="30" size="sm" padding="0 20rpx"
+									backgroundColor="tn-bg-gray--light" fontColor="tn-color-gray" @click="followUser()"
+									v-else>
+									<text>已关注</text>
+								</tn-button>
+							</view>
+						</view>
+						<view class="tn-margin-top tn-flex tn-flex-direction-column">
+							<text class="tn-text-bold tn-text-xxl">{{article.title}}</text>
+							<view
+								class="tn-flex tn-flex-row-center tn-color-grey--disabled tn-text-sm tn-margin-top-sm">
+								<text>帖子发表：{{getDateDiff(article.create_time)}}</text>
+								<view v-if="article.create_time!==article.last_update_time">
+									<text class="tn-margin-left-sm tn-margin-right-sm">|</text>
+									<text>最后编辑：{{getDateDiff(article.last_update_time)}}</text>
+								</view>
 
+							</view>
+						</view>
+
+						<view class="tn-margin-top" style="max-width: 100%;">
+							<mp-html :content="article.content" :selectable="true" />
+						</view>
+						<view class="tn-margin-top-sm">
+							<view class="tn-margin-top-xs">
+								<view class="tn-flex tn-flex-col-center tn-flex-wrap"
+									v-if="article.expand.tag && article.expand.tag.length>0">
+									<view
+										class="tn-bg-grey--light tn-text-sm tn-margin-bottom-xs tn-color-gray--dark tn-margin-right-sm tn-padding-xs"
+										style="border-radius: 10rpx;" v-for="tags in article.expand.tag" :key="tags.id">
+										<text>{{tags.name}}</text>
+									</view>
+								</view>
+								<view
+									class="tn-flex tn-flex-col-center tn-text-sm tn-color-grey--disabled tn-margin-top-sm">
+									<view class="tn-flex tn-flex-col-center  tn-margin-right">
+										<text class="tn-icon-fire tn-margin-right-xs"></text>
+										<text class="tn-margin-right-xs">浏览数：</text>
+										<text>{{article.views}}</text>
+									</view>
+									<view>
+										<text class="tn-icon-tip tn-margin-right-xs"></text>
+										<text>已开启创作声明，允许规范转载</text>
+									</view>
+								</view>
+
+							</view>
+						</view>
+					</view>
+
+					<view class="tn-padding-xs tn-bg-gray--light"></view><!-- 间隔 -->
+					<!-- 文章详情 结束 -->
+					<!-- 评论区 开始 -->
+					<view class="tn-color-grey" style="position: sticky;top: 0;z-index: 9999;">
+						<v-tabs :tabs="tabs" v-model="tabsIndex" @change="changeComentTab" lineHeight="8rpx"
+							lineColor="#29B7CB" activeColor="#29B7CB" :lineScale="0.2" color="#AAA"></v-tabs>
+					</view>
+					<view class="tn-margin">
+						<view class="tn-margin-top">
+							<view v-for="(item,index) in comments" :key="index">
+								<view class="tn-flex tn-flex-col-center">
+									<tn-avatar :src="item.expand.head_img"></tn-avatar>
+									<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
+										<view class="tn-flex tn-flex-col-center">
+											<text class="tn-text-bold">{{item.nickname}}</text>
+											<text v-if="article.users_id === item.users_id"
+												class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
+												style="padding:5rpx 8rpx">楼主</text>
+										</view>
+										<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
+									</view>
+								</view>
+								<view class="tn-margin tn-padding-left-xl"
+									style="overflow: hidden;word-wrap: break-word" @tap="subReply(item)">
+									<!-- {{item.content}} -->
+									<mp-html :content="item.content"></mp-html>
+								</view>
+								<!-- 子评论 -->
+								<view class="tn-margin">
+									<view class="tn-margin-left-xl tn-padding-sm tn-bg-gray--light ch-radius"
+										v-if="item.son.length>0">
+										<view v-for="(subComment, index) in item.son" :key="index">
+											<view class="tn-flex tn-flex-col-center">
+												<tn-avatar :src="subComment.expand.head_img"></tn-avatar>
+												<view
+													class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
+													<view class="tn-flex tn-flex-col-center">
+														<view class="tn-flex tn-flex-col-center">
+															<text class="tn-text-bold">{{subComment.nickname}}</text>
+															<text v-if="article.users_id === subComment.users_id"
+																class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
+																style="padding:5rpx 8rpx">UP</text>
+														</view>
+														<!-- 写一段注释 这个是父评论的id不等于子评论的pid里的id才会显示-->
+														<view v-if="item.id !== subComment.expand.pid.id"
+															class="tn-flex tn-flex-col-center">
+															<text class="tn-icon-right-triangle"></text>
+															<text
+																class="tn-text-bold">{{subComment.expand.pid.nickname}}</text>
+														</view>
+
+													</view>
+
+													<text
+														class="tn-text-xs">{{getDateDiff(subComment.create_time)}}</text>
+												</view>
+											</view>
+											<view class="tn-margin tn-padding-left-xl"
+												style="overflow: hidden;word-wrap: break-word"
+												@tap="subReply(subComment)">
+												<mp-html :content="subComment.content" :selectable="true"></mp-html>
 											</view>
 
-											<text class="tn-text-xs">{{getDateDiff(subComment.create_time)}}</text>
 										</view>
-									</view>
-									<view class="tn-margin tn-padding-left-xl"
-										style="overflow: hidden;word-wrap: break-word" @tap="subReply(subComment)">
-										<mp-html :content="subComment.content" :selectable="true"></mp-html>
 									</view>
 
 								</view>
+
 							</view>
-
-						</view>
-
-					</view>
-				</view>
-			</view>
-			<template #bottom>
-				<!-- 底部开始 -->
-				<view class="tn-padding tn-bg-white tn-flex tn-flex-col-center">
-					<view class="tn-bg-gray--light tn-padding-left tn-round">
-						<tn-input :disabled="true" :placeholder="commentBoxText"
-							@click="commentAllow?commentAction():''"></tn-input>
-					</view>
-					<view class="tn-flex  tn-flex-col-center tn-color-gray--dark tn-flex-basic-sm tn-flex-row-between"
-						style="margin-left: auto;">
-						<view class="tn-flex tn-flex-col-center tn-flex-direction-column">
-							<text class="tn-text-xxl tn-icon-star "></text>
-							<text>{{article.views}}</text>
-						</view>
-						<view class="tn-flex tn-flex-col-center tn-flex-direction-column">
-							<text class="tn-text-xxl tn-icon-comment"></text>
-							<text>{{article.expand.comments.count}}</text>
-						</view>
-						<view class="tn-flex tn-flex-col-center tn-flex-direction-column"
-							:class="article.expand.like.is_like?'tn-color-red':''" @tap.stop="likeAction">
-							<text class=" tn-text-xxl"
-								:class="article.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
-							<text>{{article.expand.like.likes_count}}</text>
 						</view>
 					</view>
-				</view>
-				<!-- 底部 结束 -->
-			</template>
-
-		</z-paging>
-
-		<!-- 弹出层 开始 -->
-		<tn-popup v-model="commentBoxOpen" mode="bottom" :borderRadius="10" :zIndex="3"
-			@close="resetComment;showEmoji=false">
-			<view class="tn-margin">
-				<view class="tn-bg-gray--light tn-padding-sm"
-					style="height: 150rpx;overflow: hidden; border-radius: 10rpx;">
-					<tn-input type="textarea" v-model="commentText" :clearable="false" :placeholder="commentBoxText"
-						:autoHeight="false"></tn-input>
-				</view>
-			</view>
-			<view class="tn-flex tn-margin tn-flex-col-center tn-flex-row-between">
-				<view class="tn-flex tn-flex-col-center">
-					<text class="tn-text-xl tn-icon-emoji-good" @tap.stop="showEmoji=!showEmoji;getEmojiList()"></text>
-				</view>
-				<view class="">
-					<tn-button shape="round" :plain="true" size="sm" :blockRepeatClick="true"
-						@click="commentCheck">发送~</tn-button>
-				</view>
-			</view>
-			<view v-show="showEmoji">
-				<v-tabs v-model="emojiIndex" :tabs="emojiTabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
-					activeColor="#29B7CB" :lineScale="0.2"></v-tabs>
-				<scroll-view scroll-y style="height: 20vh;" class="tn-margin-top-xs">
-					<tn-grid :col="8">
-						<block v-for="(item, index) in emojiList" :key="index">
-							<!-- H5 -->
-							<!-- #ifndef MP-WEIXIN -->
-							<tn-grid-item>
-								<image :src="item" mode="aspectFill" style="height: 50rpx;width: 50rpx;"
-									@tap.stop="insertEmoji(index)"></image>
-							</tn-grid-item>
-							<!-- #endif-->
-
-							<!-- 微信小程序 -->
-							<!-- #ifdef MP-WEIXIN -->
-							<tn-grid-item :style="{width: gridItemWidth}">
-								<view style="padding: 30rpx;">{{ item }}</view>
-							</tn-grid-item>
-							<!-- #endif-->
-						</block>
-					</tn-grid>
-				</scroll-view>
-			</view>
-
-		</tn-popup>
-		<!-- 分享 -->
-		<tn-popup mode="bottom" :borderRadius="30" v-model="showShare">
-			<view class="tn-margin">
-				<view class="tn-flex tn-flex-row-center tn-margin-bottom">
-					<text class="tn-text-sm tn-color-gray">分享到</text>
-				</view>
-				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-					<view class="tn-flex tn-flex-col-center tn-color-gray--dark tn-flex-direction-column"
-						v-for="item in shareProvider" :key="item.provider">
-						<view :class="[item.icon,item.color]" class="tn-round tn-color-white tn-text-xxl tn-padding">
-						</view>
-						<text class="tn-margin-top-sm">{{item.name}}</text>
-					</view>
-				</view>
-				<view class="tn-margin-top">
-					<view class="tn-flex tn-flex-col-center">
-						<view class="tn-color-gray--dark tn-flex tn-flex-direction-column tn-flex-col-center">
-							<view class="tn-padding tn-round tn-bg-gray--light">
-								<text class="tn-icon-xxl tn-color-gray-dark tn-icon-warning"></text>
+					<template #bottom>
+						<!-- 底部开始 -->
+						<view class="tn-padding tn-bg-white tn-flex tn-flex-col-center">
+							<view class="tn-bg-gray--light tn-padding-left tn-round">
+								<tn-input :disabled="true" :placeholder="commentBoxText"
+									@click="commentAllow?commentAction():''"></tn-input>
 							</view>
-							<text class="tn-margin-top-sm">举报</text>
+							<view
+								class="tn-flex tn-text-sm tn-flex-col-center tn-color-gray--dark tn-flex-basic-sm tn-flex-row-between"
+								style="margin-left: auto;">
+								<view class="tn-flex tn-flex-col-center tn-flex-direction-column">
+									<text class="tn-text-xxl tn-icon-star "></text>
+									<text>{{article.views}}</text>
+								</view>
+								<view class="tn-flex tn-flex-col-center tn-flex-direction-column">
+									<text class="tn-text-xxl tn-icon-comment"></text>
+									<text>{{article.expand.comments.count}}</text>
+								</view>
+								<view class="tn-flex tn-flex-col-center tn-flex-direction-column"
+									:class="article.expand.like.is_like?'tn-color-red':''" @tap.stop="likeAction">
+									<text class=" tn-text-xxl"
+										:class="article.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
+									<text>{{article.expand.like.likes_count}}</text>
+								</view>
+							</view>
+						</view>
+						<!-- 底部 结束 -->
+					</template>
+
+				</z-paging>
+
+
+				<!-- 弹出层 开始 -->
+				<tn-popup v-model="commentBoxOpen" mode="bottom" :borderRadius="10" :zIndex="3"
+					@close="resetComment;showEmoji=false">
+					<view class="tn-margin">
+						<view class="tn-bg-gray--light tn-padding-sm"
+							style="height: 150rpx;overflow: hidden; border-radius: 10rpx;">
+							<tn-input type="textarea" v-model="commentText" :clearable="false"
+								:placeholder="commentBoxText" :autoHeight="false"></tn-input>
 						</view>
 					</view>
+					<view class="tn-flex tn-margin tn-flex-col-center tn-flex-row-between">
+						<view class="tn-flex tn-flex-col-center">
+							<text class="tn-text-xl tn-icon-emoji-good"
+								@tap.stop="showEmoji=!showEmoji;getEmojiList()"></text>
+						</view>
+						<view class="">
+							<tn-button shape="round" :plain="true" size="sm" :blockRepeatClick="true"
+								@click="commentCheck">发送~</tn-button>
+						</view>
+					</view>
+					<view v-show="showEmoji">
+						<v-tabs v-model="emojiIndex" :tabs="emojiTabs" @change="changeTab" lineHeight="8rpx"
+							lineColor="#29B7CB" activeColor="#29B7CB" :lineScale="0.2"></v-tabs>
+						<scroll-view scroll-y style="height: 20vh;" class="tn-margin-top-xs">
+							<tn-grid :col="8">
+								<block v-for="(item, index) in emojiList" :key="index">
+									<!-- H5 -->
+									<!-- #ifndef MP-WEIXIN -->
+									<tn-grid-item>
+										<image :src="item" mode="aspectFill" style="height: 50rpx;width: 50rpx;"
+											@tap.stop="insertEmoji(index)"></image>
+									</tn-grid-item>
+									<!-- #endif-->
+
+									<!-- 微信小程序 -->
+									<!-- #ifdef MP-WEIXIN -->
+									<tn-grid-item :style="{width: gridItemWidth}">
+										<view style="padding: 30rpx;">{{ item }}</view>
+									</tn-grid-item>
+									<!-- #endif-->
+								</block>
+							</tn-grid>
+						</scroll-view>
+					</view>
+
+				</tn-popup>
+				<!-- 分享 -->
+				<tn-popup mode="bottom" :borderRadius="30" v-model="showShare">
+					<view class="tn-margin">
+						<view class="tn-flex tn-flex-row-center tn-margin-bottom">
+							<text class="tn-text-sm tn-color-gray">分享到</text>
+						</view>
+						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+							<view class="tn-flex tn-flex-col-center tn-color-gray--dark tn-flex-direction-column"
+								v-for="item in shareProvider" :key="item.provider">
+								<view :class="[item.icon,item.color]"
+									class="tn-round tn-color-white tn-text-xxl tn-padding">
+								</view>
+								<text class="tn-margin-top-sm">{{item.name}}</text>
+							</view>
+						</view>
+						<view class="tn-margin-top tn-flex">
+							<view class="tn-flex tn-flex-col-center tn-flex-direction-column">
+								<text class="tn-round tn-icon-warning tn-bg-gray--light tn-padding"></text>
+								<text class="tn-margin-top-sm tn-color-gray--dark">举报</text>
+							</view>
+						</view>
+					</view>
+					<view class="tn-bg-gray--light tn-text-center tn-padding"
+						@tap.stop.prevent="showShare = !showShare">
+						<text class="tn-text-bold">取消</text>
+					</view>
+				</tn-popup>
+
 				</view>
-			</view>
-			<view class="tn-bg-gray--light tn-text-center tn-padding-sm" @tap.stop.prevent="showShare = !showShare">
-				<text class="tn-text-bold">取消</text>
-			</view>
-		</tn-popup>
-
-	</view>
-
+			</swiper-item>
+			<swiper-item>
+				<userProfile :users_id="Number(params.users_id)"></userProfile>
+			</swiper-item>
+		</swiper>
+	</z-paging-swiper>
 </template>
 
 <script>
-	import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+	import userProfile from '@/pages/common/userProfile/userProfile';
 	export default {
-		mixins: [MescrollMixin], // 使用mixin
+		components: {
+			userProfile
+		},
 		data() {
 			return {
 				tabs: ['全部评论', '只看楼主'],
@@ -646,6 +664,10 @@
 <style lang="scss">
 	page {
 		height: auto;
+	}
+
+	.swiper {
+		height: 100%;
 	}
 
 	.emoji {

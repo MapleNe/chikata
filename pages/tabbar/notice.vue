@@ -20,7 +20,7 @@
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
 								v-show="noticeNum.commnet_count>0"></tn-badge>
 						</view>
-						<text class="tn-margin-top-sm">评论和@</text>
+						<text class="tn-margin-top-sm tn-color-gray--dark">评论和@</text>
 					</view>
 					<view class="tn-flex tn-flex-direction-column tn-flex-col-center"
 						@tap.stop="goNoticeDetail('articlelike')">
@@ -30,7 +30,7 @@
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
 								v-show="noticeNum.article_like_count"></tn-badge>
 						</view>
-						<text class="tn-margin-top-sm">赞和收藏</text>
+						<text class="tn-margin-top-sm tn-color-gray--dark">赞和收藏</text>
 					</view>
 					<!-- <view class="tn-flex tn-flex-direction-column tn-flex-col-center">
 						<view class="tn-bg-purplered--disabled tn-shadow-blur tn-radius tn-padding-sm">
@@ -51,7 +51,7 @@
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
 								v-show="noticeNum.focus_count>0"></tn-badge>
 						</view>
-						<text class="tn-margin-top-sm">
+						<text class="tn-margin-top-sm tn-color-gray--dark">
 							关注我的
 						</text>
 					</view>
