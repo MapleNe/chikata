@@ -1,8 +1,6 @@
 <template>
 	<view>
-		<tn-nav-bar :isBack="false"></tn-nav-bar>
-		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
-		<view class="tn-margin">
+		<view class="tn-margin tn-margin-top-lg">
 			<tn-button :plain="true" height="80rpx" width="80rpx" @tap="back">
 				<text class="tn-text-xl tn-icon-left"></text>
 			</tn-button>
@@ -13,10 +11,6 @@
 				<text class="tn-color-grey tn-margin-bottom-sm">
 					快来{{loginAction?'登录':'注册'}}吧~
 				</text>
-				<view class="tn-color-grey tn-flex tn-flex-direction-column" style="height: 30rpx;" v-show="hitokoto">
-					<text>{{hitokoto.hitokoto}}</text>
-					<text class="tn-text-right tn-icon-right-triangle">{{hitokoto.from}}</text>
-				</view>
 			</view>
 			<view v-if="loginAction">
 				<view class="tn-margin-top-xl tn-padding-top-xl">
@@ -56,12 +50,7 @@
 				<view class="tn-margin-top-xl tn-flex tn-flex-row-center">
 					<text @tap="createAction">通行证创建</text>
 				</view>
-				<view class="tn-padding-xl tn-margin-xl">
-					<view class="tn-margin-top-xl tn-text-xxl tn-flex tn-flex-row-around tn-padding-xl">
-						<text class="tn-icon-qq tn-bg-blue tn-round tn-padding-xs tn-color-white" @tap.stop.prevent="qqLogin()"></text>
-						<text class="tn-icon-wechat tn-bg-green tn-round tn-padding-xs tn-color-white"></text>
-					</view>
-				</view>
+
 			</view>
 			<view v-else>
 				<view class="tn-margin-top-xl tn-padding-top-xl">
@@ -76,7 +65,7 @@
 						class="tn-bg-gray--light tn-round tn-padding-xs tn-padding-left tn-flex tn-flex-col-center tn-margin-bottom-lg">
 						<text class="tn-text-xxl tn-icon-email tn-padding-right"></text>
 						<view class="tn-padding-right tn-flex-1">
-							<tn-input type="email" placeholder="邮箱" v-model="account" :clearable="false" />
+							<tn-input type="email" placeholder="手机号码" v-model="account" :clearable="false" />
 						</view>
 					</view>
 					<view
@@ -108,6 +97,23 @@
 			</view>
 
 		</view>
+		<view class="tn-padding-lg tn-margin-xl" v-if="loginAction">
+			<view class=" tn-text-xxl tn-flex tn-flex-row-around tn-padding-xl">
+				<text class="tn-icon-qq tn-bg-blue tn-round tn-padding tn-color-white"
+					@tap.stop.prevent="qqLogin()"></text>
+				<text class="tn-icon-wechat tn-bg-green tn-round tn-padding tn-color-white"></text>
+			</view>
+		</view>
+		<view style="position: relative;bottom: 0;" class="tn-flex tn-margin tn-text-center tn-flex-row-center">
+			<tn-checkbox v-model="accept" shape="circle" :size="32" name="accept" @change="accept = !accept">
+				<view class="tn-flex tn-flex-col-center tn-color-gray--dark">
+					<text>我已阅读并同意</text>
+					<text style="color: #29B7CB;">《用户协议》</text>
+					<text>和</text>
+					<text style="color: #29B7CB;">《隐私政策》</text>
+				</view>
+			</tn-checkbox>
+		</view>
 	</view>
 </template>
 
@@ -127,8 +133,7 @@
 				seconds: 60,
 				tips: null,
 				loginAction: true,
-				hitokoto: [],
-				timer: null,
+				accept: false,
 			}
 		},
 		computed: {
@@ -154,16 +159,7 @@
 				}
 			}
 		},
-		onShow() {
-			this.getHitokoto();
-			this.timer = setInterval(() => {
-				this.getHitokoto();
-			}, 30000);
-		},
-		onHide() {
-			clearInterval(this.timer);
-			this.timer = null;
-		},
+		onShow() {},
 		methods: {
 			...mapMutations(['logout', 'login', 'setToken', 'setRefreshToken']),
 			changeLogin() {
@@ -232,6 +228,11 @@
 						setTimeout(() => {
 							this.back()
 						}, 800)
+					} else {
+						uni.showToast({
+							icon: 'none',
+							title: res.data.msg
+						})
 					}
 				})
 			},
@@ -262,6 +263,11 @@
 						setTimeout(() => {
 							this.back()
 						}, 800)
+					} else {
+						uni.showToast({
+							icon: 'none',
+							title: res.data.msg
+						})
 					}
 				}).catch(err => {
 					console.log(err)
@@ -344,13 +350,57 @@
 					success: (res) => {
 						console.log(res)
 						uni.getUserInfo({
-							provider:'qq',
+							provider: 'qq',
 							success: (info) => {
-								console.log(info)
+								this.goQqLogin(info.userInfo)
 							}
 						})
 					}
 				})
+			},
+			goQqLogin(info) {
+				console.log(info)
+				this.$http.post('/users/qqlogin', {
+					openId: info.openId,
+					figureurl_qq: info.figureurl_qq,
+					nickname:info.nickname,
+					gender:info.gender,
+					//#ifdef APP-PLUS
+					cid: this.cid,
+					//#endif
+
+				}).then(res => {
+					if (res.data.code === 200) {
+						let data = res.data
+						let token = data.data['login-token']
+						this.setRefreshToken(data.data.refreshToken)
+						this.setToken(token)
+						uni.setStorageSync('loginExp', data.data.loginExp)
+						uni.setStorageSync('refreshExp', data.data.refreshExp)
+						// uni.setStorageSync('userInfo', data.data.user)
+						this.login(data.data.user)
+						uni.$emit('loginComplete', true)
+						console.log(res)
+						uni.showToast({
+							icon: 'none',
+							title: data.msg
+						});
+						setTimeout(() => {
+							this.back()
+						}, 800)
+					} else {
+						uni.showToast({
+							icon: 'none',
+							title: res.data.msg
+						})
+					}
+				}).catch(err => {
+					console.log(err)
+					uni.showToast({
+						icon: 'none',
+						title: err.data.msg
+					})
+				});
 			},
 			codeChange(text) {
 				this.tips = text
@@ -391,18 +441,6 @@
 					})
 				})
 			},
-			getHitokoto() {
-				this.$http.get('/proxy', {
-					params: {
-						p_url: 'https://v1.hitokoto.cn/?c=a&c=b&c=c',
-					}
-				}).then(res => {
-					if (res.data.code === 200) {
-						this.hitokoto = res.data.data
-					}
-				})
-			},
-
 		}
 	}
 </script>

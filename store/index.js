@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import {
+	router
+} from '../router/router'
 
 Vue.use(Vuex)
 
@@ -167,6 +170,12 @@ const store = new Vuex.Store({
 				key: 'refreshExp'
 			})
 			uni.$emit('logoutComplete')
+			setTimeout(()=>{
+				uni.reLaunch({
+					url:'/pages/tabbar/mine'
+				})
+			},200)
+			
 		}
 	},
 	actions: {}

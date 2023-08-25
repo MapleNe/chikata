@@ -148,7 +148,16 @@
 			}
 
 		}
-	],
+	    ,{
+            "path" : "pages/user/setting/setting",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
 	"tabBar": {
 		"backgroundColor": "#ffffff",
 		"color": "#949494",
@@ -174,9 +183,9 @@
 		"midButton": {
 			// "text": "发布",
 			"iconPath": "static/publish.png",
-			"iconWidth": "40px",
+			"iconWidth": "45px",
 			"width": "80px",
-			"height": "45px"
+			"height": "50px"
 		}
 	},
 	"globalStyle": {
@@ -189,7 +198,9 @@
 		"backgroundColor": "#F8F7F8",
 		"navigationStyle": "custom",
 		"app-plus": {
-			"animationDuration": 200
+			"animationDuration": 250,
+			"bounce": "none",
+			"softinputmode": "adjustResize"
 		}
 	},
 	"condition": {

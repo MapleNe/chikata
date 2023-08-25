@@ -23,7 +23,7 @@
 										<text v-if="item.expand.author.level==='admin'"
 											class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
 									</view>
-									<view class="tn-flex tn-flex-col-center tn-text-sm tn-color-grey--disabled">
+									<view class="tn-flex tn-flex-col-center tn-text-sm tn-color-gray--dark">
 										<text>{{getDateDiff(item.create_time)}}</text>
 										<view class="tn-flex tn-flex-col-center" v-if="item.expand.sort.length && type==='circle'">
 											<text class="tn-margin-right-xs tn-margin-left-xs">·</text>
@@ -40,7 +40,7 @@
 										<text>关注</text>
 									</view>
 								</tn-button>
-								<tn-button size="sm" :fontSize="30" padding="0 20rpx" backgroundColor="tn-bg-gray--light"
+								<tn-button size="sm" :fontSize="30" padding="0 20rpx" plain backgroundColor="tn-bg-gray--light"
 									fontColor="tn-color-gray" @click="followUser(index)" v-else>
 									<text>已关注</text>
 								</tn-button>

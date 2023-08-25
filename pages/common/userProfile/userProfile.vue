@@ -7,7 +7,7 @@
 						<tn-avatar :src="profile.head_img"></tn-avatar>
 						<text class="tn-margin-left-sm">{{profile.nickname}}</text>
 					</view>
-					<view class="tn-margin-right-xl">
+					<view class="tn-margin-right-xl" v-if="profile.expand">
 						<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29B7CB" fontColor="#29B7CB"
 							v-show="!profile.expand.is_focus" @click="followUser()">
 							<view class="tn-flex tn-flex-col-center">
@@ -23,13 +23,17 @@
 				</view>
 				<view class="tn-flex tn-flex-col-center tn-padding" slot="right">
 					<text class=" tn-text-xl tn-icon-search tn-margin-right"></text>
-					<text class="tn-text-xl tn-icon-more-vertical">
+					<text class="tn-text-xl tn-icon-more-vertical" @tap.stop.prevent="showManage =!showManage">
 					</text>
 				</view>
 			</tn-nav-bar>
 		</template>
 		<view style="position: relative;" id="userview">
-			<image :src="profile.longtext.background_img" mode="aspectFill" style="width: 100%;height: 420rpx;"></image>
+			<view v-if="profile.longtext">
+				<image :src="profile.longtext.background_img" mode="aspectFill" style="width: 100%;height: 420rpx;">
+				</image>
+			</view>
+
 			<!-- 第一层 -->
 			<view class="tn-bg-white tn-padding"
 				style="position: absolute;top:320rpx;width: 100%; border-radius: 45rpx 45rpx 0 0">
@@ -48,7 +52,7 @@
 								<view class="tn-flex tn-flex-col-center tn-flex-row-between" style="width: 150rpx;">
 									<text class="tn-text-center"
 										style="margin-left: auto;margin-right: auto;">{{profile.expand.is_focus?'已关注':'关注'}}</text>
-									<text class="tn-icon-up-triangle" @tap="fuck"></text>
+									<text class="tn-icon-up-triangle"></text>
 								</view>
 							</tn-button>
 						</view>
@@ -253,7 +257,26 @@
 
 			</swiper-item>
 		</swiper>
-
+		<tn-popup mode="bottom" v-model="showManage" :borderRadius="30">
+			<view class="tn-margin">
+				<view class="tn-text-bold">
+					<text>管理</text>
+				</view>
+				<view class="tn-margin-top">
+					<view class="tn-flex tn-color-gray--dark">
+						<view class="tn-flex tn-flex-col-center tn-flex-direction-column">
+							<text class="tn-icon-like-break tn-text-xxl tn-round tn-bg-gray--light tn-padding"></text>
+							<text class="tn-text-lg tn-margin-top-sm">拉黑</text>
+						</view>
+					</view>
+				</view>
+			</view>
+			<view class="tn-margin-top">
+				<view class="tn-bg-gray--light tn-padding tn-text-center">
+					<text class="tn-text-bold">取消</text>
+				</view>
+			</view>
+		</tn-popup>
 	</z-paging>
 </template>
 
@@ -297,7 +320,8 @@
 				pageMethod: 'paging',
 				userviewHeight: 328,
 				navAuthor: false,
-				swiperAction: true
+				swiperAction: true,
+				showManage: false,
 			}
 		},
 		onLoad(params) {
@@ -438,12 +462,14 @@
 					case 1:
 						this.$refs.comments.reload()
 						break;
+					case 2:
+						break;
 					default:
 						break;
 				}
 				// 告知z-paging下拉刷新结束，这样才可以开始下一次的下拉刷新
 				setTimeout(() => {
-					//1.5秒之后停止刷新动画
+					//0.5秒之后停止刷新动画
 					this.$refs.paging.complete();
 				}, 500)
 			},

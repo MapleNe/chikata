@@ -57,7 +57,7 @@
 										<text>关注</text>
 									</view>
 								</tn-button>
-								<tn-button :fontSize="30" size="sm" padding="0 20rpx"
+								<tn-button :fontSize="30" size="sm" plain padding="0 20rpx"
 									backgroundColor="tn-bg-gray--light" fontColor="tn-color-gray" @click="followUser()"
 									v-else>
 									<text>已关注</text>
@@ -77,8 +77,8 @@
 							</view>
 						</view>
 
-						<view class="tn-margin-top" style="max-width: 100%;">
-							<mp-html :content="article.content" :selectable="true" />
+						<view class="tn-margin-top" style="max-width: 100%;" @touchend="touchEnd" @touchmove="touchMove">
+							<mp-html :show-img-menu="imgMenu" :content="article.content" :selectable="true" />
 						</view>
 						<view class="tn-margin-top-sm">
 							<view class="tn-margin-top-xs">
@@ -263,7 +263,8 @@
 							<text class="tn-text-sm tn-color-gray">分享到</text>
 						</view>
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-							<view class="tn-flex tn-flex-col-center tn-color-gray--dark tn-flex-direction-column"
+							<view
+								class="tn-flex tn-flex-col-center tn-text-lg tn-color-gray--dark tn-flex-direction-column"
 								v-for="item in shareProvider" :key="item.provider">
 								<view :class="[item.icon,item.color]"
 									class="tn-round tn-color-white tn-text-xxl tn-padding">
@@ -271,10 +272,13 @@
 								<text class="tn-margin-top-sm">{{item.name}}</text>
 							</view>
 						</view>
-						<view class="tn-margin-top tn-flex">
-							<view class="tn-flex tn-flex-col-center tn-flex-direction-column">
-								<text class="tn-round tn-icon-warning tn-bg-gray--light tn-padding"></text>
-								<text class="tn-margin-top-sm tn-color-gray--dark">举报</text>
+						<view class="tn-margin-top">
+							<view class="tn-flex">
+								<view class="tn-flex tn-color-gray--dark tn-flex-col-center tn-flex-direction-column">
+									<text
+										class="tn-icon-warning tn-text-xxl tn-round tn-bg-gray--light tn-padding"></text>
+									<text class="tn-text-lg tn-margin-top-sm">举报</text>
+								</view>
 							</view>
 						</view>
 					</view>
@@ -379,6 +383,7 @@
 				navAuthor: false,
 				authorComments: [],
 				commentAllow: true,
+				imgMenu: true,
 
 			}
 		},
@@ -656,6 +661,13 @@
 					result = "刚刚";
 				}
 				return result;
+			},
+			touchEnd() {
+				this.imgMenu = true;
+			},
+			touchMove(e) {
+				// 手指触摸后的移动事件
+				this.imgMenu = false;
 			},
 		}
 	}

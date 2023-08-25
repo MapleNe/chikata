@@ -322,7 +322,7 @@
           // width: 25rpx;
           // height: 25rpx;
           margin-left: 20rpx;
-          font-size: 38rpx;
+          font-size: 42rpx;
           line-height: 100%;
           // border-width: 0 0 4rpx 4rpx;
           // border-color: #000000;
