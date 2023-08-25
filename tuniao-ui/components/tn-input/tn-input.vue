@@ -64,7 +64,7 @@
         class="tn-input__right-icon__item tn-input__right-icon__clear"
         @tap="onClear"
       >
-        <view class="icon tn-icon-close"></view>
+        <view class="icon tn-icon-close-circle"></view>
       </view>
       <view
         v-else-if="type === 'text' && !focused && showRightIcon && rightIcon !== ''"
@@ -189,7 +189,7 @@
       },
       // 是否可清空
       clearable: {
-        type: Boolean,
+        type: [Boolean,String],
         default: true
       },
       // 光标与键盘的距离
@@ -372,7 +372,7 @@
     flex: 1;
     
     &__input {
-      font-size: 28rpx;
+      font-size: 32rpx;
       color: $tn-font-color;
       flex: 1;
     }

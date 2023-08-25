@@ -135,7 +135,8 @@
 
 	/*APP自定义样式*/
 	.ch-bg-main {
-		background: $ch-color-primary;
+		background: $ch-color-primary !important;
+		color: white;
 	}
 
 	.ch-bg-main--light {
