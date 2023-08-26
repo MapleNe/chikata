@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<z-paging ref="paging" @query="getArticle" v-model="content" :auto="false" :auto-clean-list-when-reload="false"
+		<z-paging ref="paging" @query="getArticle" use-cache cache-key="indexArticle" v-model="content" :auto="false" :auto-clean-list-when-reload="false"
 			:auto-scroll-to-top-when-reload="false">
 			<view v-show="tabsIndex===0">
 				<view class="tn-margin" v-show="swiper">

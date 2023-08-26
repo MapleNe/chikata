@@ -377,10 +377,10 @@
 					}
 				}).then(res => {
 					console.log(res)
-					this.$refs.article.complete(res.data.data.data)
+					this.$refs.article.completeByTotal(res.data.data.data,res.data.data.count)
 
 				}).catch(err => {
-					this.$refs.paging.complete(false)
+					this.$refs.article.complete(false)
 				})
 			},
 			getUserInfo() {
