@@ -33,8 +33,8 @@
 								</view>
 							</view>
 							<view v-show="type!=='user'">
-								<tn-button plain size="sm" :fontSize="30" padding="0 15rpx" backgroundColor="#29B7CB"
-									fontColor="#29B7CB" v-if="!item.expand.focus" @click="followUser(index)">
+								<tn-button plain size="sm" :fontSize="30" padding="0 15rpx" backgroundColor="#FB7299"
+									fontColor="#FB7299" v-if="!item.expand.focus" @click="followUser(index)">
 									<view class="tn-flex tn-flex-col-center">
 										<text class="tn-icon-add tn-margin-right-xs"></text>
 										<text>关注</text>
@@ -48,7 +48,7 @@
 						</view>
 						<view @tap="goAticle(index)">
 							<view class="tn-margin-top">
-								<text class="tn-text-xl">{{item.title}}</text>
+								<text class="tn-text-title">{{item.title}}</text>
 							</view>
 							<view class="tn-padding-sm tn-no-padding-left tn-color-gray--dark tn-padding-bottom-sm">
 								<rich-text :nodes="item.description"></rich-text>

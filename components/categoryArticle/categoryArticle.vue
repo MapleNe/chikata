@@ -9,8 +9,8 @@
 			<text class="tn-margin-left-sm tn-color-white">{{categoryInfo.name}}</text>
 		</view>
 		<view style="position: relative;bottom: 15rpx;">
-			<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
-				:zIndex="2" activeColor="#29B7CB" style="border-radius: 20rpx 20rpx 0 0;background-color: white;">
+			<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#FB7299"
+				:zIndex="2" activeColor="#FB7299" style="border-radius: 20rpx 20rpx 0 0;background-color: white;">
 			</v-tabs>
 		</view>
 
@@ -31,7 +31,7 @@
 								</view>
 							</view>
 							<view>
-								<tn-button size="sm" :backgroundColor="item.expand.focus?'tn-bg-gray--light':'#29B7CB'"
+								<tn-button size="sm" :backgroundColor="item.expand.focus?'tn-bg-gray--light':'#FB7299'"
 									:fontColor="item.expand.focus?'tn-color-grey':'tn-color-white'" shape="round"
 									:blockRepeatClick="true" @tap="followUser(index)">
 									<text>{{item.expand.focus?'已关注':'关注'}}</text>

@@ -245,6 +245,10 @@
       width: 128rpx;
       height: 128rpx;
     }
+	&--xxl {
+	width: 156rpx;
+	height: 156rpx;
+	}
     
     &--square {
       border-radius: 10rpx;

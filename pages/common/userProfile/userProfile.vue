@@ -1,14 +1,14 @@
 <template>
 	<z-paging ref="paging" refresher-only @onRefresh="onRefresh" @scroll="getScroll">
 		<template #top>
-			<tn-nav-bar backTitle="" :backgroundColor="background">
+			<tn-nav-bar backTitle="" :backgroundColor="background" :fontColor="!navAuthor?'tn-color-white':''">
 				<view class="tn-flex tn-flex-1 tn-flex-col-center tn-flex-row-between" v-show="navAuthor">
 					<view class="tn-flex tn-flex-col-center">
-						<tn-avatar :src="profile.head_img"></tn-avatar>
+						<tn-avatar :src="profile.head_img" border borderColor="#fff" :borderSize="4"></tn-avatar>
 						<text class="tn-margin-left-sm">{{profile.nickname}}</text>
 					</view>
-					<view class="tn-margin-right-xl" v-if="profile.expand">
-						<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29B7CB" fontColor="#29B7CB"
+					<view class="tn-margin-right-xl" v-if="!hasLogin&&userInfo.id!=id">
+						<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#FB7299" fontColor="#FB7299"
 							v-show="!profile.expand.is_focus" @click="followUser()">
 							<view class="tn-flex tn-flex-col-center">
 								<text class="tn-icon-add tn-margin-right-xs"></text>
@@ -22,8 +22,8 @@
 					</view>
 				</view>
 				<view class="tn-flex tn-flex-col-center tn-padding" slot="right">
-					<text class=" tn-text-xl tn-icon-search tn-margin-right"></text>
-					<text class="tn-text-xl tn-icon-more-vertical" @tap.stop.prevent="showManage =!showManage">
+					<text class=" tn-text-xl tn-icon-search"></text>
+					<text class="tn-text-xl tn-margin-left tn-icon-more-vertical" @tap.stop.prevent="showManage =!showManage" v-if="!hasLogin&&userInfo.id!=id">
 					</text>
 				</view>
 			</tn-nav-bar>
@@ -33,22 +33,24 @@
 				<image :src="profile.longtext.background_img" mode="aspectFill" style="width: 100%;height: 420rpx;">
 				</image>
 			</view>
-
 			<!-- 第一层 -->
 			<view class="tn-bg-white tn-padding"
 				style="position: absolute;top:320rpx;width: 100%; border-radius: 45rpx 45rpx 0 0">
 				<view style="position: absolute;top: -70rpx;" class="tn-margin-left-sm">
-					<tn-avatar :src="profile.head_img" size="xl" border borderColor="#fff" :borderSize="6"></tn-avatar>
+					<tn-avatar :src="profile.head_img" size="xxl" border borderColor="#fff" :borderSize="6"></tn-avatar>
 				</view>
 				<!-- 按钮样式 -->
 				<view class="tn-flex tn-flex-row-right">
-					<view class="tn-flex tn-flex-col-center">
+					<view v-if="hasLogin&&userInfo.id == id">
+						<tn-button plain backgroundColor="#FB7299" fontColor="#FB7299" @click="goEdit">编辑</tn-button>
+					</view>
+					<view class="tn-flex tn-flex-col-center" v-else>
 						<view class="tn-margin-right">
-							<tn-button plain backgroundColor="#29B7CB" fontColor="#29B7CB">私信</tn-button>
+							<tn-button plain backgroundColor="#FB7299" fontColor="#FB7299">私信</tn-button>
 						</view>
 						<view>
-							<tn-button :backgroundColor="profile.expand.is_focus?'#29b7cb69':'#29B7CB'"
-								:fontColor="profile.expand.is_focus?'#29B7CB':'tn-color-white'" @click="followUser()">
+							<tn-button :backgroundColor="profile.expand.is_focus?'#FB729969':'#FB7299'"
+								:fontColor="profile.expand.is_focus?'#FB7299':'tn-color-white'" @click="followUser()">
 								<view class="tn-flex tn-flex-col-center tn-flex-row-between" style="width: 150rpx;">
 									<text class="tn-text-center"
 										style="margin-left: auto;margin-right: auto;">{{profile.expand.is_focus?'已关注':'关注'}}</text>
@@ -58,34 +60,35 @@
 						</view>
 					</view>
 				</view>
-
 			</view>
 			<!-- 第二层 在这里绘制元素 -->
 			<view class="tn-margin">
 				<!-- 用户属性 -->
-				<view class="tn-margin-top-lg">
+				<view class="tn-margin-top">
 					<view class="tn-flex tn-flex-direction-column">
-						<text class="tn-text-bold tn-text-xl">{{profile.nickname}}</text>
+						<text class="tn-text-bold tn-text-xxl">{{profile.nickname}}</text>
 						<view class="tn-flex tn-margin-top tn-flex-top tn-color-gray--dark">
 							<text class="tn-icon-image-text tn-margin-right-xs"></text>
 							<text class="tn-text-ellipsis-2" style="max-width: 50%;">{{profile.description}}</text>
 						</view>
 					</view>
 				</view>
-				<view class="tn-margin-top-xl tn-margin-bottom-lg">
-					<view class="tn-flex tn-flex-col-center tn-text-sm">
-						<view class="tn-flex tn-flex-col-center tn-margin-right">
-							<text class="tn-text-bold tn-text-xl tn-margin-right-xs">{{profile.expand.fansCount}}</text>
-							<text class="tn-color-grey--disabled">粉丝</text>
-						</view>
-						<view class="tn-flex tn-flex-col-center tn-margin-right">
+				<view class="tn-margin-top-xl tn-margin-bottom-lg tn-flex">
+					<view class="tn-flex tn-flex-col-center tn-text-sm tn-flex-basic-md tn-flex-row-between">
+						<view class="tn-flex tn-flex-col-center ">
 							<text
-								class="tn-text-bold tn-text-xl tn-margin-right-xs">{{profile.expand.focusCount}}</text>
-							<text class="tn-color-grey--disabled">关注</text>
+								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{profile.expand.fansCount}}</text>
+							<text class="tn-color-gray--dark">粉丝</text>
 						</view>
-						<view class="tn-flex tn-flex-col-center tn-margin-right">
-							<text class="tn-text-bold tn-text-xl tn-margin-right-xs">{{profile.expand.likeCount}}</text>
-							<text class="tn-color-grey--disabled">获赞</text>
+						<view class="tn-flex tn-flex-col-center ">
+							<text
+								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{profile.expand.focusCount}}</text>
+							<text class="tn-color-gray--dark">关注</text>
+						</view>
+						<view class="tn-flex tn-flex-col-center ">
+							<text
+								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{profile.expand.likeCount}}</text>
+							<text class="tn-color-gray--dark">获赞</text>
 						</view>
 					</view>
 				</view>
@@ -94,10 +97,10 @@
 		</view>
 		<!-- 定位结束 -->
 		<view :style="{'z-index': 100,'position': 'sticky','top' :vuex_custom_bar_height+'px'}">
-			<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
-				activeColor="#29B7CB" :lineScale="0.2" color="#AAA" :scroll="false"></v-tabs>
+			<z-tabs ref="tabs" :current="tabsIndex" active-color="#FB7299" @change="changeTab" :list="tabs"></z-tabs>
 		</view>
-		<swiper :current="tabsIndex" @animationfinish="swiperChange" class="swiper">
+		<swiper :current="tabsIndex" @transition="swiperTransition" @animationfinish="swiperAnimationfinish"
+			class="swiper">
 			<swiper-item>
 				<z-paging @query="getUserArticle" v-model="content" ref="article" :auto-clean-list-when-reload="false"
 					:auto-scroll-to-top-when-reload="false" :refresher-enabled="false" :use-page-scroll="swiperAction">
@@ -106,14 +109,14 @@
 							<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-color-gray tn-text-sm">
 								<view class="tn-flex tn-flex-col-bottom">
 									<text
-										class="tn-text-bold tn-color-gray tn-text-xl">{{getDate(item.create_time).day}}</text>
+										class="tn-text-bold tn-color-gray tn-text-xxl">{{getDate(item.create_time).day}}</text>
 									<text
 										class="tn-margin-left-xs">{{getDate(item.create_time).month}}月/{{getDate(item.create_time).year}}年</text>
 									<text class="tn-margin-left-xs tn-margin-right-xs">·</text>
 									<text>{{item.expand.sort[0].name}}</text>
 								</view>
 								<view>
-									<text class="tn-icon-more-horizontal tn-text-lg"></text>
+									<text class="tn-icon-more-horizontal tn-text-xxl"></text>
 								</view>
 							</view>
 							<view class="tn-margin-top-xs">
@@ -281,6 +284,9 @@
 </template>
 
 <script>
+	import {
+		mapState
+	} from 'vuex';
 	export default {
 		props: {
 			users_id: {
@@ -336,7 +342,9 @@
 				this.getUserInfo()
 			}
 		},
-		computed: {},
+		computed: {
+			...mapState(['userInfo', 'hasLogin']),
+		},
 
 		methods: {
 			getElementHeight(element) {
@@ -480,8 +488,7 @@
 				if (scrollTop > this.userviewHeight) this.swiperAction = false
 				else this.swiperAction = true
 				// 计算当前透明度
-				const opacity = scrollTop <= 200 ? scrollTop / 200 : 1;
-				// 根据透明度设置导航栏背景颜色
+				const opacity = scrollTop <= 200 ? scrollTop / 200 : 1; // 根据透明度设置导航栏背景颜色
 				this.background = `rgba(255, 255, 255, ${opacity})`;
 			},
 			goCategory(category) {
@@ -527,11 +534,21 @@
 					day
 				};
 			},
+			goEdit() {
+				this.$Router.push({
+					path: '/pages/user/profile'
+				})
+			},
 			changeTab(index) {
 				this.tabsIndex = index
 			},
-			swiperChange(e) {
-				this.tabsIndex = e.detail.current
+			swiperTransition(e) {
+				this.$refs.tabs.setDx(e.detail.dx);
+			},
+			//swiper滑动结束
+			swiperAnimationfinish(e) {
+				this.tabsIndex = e.detail.current;
+				this.$refs.tabs.unlockDx();
 			},
 			previewImage(images, index) {
 				let data = [];

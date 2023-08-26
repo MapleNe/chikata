@@ -147,9 +147,49 @@
 				"enablePullDownRefresh": false
 			}
 
+		}, {
+			"path": "pages/user/setting/setting",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/setting/account/account",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}
+		, {
+			"path": "pages/user/setting/notice/notice",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
 		}
 	    ,{
-            "path" : "pages/user/setting/setting",
+            "path" : "pages/user/setting/privacy/privacy",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/user/setting/block/block",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/user/firstLogin/firstLogin",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -161,7 +201,7 @@
 	"tabBar": {
 		"backgroundColor": "#ffffff",
 		"color": "#949494",
-		"selectedColor": "#29B7CB",
+		"selectedColor": "#FB7299",
 		"fontSize": "16px",
 		"list": [{
 				"pagePath": "pages/tabbar/index",

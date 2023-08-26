@@ -16,16 +16,17 @@
 					</view>
 				</view>
 			</tn-nav-bar>
-			
-			<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
-				activeColor="#29B7CB" field="name" :lineScale="0.2"></v-tabs>
+
+			<z-tabs ref="tabs" :current="tabsIndex" active-color="#FB7299" @change="changeTab" :list="tabs"
+				:scroll-count="2"></z-tabs>
 		</template>
 		<!-- swiper必须设置height:100%，因为swiper有默认的高度，只有设置高度100%才可以铺满页面  -->
 
-		<swiper class="swiper" :current="tabsIndex" @change="changeSwpier">
+		<swiper class="swiper" :current="tabsIndex" @animationfinish="swiperAnimationfinish"
+			@transition="swiperTransition">
 			<swiper-item class="swiper-item" v-for="(item, index) in tabs" :key="index">
-				<articleList :tabsIndex="index" :swiperIndex="tabsIndex" :content="content" :swiper="true" :type="item.type"
-					@getComments="getComments" @getMenuInfo="getMenuInfo">
+				<articleList :tabsIndex="index" :swiperIndex="tabsIndex" :content="content" :swiper="true"
+					:type="item.type" @getComments="getComments" @getMenuInfo="getMenuInfo">
 				</articleList>
 			</swiper-item>
 		</swiper>
@@ -102,6 +103,14 @@
 			},
 			changeTab(index) {
 				this.tabsIndex = index
+			},
+			swiperTransition(e) {
+				this.$refs.tabs.setDx(e.detail.dx);
+			},
+			//swiper滑动结束
+			swiperAnimationfinish(e) {
+				this.tabsIndex = e.detail.current;
+				this.$refs.tabs.unlockDx();
 			},
 			changeSwpier(event) {
 				this.tabsIndex = event.detail.current

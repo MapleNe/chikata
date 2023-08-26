@@ -3,8 +3,8 @@
 		<template #top>
 			<tn-nav-bar customBack>
 				<view class="tn-flex tn-flex-row-center">
-					<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
-						activeColor="#29B7CB" field="name" :lineScale="0.2" :scroll="false"></v-tabs>
+					<z-tabs ref="tabs" :current="tabsIndex" active-color="#FB7299" @change="changeTab" :list="tabs"
+						:scroll-count="2"></z-tabs>
 				</view>
 				<view slot="right" class="tn-padding tn-no-padding-top" v-show="!tabsIndex">
 					<text>发动态</text>
@@ -12,7 +12,8 @@
 			</tn-nav-bar>
 			<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 		</template>
-		<swiper class="swiper" :current="tabsIndex" @change="changeSwpier">
+		<swiper class="swiper" :current="tabsIndex" @animationfinish="swiperAnimationfinish"
+			@transition="swiperTransition">
 			<swiper-item>
 				<articleList :swiper="false" type="circle" @getComments="getComments" @getMenuInfo="getMenuInfo">
 				</articleList>
@@ -30,7 +31,8 @@
 								<text class="tn-text-bold tn-text-lg">全部分区</text>
 							</view>
 							<view v-for="(item,index) in categoryList" :key="index" class="tn-margin-top">
-								<view class="tn-flex tn-flex-col-center tn-flex-row-between" @tap.stop.prevent="goCategory(item)">
+								<view class="tn-flex tn-flex-col-center tn-flex-row-between"
+									@tap.stop.prevent="goCategory(item)">
 									<view class="tn-flex tn-flex-col-center">
 										<tn-avatar shape="square" :src="item.opt.head_img" size="lg"
 											backgroundColor="none"></tn-avatar>
@@ -120,6 +122,14 @@
 						this.$refs.paging.complete(res.data.data.data)
 					}
 				})
+			},
+			swiperTransition(e) {
+				this.$refs.tabs.setDx(e.detail.dx);
+			},
+			//swiper滑动结束
+			swiperAnimationfinish(e) {
+				this.tabsIndex = e.detail.current;
+				this.$refs.tabs.unlockDx();
 			},
 			getBanner() {
 				this.$http.get('/banner').then(res => {

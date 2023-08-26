@@ -1,33 +1,43 @@
 <template>
-	<z-paging ref="paging" v-model="dataList" @query="getFans">
+	<z-paging-swiper>
 		<template #top>
-			<tn-nav-bar backTitle="">粉丝列表</tn-nav-bar>
+			<tn-nav-bar backTitle="">关注</tn-nav-bar>
 			<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 		</template>
-		<view class="tn-margin">
-			<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-bottom"
-				v-for="(item,index) in dataList" :key="index">
-				<view class="tn-flex tn-flex-col-center">
-					<tn-avatar size="lg" :src="item.head_img"></tn-avatar>
-					<text class="tn-margin-left-sm tn-text-bold">{{item.nickname}}</text>
-				</view>
-				<view>
-					<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29B7CB" fontColor="#29B7CB"
-						v-show="!item.is_focus" @click="followUser(index)">
-						<view class="tn-flex tn-flex-col-center">
-							<text class="tn-icon-add tn-margin-right-xs"></text>
-							<text>回关</text>
-						</view>
-					</tn-button>
-					<tn-button size="sm" padding="0 20rpx" backgroundColor="tn-bg-gray--light" fontColor="tn-color-gray"
-						@click="followUser(index)" v-show="item.is_focus">
-						<text>已关注</text>
-					</tn-button>
-				</view>
-			</view>
-		</view>
+		<swiper style="height: 100%;">
+			<swiper-item>
+				<z-paging ref="paging" v-model="dataList" @query="getFans" :auto-clean-list-when-reload="false" :auto-scroll-to-top-when-reload="false">
+					<view class="tn-margin">
+						<block v-for="(item,index) in dataList" :key="index">
+							<view class="tn-flex tn-margin-bottom">
+								<tn-avatar size="md" :src="item.head_img"></tn-avatar>
+								<view
+									class="tn-flex-1 tn-flex-row-between tn-border-solids-bottom tn-padding-bottom-sm tn-flex tn-flex-col-center">
+									<view class="tn-margin-left-sm tn-flex tn-flex-direction-column">
+										<text class="tn-text-bold">{{item.nickname}}</text>
+										<text class="tn-text-md">{{item.description}}</text>
+									</view>
+									<tn-button plain size="sm" :fontSize="30" padding="0 15rpx" backgroundColor="#FB7299"
+										fontColor="#FB7299" v-if="!item.is_focus" @click="followUser(index)">
+										<view class="tn-flex tn-flex-col-center">
+											<text class="tn-icon-add tn-margin-right-xs"></text>
+											<text>关注</text>
+										</view>
+									</tn-button>
+									<tn-button size="sm" :fontSize="30" padding="0 20rpx" plain backgroundColor="tn-bg-gray--light"
+										fontColor="tn-color-gray" @click="followUser(index)" v-else>
+										<text>已关注</text>
+									</tn-button>
+								</view>
+							</view>
+						</block>
 
-	</z-paging>
+					</view>
+				</z-paging>
+			</swiper-item>
+		</swiper>
+	</z-paging-swiper>
+
 </template>
 
 <script>
@@ -42,11 +52,12 @@
 				this.$http.get('/Focus/Find', {
 					params: {
 						page: page,
-						limiit: num,
+						limit: num,
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.users)
+			
 					}
 				})
 			},

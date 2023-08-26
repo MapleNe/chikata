@@ -4,15 +4,34 @@
 			设置
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
-		<tn-list-cell unlined :arrow="true" :arrowRight="true">通行证账号与安全</tn-list-cell>
+		<tn-list-cell unlined :arrow="true" :arrowRight="true" v-if="hasLogin"
+			@click="goAccount">通行证账号与安全</tn-list-cell>
+		<view v-if="hasLogin">
+			<view class="tn-padding-xs tn-bg-gray--light"></view>
+			<tn-list-cell :arrow="true" :arrowRight="true" @click="goNotice">新消息通知</tn-list-cell>
+			<tn-list-cell :arrow="true" :arrowRight="true" @click="goPrivacy">隐私设置</tn-list-cell>
+			<tn-list-cell unlined :arrow="true" :arrowRight="true" @click="goBlock">屏蔽设置</tn-list-cell>
+		</view>
+
 		<view class="tn-padding-xs tn-bg-gray--light"></view>
-		<tn-list-cell :arrow="true" :arrowRight="true">新消息通知</tn-list-cell>
-		<tn-list-cell :arrow="true" :arrowRight="true">隐私设置</tn-list-cell>
-		<tn-list-cell unlined :arrow="true" :arrowRight="true">屏蔽设置</tn-list-cell>
-		<view class="tn-padding-xs tn-bg-gray--light"></view>
-		<tn-list-cell :arrow="true" :arrowRight="true">护眼模式</tn-list-cell>
-		<tn-list-cell :arrow="true" :arrowRight="true">列表视频自动播放</tn-list-cell>
-		<tn-list-cell unlined :arrow="true" :arrowRight="true">动图自动播放</tn-list-cell>
+		<tn-list-cell :arrow="true" :arrowRight="true">
+			<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+				<text>护眼模式</text>
+				<text class="tn-margin-right tn-text-sm tn-color-gray--dark">关闭</text>
+			</view>
+		</tn-list-cell>
+		<tn-list-cell :arrow="true" :arrowRight="true">
+			<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+				<text>列表视频播放</text>
+				<text class="tn-margin-right tn-text-sm tn-color-gray--dark">仅WI-FI</text>
+			</view>
+		</tn-list-cell>
+		<tn-list-cell unlined :arrow="true" :arrowRight="true">
+			<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+				<text>动图自动播放</text>
+				<text class="tn-margin-right tn-text-sm tn-color-gray--dark">大智慧模式</text>
+			</view>
+		</tn-list-cell>
 		<view class="tn-padding-xs tn-bg-gray--light"></view>
 		<tn-list-cell :arrow="true" :arrowRight="true">关于APP</tn-list-cell>
 		<tn-list-cell :arrow="true" :arrowRight="true">清除缓存</tn-list-cell>
@@ -24,7 +43,7 @@
 		<tn-list-cell unlined :arrow="true" :arrowRight="true">个人信息收集清单</tn-list-cell>
 		<tn-list-cell unlined :arrow="true" :arrowRight="true">第三方共享个人信息清单</tn-list-cell>
 		<view class="tn-padding-xs tn-bg-gray--light"></view>
-		<view class="tn-padding tn-text-center" style="font-size: 28rpx;" @tap.stop.prevent="logout">
+		<view class="tn-padding tn-text-center" style="font-size: 28rpx;" @tap.stop.prevent="logout" v-if="hasLogin">
 			<text>退出登录</text>
 		</view>
 	</view>
@@ -36,14 +55,37 @@
 		mapMutations
 	} from 'vuex';
 	export default {
-		
+
 		data() {
 			return {
 
 			};
 		},
-		methods:{
+		computed: {
+			...mapState(['hasLogin'])
+		},
+		methods: {
 			...mapMutations(['logout']),
+			goAccount() {
+				this.$Router.push({
+					path: '/pages/user/setting/account/account'
+				})
+			},
+			goNotice() {
+				this.$Router.push({
+					path: '/pages/user/setting/notice/notice'
+				})
+			},
+			goPrivacy() {
+				this.$Router.push({
+					path: '/pages/user/setting/privacy/privacy'
+				})
+			},
+			goBlock() {
+				this.$Router.push({
+					path: '/pages/user/setting/block/block'
+				})
+			}
 		}
 	}
 </script>

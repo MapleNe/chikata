@@ -15,7 +15,7 @@
 
 								<view>
 									<tn-button plain :fontSize="30" size="sm" padding="0 15rpx"
-										backgroundColor="#29B7CB" fontColor="#29B7CB" v-if="!article.expand.focus"
+										backgroundColor="#FB7299" fontColor="#FB7299" v-if="!article.expand.focus"
 										@click="followUser()">
 										<view class="tn-flex tn-flex-col-center">
 											<text class="tn-icon-add tn-margin-right-xs"></text>
@@ -50,8 +50,8 @@
 								</view>
 							</view>
 							<view>
-								<tn-button plain :fontSize="30" size="sm" padding="0 15rpx" backgroundColor="#29B7CB"
-									fontColor="#29B7CB" v-if="!article.expand.focus" @click="followUser()">
+								<tn-button plain :fontSize="30" size="sm" padding="0 15rpx" backgroundColor="#FB7299"
+									fontColor="#FB7299" v-if="!article.expand.focus" @click="followUser()">
 									<view class="tn-flex tn-flex-col-center">
 										<text class="tn-icon-add tn-margin-right-xs"></text>
 										<text>关注</text>
@@ -112,7 +112,7 @@
 					<!-- 评论区 开始 -->
 					<view class="tn-color-grey" style="position: sticky;top: 0;z-index: 9999;">
 						<v-tabs :tabs="tabs" v-model="tabsIndex" @change="changeComentTab" lineHeight="8rpx"
-							lineColor="#29B7CB" activeColor="#29B7CB" :lineScale="0.2" color="#AAA"></v-tabs>
+							lineColor="#FB7299" activeColor="#FB7299" :lineScale="0.2" color="#AAA"></v-tabs>
 					</view>
 					<view class="tn-margin">
 						<view class="tn-margin-top">
@@ -232,7 +232,7 @@
 					</view>
 					<view v-show="showEmoji">
 						<v-tabs v-model="emojiIndex" :tabs="emojiTabs" @change="changeTab" lineHeight="8rpx"
-							lineColor="#29B7CB" activeColor="#29B7CB" :lineScale="0.2"></v-tabs>
+							lineColor="#FB7299" activeColor="#FB7299" :lineScale="0.2"></v-tabs>
 						<scroll-view scroll-y style="height: 20vh;" class="tn-margin-top-xs">
 							<tn-grid :col="8">
 								<block v-for="(item, index) in emojiList" :key="index">

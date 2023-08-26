@@ -132,6 +132,7 @@
 <style lang="scss">
 	@import './tuniao-ui/index.scss';
 	@import './tuniao-ui/iconfont.css';
+	@import './static/css/animate.css';
 
 	/*APP自定义样式*/
 	.ch-bg-main {

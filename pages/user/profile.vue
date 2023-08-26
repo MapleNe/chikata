@@ -74,7 +74,7 @@
 				<view class="tn-margin-right-sm">
 					<tn-button size="sm" :plain="true" @tap="showNickname=false">取消</tn-button>
 				</view>
-				<tn-button size="sm" backgroundColor="#29B7CB" fontColor="white"
+				<tn-button size="sm" backgroundColor="#FB7299" fontColor="white"
 					@tap="modifyProfile();showNickname=false">确定</tn-button>
 			</view>
 		</tn-modal>
@@ -91,7 +91,7 @@
 				<view class="tn-margin-right-sm">
 					<tn-button size="sm" :plain="true" @tap="showDescription=false">取消</tn-button>
 				</view>
-				<tn-button size="sm" backgroundColor="#29B7CB" fontColor="white"
+				<tn-button size="sm" backgroundColor="#FB7299" fontColor="white"
 					@tap="modifyProfile();showDescription=false">确定</tn-button>
 			</view>
 		</tn-modal>

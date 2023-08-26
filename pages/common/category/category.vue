@@ -1,11 +1,22 @@
 <template>
-	<view>
-		<tn-nav-bar :backgroundColor="background" backTitle=""></tn-nav-bar>
-		<categoryArticle :id="id" ref="paging" @getComments="getComments" @getMenuInfo="getMenuInfo"></categoryArticle>
-		<tn-popup v-model="showComments" mode="bottom" length="60%" :borderRadius="20" :safeAreaInsetBottom="true">
-			<commentList :id="commentId"></commentList>
-		</tn-popup>
-	</view>
+	<z-paging-swiper>
+		<z-paging refresher-only>
+			<template #top>
+				<tn-nav-bar backTitle="" :backgroundColor="background" style="color: white;">
+					<view slot="right" class="tn-padding">
+						<text class="tn-icon-more-horizontal tn-text-xxl"></text>
+					</view>
+				</tn-nav-bar>
+			</template>
+			<view style="position: relative;">
+				<image :src="categoryInfo.opt.head_img" mode="aspectFill" style="width: 100%;height: 300rpx;"></image>
+				<view class="tn-margin" style="position: absolute;top: 200rpx;">
+					<tn-avatar size="xl" :src="categoryInfo.opt.head_img" border borderColor="#fff" :borderSize="4">
+					</tn-avatar>
+				</view>
+			</view>
+		</z-paging>
+	</z-paging-swiper>
 </template>
 
 <script>

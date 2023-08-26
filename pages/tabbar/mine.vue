@@ -1,154 +1,119 @@
 <template>
-	<z-paging-swiper>
-		<template #top>
-			<tn-nav-bar alpha customBack :zIndex="5">
-				<view slot="right" class="tn-flex tn-flex-col-center tn-margin tn-text-xxl tn-color-white"
-					v-if="hasLogin">
-					<text class="tn-icon-circle-more" @tap.stop="showProfile()"></text>
-				</view>
-			</tn-nav-bar>
-			<view class="tn-flex tn-flex-direction-column">
-				<!-- 头部控件 -->
-				<view class="image-wrapper" style="position: relative;">
-					<image :src="userInfo.longtext.background_img?userInfo.longtext.background_img:'/static/logo.png'"
-						style="height: 500rpx;width: 100%;" mode="aspectFill">
-					</image>
-				</view>
-				<view class="tn-padding-top tn-flex tn-flex-col-center tn-flex-row-between"
-					style="position: absolute;top: 380rpx;width: 100%;" v-if="hasLogin">
-					<view class="tn-flex tn-flex-col-center tn-color-white tn-flex-row-around tn-flex-basic-sm">
-						<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
-							<text class="tn-text-bold tn-text-lg">{{userInfo.expand.focusCount}}</text>
-							<text>关注</text>
-						</view>
-						<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
-							<text class="tn-text-bold tn-text-lg">{{userInfo.expand.likeCount}}</text>
-							<text>喜欢</text>
-						</view>
-						<view class="tn-flex tn-flex-direction-column tn-flex-col-center" @tap.stop.prevent="goFans">
-							<text class="tn-text-bold tn-text-lg">{{userInfo.expand.fansCount}}</text>
-							<text>粉丝</text>
-						</view>
-					</view>
+	<view>
+		<tn-nav-bar customBack alpha>
+			<view slot="right" class="tn-padding tn-color-white tn-text-xxl">
+				<text class="tn-margin-right-sm tn-icon-scan tn-padding-xs tn-round"
+					style="background-color: rgba(0,0,0,0.2);" @tap="" @tap.stop.prevent="scanQrcode"></text>
+				<text class="tn-icon-install tn-padding-xs tn-round" style="background-color: rgba(0,0,0,0.2);"
+					@tap.stop.prevent="goSetting"></text>
+			</view>
+		</tn-nav-bar>
 
+		<view style="position: relative;">
+			<view>
+				<image :src="userInfo.longtext.background_img" mode="aspectFill"
+					style="width: 100%;height: 420rpx;">
+				</image>
+			</view>
+			<!-- 第一层 -->
+			<view class="tn-bg-white tn-padding tn-no-padding-right"
+				style="position: absolute;top:320rpx;width: 100%; border-radius: 45rpx 45rpx 0 0">
+				<view style="position: absolute;top: -70rpx;" class="tn-margin-left-sm" @tap.stop.prevent="hasLogin?goProfile():goLogin()">
+					<tn-avatar :src="userInfo.head_img" size="xxl" border borderColor="#fff"
+						:borderSize="6"></tn-avatar>
 				</view>
-				<view class="tn-padding" style="position: absolute;top: 160rpx;width: 100%;">
+				<!-- 按钮样式 -->
+				<view class="tn-flex tn-flex-row-right" v-if="hasLogin">
 					<view class="tn-flex tn-flex-col-center">
-						<view>
-							<tn-avatar :src="userInfo.head_img" size="xl" :border="true" backgroundColor="#f8f7f8"
-								borderColor="#ffffff" :borderSize="6" @tap="hasLogin ? goProfile() : goLogin()">
-							</tn-avatar>
-						</view>
-
-						<view class="tn-flex tn-flex-direction-column tn-flex-1 tn-margin-left" v-if="hasLogin">
-							<view class="tn-flex tn-flex-col-center">
-								<text :class="userInfo.level==='admin'?'ch-color-primary':'tn-color-white'"
-									class="tn-text-bold tn-text-xl">{{userInfo.nickname}}</text>
-								<text v-if="userInfo.level==='admin'"
-									class="tn-text-xl tn-icon-trusty-fill tn-color-white tn-margin-left-xs"></text>
-							</view>
-							<view class="tn-flex tn-flex-col-center tn-margin-top-xs">
-								<text class="tn-color-gray">UID：{{userInfo.id}}</text>
-							</view>
-
+						<view class="tn-margin-right">
+							<tn-button plain backgroundColor="#FB7299" fontColor="#FB7299" @click="goProfile()">个人主页</tn-button>
 						</view>
 					</view>
 				</view>
-
-				<!-- 控件结束 -->
-				<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
-					:zIndex="2" activeColor="#29B7CB" :lineScale="0.2"
-					style="position: relative;bottom: 20rpx;border-radius: 20rpx;">
-				</v-tabs>
 			</view>
-		</template>
-		<swiper class="swiper" :current="tabsIndex" @change="changeSwpier">
-			<swiper-item class="swiper-item">
-				<articleList :tabsIndex="tabsIndex" :swiperIndex="tabsIndex" :content="content" :swiper="false" type="user"
-					@getComments="getComments" @getMenuInfo="getMenuInfo" v-if="hasLogin">
-				</articleList>
-				<view class="tn-flex tn-flex-row-center tn-margin-top-xl" v-else>
-					<tn-button size="sm" :plain="true" shape="round" @tap="goLogin">去登录</tn-button>
-				</view>
-			</swiper-item>
-			<swiper-item class="swiper-item">
-				<view v-if="hasLogin">
-					<collectList :tabsIndex="tabsIndex" :swiperIndex="swiperIndex"></collectList>
-					<view class="tn-margin" style="position: absolute;right: 0;bottom: 40rpx;"
-						@tap.stop="showCollect = true">
-						<tn-button shape="icon" backgroundColor="#29B7CB" size="lg" fontColor="tn-color-white">
-							<text class="tn-icon-add"></text>
-						</tn-button>
-					</view>
-				</view>
-				<view class="tn-flex tn-flex-row-center tn-margin-top-xl" v-else>
-					<tn-button size="sm" :plain="true" shape="round" @tap="goLogin">去登录</tn-button>
-				</view>
-			</swiper-item>
-		</swiper>
-		<tn-modal v-model="showCollect" :custom="true" :showCloseBtn="true" width="92%" padding="0rpx" :zIndex="5">
+			<!-- 第二层 在这里绘制元素 -->
 			<view class="tn-margin">
-				<view class="tn-margin-bottom-lg">
-					<text class="tn-text-bold">创建合集</text>
-				</view>
-
-				<view class="ch-bg-main tn-color-white tn-flex tn-flex-col-center tn-margin-bottom-sm"
-					style="border-radius: 10rpx;position: relative;">
-					<view class="tn-padding-xs" @tap.stop="imageChoose">
-						<tn-avatar :border="true" borderColor="#fff" :borderSize="6" size="xl"
-							:src="collectHead"></tn-avatar>
-					</view>
-					<view class="tn-flex tn-flex-col-center tn-flex-direction-column tn-flex-1">
-						<tn-input :maxLength="18" v-model="collectName" :clearable="false" placeholder="合集名称"
-							placeholderStyle="color:white" />
-						<tn-input :maxLength="50" v-model="collectDesc" :clearable="false" placeholder="合集介绍"
-							placeholderStyle="color:white" />
-					</view>
-				</view>
+				<!-- 用户属性 -->
 				<view class="tn-margin-top">
-					<view class="tn-flex tn-flex-row-right" @tap.stop="createCollect">
-						<tn-button size="sm" backgroundColor="#29B7CB" fontColor="tn-color-white">创建</tn-button>
+					<view class="tn-flex tn-flex-direction-column" v-if="hasLogin">
+						<text class="tn-text-bold tn-text-xxl">{{userInfo.nickname}}</text>
+						<text class="tn-text-md tn-margin-top-xs">通行证ID: {{userInfo.account}}</text>
+					</view>
+					<view class="tn-flex tn-flex-direction-column" v-else @tap="goLogin()">
+						<text class="tn-text-bold tn-text-xxl">点击登录</text>
+						<text class="tn-text-md tn-margin-top-xs">登录解锁更多精彩</text>
+					</view>
+				</view>
+				<!-- 预备个人TAG -->
+				<view class="">
+
+				</view>
+				<view class="tn-margin-top-xl tn-margin-bottom-lg" v-if="hasLogin">
+					<view class="tn-flex tn-flex-col-center tn-text-sm">
+						<view class="tn-flex tn-flex-col-center tn-margin-right" @tap.stop.prevent="goFans()()">
+							<text
+								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{userInfo.expand.fansCount}}</text>
+							<text class="tn-color-gray--dark">粉丝</text>
+						</view>
+						<view class="tn-flex tn-flex-col-center tn-margin-right">
+							<text
+								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{userInfo.expand.focusCount}}</text>
+							<text class="tn-color-gray--dark">关注</text>
+						</view>
+						<view class="tn-flex tn-flex-col-center tn-margin-right">
+							<text
+								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{userInfo.expand.likeCount}}</text>
+							<text class="tn-color-gray--dark">获赞</text>
+						</view>
 					</view>
 				</view>
 			</view>
-		</tn-modal>
-		<l-clipper v-if="showClipper" :image-url="imageUrl"
-			@success="collectHead = $event.url; upload();showTabbar();showClipper = false"
-			@cancel="showTabbar();showClipper = false" :max-width="700" :max-height="700"
-			:is-limit-move="true"></l-clipper>
-		<tn-popup v-model="showComments" mode="bottom" length="60%" :borderRadius="20" :safeAreaInsetBottom="true">
-			<commentList :id="commentId"></commentList>
-		</tn-popup>
-		<articleMenu :showMenu="showMenu" :data="menuData" @close="showMenu = false"></articleMenu>
-		<tn-popup mode="right" length="60%" v-model="showProfileMenu" safeAreaInsetBottom @close="showTabbar()">
-			<image :src="userInfo.longtext.background_img" mode="aspectFit" style="height: 285rpx;width: 100%;"></image>
-			<view class="tn-margin-bottom-sm" v-for="(item,index) in btnList" :key="item.page" @tap.stop="goPage(item)">
-				<tn-button>
-					<view class="tn-flex tn-flex-col-center" :class="item.page==='logout'?'tn-color-red':''">
-						<text :class="item.icon"></text>
-						<text class="tn-margin-left-xs">{{item.name}}</text>
-					</view>
+			<view class="tn-padding-xs tn-bg-gray--light"></view>
+			<view class="tn-margin">
+				<tn-grid :col="4" hoverClass="none" class="tn-text-md">
+					<block v-for="(item, index) in btnList" :key="index">
+						<!-- H5 -->
+						<!-- #ifndef MP-WEIXIN -->
+						<tn-grid-item>
+							<view class="tn-flex tn-flex-direction-column">
+								<text :class="item.icon" class="ch-color-primary tn-text-xxl"></text>
+								<text class="tn-margin-top-sm tn-text-sm tn-margin-bottom">{{item.name}}</text>
+							</view>
+						</tn-grid-item>
+						<!-- #endif-->
 
-				</tn-button>
+						<!-- 微信小程序 -->
+						<!-- #ifdef MP-WEIXIN -->
+						<tn-grid-item :style="{width: gridItemWidth}">
+							<view class="tn-flex tn-flex-direction-column">
+								<text :class="item.icon" class="tn-text-xxl"></text>
+								<text class="tn-margin-top-sm tn-margin-bottom">{{item.name}}</text>
+							</view>
+							<!-- #endif-->
+					</block>
+				</tn-grid>
 			</view>
-			<view class="tn-padding tn-flex tn-flex-row-between" style="position: absolute;bottom: 0;width: 100%;">
-				<tn-button shape="icon" backgroundColor="tn-bg-gray--light" size="lg">
-					<text class="tn-icon-set tn-text-bold"></text>
-				</tn-button>
-				<view @tap.stop="scanQrcode()">
-					<tn-button shape="icon" backgroundColor="tn-bg-gray--light" size="lg">
-						<text class="tn-icon-scan tn-text-bold"></text>
-					</tn-button>
+			<view class="tn-padding-xs tn-bg-gray--light"></view>
+			<tn-list-cell :arrow="true">
+				<view class="tn-flex tn-flex-col-center">
+					<text class="tn-icon-gift tn-text-xxl"></text>
+					<text class="tn-margin-left-sm">活动</text>
 				</view>
-				<view @tap.stop="logout">
-					<tn-button shape="icon" backgroundColor="tn-bg-gray--light" size="lg">
-						<text class="tn-icon-logout tn-text-bold tn-color-red"></text>
-					</tn-button>
+			</tn-list-cell>
+			<tn-list-cell :arrow="true">
+				<view class="tn-flex tn-flex-col-center">
+					<text class="tn-icon-gift tn-text-xxl"></text>
+					<text class="tn-margin-left-sm">活动</text>
 				</view>
-			</view>
-		</tn-popup>
-	</z-paging-swiper>
-
+			</tn-list-cell>
+			<tn-list-cell unlined :arrow="true">
+				<view class="tn-flex tn-flex-col-center">
+					<text class="tn-icon-gift tn-text-xxl"></text>
+					<text class="tn-margin-left-sm">活动</text>
+				</view>
+			</tn-list-cell>
+		</view>
+	</view>
 </template>
 
 <script>
@@ -156,15 +121,8 @@
 		mapState,
 		mapMutations
 	} from 'vuex';
-	import articleList from "@/components/articleList/articleList.vue";
-	import collectList from "@/components/collectList/collectList.vue";
-	import articleMenu from "@/components/aticleMenu/aticleMenu.vue";
 	export default {
-		components: {
-			articleList,
-			collectList,
-			articleMenu,
-		},
+		components: {},
 		computed: {
 			...mapState(['hasLogin', 'userInfo']), //从Store获取全局变量
 		},
@@ -174,27 +132,42 @@
 				tabs: ['动态', '合集'],
 				tabsIndex: 0,
 				btnList: [{
-						name: '个人资料',
-						page: 'profile',
+						name: '头像框',
+						page: 'avatar',
 						icon: 'tn-icon-my'
 					},
 					{
-						name: '我的会员',
-						page: 'VIP',
-						icon: 'tn-icon-vip'
+						name: '好物',
+						page: 'shop',
+						icon: 'tn-icon-shop'
 					},
 					{
-						name: '我的钱包',
-						page: 'money',
-						icon: 'tn-icon-pay'
+						name: '收藏',
+						page: 'star',
+						icon: 'tn-icon-star'
 					},
 					{
-						name: '我的关注',
-						page: 'focus',
-						icon: 'tn-icon-flower'
+						name: '浏览历史',
+						page: 'history',
+						icon: 'tn-icon-order'
 					},
 					{
-						name: '我的粉丝',
+						name: '小摊',
+						page: 'othershop',
+						icon: 'tn-icon-commissary'
+					},
+					{
+						name: '创作中心',
+						page: 'creative',
+						icon: 'tn-icon-creative'
+					},
+					{
+						name: '社区中心',
+						page: 'home',
+						icon: 'tn-icon-home-leaf'
+					},
+					{
+						name: '占位',
 						page: 'fans',
 						icon: 'tn-icon-like'
 					},
@@ -218,6 +191,12 @@
 		},
 		onLoad() {
 
+		},
+		computed: {
+			// 兼容小程序
+			gridItemWidth() {
+				return 100 / this.col + '%'
+			}
 		},
 		methods: {
 			...mapMutations(['logout']),
@@ -274,7 +253,10 @@
 			//个人主页
 			goProfile() {
 				this.$Router.push({
-					path: '/pages/user/profile',
+					path: '/pages/common/userProfile/userProfile',
+					query: {
+						id: this.userInfo.id
+					}
 				})
 			},
 			goVip() {
@@ -282,9 +264,14 @@
 					path: '/pages/user/vip',
 				})
 			},
-			goFans(){
+			goFans() {
 				this.$Router.push({
 					path: '/pages/user/userFans/userFans',
+				})
+			},
+			goSetting() {
+				this.$Router.push({
+					path: '/pages/user/setting/setting'
 				})
 			},
 			goPage(item) {

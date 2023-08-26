@@ -170,12 +170,9 @@ const store = new Vuex.Store({
 				key: 'refreshExp'
 			})
 			uni.$emit('logoutComplete')
-			setTimeout(()=>{
-				uni.reLaunch({
-					url:'/pages/tabbar/mine'
-				})
-			},200)
-			
+			uni.reLaunch({
+				url: '/pages/tabbar/index'
+			})
 		}
 	},
 	actions: {}

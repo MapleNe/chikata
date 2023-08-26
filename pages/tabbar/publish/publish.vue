@@ -9,7 +9,7 @@
 					</tn-button>
 				</view>
 				<view @tap.stop.prevent="update?'':showArticleSet = !showArticleSet">
-					<tn-button size="sm" shape="round" backgroundColor="#29B7CB" fontColor="tn-color-white">
+					<tn-button size="sm" shape="round" backgroundColor="#FB7299" fontColor="tn-color-white">
 						{{update?'更新':'发布'}}
 					</tn-button>
 				</view>
@@ -102,7 +102,7 @@
 						@click="showPermission = !showPermission">设置权限</tn-list-cell>
 					<view class="tn-margin-top-xl">
 						<view class="tn-flex-col-center tn-flex tn-flex-row-center" @tap.stop.prevent="publish()">
-							<tn-button shape="round" backgroundColor="#29B7CB" fontColor="tn-color-white"
+							<tn-button shape="round" backgroundColor="#FB7299" fontColor="tn-color-white"
 								style="width: 100%;">确认发布</tn-button>
 						</view>
 					</view>
@@ -307,7 +307,7 @@
 						</view>
 					</view>
 					<view class="tn-margin-top" @tap.stop.prevent="addLink()">
-						<tn-button backgroundColor="#29B7CB" shape="round" fontColor="tn-color-white"
+						<tn-button backgroundColor="#FB7299" shape="round" fontColor="tn-color-white"
 							style="width: 100%;">添加链接</tn-button>
 					</view>
 
