@@ -23,8 +23,7 @@
 				</view>
 				<view class="tn-flex tn-flex-col-center tn-padding" slot="right">
 					<text class=" tn-text-xl tn-icon-search"></text>
-					<text class="tn-text-xl tn-margin-left tn-icon-more-vertical"
-						@tap.stop.prevent="showManage =!showManage" v-if="!hasLogin&&userInfo.id!=id">
+					<text class="tn-text-xl tn-margin-left tn-icon-more-vertical" @tap.stop.prevent="showManage =!showManage" v-if="!hasLogin&&userInfo.id!=id">
 					</text>
 				</view>
 			</tn-nav-bar>
@@ -98,8 +97,7 @@
 		</view>
 		<!-- 定位结束 -->
 		<view :style="{'z-index': 100,'position': 'sticky','top' :vuex_custom_bar_height+'px'}">
-			<tn-tabs-swiper :list="tabs" ref="tabs" :current="tabsIndex" @change="changeTab" bold
-				activeColor="#FB7299"></tn-tabs-swiper>
+			<z-tabs ref="tabs" :current="tabsIndex" active-color="#FB7299" @change="changeTab" :list="tabs"></z-tabs>
 		</view>
 		<swiper :current="tabsIndex" @transition="swiperTransition" @animationfinish="swiperAnimationfinish"
 			class="swiper">
@@ -300,15 +298,7 @@
 		data() {
 			return {
 				content: [],
-				tabs: [{
-						name: '帖子'
-					}, {
-						name: '评论'
-					},
-					{
-						name: '收藏'
-					}
-				],
+				tabs: ['帖子', '评论', '收藏'],
 				id: null,
 				loading: true,
 				skeleton: [
@@ -387,7 +377,7 @@
 					}
 				}).then(res => {
 					console.log(res)
-					this.$refs.article.completeByTotal(res.data.data.data, res.data.data.count)
+					this.$refs.article.completeByTotal(res.data.data.data,res.data.data.count)
 
 				}).catch(err => {
 					this.$refs.article.complete(false)
@@ -553,12 +543,12 @@
 				this.tabsIndex = index
 			},
 			swiperTransition(e) {
-				this.$refs.tabs.setDx(e.detail.dx)
+				this.$refs.tabs.setDx(e.detail.dx);
 			},
 			//swiper滑动结束
 			swiperAnimationfinish(e) {
-				this.$refs.tabs.setFinishCurrent(e.detail.current)
 				this.tabsIndex = e.detail.current;
+				this.$refs.tabs.unlockDx();
 			},
 			previewImage(images, index) {
 				let data = [];

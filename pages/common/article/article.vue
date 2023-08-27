@@ -77,8 +77,7 @@
 							</view>
 						</view>
 
-						<view class="tn-margin-top" style="max-width: 100%;" @touchend="touchEnd"
-							@touchmove="touchMove">
+						<view class="tn-margin-top" style="max-width: 100%;" @touchend="touchEnd" @touchmove="touchMove">
 							<mp-html :show-img-menu="imgMenu" :content="article.content" :selectable="true" />
 						</view>
 						<view class="tn-margin-top-sm">
@@ -112,8 +111,8 @@
 					<!-- 文章详情 结束 -->
 					<!-- 评论区 开始 -->
 					<view class="tn-color-grey" style="position: sticky;top: 0;z-index: 9999;">
-						<tn-tabs :list="tabs" ref="tabs" :isScroll="true" :current="tabsIndex"
-							@change="changeComentTab" bold activeColor="#FB7299"></tn-tabs>
+						<z-tabs ref="tabs" :current="tabsIndex" active-color="#FB7299" :scrollCount="1" @change="changeComentTab" :list="tabs"></z-tabs>
+						
 					</view>
 					<view class="tn-margin">
 						<view class="tn-margin-top">
@@ -306,13 +305,7 @@
 		},
 		data() {
 			return {
-				tabs: [{
-						name: '全部评论'
-					},
-					{
-						name: '只看楼主'
-					}
-				],
+				tabs: ['全部评论', '只看楼主'],
 				tabsIndex: 0,
 				commentBoxText: '我想说...', //底部盒子显示的信息
 				commentText: '', //这个才是回复的信息

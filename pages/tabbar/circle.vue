@@ -46,11 +46,11 @@
 							<view>
 								<view v-for="(item, index) in list1" :key="item.id"
 									class="tn-margin-bottom-sm tn-padding-bottom-sm" :style="{width:item.width+'px'}"
-									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 10rpx;"
+									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 20rpx;"
 									@tap.stop.prevent="goAticle(item)">
 									<view class="">
 										<image :src="item.expand.img_src" mode="widthFix"
-											:style="{width:item.width+'px'}" style="border-radius: 10rpx 10rpx 0 0;">
+											:style="{width:item.width+'px'}" style="border-radius: 20rpx 20rpx 0 0;">
 										</image>
 									</view>
 									<view class="tn-padding-xs">
@@ -72,11 +72,11 @@
 							<view>
 								<view v-for="(item, index) in list2" :key="item.id"
 									class="tn-margin-bottom-sm tn-padding-bottom-sm" :style="{width:item.width+'px'}"
-									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 10rpx;"
+									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 20rpx;"
 									@tap.stop.prevent="goAticle(item)">
 									<view class="">
 										<image :src="item.expand.img_src" mode="widthFix"
-											:style="{width:item.width+'px'}" style="border-radius: 10rpx 10rpx 0 0;">
+											:style="{width:item.width+'px'}" style="border-radius: 20rpx 20rpx 0 0;">
 										</image>
 									</view>
 									<view class="tn-padding-xs">
