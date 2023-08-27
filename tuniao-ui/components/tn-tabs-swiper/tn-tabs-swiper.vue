@@ -173,7 +173,7 @@
           let style = {
             height: this.$tn.string.getLengthUnitValue(this.height),
             lineHeight: this.$tn.string.getLengthUnitValue(this.height),
-            fontSize: this.fontSizeStyle || '28rpx',
+            fontSize: this.fontSizeStyle || '30rpx',
             color: this.tabsInfo.length > 0 ? (this.tabsInfo[index] ? this.tabsInfo[index].color : this.activeColor) : this.inactiveColor,
             padding: this.isScroll ? `0 ${this.gutter}rpx` : '',
             flex: this.isScroll ? 'auto' : '1',

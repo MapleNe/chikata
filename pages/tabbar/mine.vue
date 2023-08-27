@@ -11,7 +11,7 @@
 
 		<view style="position: relative;">
 			<view>
-				<image :src="userInfo.longtext.background_img" mode="aspectFill"
+				<image :src="userInfo.longtext.background_img?userInfo.longtext.background_img:userInfo.head_img" mode="aspectFill"
 					style="width: 100%;height: 420rpx;">
 				</image>
 			</view>

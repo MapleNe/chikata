@@ -2,12 +2,10 @@
 	<z-paging-swiper>
 		<template #top>
 			<tn-nav-bar customBack>
-				<view class="tn-flex tn-flex-row-center">
-					<z-tabs ref="tabs" :current="tabsIndex" active-color="#FB7299" @change="changeTab" :list="tabs"
-						:scroll-count="2"></z-tabs>
-				</view>
-				<view slot="right" class="tn-padding tn-no-padding-top" v-show="!tabsIndex">
-					<text>发动态</text>
+				<tn-tabs-swiper :list="tabs" ref="tabs" :isScroll="false" :current="tabsIndex" name="name"
+					@change="changeTab" bold activeColor="#FB7299"></tn-tabs-swiper>
+				<view slot="right" class="tn-padding tn-no-padding-top" v-show="tabsIndex">
+					<text class="tn-text-md">发动态</text>
 				</view>
 			</tn-nav-bar>
 			<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
@@ -15,71 +13,91 @@
 		<swiper class="swiper" :current="tabsIndex" @animationfinish="swiperAnimationfinish"
 			@transition="swiperTransition">
 			<swiper-item>
-				<articleList :swiper="false" type="circle" @getComments="getComments" @getMenuInfo="getMenuInfo">
-				</articleList>
-			</swiper-item>
-			<swiper-item class="tn-bg-gray--light">
-				<z-paging ref="paging" v-model="categoryList" @query="getCategory">
+				<z-paging ref="paging" v-model="content" @query="getArticle">
+					<view class="tn-margin-left tn-margin-right tn-flex tn-flex-col-center tn-flex-row-between">
+						<text class="tn-text-bold tn-text-md">分区列表</text>
+						<view class="tn-flex tn-flex-col-center tn-text-md tn-color-gray--dark">
+							<text class="tn-margin-right-xs">全部</text>
+							<text class="tn-icon-right"></text>
+						</view>
+					</view>
+					<tn-scroll-list indicatorActiveColor="#FB7299">
+						<view class="tn-margin tn-flex tn-flex-col-center tn-flex-row-between tn-flex-1">
+							<block v-for="(item,index) in categoryList" :key="index">
+								<image :src="item.opt.head_img" mode="aspectFill"
+									class="tn-border-solid tn-border-gray--light tn-bold-border tn-round"
+									style="width: 100rpx;height: 100rpx;" @tap="goCategory(index)"></image>
+							</block>
+						</view>
+					</tn-scroll-list>
 					<view class="tn-margin">
 						<tn-swiper :list="swiperList" :height="300" name="img" backgroundColor="tn-bg-gray--light"
 							:radius="10" @click="clickSwiper">
 						</tn-swiper>
 					</view>
-					<view class="tn-bg-white tn-padding-top-xs tn-padding-bottom-xs">
-						<view class="tn-margin">
-							<view>
-								<text class="tn-text-bold tn-text-lg">全部分区</text>
-							</view>
-							<view v-for="(item,index) in categoryList" :key="index" class="tn-margin-top">
-								<view class="tn-flex tn-flex-col-center tn-flex-row-between"
-									@tap.stop.prevent="goCategory(item)">
-									<view class="tn-flex tn-flex-col-center">
-										<tn-avatar shape="square" :src="item.opt.head_img" size="lg"
-											backgroundColor="none"></tn-avatar>
-										<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
-											<text class="tn-margin-bottom-xs">{{item.name}}</text>
-											<text class="tn-text-sm tn-color-gray">{{item.expand.count}}篇帖子</text>
-										</view>
-									</view>
-									<view>
-										<text class="tn-icon-right tn-color-grey-disabled"></text>
-									</view>
-								</view>
-								<view
-									class="tn-margin-top-sm tn-text-sm tn-padding-top-sm tn-padding-sm tn-bg-gray--light tn-padding-xs"
-									style="border-radius: 10rpx;">
-									<view class="tn-padding-left-xs tn-padding-right-sm">
-										<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-											<text class="tn-text-bold">分区每月热榜</text>
-											<view class="tn-flex tn-flex-col-center tn-color-gray">
-												<text class="tn-margin-right-xs">全部</text>
-												<text class="tn-icon-right"></text>
-											</view>
-										</view>
-										<view class="tn-margin-top">
-											<view class="tn-flex tn-flex-col-center">
-												<view
-													class=" tn-color-orangered tn-border-solid tn-border-orangered tn-margin-right-sm"
-													style="border-radius: 10rpx;">
-													<text class="tn-padding-xs">ACG</text>
-												</view>
-												<view class="tn-color-gray--dark">
-													<text>这是文本</text>
-												</view>
-
-											</view>
-										</view>
-
-									</view>
-
-								</view>
-							</view>
-						</view>
+					<view class="tn-margin ">
+						<text>随便看看</text>
 					</view>
+					<uv-waterfall ref="waterfall" v-model="content" left-gap="12" right-gap="12" column-gap="8"
+						@changeList="changeList">
+						<!-- 第一列数据 -->
+						<template v-slot:list1>
+							<!-- 为了磨平部分平台的BUG，必须套一层view -->
+							<view>
+								<view v-for="(item, index) in list1" :key="item.id" class="tn-margin-bottom-sm tn-padding-bottom-sm"
+									:style="{width:item.width+'px'}"
+									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 10rpx;">
+									<view class="">
+										<image :src="item.expand.img_src" mode="widthFix"
+											:style="{width:item.width+'px'}" style="border-radius: 10rpx 10rpx 0 0;">
+										</image>
+									</view>
+									<view class="tn-padding-xs">
+										<view class="tn-text-ellipsis-2 tn-text-md">
+											<text>{{item.description}}</text>
+										</view>
+									</view>
+									<view class="tn-padding-xs tn-flex tn-flex-col-center">
+										<tn-avatar :src="item.expand.author.head_img" size="xs"></tn-avatar>
+										<text class="tn-margin-left-xs tn-text-sm tn-color-gray--dark">{{item.expand.author.nickname}}</text>
+									</view>
+								</view>
+							</view>
+						</template>
+						<!-- 第二列数据 -->
+						<template v-slot:list2>
+							<!-- 为了磨平部分平台的BUG，必须套一层view -->
+							<view>
+								<view v-for="(item, index) in list2" :key="item.id" class="tn-margin-bottom-sm tn-padding-bottom-sm"
+									:style="{width:item.width+'px'}"
+									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 10rpx;">
+									<view class="">
+										<image :src="item.expand.img_src" mode="widthFix"
+											:style="{width:item.width+'px'}" style="border-radius: 10rpx 10rpx 0 0;">
+										</image>
+									</view>
+									<view class="tn-padding-xs">
+										<view class="tn-text-ellipsis-2 tn-text-md">
+											<text>{{item.description}}</text>
+										</view>
+									</view>
+									<view class="tn-padding-xs tn-flex tn-flex-col-center">
+										<tn-avatar :src="item.expand.author.head_img" size="xs"></tn-avatar>
+										<text class="tn-margin-left-xs tn-text-sm tn-color-gray--dark">{{item.expand.author.nickname}}</text>
+									</view>
+								</view>
+							</view>
+						</template>
+					</uv-waterfall>
 
 				</z-paging>
 
 			</swiper-item>
+			<swiper-item>
+				<articleList :swiper="false" type="circle" @getMenuInfo="getMenuInfo">
+				</articleList>
+			</swiper-item>
+
 		</swiper>
 	</z-paging-swiper>
 </template>
@@ -90,36 +108,69 @@
 			return {
 				tabs: [{
 						id: 1,
-						name: '关注',
+						name: '发现',
 						type: 'cirecle',
 
 					},
 					{
 						id: 1,
-						name: '发现',
+						name: '关注',
 						type: 'cirecle',
 
 					}
 				],
 				tabsIndex: 0,
 				swiperList: [],
-				categoryList: []
+				categoryList: [],
+				content: [],
+				list1: [],
+				list2: [],
 
 			}
 		},
 		created() {
 			this.getBanner()
+			this.getCategory()
+		},
+		mounted() {
+			this.$nextTick(() => {
+				uni.createSelectorQuery().in(this).select('.left').boundingClientRect(res => {
+					this.columnWidth = res.width
+					//方法1
+					this.setWaterFallLayout()
+					//方法2
+					// this.setWaterFallLayout2()
+				}).exec()
+			})
 		},
 		methods: {
-			getCategory(page, num) {
-				this.$http.get('/article-sort/all', {
+			changeList(e) {
+				this[e.name].push(e.value);
+			},
+			getArticle(page, num) {
+				this.$http.get('/article/all', {
 					params: {
 						page: page,
 						limit: num,
+						random: true
+					}
+				}).then(res => {
+					console.log(res)
+					if (res.data.code === 200) {
+						this.$refs.paging.complete(res.data.data.data)
+
+					}
+				})
+			},
+			getCategory() {
+				this.$http.get('/article-sort/all', {
+					params: {
+						page: 1,
+						limit: 10,
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
-						this.$refs.paging.complete(res.data.data.data)
+						this.categoryList = res.data.data.data
 					}
 				})
 			},
@@ -129,7 +180,10 @@
 			//swiper滑动结束
 			swiperAnimationfinish(e) {
 				this.tabsIndex = e.detail.current;
-				this.$refs.tabs.unlockDx();
+				this.$refs.tabs.setFinishCurrent(e.detail.current)
+			},
+			changeTab(index) {
+				this.tabsIndex = index
 			},
 			getBanner() {
 				this.$http.get('/banner').then(res => {
@@ -141,19 +195,17 @@
 					}
 				})
 			},
-			goCategory(category) {
+			goCategory(index) {
+				console.log(index)
 				this.$Router.push({
 					path: '/pages/common/category/category',
 					query: {
-						id: category.id
+						id: this.categoryList[index].id
 					}
 				})
 			},
-			changeTab(index) {
-				this.tabsIndex = index
-			},
-			changeSwpier(event) {
-				this.tabsIndex = event.detail.current
+			changeSwpier(e) {
+				this.tabsIndex = e.detail.current
 			},
 		}
 	}
@@ -162,5 +214,11 @@
 <style lang="scss">
 	.swiper {
 		height: 100%;
+	}
+
+	.left,
+	.right {
+		margin: 0 auto;
+		width: 48%;
 	}
 </style>

@@ -17,8 +17,8 @@
 				</view>
 			</tn-nav-bar>
 
-			<z-tabs ref="tabs" :current="tabsIndex" active-color="#FB7299" @change="changeTab" :list="tabs"
-				:scroll-count="2"></z-tabs>
+			<tn-tabs-swiper :list="tabs" ref="tabs" :isScroll="true" :current="tabsIndex" @change="changeTab" bold
+				activeColor="#FB7299"></tn-tabs-swiper>
 		</template>
 		<!-- swiper必须设置height:100%，因为swiper有默认的高度，只有设置高度100%才可以铺满页面  -->
 
@@ -30,9 +30,6 @@
 				</articleList>
 			</swiper-item>
 		</swiper>
-		<tn-popup v-model="showComments" mode="bottom" length="60%" :borderRadius="20" :safeAreaInsetBottom="true">
-			<commentList :id="commentId"></commentList>
-		</tn-popup>
 	</z-paging-swiper>
 </template>
 
@@ -57,18 +54,15 @@
 				isBanner: false,
 				tabsIndex: 0,
 				tabs: [{
-						id: 1,
 						name: '首页',
 						type: 'index',
 					},
 					{
-						id: 2,
 						name: '热门',
 						type: 'index',
 
 					},
 					{
-						id: 3,
 						name: '关注',
 						type: 'focus',
 					}
@@ -97,23 +91,16 @@
 					this.showComments = true
 				}
 			},
-			getMenuInfo(data) {
-				this.showMenu = true
-				this.menuData = data
-			},
 			changeTab(index) {
 				this.tabsIndex = index
 			},
 			swiperTransition(e) {
-				this.$refs.tabs.setDx(e.detail.dx);
+				this.$refs.tabs.setDx(e.detail.dx)
 			},
 			//swiper滑动结束
 			swiperAnimationfinish(e) {
+				this.$refs.tabs.setFinishCurrent(e.detail.current)
 				this.tabsIndex = e.detail.current;
-				this.$refs.tabs.unlockDx();
-			},
-			changeSwpier(event) {
-				this.tabsIndex = event.detail.current
 			},
 			goMine() {
 				this.$Router.pushTab({

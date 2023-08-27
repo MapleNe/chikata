@@ -170,8 +170,8 @@ const store = new Vuex.Store({
 				key: 'refreshExp'
 			})
 			uni.$emit('logoutComplete')
-			uni.reLaunch({
-				url: '/pages/tabbar/index'
+			router.replaceAll({
+				path:'/pages/tabbar/index'
 			})
 		}
 	},
