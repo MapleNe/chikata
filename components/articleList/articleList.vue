@@ -9,7 +9,7 @@
 					</tn-swiper>
 				</view>
 			</view>
-			<view v-for="(item,index) in content" :key="index" @longpress="getMenuInfo(item)" @touchend="touchEnd"
+			<view v-for="(item,index) in content" :key="index" @touchend="touchEnd"
 				@touchmove="touchMove">
 				<view class="tn-margin">
 					<ls-skeleton :skeleton="skeleton" :loading="loading">
@@ -456,7 +456,7 @@
 					result = timePublish.getFullYear() + "-";
 					result += timePublish.getMonth() + "-";
 					result += timePublish.getDate();
-					alert(result);
+					
 				} else if (diffMonth > 1) {
 					result = parseInt(diffMonth) + "月前";
 				} else if (diffWeek > 1) {

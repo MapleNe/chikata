@@ -229,7 +229,7 @@
 				</z-paging>
 
 			</swiper-item>
-			<swiper-item :id="`viewcontent${this.tabsIndex}`">
+			<swiper-item>
 				<z-paging @query="getComments" v-model="comments" ref="comments" :auto-clean-list-when-reload="false"
 					:auto-scroll-to-top-when-reload="false" :refresher-enabled="false" :use-page-scroll="swiperAction">
 					<view class="tn-margin">
