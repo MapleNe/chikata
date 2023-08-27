@@ -38,15 +38,16 @@
 					<view class="tn-margin ">
 						<text>随便看看</text>
 					</view>
-					<uv-waterfall ref="waterfall" v-model="content" left-gap="12" right-gap="12" column-gap="8"
+					<uv-waterfall ref="waterfall" v-model="content" left-gap="13" right-gap="13" column-gap="8"
 						@changeList="changeList">
 						<!-- 第一列数据 -->
 						<template v-slot:list1>
 							<!-- 为了磨平部分平台的BUG，必须套一层view -->
 							<view>
-								<view v-for="(item, index) in list1" :key="item.id" class="tn-margin-bottom-sm tn-padding-bottom-sm"
-									:style="{width:item.width+'px'}"
-									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 10rpx;">
+								<view v-for="(item, index) in list1" :key="item.id"
+									class="tn-margin-bottom-sm tn-padding-bottom-sm" :style="{width:item.width+'px'}"
+									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 10rpx;"
+									@tap.stop.prevent="goAticle(item)">
 									<view class="">
 										<image :src="item.expand.img_src" mode="widthFix"
 											:style="{width:item.width+'px'}" style="border-radius: 10rpx 10rpx 0 0;">
@@ -59,7 +60,8 @@
 									</view>
 									<view class="tn-padding-xs tn-flex tn-flex-col-center">
 										<tn-avatar :src="item.expand.author.head_img" size="xs"></tn-avatar>
-										<text class="tn-margin-left-xs tn-text-sm tn-color-gray--dark">{{item.expand.author.nickname}}</text>
+										<text
+											class="tn-margin-left-xs tn-text-sm tn-color-gray--dark">{{item.expand.author.nickname}}</text>
 									</view>
 								</view>
 							</view>
@@ -68,9 +70,10 @@
 						<template v-slot:list2>
 							<!-- 为了磨平部分平台的BUG，必须套一层view -->
 							<view>
-								<view v-for="(item, index) in list2" :key="item.id" class="tn-margin-bottom-sm tn-padding-bottom-sm"
-									:style="{width:item.width+'px'}"
-									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 10rpx;">
+								<view v-for="(item, index) in list2" :key="item.id"
+									class="tn-margin-bottom-sm tn-padding-bottom-sm" :style="{width:item.width+'px'}"
+									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 10rpx;"
+									@tap.stop.prevent="goAticle(item)">
 									<view class="">
 										<image :src="item.expand.img_src" mode="widthFix"
 											:style="{width:item.width+'px'}" style="border-radius: 10rpx 10rpx 0 0;">
@@ -83,7 +86,8 @@
 									</view>
 									<view class="tn-padding-xs tn-flex tn-flex-col-center">
 										<tn-avatar :src="item.expand.author.head_img" size="xs"></tn-avatar>
-										<text class="tn-margin-left-xs tn-text-sm tn-color-gray--dark">{{item.expand.author.nickname}}</text>
+										<text
+											class="tn-margin-left-xs tn-text-sm tn-color-gray--dark">{{item.expand.author.nickname}}</text>
 									</view>
 								</view>
 							</view>
@@ -172,6 +176,15 @@
 					if (res.data.code === 200) {
 						this.categoryList = res.data.data.data
 					}
+				})
+			},
+			goAticle(item) {
+				this.$Router.push({
+					path: '/pages/common/article/article',
+					query: {
+						id: item.id,
+						users_id: item.users_id
+					},
 				})
 			},
 			swiperTransition(e) {
