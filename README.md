@@ -1,7 +1,8 @@
 # Chikata
 	Powered By Chikata
 # ISSUE
-	- 获取分类文章异常
+	- 文章发布不跳转
+	- 
 # Todo
  - [x] 关注 （后端）
  - 用户统计 （后端）

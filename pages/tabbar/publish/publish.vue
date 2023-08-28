@@ -337,6 +337,7 @@
 	import {
 		mapstate
 	} from 'vuex';
+import store from '../../../store';
 	export default {
 		data() {
 			return {
@@ -559,6 +560,7 @@
 				showSaveDraft: false,
 				draft: null,
 				showAddLink: false,
+				save:false,
 			};
 		},
 		onLoad(params) {
@@ -585,7 +587,7 @@
 			}
 		},
 		beforeRouteLeave(to, from, next) {
-			if (this.edit.textCount) {
+			if (this.edit.textCount&&!this.save) {
 				uni.showModal({
 					title: '是否保存为草稿',
 					confirmText: '保存',
@@ -599,7 +601,8 @@
 						}
 					}
 				})
-			} else {
+			} else if(this.save) {
+				console.log(11)
 				next()
 			}
 		},
@@ -638,7 +641,7 @@
 				})
 			},
 			getCategory() {
-				this.$http.get('article-sort/all', {
+				this.$http.get('/article-sort/all', {
 					params: {
 						page: 1,
 						limit: 20,
@@ -661,7 +664,6 @@
 				});
 				// 监听输入
 				this.edit.$on('edit:input', (e) => {
-
 					console.log('监听输入', e);
 				});
 				// 监听光标指向不同样式时回调
@@ -837,7 +839,7 @@
 					// 上传并替换图片
 					let {
 						data
-					} = await this.$http.upload('/file/upload', {
+					} = await this.$http.upload('/file/uploadImg', {
 						filePath: img,
 						name: 'file',
 					})
@@ -863,17 +865,18 @@
 					opt: JSON.stringify(this.articleOpt),
 				}).then(res => {
 					if (res.data.code === 200) {
-						console.log(res)
 						uni.hideLoading()
+						this.save = true
 						uni.showToast({
 							icon: 'none',
 							title: '发布' + res.data.msg
 						})
 						setTimeout(() => {
-							this.$Router.replace({
+							this.$Router.replaceAll({
 								path: '/pages/common/article/article',
 								query: {
-									id: res.data.data
+									id: res.data.data,
+									users_id:store.userInfo.id
 								}
 							})
 						}, 2000)
