@@ -216,6 +216,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/common/article/comment/comment",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"tabBar": {
 		"backgroundColor": "#ffffff",
