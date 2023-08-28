@@ -1,7 +1,8 @@
 <template>
 	<view>
 		<z-paging ref="paging" @query="getArticle" v-model="content" :auto="false">
-			<view v-for="(item,index) in content" :key="index">
+			<view v-for="(item,index) in content" :key="index" @longpress="getMenuInfo(item)" @touchend="touchEnd"
+				@touchmove="touchMove">
 				<view class="tn-margin">
 					<ls-skeleton :skeleton="skeleton" :loading="loading">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
@@ -19,8 +20,17 @@
 
 						</view>
 						<view @tap.stop="goAticle(index)">
-							<view class="tn-padding tn-no-padding-left">
+							<view class="tn-padding tn-no-padding-left tn-padding-bottom-xs">
 								<rich-text :nodes="item.description"></rich-text>
+							</view>
+							<view v-if="item.expand.tag.length>0">
+								<view class="tn-flex tn-flex-col-center tn-flex-wrap ch-color-primary">
+									<view v-for="(tags,index) in item.expand.tag" :key="tags.id"
+										class="tn-margin-right-xs tn-margin-bottom-sm">
+										<text class="tn-icon-topic"></text>
+										<text>{{tags.name}}</text>
+									</view>
+								</view>
 							</view>
 							<!-- 单张图片 -->
 							<view v-if="item.expand.images.length===1">
@@ -78,30 +88,32 @@
 								</tn-grid>
 							</view>
 							<!-- 点赞控件 -->
-							<view class="tn-flex tn-flex-col-center tn-margin-top-xs tn-flex-row-between">
-								<view v-for="(category,index) in item.expand.sort" :key="index"
-									class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius"
-									@tap.stop="goCategory(category)">
-									<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
-									<text
-										class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
+							<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top">
+								<view class="tn-flex tn-flex-row-left">
+									<view v-for="(category,index) in item.expand.sort" :key="index" class="tn-padding-right tn-round tn-border-solid tn-flex tn-flex-col-center"
+										@tap.stop="goCategory(category)">
+										<view class="tn-margin-right-sm">
+											<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
+										</view>
+										<text class="tn-text-sm">{{category.name}}</text>
+									</view>
 								</view>
-								<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-basic-sm">
+								<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-1">
 									<view class="tn-flex tn-flex-col-center">
-										<text class="tn-text-xl tn-icon-fire"></text>
+										<text class="tn-text-xxl tn-icon-fireworks tn-color-red"></text>
 										<text>{{item.views}}</text>
 									</view>
-									<view class="tn-flex tn-flex-col-center">
-										<text class="tn-text-xl tn-icon-message"></text>
+									<view class="tn-flex tn-flex-col-center" @tap.stop="showComments(index)">
+										<text class="tn-text-xxl tn-color-orangered tn-icon-comment-fill"></text>
 										<text>{{item.expand.comments.count}}</text>
 									</view>
 									<view class="tn-flex tn-flex-col-center" @tap.stop="likeAction(index)">
-										<text
-											:class="item.expand.like.is_like?'tn-text-xl tn-icon-like-fill tn-color-red':'tn-text-xl tn-icon-like'"></text>
+										<text class="tn-text-xxl"
+											:class="item.expand.like.is_like?' tn-icon-like-fill tn-color-red':'tn-icon-like'"></text>
 										<text>{{item.expand.like.likes_count}}</text>
 									</view>
-
 								</view>
+							
 							</view>
 						</view>
 					</ls-skeleton>
@@ -110,6 +122,7 @@
 				<view class="tn-bg-gray--light tn-padding-xs"></view>
 				<!-- 间隔结束 -->
 			</view>
+			
 		</z-paging>
 	</view>
 </template>
@@ -144,9 +157,15 @@
 					'circle-sm+line-sm'
 				],
 				loading: true,
+				isLongTap: true,
 			};
 		},
 		created() {
+			uni.$on('deleteArticleOk',data=>{
+				if(data){
+					this.$refs.paging.reload()
+				}
+			})
 		},
 		watch: {
 			swiperIndex: {
@@ -181,12 +200,8 @@
 				})
 			},
 			likeAction(index) {
-				this.$http.put('/ArticleLike/Record', {
+				this.$http.put('/Article-like/Record', {
 					article_id: this.content[index].id
-				}, {
-					header: {
-						Authorization: uni.getStorageSync('token')
-					}
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.content[index].expand.like.is_like = !this.content[index].expand.like.is_like
@@ -211,6 +226,14 @@
 					console.log('位于articleList的错误请联系管理')
 				})
 			},
+			showComments(index) {
+				this.$emit('getComments', this.content[index].id)
+			},
+			getMenuInfo(data){
+				if (this.isLongTap) {
+					this.$emit('getMenuInfo', data)
+				}
+			},
 			goAticle(index) {
 				let data = this.content
 				this.$Router.push({
@@ -227,6 +250,13 @@
 						id: category.id
 					}
 				})
+			},
+			touchEnd() {
+				this.isLongTap = true;
+			},
+			touchMove(e) {
+				// 手指触摸后的移动事件
+				this.isLongTap = false;
 			},
 			followUser() {
 				console.log('点击了关注')

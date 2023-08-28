@@ -1,7 +1,7 @@
 {
 	"easycom": {
 		"^tn-(.*)": "@/tuniao-ui/components/tn-$1/tn-$1.vue",
-		"ls-skeleton":"@/components/ls-skeleton/ls-skeleton.nvue"
+		"ls-skeleton": "@/components/ls-skeleton/ls-skeleton.nvue"
 	},
 	"pages": [
 		//pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
@@ -30,6 +30,9 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"login": true
 			}
 
 		}, {
@@ -44,6 +47,9 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"login": false
 			}
 
 		}, {
@@ -52,12 +58,148 @@
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false,
 				"backgroundColor": " #f8f7f8"
+			},
+			"meta": {
+				"login": true
 			}
 
 		}
 
+		, {
+			"path": "pages/common/search/search",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/common/category/category",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/profile",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"login": true
+			}
+
+		}, {
+			"path": "pages/common/collect/collect",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/createCollect",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/common/userProfile/userProfile",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/common/chat/chat",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"login": true
+			}
+
+		}, {
+			"path": "pages/user/vip",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/noticeDetail/noticeDetail",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/tabbar/publish/searchTag",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/userFans/userFans",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/common/comments/comments",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/setting/setting",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/setting/account/account",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/setting/notice/notice",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/setting/privacy/privacy",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/setting/block/block",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/firstLogin/firstLogin",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}
 	    ,{
-            "path" : "pages/common/search/search",
+            "path" : "pages/user/collect/collect",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -66,34 +208,7 @@
             
         }
         ,{
-            "path" : "pages/common/category/category",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/user/profile",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/common/collect/collect",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/user/createCollect",
+            "path" : "pages/user/collect/detail",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -105,7 +220,7 @@
 	"tabBar": {
 		"backgroundColor": "#ffffff",
 		"color": "#949494",
-		"selectedColor": "#29B7CB",
+		"selectedColor": "#FB7299",
 		"fontSize": "16px",
 		"list": [{
 				"pagePath": "pages/tabbar/index",
@@ -113,7 +228,7 @@
 			},
 			{
 				"pagePath": "pages/tabbar/circle",
-				"text": "广场"
+				"text": "动态"
 			},
 			{
 				"pagePath": "pages/tabbar/notice",
@@ -126,20 +241,25 @@
 		],
 		"midButton": {
 			// "text": "发布",
-			"iconPath": "static/img/search.png",
+			"iconPath": "static/publish.png",
+			"iconWidth": "45px",
 			"width": "80px",
-			"height": "40px"
+			"height": "50px"
 		}
 	},
 	"globalStyle": {
+		"rpxCalcMaxDeviceWidth": 1024, // rpx 计算所支持的最大设备宽度，单位 px，默认值为 960
+		"rpxCalcBaseDeviceWidth": 375, // rpx 计算使用的基准设备宽度，设备实际宽度超出 rpx 计算所支持的最大设备宽度时将按基准宽度计算，单位 px，默认值为 375
+		"rpxCalcIncludeWidth": 750, // rpx 计算特殊处理的值，始终按实际的设备宽度计算，单位 rpx，默认值为 750
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F7F8",
 		"navigationStyle": "custom",
 		"app-plus": {
-			"animationType": "slide-in-bottom",
-			"animationDuration": 500
+			"animationDuration": 250,
+			"bounce": "none",
+			"softinputmode": "adjustResize"
 		}
 	},
 	"condition": {

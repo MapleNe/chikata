@@ -2,7 +2,7 @@
 	<!-- 使用z-paging-swiper为根节点可以免计算高度 -->
 	<z-paging-swiper>
 		<template #top>
-			<tn-nav-bar :isBack="false" customBack :zIndex="2">
+			<tn-nav-bar :isBack="false" customBack :zIndex="2" :fixed="false">
 				<view class="tn-margin-sm tn-no-margin-top">
 					<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 						<tn-avatar :src="userInfo.head_img" @tap="hasLogin?goMine():goLogin()"></tn-avatar>
@@ -16,22 +16,19 @@
 					</view>
 				</view>
 			</tn-nav-bar>
-			<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
-			<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
-				activeColor="#29B7CB" :lineScale="0.2"></v-tabs>
+
+			<z-tabs ref="tabs" :current="tabsIndex" active-color="#FB7299" @change="changeTab" :list="tabs"
+				:scroll-count="2"></z-tabs>
 		</template>
 		<!-- swiper必须设置height:100%，因为swiper有默认的高度，只有设置高度100%才可以铺满页面  -->
-
-		<swiper class="swiper" :current="tabsIndex" @change="changeSwpier">
-			<swiper-item class="swiper-item" v-for="(item, index) in tabs" :key="index">
-				<articleList :tabsIndex="index" :swiperIndex="tabsIndex" :content="content" :swiper="true"
-					@getComments="getComments">
-				</articleList>
-			</swiper-item>
-		</swiper>
-		<tn-popup v-model="showComments" mode="bottom" length="60%" :borderRadius="20" :safeAreaInsetBottom="true">
-			<commentList :id="commentId"></commentList>
-		</tn-popup>
+			<swiper class="swiper" :current="tabsIndex" @animationfinish="swiperAnimationfinish"
+				@transition="swiperTransition">
+				<swiper-item class="swiper-item" v-for="(item, index) in tabs" :key="index">
+					<articleList :tabsIndex="index" :swiperIndex="tabsIndex" :content="content" :swiper="true"
+						:type="item.type" @getComments="getComments" @scroll="getScroll">
+					</articleList>
+				</swiper-item>
+			</swiper>
 	</z-paging-swiper>
 </template>
 
@@ -40,26 +37,47 @@
 		mapState,
 		mapMutations
 	} from 'vuex';
+
+	import config from "@/static/config.js";
 	import articleList from "@/components/articleList/articleList.vue";
 	import commentList from '@/components/commentList/commentList.vue';
-	import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+	import articleMenu from '@/components/aticleMenu/aticleMenu.vue';
 	export default {
-		mixins: [MescrollMixin], // 使用mixin
 		components: {
 			articleList,
 			commentList,
+			articleMenu,
 		},
 		data() {
 			return {
 				isBanner: false,
 				tabsIndex: 0,
-				tabs: ['首页', '热门', '关注'],
+				tabs: [{
+						id: 1,
+						name: '首页',
+						type: 'index',
+					},
+					{
+						id: 2,
+						name: '热门',
+						type: 'index',
+
+					},
+					{
+						id: 3,
+						name: '关注',
+						type: 'focus',
+					}
+				],
 				content: [],
 				showComments: false,
 				commentId: null,
+				showMenu: false,
+				menuData: null,
+				ws: null,
+				backButtonPress: 0,
+				swiperAction: false,
 			}
-		},
-		onLoad() {
 		},
 		created() {},
 		computed: {
@@ -76,8 +94,20 @@
 					this.showComments = true
 				}
 			},
+			getMenuInfo(data) {
+				this.showMenu = true
+				this.menuData = data
+			},
 			changeTab(index) {
 				this.tabsIndex = index
+			},
+			swiperTransition(e) {
+				this.$refs.tabs.setDx(e.detail.dx);
+			},
+			//swiper滑动结束
+			swiperAnimationfinish(e) {
+				this.tabsIndex = e.detail.current;
+				this.$refs.tabs.unlockDx();
 			},
 			changeSwpier(event) {
 				this.tabsIndex = event.detail.current
@@ -94,18 +124,23 @@
 			},
 			goLogin() {
 				this.$Router.push({
-					path: '/pages/user/login'
+					path: '/pages/user/login',
+					animation: {
+						animationType: 'slide-in-bottom',
+						animationDuration: 200
+					},
 				})
 			},
 			goSearch() {
 				this.$Router.push({
 					path: '/pages/common/search/search',
-					animation: {
-						animationType: 'slide-in-right',
-						animationDuration: 500
-					}
+
 				})
-			}
+			},
+			getScroll(status) {
+				return status
+			},
+			
 		}
 	}
 </script>

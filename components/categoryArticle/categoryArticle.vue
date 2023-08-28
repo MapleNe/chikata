@@ -1,7 +1,6 @@
 <template>
 	<view>
 		<!-- 头部组件开始 -->
-		
 		<view class="image-wrapper">
 			<image :src="categoryInfo.opt.head_img" mode="aspectFill" style="width: 100%;height: 300rpx;"></image>
 		</view>
@@ -10,35 +9,48 @@
 			<text class="tn-margin-left-sm tn-color-white">{{categoryInfo.name}}</text>
 		</view>
 		<view style="position: relative;bottom: 15rpx;">
-			<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
-				:zIndex="2" activeColor="#29B7CB" style="border-radius: 20rpx 20rpx 0 0;background-color: white;">
+			<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#FB7299"
+				:zIndex="2" activeColor="#FB7299" style="border-radius: 20rpx 20rpx 0 0;background-color: white;">
 			</v-tabs>
 		</view>
 
 		<z-paging ref="paging" @query="getArticle" v-model="content" use-page-scroll>
-			<view v-for="(item,index) in content" :key="index">
+			<view v-for="(item,index) in content" :key="index" @longpress="getMenuInfo(item)">
 				<view class="tn-margin">
 					<ls-skeleton :skeleton="skeleton" :loading="loading">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 							<view class="tn-flex tn-flex-col-center">
-								<tn-avatar :src="item.expand.author.head_img"></tn-avatar>
+								<tn-avatar :src="item.expand.author.head_img" @tap="goUserProfile(index)"></tn-avatar>
 								<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
-									<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
+									<view class="tn-flex tn-flex-col-center">
+										<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
+										<text v-if="item.expand.author.level==='admin'"
+											class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
+									</view>
 									<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
 								</view>
 							</view>
 							<view>
-								<tn-button size="sm" :backgroundColor="item.expand.focus?'tn-bg-gray--light':'#29B7CB'"
+								<tn-button size="sm" :backgroundColor="item.expand.focus?'tn-bg-gray--light':'#FB7299'"
 									:fontColor="item.expand.focus?'tn-color-grey':'tn-color-white'" shape="round"
-									@tap="followUser(index)">
+									:blockRepeatClick="true" @tap="followUser(index)">
 									<text>{{item.expand.focus?'已关注':'关注'}}</text>
 								</tn-button>
 							</view>
 
 						</view>
 						<view @tap.stop="goAticle(index)">
-							<view class="tn-padding tn-no-padding-left">
+							<view class="tn-padding tn-no-padding-left tn-padding-bottom-xs">
 								<rich-text :nodes="item.description"></rich-text>
+							</view>
+							<view v-if="item.expand.tag.length>0">
+								<view class="tn-flex tn-flex-col-center tn-flex-wrap ch-color-primary">
+									<view v-for="(tags,index) in item.expand.tag" :key="tags.id"
+										class="tn-margin-right-xs tn-margin-bottom-sm">
+										<text class="tn-icon-topic"></text>
+										<text>{{tags.name}}</text>
+									</view>
+								</view>
 							</view>
 							<!-- 单张图片 -->
 							<view v-if="item.expand.images.length===1">
@@ -96,25 +108,28 @@
 								</tn-grid>
 							</view>
 							<!-- 点赞控件 -->
-							<view class="tn-flex tn-flex-col-center tn-margin-top-xs tn-flex-row-between">
-								<view v-for="(category,index) in item.expand.sort" :key="index"
-									class="tn-flex tn-flex-col-center tn-bg-gray--light tn-radius">
-									<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
-									<text
-										class="tn-margin-left-xs tn-margin-right-xs tn-text-sm">{{category.name}}</text>
+							<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top">
+								<view class="tn-flex tn-flex-row-left">
+									<view v-for="(category,index) in item.expand.sort" :key="index"
+										class="tn-padding-right tn-round tn-border-solid tn-flex tn-flex-col-center">
+										<view class="tn-margin-right-sm">
+											<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
+										</view>
+										<text class="tn-text-sm">{{category.name}}</text>
+									</view>
 								</view>
-								<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-basic-sm">
+								<view class="tn-flex tn-flex-col-center tn-flex-row-around tn-flex-1">
 									<view class="tn-flex tn-flex-col-center">
-										<text class="tn-text-xl tn-icon-fire"></text>
+										<text class="tn-text-xxl tn-icon-fireworks tn-color-red"></text>
 										<text>{{item.views}}</text>
 									</view>
 									<view class="tn-flex tn-flex-col-center" @tap.stop="showComments(index)">
-										<text class="tn-text-xl tn-icon-message"></text>
+										<text class="tn-text-xxl tn-color-orangered tn-icon-comment-fill"></text>
 										<text>{{item.expand.comments.count}}</text>
 									</view>
 									<view class="tn-flex tn-flex-col-center" @tap.stop="likeAction(index)">
-										<text
-											:class="item.expand.like.is_like?'tn-text-xl tn-icon-like-fill tn-color-red':'tn-text-xl tn-icon-like'"></text>
+										<text class="tn-text-xxl"
+											:class="item.expand.like.is_like?' tn-icon-like-fill tn-color-red':'tn-icon-like'"></text>
 										<text>{{item.expand.like.likes_count}}</text>
 									</view>
 								</view>
@@ -150,7 +165,7 @@
 				type: Number,
 				default: null
 			},
-			
+
 		},
 		name: "categoryArticle",
 		data() {
@@ -174,6 +189,7 @@
 				],
 				loading: true,
 				navcolor: null,
+				isLongTap: true,
 			};
 
 		},
@@ -196,18 +212,17 @@
 		},
 
 		methods: {
-			async getArticle(page, num) {
-				await this.$http.get('/article-sort/article', {
+			getArticle(page, num) {
+				this.$http.get('/article-sort/article', {
 					params: {
-						id: this.id,
-						limit: num,
 						page: page,
-						order: this.tabsIndex === 1 ? 'create_time desc' : this.tabsIndex === 2 ?
-							'is_top desc,views desc' : ''
+						limit: num,
+						id: this.id,
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
-						this.$refs.paging.complete(res.data.data.expand.data)
+						this.$refs.paging.complete(res.data.data.expand.data.data)
+						console.log(res)
 						this.categoryInfo = res.data.data
 						this.firstLoad = true
 						//骨架屏仅在第一次加载数据时显示
@@ -222,7 +237,7 @@
 			},
 
 			likeAction(index) {
-				this.$http.put('/ArticleLike/Record', {
+				this.$http.put('/Article-like/Record', {
 					article_id: this.content[index].id
 				}).then(res => {
 					if (res.data.code === 200) {
@@ -248,8 +263,13 @@
 					console.log('位于articleList的错误请联系管理')
 				})
 			},
-			showComments(index){
-				this.$emit('getComments',this.content[index].id)
+			showComments(index) {
+				this.$emit('getComments', this.content[index].id)
+			},
+			getMenuInfo(data) {
+				if (this.isLongTap) {
+					this.$emit('getMenuInfo', data)
+				}
 			},
 			goAticle(index) {
 				this.$Router.push({
@@ -259,7 +279,21 @@
 					},
 				})
 			},
-
+			goUserProfile(index) {
+				this.$Router.push({
+					path: '/pages/common/userProfile/userProfile',
+					query: {
+						id: this.content[index].users_id
+					}
+				})
+			},
+			touchEnd() {
+				this.isLongTap = true;
+			},
+			touchMove(e) {
+				// 手指触摸后的移动事件
+				this.isLongTap = false;
+			},
 			followUser(index) {
 				this.$http.put('/Focus/Record', {
 					userId: this.content[index].users_id

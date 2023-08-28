@@ -1,112 +1,196 @@
 <template>
 	<view>
-		<tn-nav-bar :isBack="false"></tn-nav-bar>
-		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
-		<view class="tn-margin">
-			<tn-button :plain="true" height="80rpx" width="80rpx" @tap="back">
-				<text class="tn-text-xl tn-icon-left"></text>
-			</tn-button>
-			<view class="tn-flex tn-flex-direction-column">
-				<text class="tn-text-bold tn-text-xl-xxl tn-margin-bottom-sm tn-margin-top-lg">
-					Luck Day
-				</text>
-				<text class="tn-color-grey tn-margin-bottom-sm">
-					快来{{loginAction?'登录':'注册'}}吧~
-				</text>
-				<view class="tn-color-grey tn-flex tn-flex-direction-column" style="height: 30rpx;" v-show="hitokoto">
-					<text>{{hitokoto.hitokoto}}</text>
-					<text class="tn-text-right tn-icon-right-triangle">{{hitokoto.from}}</text>
-				</view>
+		<tn-nav-bar backTitle="" customBack alpha>
+			<view slot="back" class="tn-padding tn-no-padding-left">
+				<text class="tn-icon-close tn-text-xxl tn-color-white" @tap.stop.prevent="back()"></text>
 			</view>
-			<view v-if="loginAction">
-				<view class="tn-margin-top-xl tn-padding-top-xl">
-					<view
-						class="tn-bg-gray--light tn-round tn-padding-xs tn-padding-left tn-flex tn-flex-col-center tn-margin-bottom-lg">
-						<text class="tn-text-xxl tn-icon-email tn-padding-right"></text>
-						<view class="tn-padding-right tn-flex-1">
-							<tn-input type="text" placeholder="邮箱/账号" v-model="account" :clearable="false" />
+		</tn-nav-bar>
+		<view style="position: relative;">
+			<image src="@/static/placeholder.png" mode="aspectFill" style="width: 100%;height: 400rpx;"></image>
+			<view style="position: absolute; top:370rpx;border-radius: 30rpx 30rpx;width: 100%;" class="tn-bg-white">
+				<view class="tn-margin">
+					<!-- <登录页面 -->
+					<view class="tn-margin" v-show="loginAction&&!codeEnter">
+						<view class="tn-flex tn-flex-direction-column">
+							<text class="tn-text-bold">{{codeLogin?'手机短信登录':'账号密码登录'}}</text>
+							<text class="tn-margin-top-xs tn-color-gray--dark" style="font-size: 28rpx;"
+								v-show="codeLogin">未注册的的手机号验证通过将自动注册</text>
+						</view>
+						<view class="tn-margin-top">
+							<!-- 手机验证码登录 -->
+							<view class="tn-flex tn-flex-col-center tn-border-solids-bottom tn-border-gray--light"
+								v-show="codeLogin">
+								<view class="tn-border-solid-right">
+									<text class="tn-margin-right">+86</text>
+								</view>
+								<view class="tn-padding-left tn-flex-1">
+									<tn-input placeholder="请输入手机号码" placeholderStyle="font-size:32rpx;color:#C6D1D8"
+										:fontSize="32" v-model="phone" type="number" :maxLength="11" rightIcon="right"
+										:clearable="phone"></tn-input>
+								</view>
+							</view>
+							<!-- 账号登录 -->
+							<view class="tn-flex tn-flex-direction-column" v-show="!codeLogin">
+								<view class="tn-border-solids-bottom tn-border-gray--light">
+									<tn-input v-model="account" placeholderStyle="font-size:32rpx;color:#C6D1D8"
+										placeholder="手机号/账号" />
+								</view>
+								<view class="tn-margin-top tn-border-solids-bottom tn-border-gray--light">
+									<tn-input type="password" v-model="password" placeholderStyle="color:#C6D1D8"
+										placeholder="密码" />
+								</view>
+							</view>
+						</view>
+						<view class="tn-margin-top-xl tn-text-center">
+							<tn-checkbox v-model="accept" activeColor="#FB7299" @change="accept =!accept" shape="circle"
+								:size="30">
+								<view class="tn-color-gray--dark" style="font-size: 28rpx;">
+									<text>我已阅读并同意</text>
+									<text class="ch-color-primary">《用户协议》</text>
+									<text>和</text>
+									<text class="ch-color-primary">《隐私政策》</text>
+								</view>
+							</tn-checkbox>
+						</view>
+						<view class="tn-margin-top-sm">
+							<view class="tn-bg-gray--light tn-padding-sm tn-round tn-text-center tn-color-gray--dark"
+								:class="{'ch-bg-main tn-color-white':codeLogin&&phone&&phone.length==11&&accept||!codeLogin&&account&&accept&&password}"
+								@tap.stop.prevent="codeLogin&&phone&&phone.length==11&&accept?getLoginCode():account&&password?passwordLogin():''">
+								<text>{{codeLogin?'获取验证码':'登录'}}</text>
+							</view>
+						</view>
+						<view class="tn-margin-top-xl tn-padding-bottom-xl">
+							<view class="tn-flex tn-flex-row-center tn-color-gray--dark" style="font-size: 28rpx;">
+								<text @tap.stop.prevent="codeLogin = !codeLogin">{{codeLogin?'账密登录':'短信登录'}}</text>
+								<text class="tn-margin-left tn-margin-right tn-color-gray--light">|</text>
+								<text @tap.stop.prevent="issueAction=!issueAction">遇到问题</text>
+							</view>
+							<view class="tn-margin-top-sm tn-text-center tn-color-gray--dark" style="font-size: 28rpx;">
+								<text @tap.stop.prevent="loginAction = !loginAction">通行证创建</text>
+							</view>
+						</view>
+						<!-- 三方登录 -->
+						<view class="tn-margin-top-xl">
+							<view class="tn-flex tn-flex-col-center tn-flex-row-center ">
+								<text class="tn-icon-qq tn-bg-blue tn-text-xxl tn-padding-sm tn-color-white tn-round"
+									style="font-size: 60rpx;" @tap.stop.prevent="qqLogin"></text>
+								<text class="tn-margin-left tn-margin-right"></text>
+								<text
+									class="tn-icon-wechat-fill tn-bg-green tn-text-xxl tn-padding-sm tn-color-white tn-round"
+									style="font-size: 60rpx;"></text>
+							</view>
 						</view>
 					</view>
-					<view
-						class="tn-bg-gray--light tn-round tn-padding-xs tn-padding-left tn-flex tn-flex-col-center tn-margin-bottom-lg">
-						<text class="tn-text-xxl tn-padding-right"
-							:class="codeLogin?'tn-icon-safe':'tn-icon-lock'"></text>
-						<view class="tn-padding-right tn-flex-1">
-							<tn-input :type="codeLogin?'text':'password'" :placeholder="codeLogin? '验证码':'密码'"
-								v-model="passMode" :clearable="false" />
+					<!-- 验证码验证界面 -->
+					<view class="tn-margin-top" v-show="codeLogin&&codeEnter">
+						<view class="tn-text-center tn-flex tn-flex-col-center tn-flex-direction-column">
+							<text class="tn-text-bold" style="font-size: 30rpx;">请输入短信验证码</text>
+							<text class="tn-color-gray--dark"
+								style="font-size: 28rpx;">已发送至{{phone?phoneNum(phone):''}}</text>
 						</view>
-						<view class="tn-margin-right-xs" v-if="codeLogin">
-							<tn-verification-code :seconds="seconds" ref="verificationCode"
-								@change="codeChange"></tn-verification-code>
-							<tn-button @tap="getCode" :plain="true" shape="round">{{tips}}</tn-button>
+						<view class="tn-margin-top-sm">
+							<tn-verification-code-input v-model="loginCode" :maxLength="6" :breathe="false"
+								@finish="vclLogin()"></tn-verification-code-input>
+							<view class="tn-margin-top-xl tn-text-center">
+								<text class="ch-color-primary" :class="{'tn-color-gray--dark':seconds!==0}"
+									@tap.stop.prevent="!seconds?getLoginCode():''">{{seconds!==0?`重新获取（${this.seconds}）`:'获取验证码'}}</text>
+							</view>
+
 						</view>
 
 					</view>
-					<view class="tn-margin-left-sm tn-flex tn-flex-row-between">
-						<text @tap.stop.prevent="changeLogin">
-							{{codeLogin?'密码登录':'验证码登录'}}
-						</text>
-						<text @tap="fogetPassword">忘记密码？</text>
-					</view>
-				</view>
-				<view class="tn-margin-top-xl tn-text-center">
-					<tn-button shape="round" :plain="true" width="200rpx" @tap="loginCheck">登录</tn-button>
-				</view>
-				<view class="tn-margin-top-xl tn-flex tn-flex-row-center">
-					<text @tap="createAction">通行证创建</text>
-				</view>
-				<view class="tn-padding-xl tn-margin-xl">
-					<view class="tn-margin-top-xl tn-text-xxl tn-flex tn-flex-row-around tn-padding-xl">
-						<text class="tn-icon-qq tn-bg-blue tn-round tn-padding-xs tn-color-white"></text>
-						<text class="tn-icon-wechat tn-bg-green tn-round tn-padding-xs tn-color-white"></text>
-					</view>
-				</view>
-			</view>
-			<view v-else>
-				<view class="tn-margin-top-xl tn-padding-top-xl">
-					<view
-						class="tn-bg-gray--light tn-round tn-padding-xs tn-padding-left tn-flex tn-flex-col-center tn-margin-bottom-lg">
-						<text class="tn-text-xxl tn-icon-my tn-padding-right"></text>
-						<view class="tn-padding-right tn-flex-1">
-							<tn-input type="text" placeholder="昵称" v-model="nickname" :clearable="false" />
+					<!-- 注册页面 -->
+					<view class="tn-margin" v-show="!loginAction">
+						<text class="tn-text-bold">账号注册</text>
+						<view class="tn-margin-top-xl tn-color-gray--dark">
+							<view
+								class="tn-bg-gray--light tn-round tn-padding-xs tn-padding-left tn-flex tn-flex-col-center tn-margin-bottom-lg">
+								<text class="tn-text-xxl tn-icon-my tn-padding-right"></text>
+								<view class="tn-padding-right tn-flex-1">
+									<tn-input type="text" placeholder="昵称"
+										placeholderStyle="font-size:32rpx;color:#C6D1D8" v-model="nickname"
+										:clearable="false" />
+								</view>
+							</view>
+							<view
+								class="tn-bg-gray--light tn-round tn-padding-xs tn-padding-left tn-flex tn-flex-col-center tn-margin-bottom-lg">
+								<text class="tn-text-xxl tn-icon-phone tn-padding-right"></text>
+								<view class="tn-padding-right tn-flex-1">
+									<tn-input type="number" :maxLength="11"
+										placeholderStyle="font-size:32rpx;color:#C6D1D8" placeholder="手机号码"
+										v-model="phone" :clearable="false" />
+								</view>
+							</view>
+							<view
+								class="tn-bg-gray--light tn-round tn-padding-xs tn-padding-left tn-flex tn-flex-col-center tn-margin-bottom-lg">
+								<text class="tn-text-xxl tn-padding-right tn-icon-lock"></text>
+								<view class="tn-padding-right tn-flex-1">
+									<tn-input type="password" placeholder="密码"
+										placeholderStyle="font-size:32rpx;color:#C6D1D8" v-model="password"
+										:clearable="false" />
+								</view>
+							</view>
+							<view
+								class="tn-bg-gray--light tn-round tn-padding-xs tn-padding-left tn-flex tn-flex-col-center tn-margin-bottom-lg">
+								<text class="tn-text-xxl tn-padding-right tn-icon-safe"></text>
+								<view class="tn-padding-right tn-flex-1">
+									<tn-input type="text" placeholder="验证码"
+										placeholderStyle="font-size:32rpx;color:#C6D1D8" v-model="code"
+										:clearable="false" />
+								</view>
+								<view class="tn-margin-right-xs">
+									<tn-verification-code :seconds="seconds" ref="verificationCode"
+										@change="codeChange"></tn-verification-code>
+									<tn-button @click="nickname&&phone&&password?getRegisterCode():''" :plain="true"
+										shape="round">{{tips}}</tn-button>
+								</view>
+							</view>
+							<view class="tn-margin-top-xl">
+								<view
+									class="tn-text-center tn-color-gray--dark tn-bg-gray--light tn-padding-sm tn-round"
+									:class="{'ch-bg-main tn-color-white':nickname&&phone&&password&&code}"
+									@tap.stop.prevent="nickname&&phone&&password&&code?createAccount():''">
+									<text>创建</text>
+								</view>
+							</view>
+							<view class="tn-margin-top-xl tn-color-gray--dark tn-flex tn-flex-row-center">
+								<text @tap.stop.prevent="loginAction=!loginAction"
+									style="font-size: 28rpx;">通行证登录</text>
+							</view>
 						</view>
-					</view>
-					<view
-						class="tn-bg-gray--light tn-round tn-padding-xs tn-padding-left tn-flex tn-flex-col-center tn-margin-bottom-lg">
-						<text class="tn-text-xxl tn-icon-email tn-padding-right"></text>
-						<view class="tn-padding-right tn-flex-1">
-							<tn-input type="email" placeholder="邮箱" v-model="account" :clearable="false" />
-						</view>
-					</view>
-					<view
-						class="tn-bg-gray--light tn-round tn-padding-xs tn-padding-left tn-flex tn-flex-col-center tn-margin-bottom-lg">
-						<text class="tn-text-xxl tn-padding-right tn-icon-lock"></text>
-						<view class="tn-padding-right tn-flex-1">
-							<tn-input type="password" placeholder="密码" v-model="password" :clearable="false" />
-						</view>
-					</view>
-					<view
-						class="tn-bg-gray--light tn-round tn-padding-xs tn-padding-left tn-flex tn-flex-col-center tn-margin-bottom-lg">
-						<text class="tn-text-xxl tn-padding-right tn-icon-safe"></text>
-						<view class="tn-padding-right tn-flex-1">
-							<tn-input type="text" placeholder="验证码" v-model="code" :clearable="false" />
-						</view>
-						<view class="tn-margin-right-xs">
-							<tn-verification-code :seconds="seconds" ref="verificationCode"
-								@change="codeChange"></tn-verification-code>
-							<tn-button @tap="getCode" :plain="true" shape="round">{{tips}}</tn-button>
-						</view>
-					</view>
-					<view class="tn-margin-top-xl tn-text-center">
-						<tn-button shape="round" :plain="true" width="200rpx" @tap="registerCheck">注册</tn-button>
-					</view>
-					<view class="tn-margin-top-xl tn-flex tn-flex-row-center">
-						<text @tap="createAction">通行证登录</text>
+
 					</view>
 				</view>
 			</view>
 
 		</view>
+		<!-- 遇到问题弹出层 -->
+		<tn-popup mode="bottom" v-model="issueAction" :borderRadius="30">
+			<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
+				<text class="tn-margin">忘记密码</text>
+				<text class="tn-margin">账号申述</text>
+				<text class="tn-margin">常见问题</text>
+			</view>
+			<view class="tn-text-center tn-text-bold tn-bg-gray--light tn-padding"
+				@tap.stop.prevent="issueAction=!issueAction">
+				<text>取消</text>
+			</view>
+		</tn-popup>
+		<tn-popup mode="center" :borderRadius="20" v-model="breakLogin" length="80%">
+			<view class="tn-margin">
+				<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
+					<text>登录中止</text>
+					<text class="tn-padding-sm tn-color-gray--dark" style="font-size: 28rpx;">点击“确定”之后将中断登录，确定返回？</text>
+				</view>
+			</view>
+			<view class="tn-padding tn-color-gray--dark tn-bg-gray--light">
+				<view class="tn-flex tn-flex-row-around" style="font-size: 28rpx;">
+					<text @tap.stop.prevent="breakLogin=!breakLogin">取消</text>
+					<text class="tn-color-grey--light">|</text>
+					<text class="ch-color-primary" @tap.stop.prevent="back()">确定</text>
+				</view>
+			</view>
+		</tn-popup>
 	</view>
 </template>
 
@@ -119,17 +203,33 @@
 		data() {
 			return {
 				account: null,
+				phone: null,
 				nickname: null,
 				password: null,
 				code: null,
-				codeLogin: false,
-				seconds: 60,
+				loginCode: '',
+				codeLogin: true,
+				seconds: 65,
 				tips: null,
 				loginAction: true,
-				hitokoto: [],
+				accept: false,
+				issueAction: false,
+				codeEnter: false,
+				loginTips: null,
 				timer: null,
+				breakLogin: false,
+				realBack: false,
 			}
 		},
+		beforeRouteLeave(to, from, next) {
+			if (!this.realBack && this.codeEnter) {
+				this.breakLogin = !this.breakLogin
+				this.realBack = true
+			} else {
+				next()
+			}
+		},
+		onReady() {},
 		computed: {
 			// v-model无法使用三元判断 使用计算属性
 			passMode: {
@@ -143,29 +243,28 @@
 						this.password = value;
 					}
 				}
+			},
+			cid: {
+				get() {
+					return this.$store.state.cid
+				},
+				set(value) {
+
+				}
 			}
 		},
-		onShow() {
-			this.getHitokoto();
-			this.timer = setInterval(() => {
-				this.getHitokoto();
-			}, 30000);
-		},
-		onHide() {
-			clearInterval(this.timer);
-			this.timer = null;
-		},
+		onShow() {},
 		methods: {
 			...mapMutations(['logout', 'login', 'setToken', 'setRefreshToken']),
-			changeLogin() {
-				if (!this.codeLogin) {
-					this.codeLogin = true
-				} else {
-					this.codeLogin = false
-				}
+			phoneNum(phone) {
+				let userPhone = phone.substring(0, 3) + '****' + phone.substring(7)
+				return userPhone
+			},
+			loginChange(text) {
+				this.loginTips = text
 			},
 			loginCheck() {
-				if (this.account && this.password) {
+				if (this.account || this.phone && this.password) {
 					if (this.codeLogin) {
 						this.vclLogin();
 					} else {
@@ -180,19 +279,23 @@
 			},
 			registerCheck() {
 				switch (true) {
-					case this.account === null:
+					case this.nickname == null:
+						uni.showToast({
+							icon: 'none',
+							title: '昵称为空'
+						});
+					case this.account == null:
 						uni.showToast({
 							icon: 'none',
 							title: '邮箱为空'
 						});
-						break;
-					case this.password === null:
+					case this.password == null:
 						uni.showToast({
 							icon: 'none',
 							title: '密码为空'
 						});
 						break;
-					case this.code === null:
+					case this.code == null:
 						uni.showToast({
 							icon: 'none',
 							title: '验证码为空'
@@ -206,51 +309,75 @@
 			},
 			vclLogin() {
 				this.$http.post('/users/vcl', {
-					account: this.account,
-					code: this.code
+					account: this.phone,
+					code: this.loginCode,
+					cid: this.cid
 				}).then(res => {
-					if (res.data.code === 200) {
+					console.log(res)
+					if (res.data.code === 200||res.data.code===201) {
 						let data = res.data
 						let token = data.data['login-token']
 						this.setRefreshToken(res.data.data.refreshToken)
 						this.setToken(token)
 						// uni.setStorageSync('userInfo', data.data.user)
 						this.login(data.data.user)
-						uni.$emit('loginCompete', true)
-						console.log(data.data.user)
+						uni.$emit('loginComplete', true)
 						uni.showToast({
 							icon: 'none',
 							title: data.msg
 						});
-						setTimeout(() => {
-							this.back()
-						}, 800)
+						this.realBack = true
+						if(res.data.code===200){
+							setTimeout(() => {
+								this.back()
+							}, 800)
+						}else{
+							this.$Router.push({
+								path:'/pages/user/firstLogin/firstLogin'
+							})
+						}
+						
+					} else {
+						uni.showToast({
+							icon: 'none',
+							title: res.data.msg
+						})
 					}
 				})
 			},
 			passwordLogin() {
 				this.$http.post('/users/login', {
 					account: this.account,
-					password: this.password
+					password: this.password,
+					//#ifdef APP-PLUS
+					cid: this.cid,
+					//#endif
+
 				}).then(res => {
 					if (res.data.code === 200) {
 						let data = res.data
 						let token = data.data['login-token']
-						this.setRefreshToken(res.data.data.refreshToken)
+						this.setRefreshToken(data.data.refreshToken)
 						this.setToken(token)
-						uni.setStorageSync('loginExp',res.data.data.loginExp)
-						uni.setStorageSync('refreshExp',res.data.data.refreshExp)
+						uni.setStorageSync('loginExp', data.data.loginExp)
+						uni.setStorageSync('refreshExp', data.data.refreshExp)
 						// uni.setStorageSync('userInfo', data.data.user)
 						this.login(data.data.user)
-						uni.$emit('loginCompete', true)
+						uni.$emit('loginComplete', true)
 						console.log(res)
 						uni.showToast({
 							icon: 'none',
 							title: data.msg
 						});
+						this.realBack = true
 						setTimeout(() => {
 							this.back()
 						}, 800)
+					} else {
+						uni.showToast({
+							icon: 'none',
+							title: res.data.msg
+						})
 					}
 				}).catch(err => {
 					console.log(err)
@@ -266,31 +393,18 @@
 					title: '忘记就忘记了呗'
 				})
 			},
-			createAction() {
-				if (!this.loginAction) {
-					this.loginAction = true
-				} else {
-					this.loginAction = false
-				}
 
-			},
-			getRegisterCode() {
-				this.$http.post('/users/register', {
-					nickname: this.nickname,
-					email: this.account,
-					password: this.password,
-				}).then(res => {
-					console.log(res)
+			createAccount() {
+				if (this.phone.length < 11) {
 					uni.showToast({
 						icon: 'none',
-						title: res.data.msg
+						title: '手机号码格式错误'
 					})
-				})
-			},
-			createAccount() {
+					return;
+				}
 				this.$http.post('/users/register', {
 					nickname: this.nickname,
-					email: this.account,
+					phone: this.phone,
 					password: this.password,
 					code: this.code
 				}).then(res => {
@@ -327,54 +441,133 @@
 					})
 				}
 			},
+			qqLogin() {
+				uni.login({
+					provider: 'qq',
+					success: (res) => {
+						console.log(res)
+						uni.getUserInfo({
+							provider: 'qq',
+							success: (info) => {
+								this.goQqLogin(info.userInfo)
+							}
+						})
+					}
+				})
+			},
+			goQqLogin(info) {
+				console.log(info)
+				this.$http.post('/users/qqlogin', {
+					openId: info.openId,
+					figureurl_qq: info.figureurl_qq,
+					nickname: info.nickname,
+					gender: info.gender,
+					//#ifdef APP-PLUS
+					cid: this.cid,
+					//#endif
+
+				}).then(res => {
+					if (res.data.code === 200) {
+						console.log(res.data.data)
+						let data = res.data
+						let token = data.data['login-token']
+						this.setRefreshToken(data.data.refreshToken)
+						this.setToken(token)
+						uni.setStorageSync('loginExp', data.data.loginExp)
+						uni.setStorageSync('refreshExp', data.data.refreshExp)
+						// uni.setStorageSync('userInfo', data.data.user)
+						this.login(data.data.user)
+						uni.$emit('loginComplete', true)
+
+						uni.showToast({
+							icon: 'none',
+							title: data.msg
+						});
+						this.realBack = true
+						setTimeout(() => {
+							this.back()
+						}, 800)
+					} else {
+						uni.showToast({
+							icon: 'none',
+							title: res.data.msg
+						})
+					}
+				}).catch(err => {
+					console.log(err)
+					uni.showToast({
+						icon: 'none',
+						title: err.data.msg
+					})
+				});
+			},
 			codeChange(text) {
 				this.tips = text
 			},
-			getCode() {
-				if (this.$refs.verificationCode.canGetCode) {
-					//请求验证码
-					if (!this.loginAction) {
-						this.getRegisterCode()
+			getLoginCode() {
+				this.$http.post('/users/vcl', {
+					account: this.phone,
+				}).then(res => {
+					if (res.data.code === 200) {
+						if (!this.codeEnter) this.codeEnter = true
+						if (!this.timer) { //计时器
+							this.seconds = 60
+							this.timer = setInterval(() => {
+								if (this.seconds !== 0) {
+									this.seconds--
+								} else {
+									clearInterval(this.timer);
+								}
+							}, 1000)
+						}
+						if (res.data.data.code) {
+							this.loginCode = res.data.data.code
+						}
+						uni.showToast({
+							icon: 'none',
+							title: '短信服务未开启请手动填入验证码：' + res.data.msg
+						})
 					} else {
-						this.getLoginCode()
+						uni.showToast({
+							icon: 'none',
+							title: res.data.msg
+						})
 					}
+
+				})
+			},
+			getRegisterCode() {
+				if (this.phone.length < 11) {
+					uni.showToast({
+						icon: 'none',
+						title: '手机号码格式错误'
+					})
+					return
+				}
+				if (this.$refs.verificationCode.canGetCode) {
+					this.$http.post('/users/register', {
+						nickname: this.nickname,
+						account: this.phone,
+						phone: this.phone,
+						password: this.password,
+					}).then(res => {
+						console.log(res)
+						uni.showToast({
+							icon: 'none',
+							title: res.data.msg
+						})
+					}).catch(err => {
+						console.log(err)
+					})
 					setTimeout(() => {
 						uni.hideLoading()
 						this.$refs.verificationCode.start()
 					}, 2000)
-				} else {
-					uni.showToast({
-						icon: 'none',
-						title: '倒计时结束后可再次获取！'
-					})
 				}
 			},
-			getLoginCode() {
-				this.$http.post('/users/vcl', {
-					account: this.account,
-				}).then(res => {
-					uni.showToast({
-						icon: 'none',
-						title: res.data.msg
-					})
-				})
-			},
-			getHitokoto() {
-				this.$http.get('/proxy', {
-					params: {
-						p_url: 'https://v1.hitokoto.cn/?c=a&c=b&c=c',
-					}
-				}).then(res => {
-					if (res.data.code === 200) {
-						this.hitokoto = res.data.data
-					}
-				})
-			},
-
 		}
 	}
 </script>
 
-<style>
-
+<style lang="scss">
 </style>

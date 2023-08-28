@@ -232,7 +232,10 @@
     width: 64rpx;
     height: 64rpx;
     z-index: 1;
-    
+    &--xs {
+		width: 34rpx;
+		height: 34rpx;
+	}
     &--sm {
       width: 48rpx;
       height: 48rpx;
@@ -245,6 +248,10 @@
       width: 128rpx;
       height: 128rpx;
     }
+	&--xxl {
+	width: 156rpx;
+	height: 156rpx;
+	}
     
     &--square {
       border-radius: 10rpx;

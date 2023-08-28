@@ -1,101 +1,121 @@
 <template>
-	<z-paging-swiper>
-		<template #top>
-			<view class="tn-flex tn-flex-direction-column">
-				<!-- 头部控件 -->
+	<view>
+		<tn-nav-bar customBack alpha>
+			<view slot="right" class="tn-padding tn-color-white tn-text-xxl">
+				<text class="tn-margin-right-sm tn-icon-scan tn-padding-xs tn-round"
+					style="background-color: rgba(0,0,0,0.2);" @tap="" @tap.stop.prevent="scanQrcode"></text>
+				<text class="tn-icon-install tn-padding-xs tn-round" style="background-color: rgba(0,0,0,0.2);"
+					@tap.stop.prevent="goSetting"></text>
+			</view>
+		</tn-nav-bar>
 
-				<view class="image-wrapper" style="position: relative;">
-					<image :src="userInfo.longtext.background_img?userInfo.longtext.background_img:'/static/logo.png'"
-						style="height: 500rpx;width: 100%;" mode="aspectFill">
-					</image>
+		<view style="position: relative;">
+			<view>
+				<image :src="userInfo.longtext.background_img?userInfo.longtext.background_img:userInfo.head_img"
+					mode="aspectFill" style="width: 100%;height: 420rpx;">
+				</image>
+			</view>
+			<!-- 第一层 -->
+			<view class="tn-bg-white tn-padding tn-no-padding-right"
+				style="position: absolute;top:320rpx;width: 100%; border-radius: 45rpx 45rpx 0 0">
+				<view style="position: absolute;top: -70rpx;" class="tn-margin-left-sm"
+					@tap.stop.prevent="hasLogin?goProfile():goLogin()">
+					<tn-avatar :src="userInfo.head_img" size="xxl" border borderColor="#fff"
+						:borderSize="6"></tn-avatar>
 				</view>
-				<view class="tn-margin tn-flex" style="position: absolute; right: 0;top: 380rpx;" v-if="hasLogin">
-					<view class="tn-margin-right-sm">
-						<tn-button :plain="true" size="sm" shape="round" @tap="goProfile">编辑</tn-button>
-					</view>
-					<view>
-						<tn-button :plain="true" size="sm" shape="round" @tap="logout">退出</tn-button>
-					</view>
-
-				</view>
-				<view class="tn-padding" style="position: absolute;top: 100rpx;width: 100%;">
+				<!-- 按钮样式 -->
+				<view class="tn-flex tn-flex-row-right" v-if="hasLogin">
 					<view class="tn-flex tn-flex-col-center">
-						<tn-avatar :src="userInfo.head_img" size="xl" :border="true" backgroundColor="#f8f7f8"
-							borderColor="#ffffff" :borderSize="6" @tap="hasLogin ? goProfile() : goLogin()">
-						</tn-avatar>
-						<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-flex-1 tn-margin-left-sm">
-							<view class="tn-flex tn-flex-col-center">
-								<text :class="userInfo.level==='admin'?'ch-color-primary':'tn-color-white'"
-									class="tn-text-bold tn-text-xl">{{userInfo.nickname}}</text>
-							</view>
-							<view v-if="hasLogin">
-
-							</view>
+						<view class="tn-margin-right">
+							<tn-button plain backgroundColor="#FB7299" fontColor="#FB7299"
+								@click="goProfile()">个人主页</tn-button>
 						</view>
 					</view>
 				</view>
-
-				<!-- 控件结束 -->
-				<v-tabs v-model="tabsIndex" :tabs="tabs" @change="changeTab" lineHeight="8rpx" lineColor="#29B7CB"
-					:zIndex="2" activeColor="#29B7CB" :lineScale="0.2"
-					style="position: relative;bottom: 20rpx;border-radius: 20rpx;">
-				</v-tabs>
 			</view>
-		</template>
-		<swiper class="swiper" :current="tabsIndex" @change="changeSwpier">
-			<swiper-item class="swiper-item">
-				<userArticle :tabsIndex="tabsIndex" :swiperIndex="tabsIndex" v-if="hasLogin"></userArticle>
-				<view class="tn-flex tn-flex-row-center tn-margin-top-xl" v-else>
-					<tn-button size="sm" :plain="true" shape="round" @tap="goLogin">去登录</tn-button>
-				</view>
-			</swiper-item>
-			<swiper-item class="swiper-item">
-				<view v-if="hasLogin">
-					<collectList :tabsIndex="tabsIndex" :swiperIndex="swiperIndex"></collectList>
-					<view class="tn-margin" style="position: absolute;right: 0;bottom: 40rpx;"
-						@tap.stop="showCollect = true">
-						<tn-button shape="icon" backgroundColor="#29B7CB" size="lg" fontColor="tn-color-white">
-							<text class="tn-icon-add"></text>
-						</tn-button>
-					</view>
-				</view>
-				<view class="tn-flex tn-flex-row-center tn-margin-top-xl" v-else>
-					<tn-button size="sm" :plain="true" shape="round" @tap="goLogin">去登录</tn-button>
-				</view>
-			</swiper-item>
-		</swiper>
-		<tn-modal v-model="showCollect" :custom="true" :showCloseBtn="true" width="92%" padding="0rpx" :zIndex="5">
+			<!-- 第二层 在这里绘制元素 -->
 			<view class="tn-margin">
-				<view class="tn-margin-bottom-lg">
-					<text class="tn-text-bold">创建合集</text>
-				</view>
-
-				<view class="ch-bg-main tn-color-white tn-flex tn-flex-col-center tn-margin-bottom-sm"
-					style="border-radius: 10rpx;position: relative;">
-					<view class="tn-padding-xs" @tap.stop="imageChoose">
-						<tn-avatar :border="true" borderColor="#fff" :borderSize="6" size="xl"
-							:src="collectHead"></tn-avatar>
-					</view>
-					<view class="tn-flex tn-flex-col-center tn-flex-direction-column tn-flex-1">
-						<tn-input :maxLength="18" v-model="collectName" :clearable="false" placeholder="合集名称"
-							placeholderStyle="color:white" />
-						<tn-input :maxLength="50" v-model="collectDesc" :clearable="false" placeholder="合集介绍"
-							placeholderStyle="color:white" />
-					</view>
-				</view>
+				<!-- 用户属性 -->
 				<view class="tn-margin-top">
-					<view class="tn-flex tn-flex-row-right" @tap.stop="createCollect">
-						<tn-button size="sm" backgroundColor="#29B7CB" fontColor="tn-color-white">创建</tn-button>
+					<view class="tn-flex tn-flex-direction-column" v-if="hasLogin">
+						<text class="tn-text-bold tn-text-xxl">{{userInfo.nickname}}</text>
+						<text class="tn-text-md tn-margin-top-xs">通行证ID: {{userInfo.account}}</text>
+					</view>
+					<view class="tn-flex tn-flex-direction-column" v-else @tap="goLogin()">
+						<text class="tn-text-bold tn-text-xxl">点击登录</text>
+						<text class="tn-text-md tn-margin-top-xs">登录解锁更多精彩</text>
+					</view>
+				</view>
+				<!-- 预备个人TAG -->
+				<view class="">
+
+				</view>
+				<view class="tn-margin-top-xl tn-margin-bottom-lg" v-if="hasLogin">
+					<view class="tn-flex tn-flex-col-center tn-text-sm">
+						<view class="tn-flex tn-flex-col-center tn-margin-right" @tap.stop.prevent="goFans()()">
+							<text
+								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{userInfo.expand.fansCount}}</text>
+							<text class="tn-color-gray--dark">粉丝</text>
+						</view>
+						<view class="tn-flex tn-flex-col-center tn-margin-right">
+							<text
+								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{userInfo.expand.focusCount}}</text>
+							<text class="tn-color-gray--dark">关注</text>
+						</view>
+						<view class="tn-flex tn-flex-col-center tn-margin-right">
+							<text
+								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{userInfo.expand.likeCount}}</text>
+							<text class="tn-color-gray--dark">获赞</text>
+						</view>
 					</view>
 				</view>
 			</view>
-		</tn-modal>
-		<l-clipper v-if="showClipper" :image-url="imageUrl"
-			@success="collectHead = $event.url; upload();showTabbar();showClipper = false"
-			@cancel="showTabbar();showClipper = false" :max-width="700" :max-height="700"
-			:is-limit-move="true"></l-clipper>
-	</z-paging-swiper>
+			<view class="tn-padding-xs tn-bg-gray--light"></view>
+			<view class="tn-margin">
+				<tn-grid :col="4" hoverClass="none" class="tn-text-md">
+					<block v-for="(item, index) in btnList" :key="index">
+						<!-- H5 -->
+						<!-- #ifndef MP-WEIXIN -->
+						<tn-grid-item>
+							<view class="tn-flex tn-flex-direction-column" @tap.stop.prevent="goPage(item)">
+								<text :class="item.icon" class="ch-color-primary tn-text-xxl"></text>
+								<text class="tn-margin-top-sm tn-text-sm tn-margin-bottom">{{item.name}}</text>
+							</view>
+						</tn-grid-item>
+						<!-- #endif-->
 
+						<!-- 微信小程序 -->
+						<!-- #ifdef MP-WEIXIN -->
+						<tn-grid-item :style="{width: gridItemWidth}">
+							<view class="tn-flex tn-flex-direction-column" @tap.stop.prevent="goPage(item)">>
+								<text :class="item.icon" class="tn-text-xxl"></text>
+								<text class="tn-margin-top-sm tn-margin-bottom">{{item.name}}</text>
+							</view>
+							<!-- #endif-->
+					</block>
+				</tn-grid>
+			</view>
+			<view class="tn-padding-xs tn-bg-gray--light"></view>
+			<tn-list-cell :arrow="true">
+				<view class="tn-flex tn-flex-col-center">
+					<text class="tn-icon-gift tn-text-xxl"></text>
+					<text class="tn-margin-left-sm">活动</text>
+				</view>
+			</tn-list-cell>
+			<tn-list-cell :arrow="true">
+				<view class="tn-flex tn-flex-col-center">
+					<text class="tn-icon-gift tn-text-xxl"></text>
+					<text class="tn-margin-left-sm">活动</text>
+				</view>
+			</tn-list-cell>
+			<tn-list-cell unlined :arrow="true">
+				<view class="tn-flex tn-flex-col-center">
+					<text class="tn-icon-gift tn-text-xxl"></text>
+					<text class="tn-margin-left-sm">活动</text>
+				</view>
+			</tn-list-cell>
+		</view>
+	</view>
 </template>
 
 <script>
@@ -103,15 +123,8 @@
 		mapState,
 		mapMutations
 	} from 'vuex';
-	import userArticle from "@/components/userArticle/userArticle.vue";
-	import collectList from "@/components/collectList/collectList.vue";
-	import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 	export default {
-		mixins: [MescrollMixin], // 使用mixin
-		components: {
-			userArticle,
-			collectList
-		},
+		components: {},
 		computed: {
 			...mapState(['hasLogin', 'userInfo']), //从Store获取全局变量
 		},
@@ -120,6 +133,47 @@
 				content: [],
 				tabs: ['动态', '合集'],
 				tabsIndex: 0,
+				btnList: [{
+						name: '头像框',
+						page: 'avatar',
+						icon: 'tn-icon-my'
+					},
+					{
+						name: '好物',
+						page: 'shop',
+						icon: 'tn-icon-shop'
+					},
+					{
+						name: '收藏',
+						page: 'star',
+						icon: 'tn-icon-star'
+					},
+					{
+						name: '浏览历史',
+						page: 'history',
+						icon: 'tn-icon-order'
+					},
+					{
+						name: '小摊',
+						page: 'othershop',
+						icon: 'tn-icon-commissary'
+					},
+					{
+						name: '创作中心',
+						page: 'creative',
+						icon: 'tn-icon-creative'
+					},
+					{
+						name: '社区中心',
+						page: 'home',
+						icon: 'tn-icon-home-leaf'
+					},
+					{
+						name: '合集',
+						page: 'collect',
+						icon: 'tn-icon-folder'
+					},
+				],
 				swiperHeight: 0, //活动组件高度
 				comments: [],
 				swiperIndex: null,
@@ -129,10 +183,22 @@
 				collectDesc: null,
 				showClipper: false,
 				imageUrl: null,
+				commentId: 0,
+				showComments: false,
+				showMenu: false,
+				menuData: null,
+				showMenu: false,
+				showProfileMenu: false,
 			}
 		},
 		onLoad() {
 
+		},
+		computed: {
+			// 兼容小程序
+			gridItemWidth() {
+				return 100 / this.col + '%'
+			}
 		},
 		methods: {
 			...mapMutations(['logout']),
@@ -147,7 +213,11 @@
 			goLogin() {
 				console.log('点击了登录')
 				this.$Router.push({
-					path: '/pages/user/login'
+					path: '/pages/user/login',
+					animation: {
+						animationType: 'slide-in-bottom',
+						animationDuration: 200
+					},
 				})
 			},
 			createCollect() {
@@ -189,12 +259,54 @@
 			//个人主页
 			goProfile() {
 				this.$Router.push({
-					path: '/pages/user/profile',
-					animation: {
-						animationType: 'pop-in',
-						animationDuration: 300
+					path: '/pages/common/userProfile/userProfile',
+					query: {
+						id: this.userInfo.id
 					}
 				})
+			},
+			goVip() {
+				this.$Router.push({
+					path: '/pages/user/vip',
+				})
+			},
+			goFans() {
+				this.$Router.push({
+					path: '/pages/user/userFans/userFans',
+				})
+			},
+			goCollect() {
+				this.$Router.push({
+					path: '/pages/user/collect/collect',
+				})
+			},
+			goSetting() {
+				this.$Router.push({
+					path: '/pages/user/setting/setting'
+				})
+			},
+			goPage(item) {
+				switch (item.page) {
+					case 'profile':
+						this.goProfile()
+						break;
+					case 'money':
+						break;
+					case 'VIP':
+						this.goVip()
+						break;
+					case 'focus':
+						break;
+					case 'fans':
+						this.goFans()
+						break;
+					case 'collect':
+						this.goCollect()
+						break;
+
+					default:
+						break;
+				}
 			},
 			imageChoose() {
 				uni.chooseImage({
@@ -211,6 +323,14 @@
 			showTabbar() {
 				uni.showTabBar()
 			},
+			scanQrcode() {
+				uni.scanCode({
+					success: function(res) {
+						console.log('条码类型：' + res.scanType);
+						console.log('条码内容：' + res.result);
+					}
+				});
+			},
 			upload() {
 				const filePath = this.$isBase64(this.collectHead) ? this.collectHead : 'file://' + plus.io
 					.convertLocalFileSystemURL(this.collectHead)
@@ -223,6 +343,21 @@
 					}
 				})
 			},
+			getComments(id) {
+				if (id) {
+					this.commentId = id
+					this.showComments = true
+				}
+			},
+			showProfile() {
+				this.showProfileMenu = true
+				uni.hideTabBar()
+			},
+			getMenuInfo(data) {
+				this.showMenu = true
+				this.menuData = data
+			},
+
 			// logout() {
 			// 	console.log('点击了退出')
 			// 	uni.clearStorageSync('token')
@@ -248,7 +383,7 @@
 		left: 0;
 		height: 100%;
 		width: 100%;
-		background: linear-gradient(to top, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
+		background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
 	}
 
 	.swiper {

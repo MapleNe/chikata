@@ -7,9 +7,9 @@ body {
   
 	background-color: $tn-bg-color;
 	/* background-color: #ffffff; */
-	font-size: 28rpx;
+	font-size: 32rpx;
 	color: $tn-font-color;
-	font-family: Helvetica Neue, Helvetica, sans-serif;
+	font-family: Helvetica Neue, Helvetica, sans-serif,;
   // 修复点击view标签的时候会有蓝色遮罩
   -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
@@ -583,6 +583,10 @@ button::after {
 
 .tn-text-lg {
   font-size: 32rpx;
+}
+
+.tn-text.title{
+	font-size: 34rpx;
 }
 
 .tn-text-xl {

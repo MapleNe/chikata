@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import {
+	router
+} from '../router/router'
 
 Vue.use(Vuex)
 
@@ -49,9 +52,17 @@ const store = new Vuex.Store({
 		hasLogin: false,
 		userInfo: {
 			longtext: {
-				background_img: null
+				background_img: ''
 			}
 		},
+		noticeNum: {
+			commnet_count: 0,
+			article_like_count: 0,
+			placard_count: 0,
+			focus_count: 0,
+		},
+		chatData: null,
+		cid: null
 	},
 	mutations: {
 		$tStore(state, payload) {
@@ -73,6 +84,9 @@ const store = new Vuex.Store({
 			}
 			// 保存变量到本地中
 			saveLifeData(saveKey, state[saveKey])
+		},
+		setCID(state, cid) {
+			state.cid = cid
 		},
 		login(state, user) {
 			state.hasLogin = true
@@ -101,10 +115,42 @@ const store = new Vuex.Store({
 				data: token
 			})
 		},
+		setNotice(state, noticeNum) {
+			state.noticeNum = noticeNum
+		},
+		clearNotice(state) {
+			state.noticeNum = {
+				commnet_count: 0,
+				article_like_count: 0,
+				placard_count: 0,
+				focus_count: 0,
+			}
+		},
+		updateNotice(state, type) {
+			switch (type) {
+				case 'comment':
+					state.noticeNum.commnet_count += 1;
+					break;
+				case 'like':
+					state.noticeNum.article_like_count += 1;
+					break;
+				case 'placard':
+					state.noticeNum.placard_count += 1;
+					break;
+				case 'focus':
+					state.noticeNum.focus_count += 1;
+					break;
+				default:
+					break;
+			}
+		},
+		setChatData(state, data) {
+			state.chatData = data
+		},
 		logout(state) {
 			state.userInfo = {
 					longtext: {
-						background_img: null, //必须定义 为什么我也不知道
+						background_img: '', //必须定义 为什么我也不知道
 					}
 				},
 				state.hasLogin = false,
@@ -116,6 +162,16 @@ const store = new Vuex.Store({
 			})
 			uni.removeStorage({
 				key: 'refreshToken',
+			})
+			uni.removeStorage({
+				key: 'loginExp'
+			})
+			uni.removeStorage({
+				key: 'refreshExp'
+			})
+			uni.$emit('logoutComplete')
+			router.replaceAll({
+				path:'/pages/tabbar/index'
 			})
 		}
 	},
