@@ -237,10 +237,15 @@
 						<block v-for="(item,index) in comments" :key="index">
 							<view class="tn-margin-bottom-sm">
 								<view class="tn-flex tn-flex-col-center tn-color-gray tn-text-sm">
-									<text class="tn-text-bold tn-text-lg tn-corlor-gray">6</text>
-									<text class="tn-margin-left-xs">小时前</text>
+
+									<text
+										class="tn-text-bold tn-color-gray tn-text-xxl">{{getDate(item.create_time).isToday?getDate(item.create_time).hourDifference:getDate(item.create_time).day}}</text>
+
+									<text v-if="getDate(item.create_time).isToday" class="tn-margin-left-xs">小时前</text>
+									<text v-else
+										class="tn-margin-left-xs">{{getDate(item.create_time).month}}月/{{getDate(item.create_time).year}}年</text>
 									<text class="tn-margin-left-xs tn-margin-right-xs">·</text>
-									<text>原神</text>
+									<text>{{item.article_title}}</text>
 								</view>
 								<view class="tn-margin-top-sm">
 									<mp-html :content="item.content"></mp-html>
@@ -248,8 +253,8 @@
 								<view class="tn-margin-top-sm tn-margin-bottom-sm">
 									<view class="tn-bg-gray--light tn-color-gray--dark tn-padding-sm">
 										<view class="tn-text-ellipsis-2">
-											<text>回复评论：</text>
-											<text>这是介绍这是介绍这这是介绍这是介绍这是介绍这是介绍这是介绍这这是介绍这是介绍这是介绍这是介绍这是介绍这这是介绍这是介绍这是介绍</text>
+											<text>{{!item.pid?'回复帖子：':'回复评论：'}}</text>
+											<text>{{!item.pid?item.article_title:item.up_comment}}</text>
 										</view>
 									</view>
 								</view>
@@ -335,7 +340,6 @@
 		onLoad(params) {
 			this.id = params.id
 			this.getUserInfo()
-			console.log(params)
 		},
 		onReady() {},
 		created() {
@@ -357,15 +361,16 @@
 				}).exec()
 			},
 			getComments(page, num) {
-				this.$http.get('/comments/sql', {
+				this.$http.get('/comments/user', {
 					params: {
 						page: page,
 						limit: num,
-						where: `users_id = ${this.id}`
+						type: 'icomment',
+						uid: this.users_id ? this.users_id : this.id
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
-						this.$refs.comments.complete(res.data.data.data)
+						this.$refs.comments.complete(res.data.data)
 					}
 					console.log(res, '评论')
 				})
@@ -434,9 +439,7 @@
 				this.commentId = this.content[index].id
 				this.showCommentsBox = !this.showCommentsBox
 			},
-			getMenuInfo(data) {
-				this.$emit('getMenuInfo', data)
-			},
+
 			goAticle(index) {
 				this.$Router.push({
 					path: '/pages/common/article/article',
@@ -525,14 +528,30 @@
 				});
 			},
 			getDate(dateString) {
-				const dateParts = dateString.split(" ")[0].split("-");
-				const year = parseInt(dateParts[0]);
-				const month = parseInt(dateParts[1]);
-				const day = parseInt(dateParts[2]);
+				const dateParts = dateString.split(" ");
+				const date = dateParts[0];
+				const time = dateParts[1].split(":");
+
+				const datePartsArray = date.split("-");
+				const year = parseInt(datePartsArray[0]);
+				const month = parseInt(datePartsArray[1]);
+				const day = parseInt(datePartsArray[2]);
+				const hour = parseInt(time[0]);
+
+				const currentDate = new Date();
+				const differenceInMilliseconds = currentDate.getTime() - new Date(year, month - 1, day, hour).getTime();
+				const differenceInHours = Math.floor(differenceInMilliseconds / (1000 * 60 * 60));
+
+				const isToday = currentDate.getFullYear() === year && currentDate.getMonth() === month - 1 && currentDate
+					.getDate() === day;
+
 				return {
 					year,
 					month,
-					day
+					day,
+					hour,
+					hourDifference: differenceInHours,
+					isToday
 				};
 			},
 			goEdit() {
