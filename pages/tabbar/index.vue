@@ -21,18 +21,14 @@
 				:scroll-count="2"></z-tabs>
 		</template>
 		<!-- swiper必须设置height:100%，因为swiper有默认的高度，只有设置高度100%才可以铺满页面  -->
-
-		<swiper class="swiper" :current="tabsIndex" @animationfinish="swiperAnimationfinish"
-			@transition="swiperTransition">
-			<swiper-item class="swiper-item" v-for="(item, index) in tabs" :key="index">
-				<articleList :tabsIndex="index" :swiperIndex="tabsIndex" :content="content" :swiper="true"
-					:type="item.type" @getComments="getComments" @getMenuInfo="getMenuInfo">
-				</articleList>
-			</swiper-item>
-		</swiper>
-		<tn-popup v-model="showComments" mode="bottom" length="60%" :borderRadius="20" :safeAreaInsetBottom="true">
-			<commentList :id="commentId"></commentList>
-		</tn-popup>
+			<swiper class="swiper" :current="tabsIndex" @animationfinish="swiperAnimationfinish"
+				@transition="swiperTransition">
+				<swiper-item class="swiper-item" v-for="(item, index) in tabs" :key="index">
+					<articleList :tabsIndex="index" :swiperIndex="tabsIndex" :content="content" :swiper="true"
+						:type="item.type" @getComments="getComments" @scroll="getScroll">
+					</articleList>
+				</swiper-item>
+			</swiper>
 	</z-paging-swiper>
 </template>
 
@@ -79,7 +75,8 @@
 				showMenu: false,
 				menuData: null,
 				ws: null,
-				backButtonPress: 0
+				backButtonPress: 0,
+				swiperAction: false,
 			}
 		},
 		created() {},
@@ -127,18 +124,23 @@
 			},
 			goLogin() {
 				this.$Router.push({
-					path: '/pages/user/login'
+					path: '/pages/user/login',
+					animation: {
+						animationType: 'slide-in-bottom',
+						animationDuration: 200
+					},
 				})
 			},
 			goSearch() {
 				this.$Router.push({
 					path: '/pages/common/search/search',
-					animation: {
-						animationType: 'slide-in-right',
-						animationDuration: 500
-					}
+
 				})
-			}
+			},
+			getScroll(status) {
+				return status
+			},
+			
 		}
 	}
 </script>

@@ -30,6 +30,9 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"login": true
 			}
 
 		}, {
@@ -44,6 +47,9 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"login": false
 			}
 
 		}, {
@@ -52,6 +58,9 @@
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false,
 				"backgroundColor": " #f8f7f8"
+			},
+			"meta": {
+				"login": true
 			}
 
 		}
@@ -75,6 +84,9 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"login": true
 			}
 
 		}, {
@@ -103,6 +115,9 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"login": true
 			}
 
 		}, {
@@ -114,13 +129,6 @@
 
 		}, {
 			"path": "pages/user/noticeDetail/noticeDetail",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-
-		}, {
-			"path": "pages/tabbar/publish/publish",
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
@@ -161,9 +169,29 @@
 				"enablePullDownRefresh": false
 			}
 
-		}
-		, {
+		}, {
 			"path": "pages/user/setting/notice/notice",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/setting/privacy/privacy",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/setting/block/block",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/firstLogin/firstLogin",
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
@@ -171,7 +199,7 @@
 
 		}
 	    ,{
-            "path" : "pages/user/setting/privacy/privacy",
+            "path" : "pages/user/collect/collect",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -180,16 +208,7 @@
             
         }
         ,{
-            "path" : "pages/user/setting/block/block",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/user/firstLogin/firstLogin",
+            "path" : "pages/user/collect/detail",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",

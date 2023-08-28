@@ -3,6 +3,7 @@ import {
 	RouterMount,
 	createRouter
 } from 'uni-simple-router';
+import store from '../store';
 let num = 1;
 const router = createRouter({
 	platform: process.env.VUE_APP_PLATFORM,
@@ -38,7 +39,22 @@ const router = createRouter({
 });
 //全局路由前置守卫
 router.beforeEach((to, from, next) => {
-	next();
+	//为某些需要登录的页面做统一路由拦截
+	console.log(to)
+	if (to.meta.login && !store.state.hasLogin && !uni.getStorageSync('token')) {
+		next({
+			path: '/pages/user/login',
+			animation: {
+				animationType: 'slide-in-bottom',
+				animationDuration: 200
+			},
+			NAVTYPE: 'push'
+		});
+	} else {
+		next();
+
+	}
+
 });
 // 全局路由后置守卫
 router.afterEach((to, from) => {

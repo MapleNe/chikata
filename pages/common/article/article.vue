@@ -77,7 +77,8 @@
 							</view>
 						</view>
 
-						<view class="tn-margin-top" style="max-width: 100%;" @touchend="touchEnd" @touchmove="touchMove">
+						<view class="tn-margin-top" style="max-width: 100%;" @touchend="touchEnd"
+							@touchmove="touchMove">
 							<mp-html :show-img-menu="imgMenu" :content="article.content" :selectable="true" />
 						</view>
 						<view class="tn-margin-top-sm">
@@ -111,8 +112,9 @@
 					<!-- 文章详情 结束 -->
 					<!-- 评论区 开始 -->
 					<view class="tn-color-grey" style="position: sticky;top: 0;z-index: 9999;">
-						<z-tabs ref="tabs" :current="tabsIndex" active-color="#FB7299" :scrollCount="1" @change="changeComentTab" :list="tabs"></z-tabs>
-						
+						<z-tabs ref="tabs" :current="tabsIndex" active-color="#FB7299" :scrollCount="1"
+							@change="changeComentTab" :list="tabs"></z-tabs>
+
 					</view>
 					<view class="tn-margin">
 						<view class="tn-margin-top">
@@ -123,7 +125,7 @@
 										<view class="tn-flex tn-flex-col-center">
 											<text class="tn-text-bold">{{item.nickname}}</text>
 											<text v-if="article.users_id === item.users_id"
-												class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
+												class="tn-margin-left-xs tn-text-xs tn-radius ch-up-bg-primary ch-color-primary"
 												style="padding:5rpx 8rpx">楼主</text>
 										</view>
 										<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
@@ -147,8 +149,8 @@
 														<view class="tn-flex tn-flex-col-center">
 															<text class="tn-text-bold">{{subComment.nickname}}</text>
 															<text v-if="article.users_id === subComment.users_id"
-																class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
-																style="padding:5rpx 8rpx">UP</text>
+																class="tn-margin-left-xs tn-text-xs tn-radius ch-up-bg-primary ch-color-primary"
+																style="padding:5rpx 8rpx">楼主</text>
 														</view>
 														<!-- 写一段注释 这个是父评论的id不等于子评论的pid里的id才会显示-->
 														<view v-if="item.id !== subComment.expand.pid.id"
@@ -290,7 +292,7 @@
 
 				</view>
 			</swiper-item>
-			<swiper-item>
+			<swiper-item v-if="params">
 				<userProfile :users_id="Number(params.users_id)"></userProfile>
 			</swiper-item>
 		</swiper>
@@ -299,6 +301,7 @@
 
 <script>
 	import userProfile from '@/pages/common/userProfile/userProfile';
+	import store from '../../../store';
 	export default {
 		components: {
 			userProfile
@@ -505,7 +508,18 @@
 				});
 			},
 			commentAction() {
-				this.commentBoxOpen = true
+				if (store.state.hasLogin && uni.getStorageSync('token')) {
+					this.commentBoxOpen = true
+				} else {
+					this.$Router.push({
+						path: '/pages/user/login',
+						animation: {
+							animationType: 'slide-in-bottom',
+							animationDuration: 200
+						},
+					})
+				}
+
 			},
 			//关闭popup重置placeholder
 			resetComment() {
@@ -530,7 +544,6 @@
 				}
 			},
 			commentSend() {
-
 				this.$http.post('/comments/add', {
 					article_id: this.article.id,
 					content: this.renderEmoji(this.commentText),

@@ -1,3 +1,4 @@
+import config from '@/static/config.js'
 import inisENV from '@/static/config.js'
 import {
 	inisHelper
@@ -6,6 +7,7 @@ import Request from '@/utils/luch-request/index.js'
 import {
 	router
 } from '../router/router'
+import store from '../store'
 
 const http = new Request()
 
@@ -47,7 +49,18 @@ http.interceptors.request.use((config) => {
 	}
 	const token = uni.getStorageSync('token')
 	const nowtime = Math.round(Date.now() / 1000).toString();
-	if (token && uni.getStorageSync('refreshToken')) {
+	//如果未登录且请求方法为PUT则停止本次请求并跳转登录
+	if (!store.state.hasLogin && config.method == 'PUT') {
+		router.push({
+			path: '/pages/user/login',
+			animation: {
+				animationType: 'slide-in-bottom',
+				animationDuration: 200
+			},
+		})
+		return Promise.reject(config)
+	}
+	if (token && uni.getStorageSync('refreshToken') && store.state.hasLogin) {
 		if (uni.getStorageSync('loginExp') <= nowtime) {
 			try {
 				console.log('开始请求')
@@ -59,14 +72,13 @@ http.interceptors.request.use((config) => {
 					if (res.data.code === 200) {
 						uni.setStorageSync('loginExp', res.data.data.loginExp)
 						uni.setStorageSync('token', res.data.data['login-token'])
-						console.log(res.data.msg)
 					} else {
 						uni.showToast({
 							icon: 'none',
 							title: '登录失效请重新登录'
 						})
-						this.$router.push({
-							path: '/pages/user/login'
+						router.push({
+							path: '/pages/user/login',
 						})
 					}
 				})

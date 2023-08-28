@@ -32,7 +32,7 @@
 					</tn-scroll-list>
 					<view class="tn-margin">
 						<tn-swiper :list="swiperList" :height="300" name="img" backgroundColor="tn-bg-gray--light"
-							:radius="10" @click="clickSwiper">
+							:radius="10">
 						</tn-swiper>
 					</view>
 					<view class="tn-margin ">
@@ -44,12 +44,12 @@
 						<template v-slot:list1>
 							<!-- 为了磨平部分平台的BUG，必须套一层view -->
 							<view>
-								<view v-for="(item, index) in list1" :key="item.id"
+								<view v-for="(item, index) in list1" :key="item.id" v-if="item.expand.images.length>0"
 									class="tn-margin-bottom-sm tn-padding-bottom-sm" :style="{width:item.width+'px'}"
 									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 20rpx;"
 									@tap.stop.prevent="goAticle(item)">
 									<view class="">
-										<image :src="item.expand.img_src" mode="widthFix"
+										<image :src="item.expand.images[0].src" mode="widthFix"
 											:style="{width:item.width+'px'}" style="border-radius: 20rpx 20rpx 0 0;">
 										</image>
 									</view>
@@ -70,12 +70,12 @@
 						<template v-slot:list2>
 							<!-- 为了磨平部分平台的BUG，必须套一层view -->
 							<view>
-								<view v-for="(item, index) in list2" :key="item.id"
+								<view v-for="(item, index) in list2" :key="item.id" v-if="item.expand.images.length>0"
 									class="tn-margin-bottom-sm tn-padding-bottom-sm" :style="{width:item.width+'px'}"
 									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 20rpx;"
 									@tap.stop.prevent="goAticle(item)">
 									<view class="">
-										<image :src="item.expand.img_src" mode="widthFix"
+										<image :src="item.expand.images[0].src" mode="widthFix"
 											:style="{width:item.width+'px'}" style="border-radius: 20rpx 20rpx 0 0;">
 										</image>
 									</view>
@@ -98,7 +98,7 @@
 
 			</swiper-item>
 			<swiper-item>
-				<articleList :swiper="false" type="circle" @getMenuInfo="getMenuInfo">
+				<articleList :swiper="false" type="circle">
 				</articleList>
 			</swiper-item>
 

@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<z-paging ref="paging" @query="getArticle" use-cache cache-key="indexArticle" v-model="content" :auto="false" :auto-clean-list-when-reload="false"
-			:auto-scroll-to-top-when-reload="false">
+			:auto-scroll-to-top-when-reload="false" @onRefresh="onRefresh" @onRestore="onRestore">
 			<view v-show="tabsIndex===0">
 				<view class="tn-margin" v-show="swiper">
 					<tn-swiper :list="swiperList" :height="350" name="img" backgroundColor="tn-bg-gray--light"
@@ -308,7 +308,6 @@
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.data)
-						console.log(res)
 						this.firstLoad = true
 						//骨架屏仅在第一次加载数据时显示
 						setTimeout(() => {
@@ -482,6 +481,12 @@
 					urls: data,
 				});
 			},
+			onRefresh(e){
+				this.$emit('scroll',true)
+			},
+			onRestore(e){
+				this.$emit('scroll',false)
+			}
 		}
 	}
 </script>

@@ -74,7 +74,9 @@
 				}
 			}, false)
 			// #endif
-
+			uni.preloadPage({
+				url:'/pages/tabbar/circle'
+			})
 			console.log('App 启动')
 		},
 		beforeDestroy() {
@@ -141,7 +143,10 @@
 	}
 
 	.ch-bg-main--light {
-		background: rgba(lighten($ch-color-primary, 30%), 0.5);
+		background: rgba(lighten($ch-color-primary, 30%), 0.5) !important;
+	}
+	.ch-up-bg-primary {
+		background: $ch-up-bg-primary;
 	}
 
 	.ch-color-primary {

@@ -11,14 +11,15 @@
 
 		<view style="position: relative;">
 			<view>
-				<image :src="userInfo.longtext.background_img?userInfo.longtext.background_img:userInfo.head_img" mode="aspectFill"
-					style="width: 100%;height: 420rpx;">
+				<image :src="userInfo.longtext.background_img?userInfo.longtext.background_img:userInfo.head_img"
+					mode="aspectFill" style="width: 100%;height: 420rpx;">
 				</image>
 			</view>
 			<!-- 第一层 -->
 			<view class="tn-bg-white tn-padding tn-no-padding-right"
 				style="position: absolute;top:320rpx;width: 100%; border-radius: 45rpx 45rpx 0 0">
-				<view style="position: absolute;top: -70rpx;" class="tn-margin-left-sm" @tap.stop.prevent="hasLogin?goProfile():goLogin()">
+				<view style="position: absolute;top: -70rpx;" class="tn-margin-left-sm"
+					@tap.stop.prevent="hasLogin?goProfile():goLogin()">
 					<tn-avatar :src="userInfo.head_img" size="xxl" border borderColor="#fff"
 						:borderSize="6"></tn-avatar>
 				</view>
@@ -26,7 +27,8 @@
 				<view class="tn-flex tn-flex-row-right" v-if="hasLogin">
 					<view class="tn-flex tn-flex-col-center">
 						<view class="tn-margin-right">
-							<tn-button plain backgroundColor="#FB7299" fontColor="#FB7299" @click="goProfile()">个人主页</tn-button>
+							<tn-button plain backgroundColor="#FB7299" fontColor="#FB7299"
+								@click="goProfile()">个人主页</tn-button>
 						</view>
 					</view>
 				</view>
@@ -75,7 +77,7 @@
 						<!-- H5 -->
 						<!-- #ifndef MP-WEIXIN -->
 						<tn-grid-item>
-							<view class="tn-flex tn-flex-direction-column">
+							<view class="tn-flex tn-flex-direction-column" @tap.stop.prevent="goPage(item)">
 								<text :class="item.icon" class="ch-color-primary tn-text-xxl"></text>
 								<text class="tn-margin-top-sm tn-text-sm tn-margin-bottom">{{item.name}}</text>
 							</view>
@@ -85,7 +87,7 @@
 						<!-- 微信小程序 -->
 						<!-- #ifdef MP-WEIXIN -->
 						<tn-grid-item :style="{width: gridItemWidth}">
-							<view class="tn-flex tn-flex-direction-column">
+							<view class="tn-flex tn-flex-direction-column" @tap.stop.prevent="goPage(item)">>
 								<text :class="item.icon" class="tn-text-xxl"></text>
 								<text class="tn-margin-top-sm tn-margin-bottom">{{item.name}}</text>
 							</view>
@@ -167,9 +169,9 @@
 						icon: 'tn-icon-home-leaf'
 					},
 					{
-						name: '占位',
-						page: 'fans',
-						icon: 'tn-icon-like'
+						name: '合集',
+						page: 'collect',
+						icon: 'tn-icon-folder'
 					},
 				],
 				swiperHeight: 0, //活动组件高度
@@ -211,7 +213,11 @@
 			goLogin() {
 				console.log('点击了登录')
 				this.$Router.push({
-					path: '/pages/user/login'
+					path: '/pages/user/login',
+					animation: {
+						animationType: 'slide-in-bottom',
+						animationDuration: 200
+					},
 				})
 			},
 			createCollect() {
@@ -269,6 +275,11 @@
 					path: '/pages/user/userFans/userFans',
 				})
 			},
+			goCollect() {
+				this.$Router.push({
+					path: '/pages/user/collect/collect',
+				})
+			},
 			goSetting() {
 				this.$Router.push({
 					path: '/pages/user/setting/setting'
@@ -288,7 +299,11 @@
 						break;
 					case 'fans':
 						this.goFans()
-						break
+						break;
+					case 'collect':
+						this.goCollect()
+						break;
+
 					default:
 						break;
 				}

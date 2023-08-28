@@ -7,7 +7,7 @@
 						<tn-avatar :src="profile.head_img" border borderColor="#fff" :borderSize="4"></tn-avatar>
 						<text class="tn-margin-left-sm">{{profile.nickname}}</text>
 					</view>
-					<view class="tn-margin-right-xl" v-if="!hasLogin&&userInfo.id!=id">
+					<view class="tn-margin-right-xl" v-if="!hasLogin&&userInfo.id!=id&&profile.expand">
 						<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#FB7299" fontColor="#FB7299"
 							v-show="!profile.expand.is_focus" @click="followUser()">
 							<view class="tn-flex tn-flex-col-center">
@@ -23,7 +23,8 @@
 				</view>
 				<view class="tn-flex tn-flex-col-center tn-padding" slot="right">
 					<text class=" tn-text-xl tn-icon-search"></text>
-					<text class="tn-text-xl tn-margin-left tn-icon-more-vertical" @tap.stop.prevent="showManage =!showManage" v-if="!hasLogin&&userInfo.id!=id">
+					<text class="tn-text-xl tn-margin-left tn-icon-more-vertical"
+						@tap.stop.prevent="showManage =!showManage" v-if="!hasLogin&&userInfo.id!=id">
 					</text>
 				</view>
 			</tn-nav-bar>
@@ -313,6 +314,7 @@
 						focusCount: 0,
 						fansCount: 0,
 						likeCount: 0,
+						is_focus: 0,
 					},
 					longtext: {
 						background_img: ''
@@ -368,16 +370,15 @@
 					console.log(res, '评论')
 				})
 			},
-			getUserArticle(page, num) {
-				this.$http.get('/article/sql', {
+			async getUserArticle(page, num) {
+				await this.$http.get('/article/sql', {
 					params: {
 						limit: num,
 						page: page,
 						where: `users_id = ${this.id}`
 					}
 				}).then(res => {
-					console.log(res)
-					this.$refs.article.completeByTotal(res.data.data.data,res.data.data.count)
+					this.$refs.article.completeByTotal(res.data.data.data, res.data.data.count)
 
 				}).catch(err => {
 					this.$refs.article.complete(false)
