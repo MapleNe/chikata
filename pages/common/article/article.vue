@@ -128,7 +128,7 @@
 										<view class="tn-flex tn-flex-col-center">
 											<text>{{item.nickname}}</text>
 											<text v-if="article.users_id === item.users_id"
-												class="tn-margin-left-xs tn-text-xs tn-radius ch-up-bg-primary ch-color-primary"
+												class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
 												style="padding:5rpx 8rpx">楼主</text>
 										</view>
 
@@ -150,7 +150,7 @@
 												<text class="tn-color-indigo"
 													@tap.stop.prevent="goProfile(subComment.users_id)">{{subComment.nickname}}</text>
 												<text v-if="article.users_id === subComment.users_id"
-													class="tn-margin-left-xs tn-text-xs tn-radius ch-up-bg-primary ch-color-primary"
+													class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
 													style="padding:5rpx 8rpx">楼主</text>
 												<text class="tn-margin-left-xs">：</text>
 												<mp-html container-style="display:inline;white-space:nomarl;"
@@ -294,7 +294,7 @@
 			<view class="tn-flex tn-flex-col-center">
 				<text>{{subCommentAuthor.nickname}}</text>
 				<text v-if="article.users_id === subCommentAuthor.users_id"
-					class="tn-margin-left-xs tn-text-xs tn-radius ch-up-bg-primary ch-color-primary"
+					class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
 					style="padding:5rpx 8rpx">楼主</text>
 			</view>
 			<text class="tn-text-sm tn-color-grey--disabled">{{getDateDiff(subCommentAuthor.create_time)}}</text>
@@ -315,7 +315,7 @@
 				<view class="tn-flex tn-flex-col-center">
 					<text>{{item.nickname}}</text>
 					<text v-if="article.users_id === item.users_id"
-						class="tn-margin-left-xs tn-text-xs tn-radius ch-up-bg-primary ch-color-primary"
+						class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
 						style="padding:5rpx 8rpx">楼主</text>
 				</view>
 			</view>
