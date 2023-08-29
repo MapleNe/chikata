@@ -40,7 +40,6 @@ const router = createRouter({
 //全局路由前置守卫
 router.beforeEach((to, from, next) => {
 	//为某些需要登录的页面做统一路由拦截
-	console.log(to)
 	if (to.meta.login && !store.state.hasLogin && !uni.getStorageSync('token')) {
 		next({
 			path: '/pages/user/login',

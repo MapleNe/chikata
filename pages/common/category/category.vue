@@ -2,6 +2,9 @@
 	<z-paging ref="paging" refresher-only @onRefresh="onRefresh" @scroll="getScroll">
 		<template #top>
 			<tn-nav-bar backTitle="" :backgroundColor="background" :fontColor="!navAuthor?'tn-color-white':''">
+				<view class="tn-padding" slot="right">
+					<text class="tn-text-xxl tn-icon-share-triangle"></text>
+				</view>
 			</tn-nav-bar>
 		</template>
 		<view style="position: relative;" id="contentview">
@@ -11,9 +14,19 @@
 				</image>
 				<view style="position: absolute;top: 0;width: 100%;height: 100%;background: rgba(0, 0, 0, 0.3);"></view>
 			</view>
-			<view style="position: absolute;top: 150rpx;" class="tn-margin">
+			<view style="position: absolute;top: 120rpx;" class="tn-margin tn-flex tn-flex-col-center">
 				<tn-avatar size="xl" border borderColor="#fff" :borderSize="6"
 					:src="categoryInfo.opt.head_img"></tn-avatar>
+					<view class="tn-flex tn-margin-left-sm tn-flex-direction-column tn-color-white">
+						<text class="tn-text-bold">{{categoryInfo.name}}</text>
+						<view class="tn-margin-top tn-flex tn-flex-col-center tn-flex-basic-md tn-text-sm">
+							<text>Lv.5</text>
+							<text class="tn-margin-left-xs tn-margin-right-xs">·</text>
+							<text>1K成员</text>
+							<text class="tn-margin-left-xs tn-margin-right-xs">·</text>
+							<text>{{categoryInfo.expand.count}}篇帖子</text>
+						</view>
+					</view>
 			</view>
 			<!-- 分类公告 -->
 			<!-- 圆弧 -->
@@ -196,7 +209,7 @@
 				</z-paging>
 			</swiper-item>
 			<swiper-item style="overflow: auto;">
-				<z-paging @query="getAticle" v-model="articleHot" ref="articleHot" :auto="false"
+				<z-paging @query="getAticle" v-model="articleHot" ref="articleHot" 
 					:use-page-scroll="swiperAction" :auto-clean-list-when-reload="false"
 					:auto-scroll-to-top-when-reload="false" :refresher-enabled="false">
 					<block v-for="(item,index) in articleHot" :key="index">
@@ -344,7 +357,7 @@
 				</z-paging>
 			</swiper-item>
 			<swiper-item style="overflow: auto;">
-				<z-paging @query="getAticle" v-model="articleNew" ref="articleNew" :auto="false"
+				<z-paging @query="getAticle" v-model="articleNew" ref="articleNew" 
 					:use-page-scroll="swiperAction" :auto-clean-list-when-reload="false"
 					:auto-scroll-to-top-when-reload="false" :refresher-enabled="false">
 					<block v-for="(item,index) in articleNew" :key="index">

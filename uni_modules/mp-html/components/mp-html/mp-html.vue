@@ -5,7 +5,7 @@
     <node v-else :childs="nodes" :opts="[lazyLoad,loadingImg,errorImg,showImgMenu,selectable]" name="span" />
     <!-- #endif -->
     <!-- #ifdef APP-PLUS-NVUE -->
-    <web-view ref="web" src="/uni_modules/mp-html/static/app-plus/mp-html/local.html" :style="'margin-top:-2px;height:' + height + 'px'" @onPostMessage="_onMessage" />
+    <web-view ref="web" src="/static/app-plus/mp-html/local.html" :style="'margin-top:-2px;height:' + height + 'px'" @onPostMessage="_onMessage" />
     <!-- #endif -->
   </view>
 </template>
@@ -41,7 +41,9 @@
 import node from './node/node'
 // #endif
 import Parser from './parser'
-const plugins=[]
+import style from './style/index.js'
+import imgCache from './img-cache/index.js'
+const plugins=[style,imgCache,]
 // #ifdef APP-PLUS-NVUE
 const dom = weex.requireModule('dom')
 // #endif
@@ -56,6 +58,7 @@ export default {
     }
   },
   props: {
+    ImgCache: Boolean,
     containerStyle: {
       type: String,
       default: ''

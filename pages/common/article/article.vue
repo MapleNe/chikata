@@ -79,7 +79,8 @@
 
 						<view class="tn-margin-top" style="max-width: 100%;" @touchend="touchEnd"
 							@touchmove="touchMove">
-							<mp-html :show-img-menu="imgMenu" :content="article.content" :selectable="true" />
+							<mp-html :tag-style="{img:'border-radius:10rpx'}" :img-cache="true" :show-img-menu="imgMenu"
+								:content="article.content" :selectable="true" />
 						</view>
 						<view class="tn-margin-top-sm">
 							<view class="tn-margin-top-xs">
@@ -213,7 +214,7 @@
 
 
 				<!-- 弹出层 开始 -->
-				<tn-popup v-model="commentBoxOpen" mode="bottom" :borderRadius="10" :zIndex="3"
+				<tn-popup v-model="commentBoxOpen" mode="bottom" :borderRadius="20" :zIndex="3"
 					@close="resetComment;showEmoji=false">
 					<view class="tn-margin">
 						<view class="tn-bg-gray--light tn-padding-sm"
@@ -224,8 +225,8 @@
 					</view>
 					<view class="tn-flex tn-margin tn-flex-col-center tn-flex-row-between">
 						<view class="tn-flex tn-flex-col-center">
-							<text class="tn-text-xl tn-icon-emoji-good"
-								@tap.stop="showEmoji=!showEmoji;getEmojiList()"></text>
+							<text class="tn-text-xl tn-margin-right" v-for="(item,index) in commentBtn" :key="index"
+								:class="item.icon" @tap.stop="commentBtnTap(index)"></text>
 						</view>
 						<view class="">
 							<tn-button shape="round" :plain="true" size="sm" :blockRepeatClick="true"
@@ -315,6 +316,25 @@
 				commentBoxOpen: false, //控制弹出层
 				comments: [], //获取到的评论列表
 				showShare: false,
+				commentBtn: [{
+						name: '表情',
+						type: 'emoji',
+						active: false,
+						icon: 'tn-icon-emoji-good'
+					},
+					{
+						name: '图片',
+						type: 'picture',
+						active: false,
+						icon: 'tn-icon-image'
+					},
+					{
+						name: '@',
+						type: 'at',
+						active: false,
+						icon: 'tn-icon-like'
+					}
+				],
 				shareProvider: [{
 						provider: 'wechat',
 						icon: 'tn-icon-wechat-fill',
@@ -387,7 +407,7 @@
 				authorComments: [],
 				commentAllow: true,
 				imgMenu: true,
-
+				showAt: false,
 			}
 		},
 		onPageScroll(e) {
@@ -598,6 +618,23 @@
 					}
 				})
 			},
+			commentBtnTap(index) {
+				switch (index) {
+					case 0:
+						this.showEmoji = !this.showEmoji
+						this.getEmojiList()
+						break;
+					case 1:
+						this.imageChoose()
+						break;
+					case 2:
+						this.showAt = !this.showAt
+						break;
+					default:
+						break;
+				}
+				this.commentBtn[index].active = !this.commentBtn[index].active
+			},
 			//返回上一页
 			back() {
 				// 通过判断当前页面的页面栈信息，是否有上一页进行返回，如果没有则跳转到首页
@@ -682,6 +719,14 @@
 				// 手指触摸后的移动事件
 				this.imgMenu = false;
 			},
+			imageChoose(){
+				uni.chooseImage({
+					count:1,
+					success: (res) => {
+						console.log(res)
+					}
+				})
+			}
 		}
 	}
 </script>
@@ -701,6 +746,14 @@
 	}
 
 	.ch-radius {
+		border-radius: 10rpx;
+	}
+
+	image {
+		border-radius: 10rpx;
+	}
+
+	img {
 		border-radius: 10rpx;
 	}
 </style>
