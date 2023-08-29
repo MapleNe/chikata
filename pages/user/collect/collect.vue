@@ -4,7 +4,7 @@
 			<tn-nav-bar backTitle="" :fixed="false">
 				合集列表
 				<view class="tn-padding" slot="right">
-					<tn-button plain backgroundColor="#FB7299" padding="0 15rpx" fontColor="#FB7299" size="sm">
+					<tn-button plain backgroundColor="#29b7cb" padding="0 15rpx" fontColor="#29b7cb" size="sm">
 						<view class="tn-flex tn-flex-col-center">
 							<text class="tn-icon-add tn-margin-right-xs"></text>
 							<text>创建合集</text>

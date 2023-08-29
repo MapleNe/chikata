@@ -63,7 +63,7 @@
 						</view>
 						<view>
 
-							<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#FB7299" fontColor="#FB7299"
+							<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29b7cb" fontColor="#29b7cb"
 								v-show="!item.is_focus" @click="followUser(index)">
 								<view class="tn-flex tn-flex-col-center">
 									<text class="tn-icon-add tn-margin-right-xs"></text>

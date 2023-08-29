@@ -47,7 +47,7 @@
 					<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-left tn-flex-1">
 						<text class="tn-icon-emoji-good tn-text-xxl"></text>
 						<text class="tn-icon-image tn-text-xxl"></text>
-						<tn-button size="sm" backgroundColor="#FB7299" fontColor="tn-color-white"
+						<tn-button size="sm" backgroundColor="#29b7cb" fontColor="tn-color-white"
 							@tap="sendMessage">发送</tn-button>
 					</view>
 				</view>

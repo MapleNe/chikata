@@ -27,7 +27,7 @@
 				<view class="tn-flex tn-flex-row-right" v-if="hasLogin">
 					<view class="tn-flex tn-flex-col-center">
 						<view class="tn-margin-right">
-							<tn-button plain backgroundColor="#FB7299" fontColor="#FB7299"
+							<tn-button plain backgroundColor="#29b7cb" fontColor="#29b7cb"
 								@click="goProfile()">个人主页</tn-button>
 						</view>
 					</view>

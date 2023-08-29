@@ -45,7 +45,7 @@ router.beforeEach((to, from, next) => {
 			path: '/pages/user/login',
 			animation: {
 				animationType: 'slide-in-bottom',
-				animationDuration: 200
+				animationDuration: 350
 			},
 			NAVTYPE: 'push'
 		});

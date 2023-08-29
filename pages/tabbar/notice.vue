@@ -14,7 +14,7 @@
 				<view class="tn-margin tn-flex tn-flex-row-around">
 					<view class="tn-flex tn-flex-direction-column tn-flex-col-center"
 						@tap.stop="goNoticeDetail('comment')">
-						<view class="tn-bg-blue--disabled tn-round tn-padding-sm" style="position:relative">
+						<view class="tn-bg-blue--disabled tn-flex tn-flex-direction-row tn-round tn-padding-sm" style="position:relative">
 							<text class="tn-icon-comment-fill tn-text-xxl tn-color-white">
 							</text>
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
@@ -24,7 +24,7 @@
 					</view>
 					<view class="tn-flex tn-flex-direction-column tn-flex-col-center"
 						@tap.stop="goNoticeDetail('articlelike')">
-						<view class="tn-bg-orangered--disabled tn-round tn-padding-sm" style="position: relative;">
+						<view class="tn-bg-orangered--disabled tn-flex tn-flex-direction-row tn-round tn-padding-sm" style="position: relative;">
 							<text class="tn-icon-praise-simple-fill tn-text-xxl tn-color-white">
 							</text>
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
@@ -45,7 +45,7 @@
 					</view> -->
 					<view class="tn-flex tn-flex-direction-column tn-flex-col-center"
 						@tap.stop="goNoticeDetail('focus')">
-						<view class="tn-bg-purplered--disabled tn-round tn-padding-sm" style="position: relative;">
+						<view class="tn-bg-purplered--disabled tn-flex tn-flex-direction-row tn-round tn-padding-sm" style="position: relative;">
 							<text class="tn-icon-like-fill tn-text-xxl tn-color-white">
 							</text>
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"

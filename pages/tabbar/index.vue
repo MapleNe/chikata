@@ -17,7 +17,7 @@
 				</view>
 			</tn-nav-bar>
 
-			<z-tabs ref="tabs" :current="tabsIndex" active-color="#FB7299" @change="changeTab" :list="tabs"
+			<z-tabs ref="tabs" :current="tabsIndex" active-color="#29b7cb" @change="changeTab" :list="tabs"
 				:scroll-count="2"></z-tabs>
 		</template>
 		<!-- swiper必须设置height:100%，因为swiper有默认的高度，只有设置高度100%才可以铺满页面  -->

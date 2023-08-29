@@ -8,7 +8,7 @@
 						<text class="tn-margin-left-sm">{{profile.nickname}}</text>
 					</view>
 					<view class="tn-margin-right-xl" v-if="!hasLogin&&userInfo.id!=id&&profile.expand">
-						<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#FB7299" fontColor="#FB7299"
+						<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29b7cb" fontColor="#29b7cb"
 							v-show="!profile.expand.is_focus" @click="followUser()">
 							<view class="tn-flex tn-flex-col-center">
 								<text class="tn-icon-add tn-margin-right-xs"></text>
@@ -43,15 +43,15 @@
 				<!-- 按钮样式 -->
 				<view class="tn-flex tn-flex-row-right">
 					<view v-if="hasLogin&&userInfo.id == id">
-						<tn-button plain backgroundColor="#FB7299" fontColor="#FB7299" @click="goEdit">编辑</tn-button>
+						<tn-button plain backgroundColor="#29b7cb" fontColor="#29b7cb" @click="goEdit">编辑</tn-button>
 					</view>
 					<view class="tn-flex tn-flex-col-center" v-else>
 						<view class="tn-margin-right">
-							<tn-button plain backgroundColor="#FB7299" fontColor="#FB7299">私信</tn-button>
+							<tn-button plain backgroundColor="#29b7cb" fontColor="#29b7cb">私信</tn-button>
 						</view>
 						<view>
-							<tn-button :backgroundColor="profile.expand.is_focus?'#FB729969':'#FB7299'"
-								:fontColor="profile.expand.is_focus?'#FB7299':'tn-color-white'" @click="followUser()">
+							<tn-button :backgroundColor="profile.expand.is_focus?'#29b7cb69':'#29b7cb'"
+								:fontColor="profile.expand.is_focus?'#29b7cb':'tn-color-white'" @click="followUser()">
 								<view class="tn-flex tn-flex-col-center tn-flex-row-between" style="width: 150rpx;">
 									<text class="tn-text-center"
 										style="margin-left: auto;margin-right: auto;">{{profile.expand.is_focus?'已关注':'关注'}}</text>
@@ -98,7 +98,7 @@
 		</view>
 		<!-- 定位结束 -->
 		<view :style="{'z-index': 100,'position': 'sticky','top' :vuex_custom_bar_height+'px'}">
-			<z-tabs ref="tabs" :current="tabsIndex" active-color="#FB7299" @change="changeTab" :list="tabs"></z-tabs>
+			<z-tabs ref="tabs" :current="tabsIndex" active-color="#29b7cb" @change="changeTab" :list="tabs"></z-tabs>
 		</view>
 		<swiper :current="tabsIndex" @transition="swiperTransition" @animationfinish="swiperAnimationfinish"
 			class="swiper">
@@ -248,7 +248,7 @@
 									<text>{{item.article_title}}</text>
 								</view>
 								<view class="tn-margin-top-sm">
-									<mp-html :content="item.content"></mp-html>
+									<mp-html :preview-img="false" :content="item.content"></mp-html>
 								</view>
 								<view class="tn-margin-top-sm tn-margin-bottom-sm">
 									<view class="tn-bg-gray--light tn-color-gray--dark tn-padding-sm">
@@ -351,7 +351,6 @@
 		computed: {
 			...mapState(['userInfo', 'hasLogin']),
 		},
-
 		methods: {
 			getElementHeight(element) {
 				let query = uni.createSelectorQuery().in(this);
@@ -445,7 +444,7 @@
 					path: '/pages/common/article/article',
 					query: {
 						id: this.content[index].id,
-						users_id: this.users_id ? this.users_id : this.profile.users_id,
+						users_id: this.users_id ? this.users_id : this.content[index].users_id,
 					},
 				})
 			},

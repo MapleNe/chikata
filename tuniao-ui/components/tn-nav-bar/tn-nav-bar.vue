@@ -1,6 +1,6 @@
 <template>
 	<view class="tn-custom-nav-bar-class tn-custom-nav-bar" :style="[navBarStyle]">
-		<view class="tn-custom-nav-bar__bar" :class="[barClass]" :style="[barStyle]">
+		<view class="tn-custom-nav-bar__bar " :class="[barClass]" :style="[barStyle]">
 			<view v-if="isBack">
 				<view v-if="customBack">
 					<view :style="{
@@ -268,6 +268,7 @@
 
 <style lang="scss" scoped>
 	.tn-custom-nav-bar {
+		padding-top: 10rpx;
 		display: block;
 		position: relative;
 

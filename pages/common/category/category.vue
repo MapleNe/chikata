@@ -17,7 +17,7 @@
 			<view style="position: absolute;top: 120rpx;" class="tn-margin tn-flex tn-flex-col-center">
 				<tn-avatar size="xl" border borderColor="#fff" :borderSize="6"
 					:src="categoryInfo.opt.head_img"></tn-avatar>
-					<view class="tn-flex tn-margin-left-sm tn-flex-direction-column tn-color-white">
+					<view class="tn-flex tn-margin-left-sm tn-flex-direction-column tn-color-white" v-if="categoryInfo&&categoryInfo.expand">
 						<text class="tn-text-bold">{{categoryInfo.name}}</text>
 						<view class="tn-margin-top tn-flex tn-flex-col-center tn-flex-basic-md tn-text-sm">
 							<text>Lv.5</text>
@@ -55,7 +55,7 @@
 		</view>
 
 		<view :style="{'z-index': 100,'position': 'sticky','top' :vuex_custom_bar_height+'px'}">
-			<z-tabs ref="tabs" :current="tabsIndex" active-color="#FB7299" @change="changeTab" :list="tabs"
+			<z-tabs ref="tabs" :current="tabsIndex" active-color="#29b7cb" @change="changeTab" :list="tabs"
 				:scrollCount="2"></z-tabs>
 		</view>
 		<swiper style="height: 150vh;" :current="tabsIndex" @transition="swiperTransition"
@@ -83,7 +83,7 @@
 								</view>
 								<view>
 									<tn-button plain size="sm" :fontSize="30" padding="0 15rpx"
-										backgroundColor="#FB7299" fontColor="#FB7299" v-if="!item.expand.focus"
+										backgroundColor="#29b7cb" fontColor="#29b7cb" v-if="!item.expand.focus"
 										@click="followUser(index)">
 										<view class="tn-flex tn-flex-col-center">
 											<text class="tn-icon-add tn-margin-right-xs"></text>
@@ -231,7 +231,7 @@
 								</view>
 								<view>
 									<tn-button plain size="sm" :fontSize="30" padding="0 15rpx"
-										backgroundColor="#FB7299" fontColor="#FB7299" v-if="!item.expand.focus"
+										backgroundColor="#29b7cb" fontColor="#29b7cb" v-if="!item.expand.focus"
 										@click="followUser(index)">
 										<view class="tn-flex tn-flex-col-center">
 											<text class="tn-icon-add tn-margin-right-xs"></text>
@@ -379,7 +379,7 @@
 								</view>
 								<view>
 									<tn-button plain size="sm" :fontSize="30" padding="0 15rpx"
-										backgroundColor="#FB7299" fontColor="#FB7299" v-if="!item.expand.focus"
+										backgroundColor="#29b7cb" fontColor="#29b7cb" v-if="!item.expand.focus"
 										@click="followUser(index)">
 										<view class="tn-flex tn-flex-col-center">
 											<text class="tn-icon-add tn-margin-right-xs"></text>
@@ -560,6 +560,7 @@
 				.boundingClientRect(data => {
 					if (data) {
 						this.headerHeight = data.height
+						console.log(data.height)
 					}
 				})
 				.exec();
@@ -632,10 +633,7 @@
 				this.tabsIndex = index
 				this.loadAticle()
 			},
-			changeSwpier(event) {
-				this.tabsIndex = event.detail.current
-				this.loadAticle()
-			},
+			
 			loadAticle() {
 				switch (this.tabsIndex) {
 					case 1:
@@ -717,6 +715,7 @@
 			swiperAnimationfinish(e) {
 				this.tabsIndex = e.detail.current;
 				this.$refs.tabs.unlockDx();
+				this.loadAticle()
 			},
 			getScroll(e) {
 				const scrollTop = e.detail.scrollTop;

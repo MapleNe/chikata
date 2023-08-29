@@ -278,7 +278,7 @@
 			</view>
 			<view class="tn-margin">
 				<view class="tn-flex">
-					<tn-radio-group activeColor="#FB7299" v-model="paymentSelect" @change="radioGroupChange"
+					<tn-radio-group activeColor="#29b7cb" v-model="paymentSelect" @change="radioGroupChange"
 						class="tn-flex-1 tn-flex tn-flex-direction-column">
 						<view class="tn-flex tn-flex-row-between tn-flex-col-flex tn-margin-bottom">
 							<view class="tn-flex tn-flex-col-center">

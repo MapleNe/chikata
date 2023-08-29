@@ -1,13 +1,14 @@
 <template>
 	<z-paging-swiper>
-		<swiper class="swiper">
+		<swiper class="swiper" :current="swiperIndex" @animationfinish="swiperAnimationfinish">
 			<swiper-item>
 				<z-paging ref="paging" @query="getComment" v-model="comments" :safe-area-inset-bottom="true"
 					:auto-scroll-to-top-when-reload="false" :auto-clean-list-when-reload="false" @scroll="onScroll">
 					<template #top>
 						<tn-nav-bar :zIndex="5" backTitle="" :fixed="false">
 							<text v-show="!navAuthor" v-if="article.expand.sort">{{article.expand.sort[0].name}}</text>
-							<view class="tn-flex tn-flex-1 tn-flex-col-center tn-flex-row-between" v-show="navAuthor">
+							<view class="tn-flex tn-flex-1 tn-flex-col-center tn-flex-row-between" v-show="navAuthor"
+								@tap.stop="tabsIndex=1">
 								<view class="tn-flex tn-flex-col-center">
 									<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
 									<text class="tn-margin-left-sm">{{article.expand.author.nickname}}</text>
@@ -15,7 +16,7 @@
 
 								<view>
 									<tn-button plain :fontSize="30" size="sm" padding="0 15rpx"
-										backgroundColor="#FB7299" fontColor="#FB7299" v-if="!article.expand.focus"
+										backgroundColor="#29b7cb" fontColor="#29b7cb" v-if="!article.expand.focus"
 										@click="followUser()">
 										<view class="tn-flex tn-flex-col-center">
 											<text class="tn-icon-add tn-margin-right-xs"></text>
@@ -39,19 +40,19 @@
 					<view class="tn-margin" v-if="article" id="article">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 							<view class="tn-flex tn-flex-col-center">
-								<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
+								<tn-avatar :src="article.expand.author.head_img" @click="tabsIndex=1"></tn-avatar>
 								<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 									<view class="tn-flex tn-flex-col-center">
 										<text class="tn-text-bold">{{article.expand.author.nickname}}</text>
 										<text v-if="article.expand.author.level==='admin'"
 											class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
 									</view>
-									<text class="tn-text-xs tn-color-gray">{{getDateDiff(article.create_time)}}</text>
+
 								</view>
 							</view>
 							<view>
-								<tn-button plain :fontSize="30" size="sm" padding="0 15rpx" backgroundColor="#FB7299"
-									fontColor="#FB7299" v-if="!article.expand.focus" @click="followUser()">
+								<tn-button plain :fontSize="30" size="sm" padding="0 15rpx" backgroundColor="#29b7cb"
+									fontColor="#29b7cb" v-if="!article.expand.focus" @click="followUser()">
 									<view class="tn-flex tn-flex-col-center">
 										<text class="tn-icon-add tn-margin-right-xs"></text>
 										<text>关注</text>
@@ -113,26 +114,27 @@
 					<!-- 文章详情 结束 -->
 					<!-- 评论区 开始 -->
 					<view class="tn-color-grey" style="position: sticky;top: 0;z-index: 9999;">
-						<z-tabs ref="tabs" :current="tabsIndex" active-color="#FB7299" :scrollCount="1"
+						<z-tabs ref="tabs" :current="tabsIndex" active-color="#29b7cb" :scrollCount="1"
 							@change="changeComentTab" :list="tabs"></z-tabs>
 
 					</view>
 					<view class="tn-margin">
 						<view class="tn-margin-top">
 							<view v-for="(item,index) in comments" :key="index">
-								<view class="tn-flex tn-flex-col-center">
-									<tn-avatar :src="item.expand.head_img"></tn-avatar>
+								<view class="tn-flex tn-flex-col-center tn-text-md">
+									<tn-avatar :src="item.expand.head_img"
+										@click="article.users_id==item.users_id?swiperIndex=1:goProfile(item.users_id)"></tn-avatar>
 									<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
 										<view class="tn-flex tn-flex-col-center">
-											<text class="tn-text-bold">{{item.nickname}}</text>
+											<text>{{item.nickname}}</text>
 											<text v-if="article.users_id === item.users_id"
 												class="tn-margin-left-xs tn-text-xs tn-radius ch-up-bg-primary ch-color-primary"
 												style="padding:5rpx 8rpx">楼主</text>
 										</view>
-										<text class="tn-text-xs">{{getDateDiff(item.create_time)}}</text>
+
 									</view>
 								</view>
-								<view class="tn-margin tn-padding-left-xl"
+								<view class="tn-margin tn-margin-top-sm tn-padding-left-xl"
 									style="overflow: hidden;word-wrap: break-word" @tap="subReply(item)">
 									<!-- {{item.content}} -->
 									<mp-html :content="item.content"></mp-html>
@@ -140,42 +142,26 @@
 								<!-- 子评论 -->
 								<view class="tn-margin">
 									<view class="tn-margin-left-xl tn-padding-sm tn-bg-gray--light ch-radius"
-										v-if="item.son.length>0">
-										<view v-for="(subComment, index) in item.son" :key="index">
-											<view class="tn-flex tn-flex-col-center">
-												<tn-avatar :src="subComment.expand.head_img"></tn-avatar>
-												<view
-													class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
-													<view class="tn-flex tn-flex-col-center">
-														<view class="tn-flex tn-flex-col-center">
-															<text class="tn-text-bold">{{subComment.nickname}}</text>
-															<text v-if="article.users_id === subComment.users_id"
-																class="tn-margin-left-xs tn-text-xs tn-radius ch-up-bg-primary ch-color-primary"
-																style="padding:5rpx 8rpx">楼主</text>
-														</view>
-														<!-- 写一段注释 这个是父评论的id不等于子评论的pid里的id才会显示-->
-														<view v-if="item.id !== subComment.expand.pid.id"
-															class="tn-flex tn-flex-col-center">
-															<text class="tn-icon-right-triangle"></text>
-															<text
-																class="tn-text-bold">{{subComment.expand.pid.nickname}}</text>
-														</view>
-
-													</view>
-
-													<text
-														class="tn-text-xs">{{getDateDiff(subComment.create_time)}}</text>
-												</view>
+										v-if="item.son.length>0"
+										@tap.stop.prevent="showComment= !showComment;subId=item.id;subCommentAuthor=item">
+										<!-- 这里只显示两条防止太多评论导致的过长 -->
+										<block v-for="(subComment, index) in item.son" :key="index" v-if="index<2">
+											<view class="tn-margin-bottom-sm tn-text-md">
+												<text class="tn-color-indigo"
+													@tap.stop.prevent="goProfile(subComment.users_id)">{{subComment.nickname}}</text>
+												<text v-if="article.users_id === subComment.users_id"
+													class="tn-margin-left-xs tn-text-xs tn-radius ch-up-bg-primary ch-color-primary"
+													style="padding:5rpx 8rpx">楼主</text>
+												<text class="tn-margin-left-xs">：</text>
+												<mp-html container-style="display:inline;white-space:nomarl;"
+													:content="subComment.content" :selectable="true"></mp-html>
 											</view>
-											<view class="tn-margin tn-padding-left-xl"
-												style="overflow: hidden;word-wrap: break-word"
-												@tap="subReply(subComment)">
-												<mp-html :content="subComment.content" :selectable="true"></mp-html>
-											</view>
-
+										</block>
+										<view class="tn-flex tn-flex-col-center tn-color-gray--dark">
+											<text>全部{{item.son.length}}条评论</text>
+											<text class="tn-icon-right tn-text-md"></text>
 										</view>
 									</view>
-
 								</view>
 
 							</view>
@@ -185,7 +171,7 @@
 						<!-- 底部开始 -->
 						<view class="tn-padding tn-bg-white tn-flex tn-flex-col-center">
 							<view class="tn-bg-gray--light tn-padding-left tn-round">
-								<tn-input :disabled="true" :placeholder="commentBoxText"
+								<tn-input :disabled="true" placeholder="我想说..."
 									@click="commentAllow?commentAction():''"></tn-input>
 							</view>
 							<view
@@ -214,8 +200,8 @@
 
 
 				<!-- 弹出层 开始 -->
-				<tn-popup v-model="commentBoxOpen" mode="bottom" :borderRadius="20" :zIndex="3"
-					@close="resetComment;showEmoji=false">
+				<tn-popup v-model="commentBoxOpen" mode="bottom" :borderRadius="20" :zIndex="999"
+					@close="resetComment();showEmoji=false">
 					<view class="tn-margin">
 						<view class="tn-bg-gray--light tn-padding-sm"
 							style="height: 150rpx;overflow: hidden; border-radius: 10rpx;">
@@ -229,13 +215,13 @@
 								:class="item.icon" @tap.stop="commentBtnTap(index)"></text>
 						</view>
 						<view class="">
-							<tn-button shape="round" :plain="true" size="sm" :blockRepeatClick="true"
-								@click="commentCheck">发送~</tn-button>
+							<tn-button :plain="true" size="sm" backgroundColor="#29b7cb" fontColor="#29b7cb"
+								blockRepeatClick @click="commentCheck">发送~</tn-button>
 						</view>
 					</view>
 					<view v-show="showEmoji">
 						<v-tabs v-model="emojiIndex" :tabs="emojiTabs" @change="changeTab" lineHeight="8rpx"
-							lineColor="#FB7299" activeColor="#FB7299" :lineScale="0.2"></v-tabs>
+							lineColor="#29b7cb" activeColor="#29b7cb" :lineScale="0.2"></v-tabs>
 						<scroll-view scroll-y style="height: 20vh;" class="tn-margin-top-xs">
 							<tn-grid :col="8">
 								<block v-for="(item, index) in emojiList" :key="index">
@@ -290,14 +276,80 @@
 						<text class="tn-text-bold">取消</text>
 					</view>
 				</tn-popup>
-
+				<!-- 评论详情 -->
+				<tn-popup v-model="showComment" mode="bottom" length="70%" :borderRadius="20" :zIndex="3">
+					<z-paging ref="subComment" @query="getSubComment" v-model="subComment" :refresher-enabled="false">
+						<template#top>
+							<view class="tn-margin">
+								<view class="tn-flex tn-flex-col-center  tn-text-xxl tn-text-bold tn-flex-row-between">
+									<text class="tn-icon-close"></text>
+									<text class="tn-icon-more-horizontal"></text>
+								</view>
+							</view>
+</template>
+<view class="tn-margin tn-no-margin-top" v-if="subCommentAuthor">
+	<view class="tn-flex tn-flex-col-center tn-text-md">
+		<tn-avatar :src="subCommentAuthor.expand.head_img"></tn-avatar>
+		<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
+			<view class="tn-flex tn-flex-col-center">
+				<text>{{subCommentAuthor.nickname}}</text>
+				<text v-if="article.users_id === subCommentAuthor.users_id"
+					class="tn-margin-left-xs tn-text-xs tn-radius ch-up-bg-primary ch-color-primary"
+					style="padding:5rpx 8rpx">楼主</text>
+			</view>
+			<text class="tn-text-sm tn-color-grey--disabled">{{getDateDiff(subCommentAuthor.create_time)}}</text>
+		</view>
+	</view>
+	<view class="tn-margin tn-margin-top-sm tn-padding-left-xl" style="overflow: hidden;word-wrap: break-word"
+		@tap="subReply(subCommentAuthor)">
+		<!-- {{item.content}} -->
+		<mp-html :content="subCommentAuthor.content"></mp-html>
+	</view>
+</view>
+<view class="tn-padding-xs tn-bg-gray--light"></view>
+<block v-for="(item,index) in subComment" :key="index">
+	<view class="tn-margin">
+		<view class="tn-flex tn-flex-col-center tn-text-md">
+			<tn-avatar :src="item.expand.head_img" @click="goProfile(item.users_id)"></tn-avatar>
+			<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
+				<view class="tn-flex tn-flex-col-center">
+					<text>{{item.nickname}}</text>
+					<text v-if="article.users_id === item.users_id"
+						class="tn-margin-left-xs tn-text-xs tn-radius ch-up-bg-primary ch-color-primary"
+						style="padding:5rpx 8rpx">楼主</text>
 				</view>
-			</swiper-item>
-			<swiper-item v-if="params">
-				<userProfile :users_id="Number(params.users_id)"></userProfile>
-			</swiper-item>
-		</swiper>
-	</z-paging-swiper>
+			</view>
+		</view>
+		<view class="tn-margin tn-margin-top-xs tn-padding-left-xl" @tap="subReply(item)">
+			<view>
+				<text class="tn-margin-right-xs" v-if="item.pid != subCommentAuthor.id">回复</text>
+				<text class="tn-color-indigo" @tap.stop.prevent="goProfile(item.expand.pid.users_id)"
+					v-if="item.pid != subCommentAuthor.id">{{item.expand.pid.nickname}}</text>
+				<text v-if="item.pid != subCommentAuthor.id">：</text>
+				<mp-html container-style="display:inline;white-space:nomarl;" :content="item.content"></mp-html>
+			</view>
+		</view>
+	</view>
+</block>
+<template #bottom>
+	<view class="tn-bg-gray--light tn-padding-sm">
+		<view class="tn-bg-white tn-padding-left tn-radius">
+			<tn-input :disabled="true" :placeholder="'回复：'+subCommentAuthor.nickname"
+				@click="commentAllow?subReply(subCommentAuthor):''"></tn-input>
+		</view>
+	</view>
+
+</template>
+</z-paging>
+
+</tn-popup>
+</view>
+</swiper-item>
+<swiper-item v-if="params">
+	<userProfile :users_id="Number(params.users_id)" @back="getBack"></userProfile>
+</swiper-item>
+</swiper>
+</z-paging-swiper>
 </template>
 
 <script>
@@ -311,11 +363,14 @@
 			return {
 				tabs: ['全部评论', '只看楼主'],
 				tabsIndex: 0,
+				swiperIndex: 0,
 				commentBoxText: '我想说...', //底部盒子显示的信息
+				subCommentBoxText: null,
 				commentText: '', //这个才是回复的信息
 				commentBoxOpen: false, //控制弹出层
 				comments: [], //获取到的评论列表
 				showShare: false,
+				showComment: false,
 				commentBtn: [{
 						name: '表情',
 						type: 'emoji',
@@ -408,6 +463,9 @@
 				commentAllow: true,
 				imgMenu: true,
 				showAt: false,
+				subId: null,
+				subComment: [],
+				subCommentAuthor: null,
 			}
 		},
 		onPageScroll(e) {
@@ -417,13 +475,30 @@
 			this.params = params
 		},
 		beforeRouteLeave(to, from, next) {
-			if (!this.commentBoxOpen) {
-				next()
-			} else {
-				this.commentBoxOpen = false
-				//将路由锁解除 否则无法跳转
-				this.$Router.$lockStatus = false;
-				next(false)
+			//退出前判断
+			switch (true) {
+				case this.swiperIndex > 0:
+					this.swiperIndex = 0
+					next(false)
+					this.$Router.$lockStatus = false
+					break;
+				case !this.commentBoxOpen && !this.showComment:
+					next();
+					break;
+				case this.commentBoxOpen:
+					this.commentBoxOpen = false
+					next(false)
+					this.$Router.$lockStatus = false
+					break;
+				case this.showComment:
+					this.showComment = false
+					next(false)
+					this.$Router.$lockStatus = false
+					break;
+				default:
+					this.$Router.$lockStatus = false
+					next(false)
+					break;
 			}
 		},
 		created() {
@@ -529,13 +604,15 @@
 			},
 			commentAction() {
 				if (store.state.hasLogin && uni.getStorageSync('token')) {
-					this.commentBoxOpen = true
+					this.commentBoxOpen = true,
+						this.commentBoxText = '我想说...',
+						this.pid = 0
 				} else {
 					this.$Router.push({
 						path: '/pages/user/login',
 						animation: {
 							animationType: 'slide-in-bottom',
-							animationDuration: 200
+							animationDuration: 350
 						},
 					})
 				}
@@ -543,14 +620,24 @@
 			},
 			//关闭popup重置placeholder
 			resetComment() {
-				this.commentBoxText = '我想说...'
 				this.pid = 0
 			},
 			subReply(item) {
-				this.commentBoxOpen = true
-				this.commentBoxText = '回复:' + item.nickname
-				this.pid = item.id
-				console.log(item.id)
+				if (store.state.hasLogin && uni.getStorageSync('token')) {
+					this.commentBoxOpen = true
+					this.commentBoxText = '回复:' + item.nickname
+					this.pid = item.id
+				} else {
+					this.$Router.push({
+						path: '/pages/user/login',
+						animation: {
+							animationType: 'slide-in-bottom',
+							animationDuration: 350
+						},
+					})
+				}
+
+
 			},
 			commentCheck() {
 				if (this.commentText === '') {
@@ -579,7 +666,12 @@
 					}
 					setTimeout(() => {
 						this.commentBoxOpen = false
-						this.$refs.paging.reload()
+						if (this.showComment) {
+							this.$refs.subComment.reload()
+						} else {
+							this.$refs.paging.reload()
+						}
+
 					}, 800)
 				}).catch(err => {
 					console.log(err)
@@ -635,6 +727,14 @@
 				}
 				this.commentBtn[index].active = !this.commentBtn[index].active
 			},
+			goComment(id) {
+				this.$Router.push({
+					path: '/pages/common/article/comment/comment',
+					query: {
+						id: id
+					}
+				})
+			},
 			//返回上一页
 			back() {
 				// 通过判断当前页面的页面栈信息，是否有上一页进行返回，如果没有则跳转到首页
@@ -672,6 +772,33 @@
 					console.log(data.height);
 					this.articleHeight = data.height;
 				}).exec()
+			},
+			goProfile(id) {
+				this.$Router.push({
+					path: '/pages/common/userProfile/userProfile',
+					query: {
+						id: id
+					}
+				})
+			},
+			getSubComment(page, num) {
+				this.$http.get('/comments/one', {
+					params: {
+						page: page,
+						limit: num,
+						id: this.subId,
+						tree: false,
+					}
+				}).then(res => {
+					console.log(res, '评论')
+					if (res.data.code === 200) {
+						this.$refs.subComment.complete(res.data.data.son)
+					}
+
+				})
+			},
+			swiperAnimationfinish(e) {
+				this.swiperIndex = e.detail.current;
 			},
 			getDateDiff(data) {
 				// 传进来的data必须是日期格式，不能是时间戳
@@ -719,9 +846,9 @@
 				// 手指触摸后的移动事件
 				this.imgMenu = false;
 			},
-			imageChoose(){
+			imageChoose() {
 				uni.chooseImage({
-					count:1,
+					count: 1,
 					success: (res) => {
 						console.log(res)
 					}

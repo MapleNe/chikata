@@ -75,7 +75,7 @@
 			}, false)
 			// #endif
 			uni.preloadPage({
-				url:'/pages/tabbar/circle'
+				url: '/pages/tabbar/circle'
 			})
 			console.log('App 启动')
 		},
@@ -115,7 +115,6 @@
 				this.ws.getWebSocketMsg(data => {
 					const dataJson = data;
 					if (typeof(dataJson) == "object") {
-						console.log("wsObject", dataJson);
 						if (data.type === 'like' || data.type === 'focus' || data.type === 'comment' || data
 							.type === 'placard') {
 							this.$store.commit('updateNotice', data.type)
@@ -145,6 +144,7 @@
 	.ch-bg-main--light {
 		background: rgba(lighten($ch-color-primary, 30%), 0.5) !important;
 	}
+
 	.ch-up-bg-primary {
 		background: $ch-up-bg-primary;
 	}

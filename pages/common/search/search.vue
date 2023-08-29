@@ -1,15 +1,20 @@
 <template>
 	<view>
-		<tn-nav-bar backTitle="">
-			<view class="tn-padding tn-padding-top-xs">
-				<view
-					class="tn-flex tn-flex-col-center tn-bg-gray--light tn-round tn-padding-left-sm tn-padding-right-sm tn-flex-1">
-					<tn-input placeholder="这是搜索占位" v-model="searchKey" :clearable="false" :autoHeight="false"
-						@focus="focus = true;is_search = false" @blur="focus = false" @input="search"></tn-input>
+		<tn-nav-bar backTitle="" :isBack="false" customBack>
+			<view class="tn-margin-sm tn-no-margin-top">
+				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+					<view class="tn-margin-right" @tap="back()">
+						<text class="tn-icon-left tn-text-xxl"></text>
+					</view>
+					<view
+						class="tn-flex tn-flex-col-center tn-bg-gray--light tn-round tn-padding-left-sm tn-padding-right-sm tn-flex-1">
+						<tn-input placeholder="这是搜索占位" v-model="searchKey" :clearable="false" :autoHeight="false"
+							@focus="focus = true;is_search = false" @blur="focus = false" @input="search"></tn-input>
+					</view>
+					<view class="tn-margin-left">
+						<text class="ch-color-primary" @tap="is_search = true;search()">搜索</text>
+					</view>
 				</view>
-			</view>
-			<view slot="right" class="tn-padding">
-				<text class="ch-color-primary" @tap="is_search = true;search()">搜索</text>
 			</view>
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
@@ -37,7 +42,7 @@
 			</view>
 		</view>
 		<view v-show="is_search&&!focus">
-			<v-tabs :tabs="tabs" v-model="tabsIndex" activeColor="#FB7299" lineColor="#FB7299" :lineScale="0.3"
+			<v-tabs :tabs="tabs" v-model="tabsIndex" activeColor="#29b7cb" lineColor="#29b7cb" :lineScale="0.3"
 				lineHeight="8rpx"></v-tabs>
 			<search-article :searchKey="searchKey"></search-article>
 		</view>
@@ -60,7 +65,7 @@
 				searchKey: null,
 				showMoreHistory: false,
 				focus: false,
-				
+
 				is_search: false,
 
 				hotSearchList: [],

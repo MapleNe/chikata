@@ -9,7 +9,7 @@
 					</tn-button>
 				</view>
 				<view @tap.stop.prevent="update?'':showArticleSet = !showArticleSet">
-					<tn-button size="sm" shape="round" backgroundColor="#FB7299" fontColor="tn-color-white">
+					<tn-button size="sm" shape="round" backgroundColor="#29b7cb" fontColor="tn-color-white">
 						{{update?'更新':'发布'}}
 					</tn-button>
 				</view>
@@ -102,7 +102,7 @@
 						@click="showPermission = !showPermission">设置权限</tn-list-cell>
 					<view class="tn-margin-top-xl">
 						<view class="tn-flex-col-center tn-flex tn-flex-row-center" @tap.stop.prevent="publish()">
-							<tn-button shape="round" backgroundColor="#FB7299" fontColor="tn-color-white"
+							<tn-button shape="round" backgroundColor="#29b7cb" fontColor="tn-color-white"
 								style="width: 100%;">确认发布</tn-button>
 						</view>
 					</view>
@@ -307,7 +307,7 @@
 						</view>
 					</view>
 					<view class="tn-margin-top" @tap.stop.prevent="addLink()">
-						<tn-button backgroundColor="#FB7299" shape="round" fontColor="tn-color-white"
+						<tn-button backgroundColor="#29b7cb" shape="round" fontColor="tn-color-white"
 							style="width: 100%;">添加链接</tn-button>
 					</view>
 
@@ -337,7 +337,7 @@
 	import {
 		mapstate
 	} from 'vuex';
-import store from '../../../store';
+	import store from '../../../store';
 	export default {
 		data() {
 			return {
@@ -560,16 +560,11 @@ import store from '../../../store';
 				showSaveDraft: false,
 				draft: null,
 				showAddLink: false,
-				save:false,
+				save: false,
 			};
 		},
 		onLoad(params) {
-			let formatBar = uni.createSelectorQuery().select('#formatBar')
-			this.$nextTick(() => {
-				formatBar.boundingClientRect(function(data) {
-					console.log('元素信息：', data)
-				}).exec()
-			})
+			
 			uni.onKeyboardHeightChange((res) => {
 				// 监听软键盘的高度，页面隐藏后一定要取消监听键盘
 				if (res.height !== 0) this.bottom = 0;
@@ -587,7 +582,7 @@ import store from '../../../store';
 			}
 		},
 		beforeRouteLeave(to, from, next) {
-			if (this.edit.textCount&&!this.save) {
+			if (this.edit.textCount && !this.save) {
 				uni.showModal({
 					title: '是否保存为草稿',
 					confirmText: '保存',
@@ -601,8 +596,9 @@ import store from '../../../store';
 						}
 					}
 				})
-			} else if(this.save) {
-				console.log(11)
+			} else if (this.save) {
+				next()
+			} else {
 				next()
 			}
 		},
@@ -876,7 +872,7 @@ import store from '../../../store';
 								path: '/pages/common/article/article',
 								query: {
 									id: res.data.data,
-									users_id:store.userInfo.id
+									users_id: store.userInfo.id
 								}
 							})
 						}, 2000)

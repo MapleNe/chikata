@@ -42,7 +42,7 @@
 							</view>
 						</view>
 						<view class="tn-margin-top-xl tn-text-center">
-							<tn-checkbox v-model="accept" activeColor="#FB7299" @change="accept =!accept" shape="circle"
+							<tn-checkbox v-model="accept" activeColor="#29b7cb" @change="accept =!accept" shape="circle"
 								:size="30">
 								<view class="tn-color-gray--dark" style="font-size: 28rpx;">
 									<text>我已阅读并同意</text>

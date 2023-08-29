@@ -17,8 +17,8 @@
 										<text class="tn-text-bold">{{item.nickname}}</text>
 										<text class="tn-text-md">{{item.description}}</text>
 									</view>
-									<tn-button plain size="sm" :fontSize="30" padding="0 15rpx" backgroundColor="#FB7299"
-										fontColor="#FB7299" v-if="!item.is_focus" @click="followUser(index)">
+									<tn-button plain size="sm" :fontSize="30" padding="0 15rpx" backgroundColor="#29b7cb"
+										fontColor="#29b7cb" v-if="!item.is_focus" @click="followUser(index)">
 										<view class="tn-flex tn-flex-col-center">
 											<text class="tn-icon-add tn-margin-right-xs"></text>
 											<text>关注</text>

@@ -230,7 +230,7 @@
 	"tabBar": {
 		"backgroundColor": "#ffffff",
 		"color": "#949494",
-		"selectedColor": "#FB7299",
+		"selectedColor": "#29b7cb",
 		"fontSize": "16px",
 		"list": [{
 				"pagePath": "pages/tabbar/index",
