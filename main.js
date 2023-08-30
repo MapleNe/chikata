@@ -49,6 +49,10 @@ Vue.prototype.$inisHelper = inisHelper
 import config from '@/static/config.js'
 process.inisENV = config
 
+// 等级颜色
+import level from '@/static/level.js'
+Vue.prototype.level = level
+
 // http模块
 import {
 	http

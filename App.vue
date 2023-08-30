@@ -131,16 +131,20 @@
 </script>
 
 <style lang="scss">
-	@import './tuniao-ui/index.scss';
-	@import './tuniao-ui/iconfont.css';
-	@import './static/css/animate.css';
+	@import '@/tuniao-ui/index.scss';
+	@import '@/tuniao-ui/iconfont.css';
+	@import '@/static/css/animate.css';
+	@import '@/static/css/level.css';
+	/*引入文件不要在uni.scss引入*/
 
 	/*APP自定义样式*/
 	.ch-bg-main {
 		background: $ch-color-primary !important;
 		color: white;
 	}
-
+	.level-text{
+		font-size: 55rpx;
+	}
 	.ch-bg-main--light {
 		background: rgba(lighten($ch-color-primary, 30%), 0.5) !important;
 	}

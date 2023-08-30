@@ -38,7 +38,11 @@
 				<!-- 用户属性 -->
 				<view class="tn-margin-top">
 					<view class="tn-flex tn-flex-direction-column" v-if="hasLogin">
-						<text class="tn-text-bold tn-text-xxl">{{userInfo.nickname}}</text>
+						<view class="tn-flex">
+							<text class="tn-text-bold tn-text-xxl">{{userInfo.nickname}}</text>
+							<text class="level level-text tn-margin-left-sm" :class="['lv-'+userInfo.grade]" :style="{'color':level[userInfo.grade]}"></text>
+						</view>
+						
 						<text class="tn-text-md tn-margin-top-xs">通行证ID: {{userInfo.account}}</text>
 					</view>
 					<view class="tn-flex tn-flex-direction-column" v-else @tap="goLogin()">
