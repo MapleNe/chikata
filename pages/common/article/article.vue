@@ -177,7 +177,8 @@
 							<view
 								class="tn-flex tn-text-sm tn-flex-col-center tn-color-gray--dark tn-flex-basic-sm tn-flex-row-between"
 								style="margin-left: auto;">
-								<view class="tn-flex tn-flex-col-center tn-flex-direction-column">
+								<view class="tn-flex tn-flex-col-center tn-flex-direction-column"
+									@tap.stop.prevent="favorite()">
 									<text class="tn-text-xxl tn-icon-star "></text>
 									<text>{{article.views}}</text>
 								</view>
@@ -795,6 +796,21 @@
 						this.$refs.subComment.complete(res.data.data.son)
 					}
 
+				})
+			},
+			favorite() {
+				this.$http.post('/favorites/modify', {
+					article_id: this.article.id
+				}).then(res => {
+					uni.showToast({
+						icon: 'none',
+						title: res.data.msg
+					})
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: res.data.msg
+					})
 				})
 			},
 			swiperAnimationfinish(e) {

@@ -145,7 +145,7 @@
 					},
 					{
 						name: '收藏',
-						page: 'star',
+						page: 'favorite',
 						icon: 'tn-icon-star'
 					},
 					{
@@ -285,6 +285,11 @@
 					path: '/pages/user/setting/setting'
 				})
 			},
+			goFavorite() {
+				this.$Router.push({
+					path: '/pages/user/favorite/favorite'
+				})
+			},
 			goPage(item) {
 				switch (item.page) {
 					case 'profile':
@@ -296,6 +301,9 @@
 						this.goVip()
 						break;
 					case 'focus':
+						break;
+					case 'favorite':
+						this.goFavorite()
 						break;
 					case 'fans':
 						this.goFans()

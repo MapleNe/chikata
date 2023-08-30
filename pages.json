@@ -47,9 +47,6 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"login": false
 			}
 
 		}, {
@@ -101,6 +98,9 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"login": true
 			}
 
 		}, {
@@ -167,6 +167,9 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"login": true
 			}
 
 		}, {
@@ -204,7 +207,10 @@
             {
                 "navigationBarTitleText": "",
                 "enablePullDownRefresh": false
-            }
+            },
+			"meta": {
+				"login": true
+			}
             
         }
         ,{
@@ -226,6 +232,18 @@
             
         }
         
+        ,{
+            "path" : "pages/user/favorite/favorite",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            },
+			"meta": {
+				"login": true
+			}
+            
+        }
     ],
 	"tabBar": {
 		"backgroundColor": "#ffffff",
