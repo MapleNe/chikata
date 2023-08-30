@@ -67,7 +67,12 @@
 				<!-- 用户属性 -->
 				<view class="tn-margin-top">
 					<view class="tn-flex tn-flex-direction-column">
-						<text class="tn-text-bold tn-text-xxl">{{profile.nickname}}</text>
+						<view class="tn-flex">
+							<text class="tn-text-bold tn-text-xxl">{{profile.nickname}}</text>
+							<text class="level tn-margin-left-sm level-text" :class="['lv-'+profile.grade]"
+								:style="{'color':level[profile.grade]}"></text>
+						</view>
+
 						<view class="tn-flex tn-margin-top tn-flex-top tn-color-gray--dark">
 							<text class="tn-icon-image-text tn-margin-right-xs"></text>
 							<text class="tn-text-ellipsis-2" style="max-width: 50%;">{{profile.description}}</text>

@@ -8,7 +8,7 @@
 						<tn-nav-bar :zIndex="5" backTitle="" :fixed="false">
 							<text v-show="!navAuthor" v-if="article.expand.sort">{{article.expand.sort[0].name}}</text>
 							<view class="tn-flex tn-flex-1 tn-flex-col-center tn-flex-row-between" v-show="navAuthor"
-								@tap.stop="tabsIndex=1">
+								@tap.stop="swiperIndex=1">
 								<view class="tn-flex tn-flex-col-center">
 									<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
 									<text class="tn-margin-left-sm">{{article.expand.author.nickname}}</text>
@@ -46,6 +46,9 @@
 										<text class="tn-text-bold">{{article.expand.author.nickname}}</text>
 										<text v-if="article.expand.author.level==='admin'"
 											class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
+											<text class="level tn-margin-left-xs level-text"
+												:class="['lv-'+article.expand.author.grade]"
+												:style="{'color':level[article.expand.author.grade]}"></text>
 									</view>
 
 								</view>
@@ -130,6 +133,11 @@
 											<text v-if="article.users_id === item.users_id"
 												class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
 												style="padding:5rpx 8rpx">楼主</text>
+												
+												<text class="level tn-margin-left-xs level-text"
+													:class="['lv-'+item.expand.user.grade]"
+													:style="{'color':level[item.expand.user.grade]}"></text>
+												
 										</view>
 
 									</view>
@@ -297,6 +305,10 @@
 				<text v-if="article.users_id === subCommentAuthor.users_id"
 					class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
 					style="padding:5rpx 8rpx">楼主</text>
+					<text class="level tn-margin-left-xs level-text"
+						:class="['lv-'+subCommentAuthor.expand.user.grade]"
+						:style="{'color':level[subCommentAuthor.expand.user.grade]}"></text>
+						
 			</view>
 			<text class="tn-text-sm tn-color-grey--disabled">{{getDateDiff(subCommentAuthor.create_time)}}</text>
 		</view>
@@ -318,6 +330,9 @@
 					<text v-if="article.users_id === item.users_id"
 						class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
 						style="padding:5rpx 8rpx">楼主</text>
+						<text class="level tn-margin-left-xs level-text"
+							:class="['lv-'+item.expand.user.grade]"
+							:style="{'color':level[item.expand.user.grade]}"></text>
 				</view>
 			</view>
 		</view>
@@ -534,6 +549,7 @@
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
+						
 						this.$refs.paging.complete(res.data.data.data)
 						setTimeout(() => {
 							const author = res.data.data.data.filter(item => item.users_id === this

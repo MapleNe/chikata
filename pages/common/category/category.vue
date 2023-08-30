@@ -75,6 +75,9 @@
 											<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
 											<text v-if="item.expand.author.level==='admin'"
 												class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
+												<text class="level tn-margin-left-xs level-text"
+													:class="['lv-'+item.expand.author.grade]"
+													:style="{'color':level[item.expand.author.grade]}"></text>
 										</view>
 										<view class="tn-flex tn-flex-col-center tn-text-sm tn-color-gray--dark">
 											<text>{{getDate(item.create_time)}}</text>
