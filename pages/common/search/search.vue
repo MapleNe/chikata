@@ -1,5 +1,5 @@
 <template>
-	<view>
+	<z-paging-swiper>
 		<tn-nav-bar backTitle="" :isBack="false" customBack>
 			<view class="tn-margin-sm tn-no-margin-top">
 				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
@@ -8,8 +8,9 @@
 					</view>
 					<view
 						class="tn-flex tn-flex-col-center tn-bg-gray--light tn-round tn-padding-left-sm tn-padding-right-sm tn-flex-1">
-						<tn-input placeholder="这是搜索占位" v-model="searchKey" :clearable="false" :autoHeight="false"
-							@focus="focus = true;is_search = false" @blur="focus = false" @input="search"></tn-input>
+						<tn-input placeholder="这是搜索占位" v-model="key" :clearable="false" :autoHeight="false"
+							@focus="focus = true;is_search = false" @blur="focus = false" @input="search"
+							@click="searchKey = key;search()"></tn-input>
 					</view>
 					<view class="tn-margin-left">
 						<text class="ch-color-primary" @tap="is_search = true;search()">搜索</text>
@@ -18,7 +19,7 @@
 			</view>
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
-		<view v-if="!is_search&&searchKey">
+		<view v-if="!is_search&&key">
 			<view class="tn-margin">
 				<view class="tn-flex tn-flex-direction-column">
 					<block v-for="(item,index) in content">
@@ -28,7 +29,7 @@
 				</view>
 			</view>
 		</view>
-		<view v-if="!searchKey&&!is_search">
+		<view v-if="!key&&!is_search">
 			<view class="tn-margin">
 				<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-color-gray--dark tn-text-md">
 					<text class="">历史搜索</text>
@@ -41,13 +42,15 @@
 				</view>
 			</view>
 		</view>
-		<view v-show="is_search&&!focus">
-			<v-tabs :tabs="tabs" v-model="tabsIndex" activeColor="#29b7cb" lineColor="#29b7cb" :lineScale="0.3"
-				lineHeight="8rpx"></v-tabs>
-			<search-article :searchKey="searchKey"></search-article>
-		</view>
-
-	</view>
+		<z-tabs ref="tabs" :current="tabsIndex" active-color="#29b7cb" @change="changeTab" :list="tabs"
+			:scroll-count="2" v-if="is_search&&!focus"></z-tabs>
+		<swiper class="swiper" :current="swiperIndex" v-if="is_search&&!focus" @animationfinish="swiperAnimationfinish"
+				@transition="swiperTransition">
+			<swiper-item v-for="(item,index) in tabs" :key="index">
+				<search-article :tabsIndex="index" :searchKey="searchKey" :swiperIndex="swiperIndex"></search-article>
+			</swiper-item>
+		</swiper>
+	</z-paging-swiper>
 </template>
 
 <script>
@@ -63,9 +66,10 @@
 				tabsIndex: 0,
 				tabs: ['综合', '标签', '用户'],
 				searchKey: null,
+				key: null,
 				showMoreHistory: false,
 				focus: false,
-
+				swiperIndex: 0,
 				is_search: false,
 
 				hotSearchList: [],
@@ -87,10 +91,10 @@
 				this.is_search = true
 			},
 			search() {
-				if (!this.searchKey) return;
+				if (!this.key) return;
 				this.$http.get('/search', {
 					params: {
-						value: this.searchKey,
+						value: this.key,
 						mode: 'article',
 					}
 				}).then(res => {
@@ -111,7 +115,18 @@
 			moreAction() {
 				this.showMoreHistory = !this.showMoreHistory
 			},
-
+			changeTab(index) {
+				this.tabsIndex = index
+				this.swiperIndex = index
+			},
+			swiperTransition(e) {
+				this.$refs.tabs.setDx(e.detail.dx);
+			},
+			//swiper滑动结束
+			swiperAnimationfinish(e) {
+				this.tabsIndex = e.detail.current;
+				this.$refs.tabs.unlockDx();
+			},
 			back() {
 				// 通过判断当前页面的页面栈信息，是否有上一页进行返回，如果没有则跳转到首页
 				const pages = getCurrentPages()
@@ -137,6 +152,10 @@
 <style lang="scss">
 	.ch-color-primary {
 		color: $ch-color-primary;
+	}
+
+	.swiper {
+		height: 100%;
 	}
 
 	.hide {

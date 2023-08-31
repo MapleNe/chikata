@@ -225,6 +225,7 @@
 			if (!this.realBack && this.codeEnter) {
 				this.breakLogin = !this.breakLogin
 				this.realBack = true
+				this.$Router.$lockStatus = false
 			} else {
 				next()
 			}

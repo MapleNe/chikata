@@ -362,7 +362,7 @@
 </view>
 </swiper-item>
 <swiper-item v-if="params">
-	<userProfile :users_id="Number(params.users_id)" @back="getBack"></userProfile>
+	<userProfile :users_id="Number(params.users_id)"></userProfile>
 </swiper-item>
 </swiper>
 </z-paging-swiper>

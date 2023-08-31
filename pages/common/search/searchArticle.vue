@@ -2,8 +2,8 @@
 	<z-paging ref="paging" @query="getContent" use-cache cache-key="searchAricle" v-model="content" :auto="false"
 		:auto-clean-list-when-reload="false" :auto-scroll-to-top-when-reload="false" @onRefresh="onRefresh"
 		@onRestore="onRestore" :refresher-enabled="false">
-		<view :style="{paddingTop: vuex_custom_bar_height+30 + 'px'}"></view>
-		<view v-for="(item,index) in content" :key="index" @touchend="touchEnd" @touchmove="touchMove">
+		<view v-for="(item,index) in content" :key="index" @touchend="touchEnd" @touchmove="touchMove"
+			v-if="tabsIndex==0">
 			<view class="tn-margin">
 				<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-text-md">
 					<view class="tn-flex tn-flex-col-center">
@@ -74,12 +74,12 @@
 								<text class="tn-text-xxl tn-icon-fire "></text>
 								<text class="tn-margin-left-xs">{{item.views}}</text>
 							</view>
-							<view class="tn-flex tn-flex-col-bottom" @tap.stop="showComments(index)">
+							<view class="tn-flex tn-flex-col-bottom">
 								<text class="tn-text-xxl tn-icon-comment"></text>
 								<text class="tn-margin-left-xs">{{item.expand.comments.count}}</text>
 							</view>
-							<view class="tn-flex tn-flex-col-bottom" :class="item.expand.like.is_like?'tn-color-red':''"
-								@tap.stop="likeAction(index)">
+							<view class="tn-flex tn-flex-col-bottom"
+								:class="item.expand.like.is_like?'tn-color-red':''">
 								<text class="tn-text-xxl"
 									:class="item.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
 								<text class="tn-margin-left-xs">{{item.expand.like.likes_count}}</text>
@@ -87,11 +87,26 @@
 						</view>
 					</view>
 				</view>
-				</ls-skeleton>
 			</view>
-			<!-- 间隔开始 -->
 			<view class="tn-bg-gray--light tn-padding-xs"></view>
-			<!-- 间隔结束 -->
+		</view>
+		<view v-if="tabsIndex==1">
+			<view class="tn-flex tn-flex-col-center tn-margin tn-flex-wrap tn-color-gray--dark">
+				<block v-for="(item,index) in content" :key="index">
+					<view class="tn-bg-gray--light tn-margin-right-sm tn-padding-left-xs tn-padding-right-xs">
+						<text>{{item.name}}</text>
+					</view>
+				</block>
+			</view>
+		</view>
+		<view v-if="tabsIndex==2">
+			<view class="tn-flex tn-flex-col-center tn-margin tn-flex-wrap tn-color-gray--dark">
+				<block v-for="(item,index) in content" :key="index">
+					<view class="tn-bg-gray--light tn-margin-right-sm tn-padding-left-xs tn-padding-right-xs">
+						<text>{{item.name}}</text>
+					</view>
+				</block>
+			</view>
 		</view>
 	</z-paging>
 </template>
@@ -145,6 +160,7 @@
 				isLongTap: true,
 				api: null,
 				key: null,
+				current: 0,
 
 			};
 		},
@@ -157,6 +173,8 @@
 		watch: {
 			swiperIndex: {
 				handler(e) {
+					this.current = e
+					console.log(e)
 					if (e === this.tabsIndex) {
 						if (!this.firstLoad) {
 							setTimeout(() => {
@@ -170,15 +188,12 @@
 			searchKey: {
 				handler(e) {
 					this.key = e
-					console.log(e)
 					setTimeout(() => {
 						this.$refs.paging.reload()
 					}, 200)
-
 				},
 				deep: true,
 				immediate: true
-
 			}
 		},
 		computed: {
@@ -196,7 +211,7 @@
 						limit: num,
 						page: page,
 						value: this.key,
-						mode: 'article'
+						mode: this.tabsIndex == 0 ? 'article' : this.tabsIndex == 1 ? 'tags' : 'users'
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
