@@ -165,7 +165,8 @@
 													:content="subComment.content" :selectable="true"></mp-html>
 											</view>
 										</block>
-										<view class="tn-flex tn-flex-col-center tn-color-gray--dark" v-if="item.son.length>2">
+										<view class="tn-flex tn-flex-col-center tn-color-gray--dark"
+											v-if="item.son.length>2">
 											<text>全部{{item.son.length}}条评论</text>
 											<text class="tn-icon-right tn-text-md"></text>
 										</view>
@@ -273,10 +274,17 @@
 						</view>
 						<view class="tn-margin-top">
 							<view class="tn-flex">
-								<view class="tn-flex tn-color-gray--dark tn-flex-col-center tn-flex-direction-column">
+								<view
+									class="tn-flex tn-color-gray--dark tn-flex-col-center tn-flex-direction-column tn-margin-right">
 									<text
 										class="tn-icon-warning tn-text-xxl tn-round tn-bg-gray--light tn-padding"></text>
 									<text class="tn-text-lg tn-margin-top-sm">举报</text>
+								</view>
+
+								<view class="tn-flex tn-color-gray--dark tn-flex-col-center tn-flex-direction-column"
+									v-if="article.users_id == userInfo.id" @tap.stop.prevent="goEdit">
+									<text class="tn-icon-edit tn-text-xxl tn-round tn-bg-gray--light tn-padding"></text>
+									<text class="tn-text-lg tn-margin-top-sm">编辑</text>
 								</view>
 							</view>
 						</view>
@@ -760,6 +768,16 @@
 					path: '/pages/common/article/comment/comment',
 					query: {
 						id: id
+					}
+				})
+			},
+			goEdit() {
+				uni.$emit('editArticle',this.article)
+				this.$Router.push({
+					path: '/pages/tabbar/publish/publish',
+					query: {
+						id: this.article.id,
+						update: 1,
 					}
 				})
 			},

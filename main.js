@@ -46,11 +46,11 @@ import {
 Vue.prototype.$inisHelper = inisHelper
 
 // INIS 配置文件
-import config from '@/static/config.js'
+import config from '@/config/config.js'
 process.inisENV = config
 
 // 等级颜色
-import level from '@/static/level.js'
+import level from '@/config/level.js'
 Vue.prototype.level = level
 
 // http模块

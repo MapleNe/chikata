@@ -1,5 +1,5 @@
-import config from '@/static/config.js'
-import inisENV from '@/static/config.js'
+import config from '@/config/config.js'
+import inisENV from '@/config/config.js'
 import {
 	inisHelper
 } from '@/utils/helper.js'

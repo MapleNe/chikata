@@ -4,7 +4,7 @@
 		mapMutations,
 		mapState
 	} from 'vuex';
-	import config from './static/config.js'
+	import config from './config/config.js'
 	import WS from "@/utils/webSocket.js";
 	export default {
 		data() {

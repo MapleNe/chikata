@@ -344,6 +344,8 @@
 				link: null,
 				linkName: null,
 				update: false,
+				id: 0,
+				
 				edit: null,
 				showArticleSet: false,
 				formatObj: null,
@@ -564,16 +566,15 @@
 			};
 		},
 		onLoad(params) {
-			
+			this.id = params.id
+			this.update = params.update
 			uni.onKeyboardHeightChange((res) => {
 				// 监听软键盘的高度，页面隐藏后一定要取消监听键盘
 				if (res.height !== 0) this.bottom = 0;
-
 				if (res.height === 0) {
 					this.bottom = this.curTop
 				}
 			})
-			this.update = params.update
 			this.getTags()
 			this.getCollect()
 			this.getCategory()
@@ -707,6 +708,9 @@
 			},
 			changeTab(index) {
 				this.tabsIndex = index
+			},
+			getContent() {
+				this.$http.get('/article/one')
 			},
 			formatTap(item) {
 				this.edit[item.customFn ? item.customFn : 'format'](item.type, item.value);

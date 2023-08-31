@@ -38,7 +38,7 @@
 		mapMutations
 	} from 'vuex';
 
-	import config from "@/static/config.js";
+	import config from "@/config/config.js";
 	import articleList from "@/components/articleList/articleList.vue";
 	import commentList from '@/components/commentList/commentList.vue';
 	import articleMenu from '@/components/aticleMenu/aticleMenu.vue';
