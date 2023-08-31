@@ -268,7 +268,6 @@
 
 <style lang="scss" scoped>
 	.tn-custom-nav-bar {
-		padding-top: 10rpx;
 		display: block;
 		position: relative;
 

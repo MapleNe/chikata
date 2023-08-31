@@ -46,9 +46,9 @@
 										<text class="tn-text-bold">{{article.expand.author.nickname}}</text>
 										<text v-if="article.expand.author.level==='admin'"
 											class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
-											<text class="level tn-margin-left-xs level-text"
-												:class="['lv-'+article.expand.author.grade]"
-												:style="{'color':level[article.expand.author.grade]}"></text>
+										<text class="level tn-margin-left-xs level-text"
+											:class="['lv-'+article.expand.author.grade]"
+											:style="{'color':level[article.expand.author.grade]}"></text>
 									</view>
 
 								</view>
@@ -133,11 +133,11 @@
 											<text v-if="article.users_id === item.users_id"
 												class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
 												style="padding:5rpx 8rpx">楼主</text>
-												
-												<text class="level tn-margin-left-xs level-text"
-													:class="['lv-'+item.expand.user.grade]"
-													:style="{'color':level[item.expand.user.grade]}"></text>
-												
+
+											<text class="level tn-margin-left-xs level-text"
+												:class="['lv-'+item.expand.user.grade]"
+												:style="{'color':level[item.expand.user.grade]}"></text>
+
 										</view>
 
 									</view>
@@ -165,7 +165,7 @@
 													:content="subComment.content" :selectable="true"></mp-html>
 											</view>
 										</block>
-										<view class="tn-flex tn-flex-col-center tn-color-gray--dark">
+										<view class="tn-flex tn-flex-col-center tn-color-gray--dark" v-if="item.son.length>2">
 											<text>全部{{item.son.length}}条评论</text>
 											<text class="tn-icon-right tn-text-md"></text>
 										</view>
@@ -186,9 +186,10 @@
 								class="tn-flex tn-text-sm tn-flex-col-center tn-color-gray--dark tn-flex-basic-sm tn-flex-row-between"
 								style="margin-left: auto;">
 								<view class="tn-flex tn-flex-col-center tn-flex-direction-column"
-									@tap.stop.prevent="favorite()">
-									<text class="tn-text-xxl tn-icon-star "></text>
-									<text>{{article.views}}</text>
+									v-if="article.expand.favorites" @tap.stop="favorite">
+									<text class="tn-text-xxl"
+										:class="article.expand.favorites.is_favorites?'tn-icon-star-fill tn-color-orangered':'tn-icon-star'"></text>
+									<text>{{article.expand.favorites.favorites_count}}</text>
 								</view>
 								<view class="tn-flex tn-flex-col-center tn-flex-direction-column">
 									<text class="tn-text-xxl tn-icon-comment"></text>
@@ -305,10 +306,9 @@
 				<text v-if="article.users_id === subCommentAuthor.users_id"
 					class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
 					style="padding:5rpx 8rpx">楼主</text>
-					<text class="level tn-margin-left-xs level-text"
-						:class="['lv-'+subCommentAuthor.expand.user.grade]"
-						:style="{'color':level[subCommentAuthor.expand.user.grade]}"></text>
-						
+				<text class="level tn-margin-left-xs level-text" :class="['lv-'+subCommentAuthor.expand.user.grade]"
+					:style="{'color':level[subCommentAuthor.expand.user.grade]}"></text>
+
 			</view>
 			<text class="tn-text-sm tn-color-grey--disabled">{{getDateDiff(subCommentAuthor.create_time)}}</text>
 		</view>
@@ -330,9 +330,8 @@
 					<text v-if="article.users_id === item.users_id"
 						class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
 						style="padding:5rpx 8rpx">楼主</text>
-						<text class="level tn-margin-left-xs level-text"
-							:class="['lv-'+item.expand.user.grade]"
-							:style="{'color':level[item.expand.user.grade]}"></text>
+					<text class="level tn-margin-left-xs level-text" :class="['lv-'+item.expand.user.grade]"
+						:style="{'color':level[item.expand.user.grade]}"></text>
 				</view>
 			</view>
 		</view>
@@ -362,7 +361,7 @@
 </view>
 </swiper-item>
 <swiper-item v-if="params">
-	<userProfile :users_id="Number(params.users_id)"></userProfile>
+	<userProfile :users_id="Number(params.users_id)" @edit="is_edit = true"></userProfile>
 </swiper-item>
 </swiper>
 </z-paging-swiper>
@@ -482,6 +481,8 @@
 				subId: null,
 				subComment: [],
 				subCommentAuthor: null,
+				is_edit: false,
+				goLogin: false,
 			}
 		},
 		onPageScroll(e) {
@@ -494,9 +495,14 @@
 			//退出前判断
 			switch (true) {
 				case this.swiperIndex > 0:
-					this.swiperIndex = 0
-					next(false)
-					this.$Router.$lockStatus = false
+					if (this.is_edit) {
+						next()
+						this.is_edit = !this.is_edit
+					} else {
+						this.swiperIndex = 0
+						next(false)
+						this.$Router.$lockStatus = false
+					}
 					break;
 				case !this.commentBoxOpen && !this.showComment:
 					next();
@@ -505,6 +511,9 @@
 					this.commentBoxOpen = false
 					next(false)
 					this.$Router.$lockStatus = false
+					break;
+				case this.goLogin:
+					next()
 					break;
 				case this.showComment:
 					this.showComment = false
@@ -530,6 +539,7 @@
 					}
 				}).then(res => {
 					if (res.data.code == 200) {
+						console.log(res)
 						this.article = res.data.data
 						this.commentDisAllow = res.data.data.opt.comments.allow
 						if (!res.data.data.opt.comments.allow) this.commentBoxText = '作者关闭了评论...';
@@ -549,7 +559,7 @@
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
-						
+
 						this.$refs.paging.complete(res.data.data.data)
 						setTimeout(() => {
 							const author = res.data.data.data.filter(item => item.users_id === this
@@ -645,6 +655,7 @@
 					this.commentBoxText = '回复:' + item.nickname
 					this.pid = item.id
 				} else {
+					this.goLogin = true
 					this.$Router.push({
 						path: '/pages/user/login',
 						animation: {
@@ -818,10 +829,21 @@
 				this.$http.post('/favorites/modify', {
 					article_id: this.article.id
 				}).then(res => {
-					uni.showToast({
-						icon: 'none',
-						title: res.data.msg
-					})
+					if (res.data.code === 200) {
+						if (this.article.expand.favorites.is_favorites) {
+							this.article.expand.favorites.favorites_count--
+
+						} else {
+							this.article.expand.favorites.favorites_count++
+
+						}
+						this.article.expand.favorites.is_favorites = !this.article.expand.favorites.is_favorites
+						uni.showToast({
+							icon: 'none',
+							title: res.data.msg
+						})
+					}
+
 				}).catch(err => {
 					uni.showToast({
 						icon: 'none',

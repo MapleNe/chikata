@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<tn-nav-bar>
+		<tn-nav-bar backTitle="">
 			个人信息
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>

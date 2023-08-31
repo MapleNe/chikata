@@ -559,6 +559,7 @@
 				};
 			},
 			goEdit() {
+				this.$emit('edit',true)
 				this.$Router.push({
 					path: '/pages/user/profile'
 				})
