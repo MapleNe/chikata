@@ -109,13 +109,13 @@
 			<tn-list-cell :arrow="true">
 				<view class="tn-flex tn-flex-col-center">
 					<text class="tn-icon-gift tn-text-xxl"></text>
-					<text class="tn-margin-left-sm">活动</text>
+					<text class="tn-margin-left-sm">客服</text>
 				</view>
 			</tn-list-cell>
 			<tn-list-cell unlined :arrow="true">
 				<view class="tn-flex tn-flex-col-center">
 					<text class="tn-icon-gift tn-text-xxl"></text>
-					<text class="tn-margin-left-sm">活动</text>
+					<text class="tn-margin-left-sm">青少年守护</text>
 				</view>
 			</tn-list-cell>
 		</view>

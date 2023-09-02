@@ -4,8 +4,9 @@
 		mapMutations,
 		mapState
 	} from 'vuex';
-	import config from './config/config.js'
+	import config from './config/config.js';
 	import WS from "@/utils/webSocket.js";
+	import APPUpdate from '@/uni_modules/zhouWei-APPUpdate/js_sdk/appUpdate';
 	export default {
 		data() {
 			return {
@@ -15,6 +16,9 @@
 			}
 		},
 		onLaunch: function() {
+			// #ifdef APP-PLUS
+			APPUpdate();
+			// #endif
 			//启动APP时判断是否已有用户数据
 			let userInfo = uni.getStorageSync('userInfo') || ''
 			this.id = userInfo.id
@@ -142,9 +146,11 @@
 		background: $ch-color-primary !important;
 		color: white;
 	}
-	.level-text{
+
+	.level-text {
 		font-size: 55rpx;
 	}
+
 	.ch-bg-main--light {
 		background: rgba(lighten($ch-color-primary, 30%), 0.5) !important;
 	}
