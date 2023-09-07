@@ -16,8 +16,9 @@
 						<view class="tn-flex tn-flex-col-center" style="position: relative;">
 							<tn-avatar :src="item.expand.author.head_img"
 								@tap="type!=='user'?goUserProfile(index):''"></tn-avatar>
-								<text v-if="item.expand.author.level==='admin'"
-									class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill" style="position: absolute;top: 50rpx;left: 30rpx; z-index: 9999;"></text>
+							<text v-if="item.expand.author.level==='admin'"
+								class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"
+								style="position: absolute;top: 50rpx;left: 30rpx; z-index: 9999;"></text>
 							<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 								<view class="tn-flex tn-flex-col-center">
 									<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
@@ -27,6 +28,12 @@
 								</view>
 								<view class="tn-flex tn-flex-col-center tn-text-sm tn-color-gray--dark">
 									<text>{{getDateDiff(item.create_time)}}</text>
+									<view class="tn-flex tn-flex-col-center" v-if="item.expand.sort.length"
+										@tap.stop.prevent="goCategory(item.expand.sort[0].id)">
+										<text class="tn-margin-right-xs tn-margin-left-xs">·</text>
+										<text>{{item.expand.sort[0].name}}</text>
+									</view>
+									<!-- 圈子页面显示以下样式 -->
 									<view class="tn-flex tn-flex-col-center"
 										v-if="item.expand.sort.length && type==='circle'">
 										<text class="tn-margin-right-xs tn-margin-left-xs">·</text>
@@ -308,7 +315,7 @@
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
-						
+
 						this.$refs.paging.complete(res.data.data.data)
 						this.firstLoad = true
 						//骨架屏仅在第一次加载数据时显示
@@ -348,13 +355,6 @@
 							icon: 'none',
 							title: res.data.msg
 						})
-					} else {
-						if (res.data.code === 403) {
-							uni.showToast({
-								icon: 'none',
-								title: '令牌失效请重新登录'
-							})
-						}
 					}
 				}).catch(err => {
 
@@ -393,11 +393,11 @@
 					},
 				})
 			},
-			goCategory(category) {
+			goCategory(id) {
 				this.$Router.push({
 					path: '/pages/common/category/category',
 					query: {
-						id: category.id
+						id: id
 					}
 				})
 			},

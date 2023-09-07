@@ -39,7 +39,7 @@
 					<view class="tn-margin" v-if="article" id="article">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 							<view class="tn-flex tn-flex-col-center" style="position: relative;">
-								<tn-avatar :src="article.expand.author.head_img" @click="tabsIndex=1"></tn-avatar>
+								<tn-avatar :src="article.expand.author.head_img" @click="swiperIndex=1"></tn-avatar>
 								<text v-if="article.expand.author.level==='admin'"
 									class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"
 									style="position: absolute;top: 40rpx;left: 30rpx; z-index: 9999;"></text>
@@ -103,10 +103,10 @@
 										<text class="tn-margin-right-xs">浏览数：</text>
 										<text>{{article.views}}</text>
 									</view>
-									<view>
+									<!-- <view >
 										<text class="tn-icon-tip tn-margin-right-xs"></text>
 										<text>已开启创作声明，允许规范转载</text>
-									</view>
+									</view> -->
 								</view>
 
 							</view>

@@ -56,7 +56,7 @@
 				</view>
 				<view class="tn-margin-top-xl tn-margin-bottom-lg" v-if="hasLogin">
 					<view class="tn-flex tn-flex-col-center tn-text-sm">
-						<view class="tn-flex tn-flex-col-center tn-margin-right" @tap.stop.prevent="goFans()()">
+						<view class="tn-flex tn-flex-col-center tn-margin-right" @tap.stop.prevent="goFans()">
 							<text
 								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{userInfo.expand.fansCount}}</text>
 							<text class="tn-color-gray--dark">粉丝</text>
