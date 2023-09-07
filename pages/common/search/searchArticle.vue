@@ -8,7 +8,7 @@
 				<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-text-md">
 					<view class="tn-flex tn-flex-col-center">
 						<tn-avatar :src="item.expand.author.head_img"
-							@tap="type!=='user'?goUserProfile(index):''"></tn-avatar>
+							@tap="type!=='user'?goUserProfile(item.users_id):''"></tn-avatar>
 						<view class="tn-flex tn-flex-col-center tn-margin-left-sm">
 							<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
 							<text v-if="item.expand.author.level==='admin'"
@@ -102,8 +102,16 @@
 		<view v-if="tabsIndex==2">
 			<view class="tn-flex tn-flex-col-center tn-margin tn-flex-wrap tn-color-gray--dark">
 				<block v-for="(item,index) in content" :key="index">
-					<view class="tn-bg-gray--light tn-margin-right-sm tn-padding-left-xs tn-padding-right-xs">
-						<text>{{item.name}}</text>
+					<view class="tn-flex tn-flex-col-center" style="position: relative;">
+						<tn-avatar :src="item.head_img"
+							@tap="goUserProfile(item.id)"></tn-avatar>
+							<text v-if="item.level==='admin'"
+								class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"
+								style="position: absolute;top: 40rpx;left: 30rpx; z-index: 9999;"></text>
+						<view class="tn-flex tn-flex-col-center tn-margin-left-sm">
+							<text class="tn-text-bold">{{item.nickname}}</text>
+							
+						</view>
 					</view>
 				</block>
 			</view>
@@ -173,8 +181,6 @@
 		watch: {
 			swiperIndex: {
 				handler(e) {
-					this.current = e
-					console.log(e)
 					if (e === this.tabsIndex) {
 						if (!this.firstLoad) {
 							setTimeout(() => {
@@ -211,10 +217,12 @@
 						limit: num,
 						page: page,
 						value: this.key,
-						mode: this.tabsIndex == 0 ? 'article' : this.tabsIndex == 1 ? 'tags' : 'users'
+						mode: this.tabsIndex == 0 ? 'article' : this.tabsIndex == 1 ? 'tags' : this
+							.tabsIndex == 2 ? 'users' : ''
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
+						console.log(res)
 						this.$refs.paging.complete(res.data.data.data)
 						this.firstLoad = true
 						//骨架屏仅在第一次加载数据时显示
@@ -283,11 +291,11 @@
 					},
 				})
 			},
-			goUserProfile(index) {
+			goUserProfile(id) {
 				this.$Router.push({
 					path: '/pages/common/userProfile/userProfile',
 					query: {
-						id: this.content[index].users_id
+						id: id
 					}
 				})
 			},

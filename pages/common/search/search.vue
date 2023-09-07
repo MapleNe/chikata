@@ -45,7 +45,7 @@
 		<z-tabs ref="tabs" :current="tabsIndex" active-color="#29b7cb" @change="changeTab" :list="tabs"
 			:scroll-count="2" v-if="is_search&&!focus"></z-tabs>
 		<swiper class="swiper" :current="swiperIndex" v-if="is_search&&!focus" @animationfinish="swiperAnimationfinish"
-				@transition="swiperTransition">
+			@transition="swiperTransition">
 			<swiper-item v-for="(item,index) in tabs" :key="index">
 				<search-article :tabsIndex="index" :searchKey="searchKey" :swiperIndex="swiperIndex"></search-article>
 			</swiper-item>
@@ -71,7 +71,6 @@
 				focus: false,
 				swiperIndex: 0,
 				is_search: false,
-
 				hotSearchList: [],
 				historySearch: [],
 				content: [],
@@ -92,6 +91,8 @@
 			},
 			search() {
 				if (!this.key) return;
+				this.searchKey = this.key;
+				this.is_search = true;
 				this.$http.get('/search', {
 					params: {
 						value: this.key,
@@ -125,6 +126,7 @@
 			//swiper滑动结束
 			swiperAnimationfinish(e) {
 				this.tabsIndex = e.detail.current;
+				this.swiperIndex = e.detail.current;
 				this.$refs.tabs.unlockDx();
 			},
 			back() {

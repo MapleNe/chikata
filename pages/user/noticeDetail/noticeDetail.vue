@@ -37,13 +37,13 @@
 							@tap.stop.prevent="goUserProfile(index)">
 							<tn-avatar :src="item.head_img"></tn-avatar>
 							<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
-								<text class="ch-color-primary">{{item.nickname}}</text>
+								<text>{{item.nickname}}</text>
 								<text
 									class="tn-color-gray tn-text-sm tn-text-xs">{{getDateDiff(item.create_time)}}</text>
 							</view>
 						</view>
 						<view>
-							<text class="tn-color-gray--dark">点赞了你的评论</text>
+							<text class="tn-color-gray--dark">点赞了你</text>
 							<text class="tn-text-xxl tn-icon-like-fill tn-color-red"></text>
 						</view>
 					</view>

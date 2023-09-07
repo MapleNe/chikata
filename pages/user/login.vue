@@ -509,6 +509,7 @@
 				this.$http.post('/users/vcl', {
 					account: this.phone,
 				}).then(res => {
+					console.log(res)
 					if (res.data.code === 200) {
 						if (!this.codeEnter) this.codeEnter = true
 						if (!this.timer) { //计时器

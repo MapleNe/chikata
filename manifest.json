@@ -8,8 +8,17 @@
 	/* 5+App特有相关 */
 	"app-plus": {
 		"usingComponents": true,
+		"darkMode": true,
+		"themeLocation": "theme.json",
 		"nvueStyleCompiler": "uni-app",
 		"compilerVersion": 3,
+		"safearea": { //iOS平台的安全区域
+			"background": "#ffffff",
+			"backgroundDark": "#2f0508", // HX 3.1.19+支持
+			"bottom": {
+				"offset": "auto"
+			}
+		},
 		"splashscreen": {
 			"alwaysShowBeforeRender": false,
 			"waiting": true,

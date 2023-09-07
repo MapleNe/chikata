@@ -13,7 +13,6 @@
 									<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
 									<text class="tn-margin-left-sm">{{article.expand.author.nickname}}</text>
 								</view>
-
 								<view>
 									<tn-button plain :fontSize="30" size="sm" padding="0 15rpx"
 										backgroundColor="#29b7cb" fontColor="#29b7cb" v-if="!article.expand.focus"
@@ -39,13 +38,15 @@
 					<!-- 页面内容 -->
 					<view class="tn-margin" v-if="article" id="article">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-							<view class="tn-flex tn-flex-col-center">
+							<view class="tn-flex tn-flex-col-center" style="position: relative;">
 								<tn-avatar :src="article.expand.author.head_img" @click="tabsIndex=1"></tn-avatar>
+								<text v-if="article.expand.author.level==='admin'"
+									class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"
+									style="position: absolute;top: 40rpx;left: 30rpx; z-index: 9999;"></text>
 								<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 									<view class="tn-flex tn-flex-col-center">
 										<text class="tn-text-bold">{{article.expand.author.nickname}}</text>
-										<text v-if="article.expand.author.level==='admin'"
-											class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
+
 										<text class="level tn-margin-left-xs level-text"
 											:class="['lv-'+article.expand.author.grade]"
 											:style="{'color':level[article.expand.author.grade]}"></text>
@@ -77,7 +78,6 @@
 									<text class="tn-margin-left-sm tn-margin-right-sm">|</text>
 									<text>最后编辑：{{getDateDiff(article.last_update_time)}}</text>
 								</view>
-
 							</view>
 						</view>
 
@@ -154,7 +154,7 @@
 										@tap.stop.prevent="showComment= !showComment;subId=item.id;subCommentAuthor=item">
 										<!-- 这里只显示两条防止太多评论导致的过长 -->
 										<block v-for="(subComment, index) in item.son" :key="index" v-if="index<2">
-											<view class="tn-margin-bottom-sm tn-text-md">
+											<view class=" tn-text-md">
 												<text class="tn-color-indigo"
 													@tap.stop.prevent="goProfile(subComment.users_id)">{{subComment.nickname}}</text>
 												<text v-if="article.users_id === subComment.users_id"
@@ -165,7 +165,7 @@
 													:content="subComment.content" :selectable="true"></mp-html>
 											</view>
 										</block>
-										<view class="tn-flex tn-flex-col-center tn-color-gray--dark"
+										<view class="tn-flex tn-flex-col-center tn-margin-top-sm tn-color-gray--dark"
 											v-if="item.son.length>2">
 											<text>全部{{item.son.length}}条评论</text>
 											<text class="tn-icon-right tn-text-md"></text>
@@ -651,7 +651,6 @@
 						},
 					})
 				}
-
 			},
 			//关闭popup重置placeholder
 			resetComment() {
@@ -672,8 +671,6 @@
 						},
 					})
 				}
-
-
 			},
 			commentCheck() {
 				if (this.commentText === '') {
@@ -772,7 +769,7 @@
 				})
 			},
 			goEdit() {
-				uni.$emit('editArticle',this.article)
+				uni.$emit('editArticle', this.article)
 				this.$Router.push({
 					path: '/pages/tabbar/publish/publish',
 					query: {

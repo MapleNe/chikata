@@ -632,6 +632,13 @@
 					console.log(res)
 				})
 			},
+			getCategoryPlacard(){
+				this.$http.get('/getcategoryInfo',{
+					params:{
+						
+					}
+				})
+			},
 			changeTab(index) {
 				this.tabsIndex = index
 				this.loadAticle()
@@ -768,6 +775,30 @@
 						users_id: item.users_id
 					},
 				})
+			},
+			followUser(index) {
+				this.$http.put('/Focus/Record', {
+					userId: this.content[index].users_id
+				}).then(res => {
+					switch (res.data.code) {
+						case 200:
+							uni.showToast({
+								icon: 'none',
+								title: res.data.msg
+							});
+							this.content[index].expand.focus = !this.content[index].expand.focus
+							break;
+						case 400:
+							uni.showToast({
+								icon: 'none',
+								title: res.data.msg
+							});
+							break;
+						default:
+							// 处理其他情况
+							break;
+					}
+				});
 			},
 			goUserProfile(item) {
 				this.$Router.push({

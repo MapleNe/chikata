@@ -13,14 +13,14 @@
 			<view class="tn-margin">
 				<ls-skeleton :skeleton="skeleton" :loading="loading">
 					<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-						<view class="tn-flex tn-flex-col-center">
+						<view class="tn-flex tn-flex-col-center" style="position: relative;">
 							<tn-avatar :src="item.expand.author.head_img"
 								@tap="type!=='user'?goUserProfile(index):''"></tn-avatar>
+								<text v-if="item.expand.author.level==='admin'"
+									class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill" style="position: absolute;top: 50rpx;left: 30rpx; z-index: 9999;"></text>
 							<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 								<view class="tn-flex tn-flex-col-center">
 									<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
-									<text v-if="item.expand.author.level==='admin'"
-										class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
 									<text class="level tn-margin-left-xs level-text"
 										:class="['lv-'+item.expand.author.grade]"
 										:style="{'color':level[item.expand.author.grade]}"></text>
