@@ -119,7 +119,7 @@
 									<text
 										class="tn-margin-left-xs">{{getDate(item.create_time).month}}月/{{getDate(item.create_time).year}}年</text>
 									<text class="tn-margin-left-xs tn-margin-right-xs">·</text>
-									<text>{{item.expand.sort[0].name}}</text>
+									<text v-if="item.expand.sort&&item.expand.sort.length>0">{{item.expand.sort[0].name}}</text>
 								</view>
 								<view>
 									<text class="tn-icon-more-horizontal tn-text-xxl"></text>
@@ -376,7 +376,6 @@
 					if (res.data.code === 200) {
 						this.$refs.comments.complete(res.data.data)
 					}
-					console.log(res, '评论')
 				})
 			},
 			async getUserArticle(page, num) {

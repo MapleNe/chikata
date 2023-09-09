@@ -6,7 +6,8 @@
 					:auto-scroll-to-top-when-reload="false" :auto-clean-list-when-reload="false" @scroll="onScroll">
 					<template #top>
 						<tn-nav-bar :zIndex="5" backTitle="" :fixed="false">
-							<text v-show="!navAuthor" v-if="article.expand.sort">{{article.expand.sort[0].name}}</text>
+							<text v-show="!navAuthor"
+								v-if="article.expand.sort&&article.expand.sort.length>0">{{article.expand.sort[0].name}}</text>
 							<view class="tn-flex tn-flex-1 tn-flex-col-center tn-flex-row-between" v-show="navAuthor"
 								@tap.stop="swiperIndex=1">
 								<view class="tn-flex tn-flex-col-center">
@@ -547,7 +548,6 @@
 					}
 				}).then(res => {
 					if (res.data.code == 200) {
-						console.log(res)
 						this.article = res.data.data
 						this.commentDisAllow = res.data.data.opt.comments.allow
 						if (!res.data.data.opt.comments.allow) this.commentBoxText = '作者关闭了评论...';

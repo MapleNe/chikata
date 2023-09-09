@@ -345,7 +345,7 @@
 				linkName: null,
 				update: false,
 				id: 0,
-				
+
 				edit: null,
 				showArticleSet: false,
 				formatObj: null,
@@ -583,24 +583,24 @@
 			}
 		},
 		beforeRouteLeave(to, from, next) {
-			if (this.edit.textCount && !this.save) {
+			if (this.save) {
+				next();
+				return;
+			}
+			if (this.edit.textCount) {
 				uni.showModal({
 					title: '是否保存为草稿',
 					confirmText: '保存',
 					cancelText: '不保存',
 					success: (res) => {
 						if (res.confirm) {
-							this.saveDraft()
-							next()
-						} else {
-							next()
+							this.saveDraft();
 						}
-					}
-				})
-			} else if (this.save) {
-				next()
+						next();
+					},
+				});
 			} else {
-				next()
+				next();
 			}
 		},
 		created() {
@@ -614,7 +614,7 @@
 
 		methods: {
 			getTags() {
-				this.$http.get('tag/all', {
+				this.$http.get('/tag/all', {
 					params: {
 						page: 1,
 						limit: 20,
@@ -865,14 +865,15 @@
 					opt: JSON.stringify(this.articleOpt),
 				}).then(res => {
 					if (res.data.code === 200) {
-						uni.hideLoading()
 						this.save = true
+						this.$Router.$lockStatus = false
+						uni.hideLoading()
 						uni.showToast({
 							icon: 'none',
 							title: '发布' + res.data.msg
 						})
 						setTimeout(() => {
-							this.$Router.replaceAll({
+							this.$Router.replace({
 								path: '/pages/common/article/article',
 								query: {
 									id: res.data.data,
