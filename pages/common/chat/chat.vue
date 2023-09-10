@@ -77,7 +77,6 @@
 		},
 		onLoad(params) {
 			this.chatInfo = params
-			console.log(this.chatInfo)
 		},
 		created() {
 			uni.$on('getNewChat', data => {
@@ -118,7 +117,7 @@
 						id: this.chatInfo.users_id ? this.chatInfo.users_id : ''
 					}
 				}).then(res => {
-					console.log(res)
+
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data)
 					}
@@ -165,7 +164,7 @@
 							text: msg,
 							create_time: this.getNowTime(),
 						});
-						console.log(res,'发送成功')
+						console.log(res, '发送成功')
 						this.scrollToBottom()
 					},
 					fail: (err) => {

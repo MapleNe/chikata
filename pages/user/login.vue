@@ -65,9 +65,9 @@
 								<text class="tn-margin-left tn-margin-right tn-color-gray--light">|</text>
 								<text @tap.stop.prevent="issueAction=!issueAction">遇到问题</text>
 							</view>
-							<view class="tn-margin-top-sm tn-text-center tn-color-gray--dark" style="font-size: 28rpx;">
+							<!-- <view class="tn-margin-top-sm tn-text-center tn-color-gray--dark" style="font-size: 28rpx;">
 								<text @tap.stop.prevent="loginAction = !loginAction">通行证创建</text>
-							</view>
+							</view> -->
 						</view>
 						<!-- 三方登录 -->
 						<view class="tn-margin-top-xl">

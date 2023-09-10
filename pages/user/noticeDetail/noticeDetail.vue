@@ -54,24 +54,24 @@
 				</block>
 				<block v-if="type==='focus'">
 					<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-bottom">
-						<view class="tn-flex tn-flex-col-center">
-							<tn-avatar size="lg" :src="item.head_img"></tn-avatar>
+						<view class="tn-flex tn-flex-col-center" @tap.stop="goUserProfile(index)">
+							<tn-avatar :src="item.head_img"></tn-avatar>
 							<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
-								<text class="tn-text-bold">{{item.nickname}}</text>
-								<text>{{getDateDiff(item.create_time)}}</text>
+								<text>{{item.nickname}}</text>
+								<text class="tn-text-sm">{{getDateDiff(item.create_time)}}</text>
 							</view>
 						</view>
 						<view>
-
-							<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29b7cb" fontColor="#29b7cb"
-								v-show="!item.is_focus" @click="followUser(index)">
+							<tn-button plain :fontSize="30" size="sm" padding="0 15rpx" backgroundColor="#29b7cb"
+								fontColor="#29b7cb" v-if="!item.focus" @click="followUser()">
 								<view class="tn-flex tn-flex-col-center">
 									<text class="tn-icon-add tn-margin-right-xs"></text>
-									<text>回关</text>
+									<text>关注</text>
 								</view>
 							</tn-button>
-							<tn-button size="sm" padding="0 20rpx" backgroundColor="tn-bg-gray--light"
-								fontColor="tn-color-gray" @click="followUser(index)" v-show="item.is_focus">
+							<tn-button :fontSize="30" size="sm" plain padding="0 20rpx"
+								backgroundColor="tn-bg-gray--light" fontColor="tn-color-gray"
+								@click="showCancelFollow = true" v-else>
 								<text>已关注</text>
 							</tn-button>
 						</view>
@@ -113,11 +113,12 @@
 				})
 			},
 			goUserProfile(index) {
+				console.log(this.noticeList[index])
 				this.$Router.push({
 					path: '/pages/common/userProfile/userProfile',
 					query: {
 						id: this.noticeList[index].users_id ? this.noticeList[index].users_id : this.noticeList[
-							index].fuserId
+							index].fansid
 					}
 				})
 			},
