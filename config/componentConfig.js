@@ -28,7 +28,6 @@ export default {
 		http.get("/other/version", {
 			params
 		}).then(res => {
-			console.log('请求成功',res)
 			/* res的数据说明
 			 * | 参数名称        | 一定返回     | 类型        | 描述
 			 * | -------------|--------- | --------- | ------------- |

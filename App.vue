@@ -136,7 +136,6 @@
 			// 获取页面信息
 			getPage() {
 				http.get('/page/all').then(res => {
-					console.log(res)
 					if (res.data.code === 200) {
 						this.setPage(res.data.data.data)
 					}

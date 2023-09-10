@@ -37,7 +37,7 @@ class WebSocketClass {
 			this.ws = uni.connectSocket({
 				url: this.wsUrl,
 				success(data) {
-					console.log("websocket连接成功");
+					// console.log("websocket连接成功");
 				},
 			});
 			this.initEventHandle();
@@ -54,14 +54,14 @@ class WebSocketClass {
 		 */
 		// #ifdef H5
 		this.ws.onopen = (event) => {
-			console.log("WebSocket连接打开H5"); //打开连接
+			// console.log("WebSocket连接打开H5"); //打开连接
 			this.start()
 		};
 		// #endif
 
 		// #ifdef APP-PLUS
 		this.ws.onOpen(res => {
-			console.log('WebSocket连接打开APP'); //打开连接
+			// console.log('WebSocket连接打开APP'); //打开连接
 			this.start()
 		});
 		// #endif
@@ -139,10 +139,10 @@ class WebSocketClass {
 		this.ws && this.ws.send({
 			data: msg,
 			success() {
-				console.log("消息发送成功");
+				// console.log("消息发送成功");
 			},
 			fail(err) {
-				console.log("消息发送失败", err)
+				// console.log("消息发送失败", err)
 			}
 		});
 	}
@@ -152,10 +152,10 @@ class WebSocketClass {
 		uni.sendSocketMessage({
 			data: msg,
 			success() {
-				console.log("消息发送成功");
+				// console.log("消息发送成功");
 			},
 			fail(err) {
-				console.log("消息发送失败", err)
+				// console.log("消息发送失败", err)
 			}
 		})
 	}

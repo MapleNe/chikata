@@ -36,7 +36,7 @@
 		<tn-list-cell :arrow="true" :arrowRight="true">关于APP</tn-list-cell>
 		<tn-list-cell :arrow="true" :arrowRight="true">清除缓存</tn-list-cell>
 		<tn-list-cell :arrow="true" :arrowRight="true">建议与反馈</tn-list-cell>
-		<tn-list-cell unlined :arrow="true" :arrowRight="true">检查更新</tn-list-cell>
+		<tn-list-cell unlined :arrow="true" :arrowRight="true" @click="onAPPUpdate()">检查更新</tn-list-cell>
 		<view class="tn-padding-xs tn-bg-gray--light"></view>
 		<tn-list-cell unlined :arrow="true" :arrowRight="true"
 			@click="goAgreement($store.state.page,'agreement')">用户协议</tn-list-cell>
@@ -53,6 +53,9 @@
 </template>
 
 <script>
+	import APPUpdate, {
+		getCurrentNo
+	} from '@/uni_modules/zhouWei-APPUpdate/js_sdk/appUpdate';
 	import {
 		mapState,
 		mapMutations
@@ -61,14 +64,27 @@
 
 		data() {
 			return {
-
+				version: ''
 			};
+		},
+		created() {
+			// #ifdef APP-PLUS
+			getCurrentNo(res => {
+				// 进页面获取当前APP版本号（用于页面显示）
+				this.version = res.version;
+			});
+			// #endif
 		},
 		computed: {
 			...mapState(['hasLogin'])
 		},
 		methods: {
 			...mapMutations(['logout']),
+			// 检查APP是否有新版本
+			onAPPUpdate() {
+				// true 没有新版本的时候有提示，默认：false
+				APPUpdate(true);
+			},
 			goAccount() {
 				this.$Router.push({
 					path: '/pages/user/setting/account/account'
@@ -90,7 +106,6 @@
 				})
 			},
 			goAgreement(data, alias) {
-
 				for (let i = 0; i < data.length; i++) {
 					if (data[i].alias == alias) {
 						this.$Router.push({
@@ -101,7 +116,6 @@
 						})
 					}
 				}
-
 			}
 		}
 	}
