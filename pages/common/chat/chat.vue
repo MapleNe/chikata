@@ -15,7 +15,7 @@
 			</tn-nav-bar>
 			<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 		</template>
-		<view class="tn-margin-sm" v-if="this.chatList">
+		<view class="tn-margin-sm" v-if="chatList">
 			<view class="tn-margin-bottom" v-for="(item,index) in chatList" :key="index" :id="`z-paging-${index}`">
 				<view class="tn-flex tn-flex-start" v-if="!isMine(item.sendId)">
 					<view>
@@ -38,8 +38,8 @@
 			</view>
 		</view>
 		<template #bottom>
-			<view class="tn-bg-white tn-padding-sm tn-border-solid tn-border-solid-top">
-				<view class=" tn-flex tn-flex-col-center tn-flex-row-between">
+			<view class="tn-bg-white tn-border-solid tn-border-solid-top">
+				<view class=" tn-flex tn-margin-sm tn-flex-col-center tn-flex-row-between">
 					<view class="tn-bg-gray--light tn-flex-basic-lg ch-radius tn-padding-xs tn-no-padding-bottom">
 						<tn-input type="textarea" v-model="chatText" :height="40" :autoHeight='true'
 							:clearable="false" />
@@ -65,14 +65,19 @@
 		data() {
 			return {
 				chatList: [],
-				chatInfo: {},
+				chatInfo: {
+					users_id: 0,
+					nickname: null,
+					head_img: ''
+				},
 				chatText: null,
 				isFoucs: false,
 				ws: null,
 			};
 		},
 		onLoad(params) {
-			this.chatInfo = params.query.params
+			this.chatInfo = params
+			console.log(this.chatInfo)
 		},
 		created() {
 			uni.$on('getNewChat', data => {
@@ -80,6 +85,9 @@
 					this.addNewChat(data)
 				}
 			})
+		},
+		onUnload() {
+			uni.$off('getNewChat')
 		},
 		computed: {
 			...mapState(['userInfo']),
@@ -110,6 +118,7 @@
 						id: this.chatInfo.users_id ? this.chatInfo.users_id : ''
 					}
 				}).then(res => {
+					console.log(res)
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data)
 					}
@@ -156,9 +165,9 @@
 							text: msg,
 							create_time: this.getNowTime(),
 						});
+						console.log(res,'发送成功')
 						this.scrollToBottom()
 					},
-
 					fail: (err) => {
 						console.error('发送消息失败:', err);
 					}

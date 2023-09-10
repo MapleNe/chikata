@@ -14,7 +14,8 @@
 				<view class="tn-margin tn-flex tn-flex-row-around">
 					<view class="tn-flex tn-flex-direction-column tn-flex-col-center"
 						@tap.stop="goNoticeDetail('comment')">
-						<view class="tn-bg-blue--disabled tn-flex tn-flex-direction-row tn-round tn-padding-sm" style="position:relative">
+						<view class="tn-bg-blue--disabled tn-flex tn-flex-direction-row tn-round tn-padding-sm"
+							style="position:relative">
 							<text class="tn-icon-comment-fill tn-text-xxl tn-color-white">
 							</text>
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
@@ -24,7 +25,8 @@
 					</view>
 					<view class="tn-flex tn-flex-direction-column tn-flex-col-center"
 						@tap.stop="goNoticeDetail('articlelike')">
-						<view class="tn-bg-orangered--disabled tn-flex tn-flex-direction-row tn-round tn-padding-sm" style="position: relative;">
+						<view class="tn-bg-orangered--disabled tn-flex tn-flex-direction-row tn-round tn-padding-sm"
+							style="position: relative;">
 							<text class="tn-icon-praise-simple-fill tn-text-xxl tn-color-white">
 							</text>
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
@@ -45,7 +47,8 @@
 					</view> -->
 					<view class="tn-flex tn-flex-direction-column tn-flex-col-center"
 						@tap.stop="goNoticeDetail('focus')">
-						<view class="tn-bg-purplered--disabled tn-flex tn-flex-direction-row tn-round tn-padding-sm" style="position: relative;">
+						<view class="tn-bg-purplered--disabled tn-flex tn-flex-direction-row tn-round tn-padding-sm"
+							style="position: relative;">
 							<text class="tn-icon-like-fill tn-text-xxl tn-color-white">
 							</text>
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
@@ -115,6 +118,7 @@
 		methods: {
 			getChatter(page, num) {
 				this.$http.get('/chat/chatter').then(res => {
+					console.log(res)
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data)
 					}
@@ -134,7 +138,9 @@
 				this.$Router.push({
 					path: '/pages/common/chat/chat',
 					query: {
-						params: this.chatList[index],
+						users_id: this.chatList[index].users_id,
+						nickname: this.chatList[index].nickname,
+						head_img: this.chatList[index].head_img
 					}
 				})
 			},

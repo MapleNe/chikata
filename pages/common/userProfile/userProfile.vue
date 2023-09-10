@@ -7,16 +7,16 @@
 						<tn-avatar :src="profile.head_img" border borderColor="#fff" :borderSize="4"></tn-avatar>
 						<text class="tn-margin-left-sm">{{profile.nickname}}</text>
 					</view>
-					<view class="tn-margin-right-xl" v-if="!hasLogin&&userInfo.id!=id&&profile.expand">
+					<view class="tn-margin-right-xl tn-padding-right-lg" v-if="userInfo.id!=id&&profile.expand">
 						<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29b7cb" fontColor="#29b7cb"
-							v-show="!profile.expand.is_focus" @click="followUser()">
+							v-show="profile.expand&&!profile.expand.is_focus" @click="followUser()">
 							<view class="tn-flex tn-flex-col-center">
 								<text class="tn-icon-add tn-margin-right-xs"></text>
 								<text>关注</text>
 							</view>
 						</tn-button>
 						<tn-button size="sm" padding="0 20rpx" backgroundColor="tn-bg-gray--light"
-							fontColor="tn-color-gray" @click="followUser()" v-show="profile.expand.is_focus">
+							fontColor="tn-color-gray" @click="followUser()" v-show="profile.expand&&profile.expand.is_focus">
 							<text>已关注</text>
 						</tn-button>
 					</view>
@@ -31,7 +31,7 @@
 		</template>
 		<view style="position: relative;" id="userview">
 			<view v-if="profile.longtext">
-				<image :src="profile.longtext.background_img" mode="aspectFill" style="width: 100%;height: 420rpx;">
+				<image :src="profile.longtext.background_img?profile.longtext.background_img:profile.head_img" mode="aspectFill" style="width: 100%;height: 420rpx;">
 				</image>
 			</view>
 			<!-- 第一层 -->
@@ -47,16 +47,14 @@
 					</view>
 					<view class="tn-flex tn-flex-col-center" v-else>
 						<view class="tn-margin-right">
-							<tn-button plain backgroundColor="#29b7cb" fontColor="#29b7cb">私信</tn-button>
+							<tn-button plain backgroundColor="#29b7cb" fontColor="#29b7cb"
+								@click="goChat()">私信</tn-button>
 						</view>
 						<view>
-							<tn-button :backgroundColor="profile.expand.is_focus?'#29b7cb69':'#29b7cb'"
-								:fontColor="profile.expand.is_focus?'#29b7cb':'tn-color-white'" @click="followUser()">
-								<view class="tn-flex tn-flex-col-center tn-flex-row-between" style="width: 150rpx;">
-									<text class="tn-text-center"
-										style="margin-left: auto;margin-right: auto;">{{profile.expand.is_focus?'已关注':'关注'}}</text>
-									<text class="tn-icon-up-triangle"></text>
-								</view>
+							<tn-button :backgroundColor="profile.expand&&profile.expand.is_focus?'#29b7cb69':'#29b7cb'"
+								:fontColor="profile.expand&&profile.expand.is_focus?'#29b7cb':'tn-color-white'" padding="0 50rpx"
+								@click="profile.expand&&profile.expand.is_focus?showCancelFollow = true:followUser()">
+								<text style="width:100rpx">{{profile.expand&&profile.expand.is_focus?'已关注':'关注'}}</text>
 							</tn-button>
 						</view>
 					</view>
@@ -83,17 +81,17 @@
 					<view class="tn-flex tn-flex-col-center tn-text-sm tn-flex-basic-md tn-flex-row-between">
 						<view class="tn-flex tn-flex-col-center ">
 							<text
-								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{profile.expand.fansCount}}</text>
+								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{profile.expand&&profile.expand.fansCount}}</text>
 							<text class="tn-color-gray--dark">粉丝</text>
 						</view>
 						<view class="tn-flex tn-flex-col-center ">
 							<text
-								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{profile.expand.focusCount}}</text>
+								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{profile.expand&&profile.expand.focusCount}}</text>
 							<text class="tn-color-gray--dark">关注</text>
 						</view>
 						<view class="tn-flex tn-flex-col-center ">
 							<text
-								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{profile.expand.likeCount}}</text>
+								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{profile.expand&&profile.expand.likeCount}}</text>
 							<text class="tn-color-gray--dark">获赞</text>
 						</view>
 					</view>
@@ -119,7 +117,8 @@
 									<text
 										class="tn-margin-left-xs">{{getDate(item.create_time).month}}月/{{getDate(item.create_time).year}}年</text>
 									<text class="tn-margin-left-xs tn-margin-right-xs">·</text>
-									<text v-if="item.expand.sort&&item.expand.sort.length>0">{{item.expand.sort[0].name}}</text>
+									<text
+										v-if="item.expand.sort&&item.expand.sort.length>0">{{item.expand.sort[0].name}}</text>
 								</view>
 								<view>
 									<text class="tn-icon-more-horizontal tn-text-xxl"></text>
@@ -291,6 +290,21 @@
 				</view>
 			</view>
 		</tn-popup>
+		<tn-popup mode="center" :borderRadius="20" v-model="showCancelFollow" length="80%">
+			<view class="tn-margin">
+				<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
+					<text>取消关注</text>
+					<text class="tn-padding-sm tn-color-gray--dark" style="font-size: 28rpx;">点击“确定”则取消关注该用户</text>
+				</view>
+			</view>
+			<view class="tn-padding tn-color-gray--dark tn-bg-gray--light">
+				<view class="tn-flex tn-flex-row-around" style="font-size: 28rpx;">
+					<text @tap.stop.prevent="showCancelFollow = false">取消</text>
+					<text class="tn-color-grey--light">|</text>
+					<text class="ch-color-primary" @tap.stop.prevent="followUser();showCancelFollow = false">确定</text>
+				</view>
+			</view>
+		</tn-popup>
 	</z-paging>
 </template>
 
@@ -303,7 +317,7 @@
 			users_id: {
 				type: Number,
 				default: 0,
-			}
+			},
 		},
 		name: 'userProfile',
 		data() {
@@ -340,10 +354,12 @@
 				navAuthor: false,
 				swiperAction: true,
 				showManage: false,
+				showCancelFollow: false,
 			}
 		},
 		onLoad(params) {
 			this.id = params.id
+			console.log(this.users)
 			this.getUserInfo()
 		},
 		onReady() {},
@@ -452,6 +468,18 @@
 					},
 				})
 			},
+			// 私信
+			goChat() {
+				this.$Router.push({
+					path: '/pages/common/chat/chat',
+					query: {
+						users_id: this.profile.id,
+						nickname: this.profile.nickname,
+						head_img: this.profile.head_img
+					}
+				})
+
+			},
 			goUserProfile(index) {
 				this.$Router.push({
 					path: '/pages/common/userProfile/userProfile',
@@ -558,7 +586,7 @@
 				};
 			},
 			goEdit() {
-				this.$emit('edit',true)
+				this.$emit('edit', true)
 				this.$Router.push({
 					path: '/pages/user/profile'
 				})

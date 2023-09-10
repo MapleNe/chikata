@@ -100,17 +100,16 @@
 			</view>
 		</view>
 		<view v-if="tabsIndex==2">
-			<view class="tn-flex tn-flex-col-center tn-margin tn-flex-wrap tn-color-gray--dark">
+			<view class="tn-flex tn-flex-direction-column tn-margin tn-flex-wrap tn-color-gray--dark">
 				<block v-for="(item,index) in content" :key="index">
-					<view class="tn-flex tn-flex-col-center" style="position: relative;">
+					<view class="tn-flex tn-flex-col-center tn-margin-bottom-sm" style="position: relative;">
 						<tn-avatar :src="item.head_img"
 							@tap="goUserProfile(item.id)"></tn-avatar>
 							<text v-if="item.level==='admin'"
 								class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"
 								style="position: absolute;top: 40rpx;left: 30rpx; z-index: 9999;"></text>
 						<view class="tn-flex tn-flex-col-center tn-margin-left-sm">
-							<text class="tn-text-bold">{{item.nickname}}</text>
-							
+							<text>{{item.nickname}}</text>
 						</view>
 					</view>
 				</block>

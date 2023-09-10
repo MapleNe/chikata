@@ -2,7 +2,7 @@
 	<!-- 使用z-paging-swiper为根节点可以免计算高度 -->
 	<z-paging-swiper>
 		<template #top>
-			<tn-nav-bar :isBack="false" customBack :zIndex="2" :fixed="false">
+			<tn-nav-bar :isBack="false" customBack :zIndex="2">
 				<view class="tn-margin-sm tn-no-margin-top">
 					<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 						<tn-avatar :src="userInfo.head_img" @tap="hasLogin?goMine():goLogin()"></tn-avatar>
@@ -16,7 +16,7 @@
 					</view>
 				</view>
 			</tn-nav-bar>
-
+			 <view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 			<z-tabs ref="tabs" :current="tabsIndex" active-color="#29b7cb" @change="changeTab" :list="tabs"
 				:scroll-count="2"></z-tabs>
 		</template>
@@ -127,7 +127,7 @@
 					path: '/pages/user/login',
 					animation: {
 						animationType: 'slide-in-bottom',
-						animationDuration: 200
+						animationDuration: 350
 					},
 				})
 			},

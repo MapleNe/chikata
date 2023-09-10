@@ -4,12 +4,12 @@
 			{{update?'编辑':'发布'}}
 			<view slot="right" class="tn-padding tn-flex tn-flex-col-center">
 				<view class="tn-margin-right-sm" v-show="!update" @tap.stop.prevent="saveDraft()">
-					<tn-button size="sm" shape="round" plain>
+					<tn-button size="sm" plain>
 						存草稿
 					</tn-button>
 				</view>
 				<view @tap.stop.prevent="update?'':showArticleSet = !showArticleSet">
-					<tn-button size="sm" shape="round" backgroundColor="#29b7cb" fontColor="tn-color-white">
+					<tn-button size="sm" backgroundColor="#29b7cb" fontColor="tn-color-white">
 						{{update?'更新':'发布'}}
 					</tn-button>
 				</view>
@@ -315,21 +315,37 @@
 			</view>
 		</tn-modal>
 		<!-- 保存草稿 -->
-		<tn-modal v-model="showDraft" padding="0rpx" custom width="80%">
+		<tn-popup mode="center" :borderRadius="20" v-model="showDraft" length="80%">
 			<view class="tn-margin">
-				<view class="tn-text-center">
-					<text class="tn-text-bold">是否载入草稿？</text>
-				</view>
-				<view class="tn-margin-top-xl tn-flex tn-flex-col-center tn-flex-row-between">
-					<view @tap.stop.prevent="deleteDraft()">
-						<tn-button fontColor="tn-color-red">删除</tn-button>
-					</view>
-					<view @tap.stop.prevent="insertDraft()">
-						<tn-button>载入</tn-button>
-					</view>
+				<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
+					<text>草稿</text>
+					<text class="tn-padding-sm tn-color-gray--dark" style="font-size: 28rpx;">点击“确定”将插入最新草稿</text>
 				</view>
 			</view>
-		</tn-modal>
+			<view class="tn-padding tn-color-gray--dark tn-bg-gray--light">
+				<view class="tn-flex tn-flex-row-around" style="font-size: 28rpx;">
+					<text @tap.stop.prevent="deleteDraft()">取消</text>
+					<text class="tn-color-grey--light">|</text>
+					<text class="ch-color-primary" @tap.stop.prevent="insertDraft()">确定</text>
+				</view>
+			</view>
+		</tn-popup>
+		<tn-popup mode="center" :borderRadius="20" v-model="showSaveDraft" length="80%">
+			<view class="tn-margin">
+				<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
+					<text>保存</text>
+					<text class="tn-padding-sm tn-color-gray--dark" style="font-size: 28rpx;">是否保存草稿？</text>
+				</view>
+			</view>
+			<view class="tn-padding tn-color-gray--dark tn-bg-gray--light">
+				<view class="tn-flex tn-flex-row-around" style="font-size: 28rpx;">
+					<text @tap.stop.prevent="saveDraftAction(false)">取消</text>
+					<text class="tn-color-grey--light">|</text>
+					<text class="ch-color-primary" @tap.stop.prevent="saveDraftAction(true)">确定</text>
+				</view>
+			</view>
+		</tn-popup>
+
 	</view>
 </template>
 
@@ -563,6 +579,7 @@
 				draft: null,
 				showAddLink: false,
 				save: false,
+				realback: false,
 			};
 		},
 		onLoad(params) {
@@ -583,24 +600,13 @@
 			}
 		},
 		beforeRouteLeave(to, from, next) {
-			if (this.save) {
-				next();
-				return;
-			}
+			if (this.realback) next();
+
 			if (this.edit.textCount) {
-				uni.showModal({
-					title: '是否保存为草稿',
-					confirmText: '保存',
-					cancelText: '不保存',
-					success: (res) => {
-						if (res.confirm) {
-							this.saveDraft();
-						}
-						next();
-					},
-				});
-			} else {
-				next();
+				this.showSaveDraft = true
+				next(false)
+			}else{
+				next()
 			}
 		},
 		created() {
@@ -613,6 +619,16 @@
 		},
 
 		methods: {
+			// 保存草稿方法
+			saveDraftAction(data) {
+				if (data) {
+					this.saveDraft()
+				}
+				this.showSaveDraft = false
+				this.realback = true
+				this.$Router.$lockStatus = false
+				this.$Router.back(1)
+			},
 			getTags() {
 				this.$http.get('/tag/all', {
 					params: {
@@ -865,7 +881,7 @@
 					opt: JSON.stringify(this.articleOpt),
 				}).then(res => {
 					if (res.data.code === 200) {
-						this.save = true
+						this.realback = true
 						this.$Router.$lockStatus = false
 						uni.hideLoading()
 						uni.showToast({
@@ -873,7 +889,7 @@
 							title: '发布' + res.data.msg
 						})
 						setTimeout(() => {
-							this.$Router.replace({
+							this.$Router.replaceAll({
 								path: '/pages/common/article/article',
 								query: {
 									id: res.data.data,

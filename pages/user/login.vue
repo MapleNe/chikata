@@ -527,7 +527,7 @@
 						}
 						uni.showToast({
 							icon: 'none',
-							title: '短信服务未开启请手动填入验证码：' + res.data.msg
+							title: res.data.msg
 						})
 					} else {
 						uni.showToast({
