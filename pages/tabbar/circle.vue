@@ -3,7 +3,7 @@
 		<template #top>
 			<tn-nav-bar customBack>
 				<tn-tabs-swiper :list="tabs" ref="tabs" :isScroll="false" :current="tabsIndex" name="name"
-					@change="changeTab" bold activeColor="#FB7299"></tn-tabs-swiper>
+					@change="changeTab" bold activeColor="#29b7cb"></tn-tabs-swiper>
 				<view slot="right" class="tn-padding tn-no-padding-top" v-show="tabsIndex">
 					<text class="tn-text-md">发动态</text>
 				</view>
@@ -21,7 +21,7 @@
 							<text class="tn-icon-right"></text>
 						</view>
 					</view>
-					<tn-scroll-list indicatorActiveColor="#FB7299">
+					<tn-scroll-list indicatorActiveColor="#29b7cb">
 						<view class="tn-margin tn-flex tn-flex-col-center tn-flex-row-between tn-flex-1">
 							<block v-for="(item,index) in categoryList" :key="index">
 								<image :src="item.opt.head_img" mode="aspectFill"
@@ -44,7 +44,7 @@
 						<template v-slot:list1>
 							<!-- 为了磨平部分平台的BUG，必须套一层view -->
 							<view>
-								<view v-for="(item, index) in list1" :key="item.id" v-if="item.expand.images.length>0"
+								<view v-for="(item, index) in list1" :key="item.id" v-if="item&&item.width&&item.expand.images.length>0"
 									class="tn-margin-bottom-sm tn-padding-bottom-sm" :style="{width:item.width+'px'}"
 									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 20rpx;"
 									@tap.stop.prevent="goAticle(item)">
@@ -70,7 +70,7 @@
 						<template v-slot:list2>
 							<!-- 为了磨平部分平台的BUG，必须套一层view -->
 							<view>
-								<view v-for="(item, index) in list2" :key="item.id" v-if="item.expand.images.length>0"
+								<view v-for="(item, index) in list2" :key="item.id" v-if="item&&item.width&&item.expand.images.length>0"
 									class="tn-margin-bottom-sm tn-padding-bottom-sm" :style="{width:item.width+'px'}"
 									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 20rpx;"
 									@tap.stop.prevent="goAticle(item)">

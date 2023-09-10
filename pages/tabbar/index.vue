@@ -2,7 +2,7 @@
 	<!-- 使用z-paging-swiper为根节点可以免计算高度 -->
 	<z-paging-swiper>
 		<template #top>
-			<tn-nav-bar :isBack="false" customBack :zIndex="2" :fixed="false">
+			<tn-nav-bar :isBack="false" customBack :zIndex="2">
 				<view class="tn-margin-sm tn-no-margin-top">
 					<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 						<tn-avatar :src="userInfo.head_img" @tap="hasLogin?goMine():goLogin()"></tn-avatar>
@@ -16,8 +16,8 @@
 					</view>
 				</view>
 			</tn-nav-bar>
-
-			<z-tabs ref="tabs" :current="tabsIndex" active-color="#FB7299" @change="changeTab" :list="tabs"
+			 <view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
+			<z-tabs ref="tabs" :current="tabsIndex" active-color="#29b7cb" @change="changeTab" :list="tabs"
 				:scroll-count="2"></z-tabs>
 		</template>
 		<!-- swiper必须设置height:100%，因为swiper有默认的高度，只有设置高度100%才可以铺满页面  -->
@@ -38,7 +38,7 @@
 		mapMutations
 	} from 'vuex';
 
-	import config from "@/static/config.js";
+	import config from "@/config/config.js";
 	import articleList from "@/components/articleList/articleList.vue";
 	import commentList from '@/components/commentList/commentList.vue';
 	import articleMenu from '@/components/aticleMenu/aticleMenu.vue';
@@ -127,7 +127,7 @@
 					path: '/pages/user/login',
 					animation: {
 						animationType: 'slide-in-bottom',
-						animationDuration: 200
+						animationDuration: 350
 					},
 				})
 			},

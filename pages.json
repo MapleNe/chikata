@@ -47,9 +47,6 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"login": false
 			}
 
 		}, {
@@ -101,6 +98,9 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"login": true
 			}
 
 		}, {
@@ -167,6 +167,9 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"login": true
 			}
 
 		}, {
@@ -197,30 +200,51 @@
 				"enablePullDownRefresh": false
 			}
 
+		}, {
+			"path": "pages/user/collect/collect",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"login": true
+			}
+
+		}, {
+			"path": "pages/user/collect/detail",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/common/article/comment/comment",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/favorite/favorite",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"login": true
+			}
+		}, {
+			"path": "pages/user/setting/agreement",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
 		}
-	    ,{
-            "path" : "pages/user/collect/collect",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/user/collect/detail",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-    ],
+	],
 	"tabBar": {
 		"backgroundColor": "#ffffff",
 		"color": "#949494",
-		"selectedColor": "#FB7299",
+		"selectedColor": "#29b7cb",
 		"fontSize": "16px",
 		"list": [{
 				"pagePath": "pages/tabbar/index",

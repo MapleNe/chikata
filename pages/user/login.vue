@@ -42,13 +42,14 @@
 							</view>
 						</view>
 						<view class="tn-margin-top-xl tn-text-center">
-							<tn-checkbox v-model="accept" activeColor="#FB7299" @change="accept =!accept" shape="circle"
+							<tn-checkbox v-model="accept" activeColor="#29b7cb" @change="accept =!accept" shape="circle"
 								:size="30">
 								<view class="tn-color-gray--dark" style="font-size: 28rpx;">
 									<text>我已阅读并同意</text>
-									<text class="ch-color-primary">《用户协议》</text>
+									<text class="ch-color-primary"
+										@tap.stop.prevent="goAgreement($store.state.page,'agreement')">《用户协议》</text>
 									<text>和</text>
-									<text class="ch-color-primary">《隐私政策》</text>
+									<text class="ch-color-primary" @tap.stop.prevent="goAgreement($store.state.page,'privacy')">《隐私政策》</text>
 								</view>
 							</tn-checkbox>
 						</view>
@@ -65,9 +66,9 @@
 								<text class="tn-margin-left tn-margin-right tn-color-gray--light">|</text>
 								<text @tap.stop.prevent="issueAction=!issueAction">遇到问题</text>
 							</view>
-							<view class="tn-margin-top-sm tn-text-center tn-color-gray--dark" style="font-size: 28rpx;">
+							<!-- <view class="tn-margin-top-sm tn-text-center tn-color-gray--dark" style="font-size: 28rpx;">
 								<text @tap.stop.prevent="loginAction = !loginAction">通行证创建</text>
-							</view>
+							</view> -->
 						</view>
 						<!-- 三方登录 -->
 						<view class="tn-margin-top-xl">
@@ -225,6 +226,7 @@
 			if (!this.realBack && this.codeEnter) {
 				this.breakLogin = !this.breakLogin
 				this.realBack = true
+				this.$Router.$lockStatus = false
 			} else {
 				next()
 			}
@@ -314,7 +316,7 @@
 					cid: this.cid
 				}).then(res => {
 					console.log(res)
-					if (res.data.code === 200||res.data.code===201) {
+					if (res.data.code === 200 || res.data.code === 201) {
 						let data = res.data
 						let token = data.data['login-token']
 						this.setRefreshToken(res.data.data.refreshToken)
@@ -327,16 +329,16 @@
 							title: data.msg
 						});
 						this.realBack = true
-						if(res.data.code===200){
+						if (res.data.code === 200) {
 							setTimeout(() => {
 								this.back()
 							}, 800)
-						}else{
+						} else {
 							this.$Router.push({
-								path:'/pages/user/firstLogin/firstLogin'
+								path: '/pages/user/firstLogin/firstLogin'
 							})
 						}
-						
+
 					} else {
 						uni.showToast({
 							icon: 'none',
@@ -508,6 +510,7 @@
 				this.$http.post('/users/vcl', {
 					account: this.phone,
 				}).then(res => {
+					console.log(res)
 					if (res.data.code === 200) {
 						if (!this.codeEnter) this.codeEnter = true
 						if (!this.timer) { //计时器
@@ -525,7 +528,7 @@
 						}
 						uni.showToast({
 							icon: 'none',
-							title: '短信服务未开启请手动填入验证码：' + res.data.msg
+							title: res.data.msg
 						})
 					} else {
 						uni.showToast({
@@ -565,6 +568,19 @@
 					}, 2000)
 				}
 			},
+			// 协议页面
+			goAgreement(data, alias) {
+				for (let i = 0; i < data.length; i++) {
+					if (data[i].alias == alias) {
+						this.$Router.push({
+							path: '/pages/user/setting/agreement',
+							query: {
+								id: data[i].id
+							}
+						})
+					}
+				}
+			}
 		}
 	}
 </script>

@@ -7,16 +7,16 @@
 						<tn-avatar :src="profile.head_img" border borderColor="#fff" :borderSize="4"></tn-avatar>
 						<text class="tn-margin-left-sm">{{profile.nickname}}</text>
 					</view>
-					<view class="tn-margin-right-xl" v-if="!hasLogin&&userInfo.id!=id&&profile.expand">
-						<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#FB7299" fontColor="#FB7299"
-							v-show="!profile.expand.is_focus" @click="followUser()">
+					<view class="tn-margin-right-xl tn-padding-right-lg" v-if="userInfo.id!=id&&profile.expand">
+						<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29b7cb" fontColor="#29b7cb"
+							v-show="profile.expand&&!profile.expand.is_focus" @click="followUser()">
 							<view class="tn-flex tn-flex-col-center">
 								<text class="tn-icon-add tn-margin-right-xs"></text>
 								<text>关注</text>
 							</view>
 						</tn-button>
 						<tn-button size="sm" padding="0 20rpx" backgroundColor="tn-bg-gray--light"
-							fontColor="tn-color-gray" @click="followUser()" v-show="profile.expand.is_focus">
+							fontColor="tn-color-gray" @click="followUser()" v-show="profile.expand&&profile.expand.is_focus">
 							<text>已关注</text>
 						</tn-button>
 					</view>
@@ -31,7 +31,7 @@
 		</template>
 		<view style="position: relative;" id="userview">
 			<view v-if="profile.longtext">
-				<image :src="profile.longtext.background_img" mode="aspectFill" style="width: 100%;height: 420rpx;">
+				<image :src="profile.longtext.background_img?profile.longtext.background_img:profile.head_img" mode="aspectFill" style="width: 100%;height: 420rpx;">
 				</image>
 			</view>
 			<!-- 第一层 -->
@@ -43,20 +43,18 @@
 				<!-- 按钮样式 -->
 				<view class="tn-flex tn-flex-row-right">
 					<view v-if="hasLogin&&userInfo.id == id">
-						<tn-button plain backgroundColor="#FB7299" fontColor="#FB7299" @click="goEdit">编辑</tn-button>
+						<tn-button plain backgroundColor="#29b7cb" fontColor="#29b7cb" @click="goEdit">编辑</tn-button>
 					</view>
 					<view class="tn-flex tn-flex-col-center" v-else>
 						<view class="tn-margin-right">
-							<tn-button plain backgroundColor="#FB7299" fontColor="#FB7299">私信</tn-button>
+							<tn-button plain backgroundColor="#29b7cb" fontColor="#29b7cb"
+								@click="goChat()">私信</tn-button>
 						</view>
 						<view>
-							<tn-button :backgroundColor="profile.expand.is_focus?'#FB729969':'#FB7299'"
-								:fontColor="profile.expand.is_focus?'#FB7299':'tn-color-white'" @click="followUser()">
-								<view class="tn-flex tn-flex-col-center tn-flex-row-between" style="width: 150rpx;">
-									<text class="tn-text-center"
-										style="margin-left: auto;margin-right: auto;">{{profile.expand.is_focus?'已关注':'关注'}}</text>
-									<text class="tn-icon-up-triangle"></text>
-								</view>
+							<tn-button :backgroundColor="profile.expand&&profile.expand.is_focus?'#29b7cb69':'#29b7cb'"
+								:fontColor="profile.expand&&profile.expand.is_focus?'#29b7cb':'tn-color-white'" padding="0 50rpx"
+								@click="profile.expand&&profile.expand.is_focus?showCancelFollow = true:followUser()">
+								<text style="width:100rpx">{{profile.expand&&profile.expand.is_focus?'已关注':'关注'}}</text>
 							</tn-button>
 						</view>
 					</view>
@@ -67,7 +65,12 @@
 				<!-- 用户属性 -->
 				<view class="tn-margin-top">
 					<view class="tn-flex tn-flex-direction-column">
-						<text class="tn-text-bold tn-text-xxl">{{profile.nickname}}</text>
+						<view class="tn-flex">
+							<text class="tn-text-bold tn-text-xxl">{{profile.nickname}}</text>
+							<text class="level tn-margin-left-sm level-text" :class="['lv-'+profile.grade]"
+								:style="{'color':level[profile.grade]}"></text>
+						</view>
+
 						<view class="tn-flex tn-margin-top tn-flex-top tn-color-gray--dark">
 							<text class="tn-icon-image-text tn-margin-right-xs"></text>
 							<text class="tn-text-ellipsis-2" style="max-width: 50%;">{{profile.description}}</text>
@@ -78,17 +81,17 @@
 					<view class="tn-flex tn-flex-col-center tn-text-sm tn-flex-basic-md tn-flex-row-between">
 						<view class="tn-flex tn-flex-col-center ">
 							<text
-								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{profile.expand.fansCount}}</text>
+								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{profile.expand&&profile.expand.fansCount}}</text>
 							<text class="tn-color-gray--dark">粉丝</text>
 						</view>
 						<view class="tn-flex tn-flex-col-center ">
 							<text
-								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{profile.expand.focusCount}}</text>
+								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{profile.expand&&profile.expand.focusCount}}</text>
 							<text class="tn-color-gray--dark">关注</text>
 						</view>
 						<view class="tn-flex tn-flex-col-center ">
 							<text
-								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{profile.expand.likeCount}}</text>
+								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{profile.expand&&profile.expand.likeCount}}</text>
 							<text class="tn-color-gray--dark">获赞</text>
 						</view>
 					</view>
@@ -98,7 +101,7 @@
 		</view>
 		<!-- 定位结束 -->
 		<view :style="{'z-index': 100,'position': 'sticky','top' :vuex_custom_bar_height+'px'}">
-			<z-tabs ref="tabs" :current="tabsIndex" active-color="#FB7299" @change="changeTab" :list="tabs"></z-tabs>
+			<z-tabs ref="tabs" :current="tabsIndex" active-color="#29b7cb" @change="changeTab" :list="tabs"></z-tabs>
 		</view>
 		<swiper :current="tabsIndex" @transition="swiperTransition" @animationfinish="swiperAnimationfinish"
 			class="swiper">
@@ -114,7 +117,8 @@
 									<text
 										class="tn-margin-left-xs">{{getDate(item.create_time).month}}月/{{getDate(item.create_time).year}}年</text>
 									<text class="tn-margin-left-xs tn-margin-right-xs">·</text>
-									<text>{{item.expand.sort[0].name}}</text>
+									<text
+										v-if="item.expand.sort&&item.expand.sort.length>0">{{item.expand.sort[0].name}}</text>
 								</view>
 								<view>
 									<text class="tn-icon-more-horizontal tn-text-xxl"></text>
@@ -237,19 +241,24 @@
 						<block v-for="(item,index) in comments" :key="index">
 							<view class="tn-margin-bottom-sm">
 								<view class="tn-flex tn-flex-col-center tn-color-gray tn-text-sm">
-									<text class="tn-text-bold tn-text-lg tn-corlor-gray">6</text>
-									<text class="tn-margin-left-xs">小时前</text>
+
+									<text
+										class="tn-text-bold tn-color-gray tn-text-xxl">{{getDate(item.create_time).isToday?getDate(item.create_time).hourDifference:getDate(item.create_time).day}}</text>
+
+									<text v-if="getDate(item.create_time).isToday" class="tn-margin-left-xs">小时前</text>
+									<text v-else
+										class="tn-margin-left-xs">{{getDate(item.create_time).month}}月/{{getDate(item.create_time).year}}年</text>
 									<text class="tn-margin-left-xs tn-margin-right-xs">·</text>
-									<text>原神</text>
+									<text>{{item.article_title}}</text>
 								</view>
 								<view class="tn-margin-top-sm">
-									<mp-html :content="item.content"></mp-html>
+									<mp-html :preview-img="false" :content="item.content"></mp-html>
 								</view>
 								<view class="tn-margin-top-sm tn-margin-bottom-sm">
 									<view class="tn-bg-gray--light tn-color-gray--dark tn-padding-sm">
 										<view class="tn-text-ellipsis-2">
-											<text>回复评论：</text>
-											<text>这是介绍这是介绍这这是介绍这是介绍这是介绍这是介绍这是介绍这这是介绍这是介绍这是介绍这是介绍这是介绍这这是介绍这是介绍这是介绍</text>
+											<text>{{!item.pid?'回复帖子：':'回复评论：'}}</text>
+											<text>{{!item.pid?item.article_title:item.up_comment}}</text>
 										</view>
 									</view>
 								</view>
@@ -281,6 +290,21 @@
 				</view>
 			</view>
 		</tn-popup>
+		<tn-popup mode="center" :borderRadius="20" v-model="showCancelFollow" length="80%">
+			<view class="tn-margin">
+				<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
+					<text>取消关注</text>
+					<text class="tn-padding-sm tn-color-gray--dark" style="font-size: 28rpx;">点击“确定”则取消关注该用户</text>
+				</view>
+			</view>
+			<view class="tn-padding tn-color-gray--dark tn-bg-gray--light">
+				<view class="tn-flex tn-flex-row-around" style="font-size: 28rpx;">
+					<text @tap.stop.prevent="showCancelFollow = false">取消</text>
+					<text class="tn-color-grey--light">|</text>
+					<text class="ch-color-primary" @tap.stop.prevent="followUser();showCancelFollow = false">确定</text>
+				</view>
+			</view>
+		</tn-popup>
 	</z-paging>
 </template>
 
@@ -293,7 +317,7 @@
 			users_id: {
 				type: Number,
 				default: 0,
-			}
+			},
 		},
 		name: 'userProfile',
 		data() {
@@ -330,12 +354,13 @@
 				navAuthor: false,
 				swiperAction: true,
 				showManage: false,
+				showCancelFollow: false,
 			}
 		},
 		onLoad(params) {
 			this.id = params.id
+			console.log(this.users)
 			this.getUserInfo()
-			console.log(params)
 		},
 		onReady() {},
 		created() {
@@ -347,7 +372,6 @@
 		computed: {
 			...mapState(['userInfo', 'hasLogin']),
 		},
-
 		methods: {
 			getElementHeight(element) {
 				let query = uni.createSelectorQuery().in(this);
@@ -357,17 +381,17 @@
 				}).exec()
 			},
 			getComments(page, num) {
-				this.$http.get('/comments/sql', {
+				this.$http.get('/comments/user', {
 					params: {
 						page: page,
 						limit: num,
-						where: `users_id = ${this.id}`
+						type: 'icomment',
+						uid: this.users_id ? this.users_id : this.id
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
-						this.$refs.comments.complete(res.data.data.data)
+						this.$refs.comments.complete(res.data.data)
 					}
-					console.log(res, '评论')
 				})
 			},
 			async getUserArticle(page, num) {
@@ -434,17 +458,27 @@
 				this.commentId = this.content[index].id
 				this.showCommentsBox = !this.showCommentsBox
 			},
-			getMenuInfo(data) {
-				this.$emit('getMenuInfo', data)
-			},
+
 			goAticle(index) {
 				this.$Router.push({
 					path: '/pages/common/article/article',
 					query: {
 						id: this.content[index].id,
-						users_id: this.users_id ? this.users_id : this.profile.users_id,
+						users_id: this.users_id ? this.users_id : this.content[index].users_id,
 					},
 				})
+			},
+			// 私信
+			goChat() {
+				this.$Router.push({
+					path: '/pages/common/chat/chat',
+					query: {
+						users_id: this.profile.id,
+						nickname: this.profile.nickname,
+						head_img: this.profile.head_img
+					}
+				})
+
 			},
 			goUserProfile(index) {
 				this.$Router.push({
@@ -525,17 +559,34 @@
 				});
 			},
 			getDate(dateString) {
-				const dateParts = dateString.split(" ")[0].split("-");
-				const year = parseInt(dateParts[0]);
-				const month = parseInt(dateParts[1]);
-				const day = parseInt(dateParts[2]);
+				const dateParts = dateString.split(" ");
+				const date = dateParts[0];
+				const time = dateParts[1].split(":");
+
+				const datePartsArray = date.split("-");
+				const year = parseInt(datePartsArray[0]);
+				const month = parseInt(datePartsArray[1]);
+				const day = parseInt(datePartsArray[2]);
+				const hour = parseInt(time[0]);
+
+				const currentDate = new Date();
+				const differenceInMilliseconds = currentDate.getTime() - new Date(year, month - 1, day, hour).getTime();
+				const differenceInHours = Math.floor(differenceInMilliseconds / (1000 * 60 * 60));
+
+				const isToday = currentDate.getFullYear() === year && currentDate.getMonth() === month - 1 && currentDate
+					.getDate() === day;
+
 				return {
 					year,
 					month,
-					day
+					day,
+					hour,
+					hourDifference: differenceInHours,
+					isToday
 				};
 			},
 			goEdit() {
+				this.$emit('edit', true)
 				this.$Router.push({
 					path: '/pages/user/profile'
 				})

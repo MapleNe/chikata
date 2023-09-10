@@ -34,26 +34,14 @@ class WebSocketClass {
 		this.wsUrl = url;
 		try {
 			// 创建一个this.ws对象【发送、接收、关闭socket都由这个对象操作】
-
-			// #ifdef H5
 			this.ws = uni.connectSocket({
 				url: this.wsUrl,
 				success(data) {
-					console.log("websocket连接成功H5");
+					// console.log("websocket连接成功");
 				},
 			});
 			this.initEventHandle();
-			// #endif
 
-			// #ifdef APP-PLUS
-			this.ws = uni.connectSocket({
-				url: this.wsUrl,
-				success(data) {
-					console.log("websocket连接成功APP");
-				},
-			});
-			this.initEventHandle();
-			// #endif
 		} catch (e) {
 			this.reconnect(url);
 		}
@@ -64,17 +52,16 @@ class WebSocketClass {
 		/**
 		 * 监听WebSocket连接打开成功
 		 */
-
 		// #ifdef H5
 		this.ws.onopen = (event) => {
-			console.log("WebSocket连接打开H5"); //打开连接
+			// console.log("WebSocket连接打开H5"); //打开连接
 			this.start()
 		};
 		// #endif
 
 		// #ifdef APP-PLUS
 		this.ws.onOpen(res => {
-			console.log('WebSocket连接打开APP'); //打开连接
+			// console.log('WebSocket连接打开APP'); //打开连接
 			this.start()
 		});
 		// #endif
@@ -120,8 +107,6 @@ class WebSocketClass {
 			}
 		});
 		// #endif
-
-
 		/**
 		 * 收到服务器数据后的回调函数
 		 */
@@ -154,10 +139,10 @@ class WebSocketClass {
 		this.ws && this.ws.send({
 			data: msg,
 			success() {
-				console.log("消息发送成功");
+				// console.log("消息发送成功");
 			},
 			fail(err) {
-				console.log("消息发送失败", err)
+				// console.log("消息发送失败", err)
 			}
 		});
 	}
@@ -167,10 +152,10 @@ class WebSocketClass {
 		uni.sendSocketMessage({
 			data: msg,
 			success() {
-				console.log("消息发送成功");
+				// console.log("消息发送成功");
 			},
 			fail(err) {
-				console.log("消息发送失败", err)
+				// console.log("消息发送失败", err)
 			}
 		})
 	}

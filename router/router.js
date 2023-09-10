@@ -40,13 +40,12 @@ const router = createRouter({
 //全局路由前置守卫
 router.beforeEach((to, from, next) => {
 	//为某些需要登录的页面做统一路由拦截
-	console.log(to)
 	if (to.meta.login && !store.state.hasLogin && !uni.getStorageSync('token')) {
 		next({
 			path: '/pages/user/login',
 			animation: {
 				animationType: 'slide-in-bottom',
-				animationDuration: 200
+				animationDuration: 350
 			},
 			NAVTYPE: 'push'
 		});
@@ -58,7 +57,7 @@ router.beforeEach((to, from, next) => {
 });
 // 全局路由后置守卫
 router.afterEach((to, from) => {
-	console.log('跳转结束')
+	// console.log('跳转结束')
 })
 
 export {

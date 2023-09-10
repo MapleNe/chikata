@@ -87,7 +87,7 @@ export class Edit extends Observer {
 						attributes: {
 							"link": `${this.queryParams(data)}`,
 							"textDecoration": "none",
-							"color": "#FB7299"
+							"color": "#29b7cb"
 						},
 						insert: name
 					};

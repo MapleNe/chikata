@@ -1,5 +1,5 @@
-import config from '@/static/config.js'
-import inisENV from '@/static/config.js'
+import config from '@/config/config.js'
+import inisENV from '@/config/config.js'
 import {
 	inisHelper
 } from '@/utils/helper.js'
@@ -55,7 +55,7 @@ http.interceptors.request.use((config) => {
 			path: '/pages/user/login',
 			animation: {
 				animationType: 'slide-in-bottom',
-				animationDuration: 200
+				animationDuration: 350
 			},
 		})
 		return Promise.reject(config)

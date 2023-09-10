@@ -2,6 +2,9 @@
 	<z-paging ref="paging" refresher-only @onRefresh="onRefresh" @scroll="getScroll">
 		<template #top>
 			<tn-nav-bar backTitle="" :backgroundColor="background" :fontColor="!navAuthor?'tn-color-white':''">
+				<view class="tn-padding" slot="right">
+					<text class="tn-text-xxl tn-icon-share-triangle"></text>
+				</view>
 			</tn-nav-bar>
 		</template>
 		<view style="position: relative;" id="contentview">
@@ -11,9 +14,20 @@
 				</image>
 				<view style="position: absolute;top: 0;width: 100%;height: 100%;background: rgba(0, 0, 0, 0.3);"></view>
 			</view>
-			<view style="position: absolute;top: 150rpx;" class="tn-margin">
+			<view style="position: absolute;top: 120rpx;" class="tn-margin tn-flex tn-flex-col-center">
 				<tn-avatar size="xl" border borderColor="#fff" :borderSize="6"
 					:src="categoryInfo.opt.head_img"></tn-avatar>
+				<view class="tn-flex tn-margin-left-sm tn-flex-direction-column tn-color-white"
+					v-if="categoryInfo&&categoryInfo.expand">
+					<text class="tn-text-bold">{{categoryInfo.name}}</text>
+					<view class="tn-margin-top tn-flex tn-flex-col-center tn-flex-basic-md tn-text-sm">
+						<text>Lv.5</text>
+						<text class="tn-margin-left-xs tn-margin-right-xs">·</text>
+						<text>1K成员</text>
+						<text class="tn-margin-left-xs tn-margin-right-xs">·</text>
+						<text>{{categoryInfo.expand.count}}篇帖子</text>
+					</view>
+				</view>
 			</view>
 			<!-- 分类公告 -->
 			<!-- 圆弧 -->
@@ -42,7 +56,7 @@
 		</view>
 
 		<view :style="{'z-index': 100,'position': 'sticky','top' :vuex_custom_bar_height+'px'}">
-			<z-tabs ref="tabs" :current="tabsIndex" active-color="#FB7299" @change="changeTab" :list="tabs"
+			<z-tabs ref="tabs" :current="tabsIndex" active-color="#29b7cb" @change="changeTab" :list="tabs"
 				:scrollCount="2"></z-tabs>
 		</view>
 		<swiper style="height: 150vh;" :current="tabsIndex" @transition="swiperTransition"
@@ -62,6 +76,9 @@
 											<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
 											<text v-if="item.expand.author.level==='admin'"
 												class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
+											<text class="level tn-margin-left-xs level-text"
+												:class="['lv-'+item.expand.author.grade]"
+												:style="{'color':level[item.expand.author.grade]}"></text>
 										</view>
 										<view class="tn-flex tn-flex-col-center tn-text-sm tn-color-gray--dark">
 											<text>{{getDate(item.create_time)}}</text>
@@ -70,7 +87,7 @@
 								</view>
 								<view>
 									<tn-button plain size="sm" :fontSize="30" padding="0 15rpx"
-										backgroundColor="#FB7299" fontColor="#FB7299" v-if="!item.expand.focus"
+										backgroundColor="#29b7cb" fontColor="#29b7cb" v-if="!item.expand.focus"
 										@click="followUser(index)">
 										<view class="tn-flex tn-flex-col-center">
 											<text class="tn-icon-add tn-margin-right-xs"></text>
@@ -196,9 +213,9 @@
 				</z-paging>
 			</swiper-item>
 			<swiper-item style="overflow: auto;">
-				<z-paging @query="getAticle" v-model="articleHot" ref="articleHot" :auto="false"
-					:use-page-scroll="swiperAction" :auto-clean-list-when-reload="false"
-					:auto-scroll-to-top-when-reload="false" :refresher-enabled="false">
+				<z-paging @query="getAticle" v-model="articleHot" ref="articleHot" :use-page-scroll="swiperAction"
+					:auto-clean-list-when-reload="false" :auto-scroll-to-top-when-reload="false"
+					:refresher-enabled="false">
 					<block v-for="(item,index) in articleHot" :key="index">
 						<view class="tn-margin">
 							<view class="tn-flex tn-flex-col-center tn-flex-row-between">
@@ -218,7 +235,7 @@
 								</view>
 								<view>
 									<tn-button plain size="sm" :fontSize="30" padding="0 15rpx"
-										backgroundColor="#FB7299" fontColor="#FB7299" v-if="!item.expand.focus"
+										backgroundColor="#29b7cb" fontColor="#29b7cb" v-if="!item.expand.focus"
 										@click="followUser(index)">
 										<view class="tn-flex tn-flex-col-center">
 											<text class="tn-icon-add tn-margin-right-xs"></text>
@@ -344,9 +361,9 @@
 				</z-paging>
 			</swiper-item>
 			<swiper-item style="overflow: auto;">
-				<z-paging @query="getAticle" v-model="articleNew" ref="articleNew" :auto="false"
-					:use-page-scroll="swiperAction" :auto-clean-list-when-reload="false"
-					:auto-scroll-to-top-when-reload="false" :refresher-enabled="false">
+				<z-paging @query="getAticle" v-model="articleNew" ref="articleNew" :use-page-scroll="swiperAction"
+					:auto-clean-list-when-reload="false" :auto-scroll-to-top-when-reload="false"
+					:refresher-enabled="false">
 					<block v-for="(item,index) in articleNew" :key="index">
 						<view class="tn-margin">
 							<view class="tn-flex tn-flex-col-center tn-flex-row-between">
@@ -366,7 +383,7 @@
 								</view>
 								<view>
 									<tn-button plain size="sm" :fontSize="30" padding="0 15rpx"
-										backgroundColor="#FB7299" fontColor="#FB7299" v-if="!item.expand.focus"
+										backgroundColor="#29b7cb" fontColor="#29b7cb" v-if="!item.expand.focus"
 										@click="followUser(index)">
 										<view class="tn-flex tn-flex-col-center">
 											<text class="tn-icon-add tn-margin-right-xs"></text>
@@ -387,7 +404,7 @@
 								<view class="tn-padding-sm tn-no-padding-left tn-color-gray--dark tn-padding-bottom-sm">
 									<rich-text :nodes="item.description"></rich-text>
 								</view>
-			
+
 								<!-- 单张图片 -->
 								<view v-if="item.expand.images.length===1">
 									<image v-for="(images,index) in item.expand.images" :key="index" :src="images.src"
@@ -410,7 +427,7 @@
 												</image>
 											</tn-grid-item>
 											<!-- #endif-->
-			
+
 											<!-- 微信小程序 -->
 											<!-- #ifdef MP-WEIXIN -->
 											<tn-grid-item :style="{width: gridItemWidth,height:gridItemWidth}"
@@ -438,7 +455,7 @@
 												</image>
 											</tn-grid-item>
 											<!-- #endif-->
-			
+
 											<!-- 微信小程序 -->
 											<!-- #ifdef MP-WEIXIN -->
 											<tn-grid-item :style="{width: gridItemWidth,height:gridItemWidth}"
@@ -473,11 +490,9 @@
 											<text class="tn-text-xxl tn-icon-comment"></text>
 											<text class="tn-margin-left-xs">{{item.expand.comments.count}}</text>
 										</view>
-										<view class="tn-flex tn-flex-col-bottom"
-											:class="item.expand.like.is_like?'tn-color-red':''"
-											@tap.stop="likeAction(index)">
+										<view class="tn-flex tn-flex-col-bottom" @tap.stop="likeAction(index)">
 											<text class="tn-text-xxl"
-												:class="item.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
+												:class="item.expand.like.is_like?' tn-icon-praise-fill tn-color-red':'tn-icon-praise'"></text>
 											<text class="tn-margin-left-xs">{{item.expand.like.likes_count}}</text>
 										</view>
 									</view>
@@ -540,6 +555,7 @@
 		onLoad(params) {
 			this.id = Number(params.id)
 			this.getcategoryInfo()
+			this.getCategoryPlacard()
 		},
 		onReady() {
 			uni.createSelectorQuery()
@@ -547,6 +563,7 @@
 				.boundingClientRect(data => {
 					if (data) {
 						this.headerHeight = data.height
+						console.log(data.height)
 					}
 				})
 				.exec();
@@ -568,18 +585,18 @@
 							'views desc create_time desc' : this.tabsInde == 2 ? 'create_time asc' : ''
 					}
 				}).then(res => {
-					console.log(res)
 					if (res.data.code === 200) {
+						console.log(res)
 						switch (this.tabsIndex) {
 							case 0:
-								this.$refs.article.complete(res.data.data.expand.data.data)
+								this.$refs.article.complete(res.data.data.expand.data)
 								break;
 							case 1:
-								this.$refs.articleHot.complete(res.data.data.expand.data.data)
+								this.$refs.articleHot.complete(res.data.data.expand.data)
 								this.isloadedHot = true
 								break;
 							case 2:
-								this.$refs.articleNew.complete(res.data.data.expand.data.data)
+								this.$refs.articleNew.complete(res.data.data.expand.data)
 								this.isloadedNew = true
 								break;
 							default:
@@ -589,11 +606,16 @@
 					}
 				})
 			},
-
 			onRefresh() {
 				switch (this.tabsIndex) {
 					case 0:
 						this.$refs.article.reload()
+						break;
+					case 1:
+						this.$refs.articleHot.reload()
+						break;
+					case 2:
+						this.$refs.articleNew.reload()
 						break;
 					default:
 						break;
@@ -612,17 +634,23 @@
 					}
 				}).then(res => {
 					this.categoryInfo = res.data.data
-					console.log(res)
+
+				})
+			},
+			getCategoryPlacard() {
+				this.$http.get('/placard/sql', {
+					params: {
+						where: `sort = ${this.id}`
+					}
+				}).then(res => {
+
 				})
 			},
 			changeTab(index) {
 				this.tabsIndex = index
 				this.loadAticle()
 			},
-			changeSwpier(event) {
-				this.tabsIndex = event.detail.current
-				this.loadAticle()
-			},
+
 			loadAticle() {
 				switch (this.tabsIndex) {
 					case 1:
@@ -638,6 +666,16 @@
 					default:
 						break;
 				}
+			},
+			previewImage(images, index) {
+				let data = [];
+				for (let i = 0; i < images.length; i++) {
+					data.push(images[i].src);
+				}
+				uni.previewImage({
+					current: index,
+					urls: data,
+				});
 			},
 			getDate(data) {
 				// 传进来的data必须是日期格式，不能是时间戳
@@ -704,6 +742,7 @@
 			swiperAnimationfinish(e) {
 				this.tabsIndex = e.detail.current;
 				this.$refs.tabs.unlockDx();
+				this.loadAticle()
 			},
 			getScroll(e) {
 				const scrollTop = e.detail.scrollTop;
@@ -720,14 +759,27 @@
 			},
 			likeAction(index) {
 				this.$http.put('/Article-like/Record', {
-					article_id: this.content[index].id
+					article_id: this[`${this.tabsIndex==0?'article':this.tabsIndex==1?'articleHot':'articleNew'}`][
+						index
+					].id
 				}).then(res => {
 					if (res.data.code === 200) {
-						this.content[index].expand.like.is_like = !this.content[index].expand.like.is_like
-						if (this.content[index].expand.like.is_like) {
-							this.content[index].expand.like.likes_count++
+						this[`${this.tabsIndex==0?'article':this.tabsIndex==1?'articleHot':'articleNew'}`][
+							index
+						].expand.like.is_like = !this[
+							`${this.tabsIndex==0?'article':this.tabsIndex==1?'articleHot':'articleNew'}`][
+							index
+						].expand.like.is_like
+						if (this[`${this.tabsIndex==0?'article':this.tabsIndex==1?'articleHot':'articleNew'}`][
+								index
+							].expand.like.is_like) {
+							this[`${this.tabsIndex==0?'article':this.tabsIndex==1?'articleHot':'articleNew'}`][
+								index
+							].expand.like.likes_count++
 						} else {
-							this.content[index].expand.like.likes_count--
+							this[`${this.tabsIndex==0?'article':this.tabsIndex==1?'articleHot':'articleNew'}`][
+								index
+							].expand.like.likes_count--
 						}
 						uni.showToast({
 							icon: 'none',
@@ -742,17 +794,48 @@
 						}
 					}
 				}).catch(err => {
-			
+
 				})
 			},
 			goAticle(item) {
 				this.$Router.push({
 					path: '/pages/common/article/article',
 					query: {
-						id:  item.id,
+						id: item.id,
 						users_id: item.users_id
 					},
 				})
+			},
+			followUser(index) {
+				this.$http.put('/Focus/Record', {
+					userId: this[`${this.tabsIndex==0?'article':this.tabsIndex==1?'articleHot':'articleNew'}`][
+						index
+					].users_id
+				}).then(res => {
+					switch (res.data.code) {
+						case 200:
+							uni.showToast({
+								icon: 'none',
+								title: res.data.msg
+							});
+							this[`${this.tabsIndex==0?'article':this.tabsIndex==1?'articleHot':'articleNew'}`][
+								index
+							].expand.focus = !this[
+								`${this.tabsIndex==0?'article':this.tabsIndex==1?'articleHot':'articleNew'}`][
+								index
+							].expand.focus
+							break;
+						case 400:
+							uni.showToast({
+								icon: 'none',
+								title: res.data.msg
+							});
+							break;
+						default:
+							// 处理其他情况
+							break;
+					}
+				});
 			},
 			goUserProfile(item) {
 				this.$Router.push({

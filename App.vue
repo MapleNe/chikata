@@ -4,8 +4,12 @@
 		mapMutations,
 		mapState
 	} from 'vuex';
-	import config from './static/config.js'
+	import config from '@/config/config.js';
 	import WS from "@/utils/webSocket.js";
+	import APPUpdate from '@/uni_modules/zhouWei-APPUpdate/js_sdk/appUpdate';
+	import {
+		http
+	} from '@/utils/http.js'
 	export default {
 		data() {
 			return {
@@ -15,6 +19,9 @@
 			}
 		},
 		onLaunch: function() {
+			// #ifdef APP-PLUS
+			APPUpdate();
+			// #endif
 			//启动APP时判断是否已有用户数据
 			let userInfo = uni.getStorageSync('userInfo') || ''
 			this.id = userInfo.id
@@ -75,9 +82,13 @@
 			}, false)
 			// #endif
 			uni.preloadPage({
-				url:'/pages/tabbar/circle'
+				url: '/pages/tabbar/circle'
 			})
-			console.log('App 启动')
+
+			// 获取页面信息
+			const page = uni.getStorageSync('page')
+			if(page) this.setPage(page); else this.getPage()
+
 		},
 		beforeDestroy() {
 			this.ws && this.ws.closeSocket();
@@ -89,16 +100,12 @@
 				this.connectWebSocket()
 			}
 			// #endif
-
-		},
-		onHide: function() {
-			console.log('App 隐藏')
 		},
 		computed: {
 			...mapState(['hasLogin'])
 		},
 		methods: {
-			...mapMutations(['login', 'logout', 'updateNotice']),
+			...mapMutations(['login', 'logout', 'updateNotice', 'setPage']),
 			connectWebSocket() {
 				this.ws && this.ws.closeSocket();
 				this.ws = new WS(config.wss) // xxx 表示接口地址URL
@@ -115,7 +122,6 @@
 				this.ws.getWebSocketMsg(data => {
 					const dataJson = data;
 					if (typeof(dataJson) == "object") {
-						console.log("wsObject", dataJson);
 						if (data.type === 'like' || data.type === 'focus' || data.type === 'comment' || data
 							.type === 'placard') {
 							this.$store.commit('updateNotice', data.type)
@@ -126,15 +132,26 @@
 						// console.log(dataJson);
 					}
 				});
+			},
+			// 获取页面信息
+			getPage() {
+				http.get('/page/all').then(res => {
+					if (res.data.code === 200) {
+						this.setPage(res.data.data.data)
+					}
+
+				})
 			}
 		}
 	}
 </script>
 
 <style lang="scss">
-	@import './tuniao-ui/index.scss';
-	@import './tuniao-ui/iconfont.css';
-	@import './static/css/animate.css';
+	@import '@/tuniao-ui/index.scss';
+	@import '@/tuniao-ui/iconfont.css';
+	@import '@/static/css/animate.css';
+	@import '@/static/css/level.css';
+	/*引入文件不要在uni.scss引入*/
 
 	/*APP自定义样式*/
 	.ch-bg-main {
@@ -142,9 +159,14 @@
 		color: white;
 	}
 
+	.level-text {
+		font-size: 55rpx;
+	}
+
 	.ch-bg-main--light {
 		background: rgba(lighten($ch-color-primary, 30%), 0.5) !important;
 	}
+
 	.ch-up-bg-primary {
 		background: $ch-up-bg-primary;
 	}

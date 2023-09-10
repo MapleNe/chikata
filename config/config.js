@@ -1,8 +1,8 @@
 const config = {
 	// API接口，必须是HTTPS开头
-	"api": "https://api.guan.asia/api",
+	"api": "https://api.fantwo.cc/api",
 	// WebSocket
-	"wss": "wss://api.guan.asia:9501",
+	"wss": "wss://api.fantwo.cc:9501",
 	// Token令牌，如果后端开启了，需要修改此项
 	"token": "95fb9c89cba09c40010ac075438df212",
 	// 版本号，禁止私自修改，后果自负

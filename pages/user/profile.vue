@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<tn-nav-bar>
+		<tn-nav-bar backTitle="">
 			个人信息
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
@@ -18,7 +18,7 @@
 				<tn-list-cell :unlined="true" :arrow="false">
 					<view class="tn-flex tn-flex-row-between tn-flex-col-center">
 						<text>UID</text>
-						<text class="tn-margin-right">{{id}}</text>
+						<text class="tn-margin-right">{{account}}</text>
 					</view>
 				</tn-list-cell>
 				<tn-list-cell :unlined="true" :arrow="true" @tap="showNickname = true">
@@ -74,7 +74,7 @@
 				<view class="tn-margin-right-sm">
 					<tn-button size="sm" :plain="true" @tap="showNickname=false">取消</tn-button>
 				</view>
-				<tn-button size="sm" backgroundColor="#FB7299" fontColor="white"
+				<tn-button size="sm" backgroundColor="#29b7cb" fontColor="white"
 					@tap="modifyProfile();showNickname=false">确定</tn-button>
 			</view>
 		</tn-modal>
@@ -91,7 +91,7 @@
 				<view class="tn-margin-right-sm">
 					<tn-button size="sm" :plain="true" @tap="showDescription=false">取消</tn-button>
 				</view>
-				<tn-button size="sm" backgroundColor="#FB7299" fontColor="white"
+				<tn-button size="sm" backgroundColor="#29b7cb" fontColor="white"
 					@tap="modifyProfile();showDescription=false">确定</tn-button>
 			</view>
 		</tn-modal>
@@ -121,7 +121,7 @@
 			...mapState(['hasLogin', 'userInfo']), //从Store获取全局变量
 		},
 		onLoad() {
-			this.id = this.userInfo.id
+			this.account = this.userInfo.account
 			this.head_img = this.userInfo.head_img
 			this.nickname = this.userInfo.nickname
 			this.sex = this.userInfo.sex
@@ -131,7 +131,7 @@
 		},
 		data() {
 			return {
-				id: null,
+				account: null,
 				head_img: null,
 				nickname: null,
 				sex: null,

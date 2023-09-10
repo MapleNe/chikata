@@ -4,7 +4,7 @@
 			<tn-nav-bar backTitle="" :fixed="false">
 				{{name}}
 				<view class="tn-padding" slot="right">
-					<tn-button plain size="sm" fontColor="#FB7299" backgroundColor="#FB7299">
+					<tn-button plain size="sm" fontColor="#29b7cb" backgroundColor="#29b7cb">
 						<view class="tn-flex tn-flex-col-center">
 							<text>管理作品</text>
 						</view>

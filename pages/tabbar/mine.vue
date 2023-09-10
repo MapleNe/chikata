@@ -27,7 +27,7 @@
 				<view class="tn-flex tn-flex-row-right" v-if="hasLogin">
 					<view class="tn-flex tn-flex-col-center">
 						<view class="tn-margin-right">
-							<tn-button plain backgroundColor="#FB7299" fontColor="#FB7299"
+							<tn-button plain backgroundColor="#29b7cb" fontColor="#29b7cb"
 								@click="goProfile()">个人主页</tn-button>
 						</view>
 					</view>
@@ -38,7 +38,11 @@
 				<!-- 用户属性 -->
 				<view class="tn-margin-top">
 					<view class="tn-flex tn-flex-direction-column" v-if="hasLogin">
-						<text class="tn-text-bold tn-text-xxl">{{userInfo.nickname}}</text>
+						<view class="tn-flex">
+							<text class="tn-text-bold tn-text-xxl">{{userInfo.nickname}}</text>
+							<text class="level level-text tn-margin-left-sm" :class="['lv-'+userInfo.grade]" :style="{'color':level[userInfo.grade]}"></text>
+						</view>
+						
 						<text class="tn-text-md tn-margin-top-xs">通行证ID: {{userInfo.account}}</text>
 					</view>
 					<view class="tn-flex tn-flex-direction-column" v-else @tap="goLogin()">
@@ -52,7 +56,7 @@
 				</view>
 				<view class="tn-margin-top-xl tn-margin-bottom-lg" v-if="hasLogin">
 					<view class="tn-flex tn-flex-col-center tn-text-sm">
-						<view class="tn-flex tn-flex-col-center tn-margin-right" @tap.stop.prevent="goFans()()">
+						<view class="tn-flex tn-flex-col-center tn-margin-right" @tap.stop.prevent="goFans()">
 							<text
 								class="tn-text-bold tn-text-xxl tn-margin-right-xs">{{userInfo.expand.fansCount}}</text>
 							<text class="tn-color-gray--dark">粉丝</text>
@@ -105,13 +109,13 @@
 			<tn-list-cell :arrow="true">
 				<view class="tn-flex tn-flex-col-center">
 					<text class="tn-icon-gift tn-text-xxl"></text>
-					<text class="tn-margin-left-sm">活动</text>
+					<text class="tn-margin-left-sm">客服</text>
 				</view>
 			</tn-list-cell>
 			<tn-list-cell unlined :arrow="true">
 				<view class="tn-flex tn-flex-col-center">
 					<text class="tn-icon-gift tn-text-xxl"></text>
-					<text class="tn-margin-left-sm">活动</text>
+					<text class="tn-margin-left-sm">青少年守护</text>
 				</view>
 			</tn-list-cell>
 		</view>
@@ -145,7 +149,7 @@
 					},
 					{
 						name: '收藏',
-						page: 'star',
+						page: 'favorite',
 						icon: 'tn-icon-star'
 					},
 					{
@@ -285,6 +289,11 @@
 					path: '/pages/user/setting/setting'
 				})
 			},
+			goFavorite() {
+				this.$Router.push({
+					path: '/pages/user/favorite/favorite'
+				})
+			},
 			goPage(item) {
 				switch (item.page) {
 					case 'profile':
@@ -296,6 +305,9 @@
 						this.goVip()
 						break;
 					case 'focus':
+						break;
+					case 'favorite':
+						this.goFavorite()
 						break;
 					case 'fans':
 						this.goFans()

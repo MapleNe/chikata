@@ -1,17 +1,27 @@
 {
-    "name" : "下北泽社区",
+    "name" : "泛二",
     "appid" : "__UNI__EE93837",
-    "description" : "下北泽社区",
+    "description" : "泛二",
     "versionName" : "1.0.0",
     "versionCode" : 1,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
         "usingComponents" : true,
+        "darkMode" : true,
+        "themeLocation" : "theme.json",
         "nvueStyleCompiler" : "uni-app",
         "compilerVersion" : 3,
+        "safearea" : {
+            //iOS平台的安全区域
+            "background" : "#ffffff",
+            "backgroundDark" : "#2f0508", // HX 3.1.19+支持
+            "bottom" : {
+                "offset" : "auto"
+            }
+        },
         "splashscreen" : {
-            "alwaysShowBeforeRender" : false,
+            "alwaysShowBeforeRender" : true,
             "waiting" : true,
             "autoclose" : false,
             "delay" : 0
@@ -28,6 +38,8 @@
             /* android打包配置 */
             "android" : {
                 "permissions" : [
+                    "<uses-permission android:name=\"android.permission.INSTALL_PACKAGES\"/>",
+                    "<uses-permission android:name=\"android.permission.REQUEST_INSTALL_PACKAGES\"/>",
                     "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
                     "<uses-permission android:name=\"android.permission.VIBRATE\"/>",
@@ -44,7 +56,7 @@
                     "<uses-feature android:name=\"android.hardware.camera\"/>",
                     "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
                 ],
-                "abiFilters" : [ "arm64-v8a" ]
+                "abiFilters" : [ "armeabi-v7a", "arm64-v8a" ]
             },
             /* ios打包配置 */
             "ios" : {
@@ -97,7 +109,7 @@
                 }
             },
             "splashscreen" : {
-                "androidStyle" : "default",
+                "androidStyle" : "common",
                 "android" : {
                     "hdpi" : "static/start.png",
                     "xhdpi" : "static/start.png",

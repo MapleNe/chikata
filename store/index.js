@@ -62,7 +62,8 @@ const store = new Vuex.Store({
 			focus_count: 0,
 		},
 		chatData: null,
-		cid: null
+		cid: null,
+		page: [],
 	},
 	mutations: {
 		$tStore(state, payload) {
@@ -85,9 +86,11 @@ const store = new Vuex.Store({
 			// 保存变量到本地中
 			saveLifeData(saveKey, state[saveKey])
 		},
+		// 保存设备cid
 		setCID(state, cid) {
 			state.cid = cid
 		},
+		// 保存登录状态
 		login(state, user) {
 			state.hasLogin = true
 			state.userInfo = user
@@ -96,6 +99,7 @@ const store = new Vuex.Store({
 				data: user
 			})
 		},
+		// 保存用户信息
 		setUserInfo(state, user) {
 			state.userInfo = user
 			uni.setStorage({
@@ -103,21 +107,25 @@ const store = new Vuex.Store({
 				data: user
 			})
 		},
+		// 保存刷新令牌
 		setRefreshToken(state, refreshToken) {
 			uni.setStorage({
 				key: 'refreshToken',
 				data: refreshToken
 			})
 		},
+		// 保存令牌
 		setToken(state, token) {
 			uni.setStorage({
 				key: 'token',
 				data: token
 			})
 		},
+		// 保存消息
 		setNotice(state, noticeNum) {
 			state.noticeNum = noticeNum
 		},
+		// 清除消息
 		clearNotice(state) {
 			state.noticeNum = {
 				commnet_count: 0,
@@ -126,6 +134,7 @@ const store = new Vuex.Store({
 				focus_count: 0,
 			}
 		},
+		// 更新消息
 		updateNotice(state, type) {
 			switch (type) {
 				case 'comment':
@@ -144,9 +153,11 @@ const store = new Vuex.Store({
 					break;
 			}
 		},
+		// 设置聊天信息
 		setChatData(state, data) {
 			state.chatData = data
 		},
+		// 退出登录
 		logout(state) {
 			state.userInfo = {
 					longtext: {
@@ -171,8 +182,17 @@ const store = new Vuex.Store({
 			})
 			uni.$emit('logoutComplete')
 			router.replaceAll({
-				path:'/pages/tabbar/index'
+				path: '/pages/tabbar/index'
 			})
+		},
+		// 保存页面
+		setPage(state, payload) {
+			state.page = payload
+			uni.setStorage({
+				key: 'page',
+				data: payload,
+			})
+
 		}
 	},
 	actions: {}

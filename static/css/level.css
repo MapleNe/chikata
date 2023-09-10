@@ -1,0 +1,99 @@
+@font-face {
+  font-family: "level"; /* Project id 4231723 */
+  src: url('~@/static/css/level.woff2?t=1693421688478') format('woff2'),
+       url('~@/static/css/level.woff?t=1693421688478') format('woff'),
+       url('~@/static/css/level.ttf?t=1693421688478') format('truetype');
+}
+
+.level {
+  font-family: "level" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.lv-1:before {
+  content: "\e691";
+}
+
+.lv-2:before {
+  content: "\e692";
+}
+
+.lv-3:before {
+  content: "\e693";
+}
+
+.lv-4:before {
+  content: "\e694";
+}
+
+.lv-5:before {
+  content: "\e695";
+}
+
+.lv-6:before {
+  content: "\e696";
+}
+
+.lv-7:before {
+  content: "\e697";
+}
+
+.lv-8:before {
+  content: "\e698";
+}
+
+.lv-9:before {
+  content: "\e699";
+}
+
+.lv-11:before {
+  content: "\e69a";
+}
+
+.lv-13:before {
+  content: "\e69b";
+}
+
+.lv-12:before {
+  content: "\e69c";
+}
+
+.lv-10:before {
+  content: "\e69d";
+}
+
+.lv-14:before {
+  content: "\e69e";
+}
+
+.lv-15:before {
+  content: "\e69f";
+}
+
+.lv-16:before {
+  content: "\e6a0";
+}
+
+.lv-17:before {
+  content: "\e6a1";
+}
+
+.lv-18:before {
+  content: "\e6a2";
+}
+
+.lv-19:before {
+  content: "\e6a3";
+}
+
+.lv-20:before {
+  content: "\e6a4";
+}
+
+.lv-0:before {
+  content: "\e6a5";
+}
+
