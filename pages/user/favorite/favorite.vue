@@ -24,7 +24,7 @@
 											<text>{{getDateDiff(item.create_time)}}</text>
 											<view class="tn-flex tn-flex-col-center">
 												<text class="tn-margin-right-xs tn-margin-left-xs">·</text>
-												<text>{{item.expand.sort[0].name}}</text>
+												<text v-if="item.expand.sort&&item.expand.sort.length>0">{{item.expand.sort[0].name}}</text>
 											</view>
 										</view>
 									</view>
@@ -141,6 +141,16 @@
 						id: this.article[index].users_id
 					}
 				})
+			},
+			previewImage(images, index) {
+				let data = [];
+				for (let i = 0; i < images.length; i++) {
+					data.push(images[i].src);
+				}
+				uni.previewImage({
+					current: index,
+					urls: data,
+				});
 			},
 			getDateDiff(data) {
 				// 传进来的data必须是日期格式，不能是时间戳

@@ -18,7 +18,7 @@
 				<tn-list-cell :unlined="true" :arrow="false">
 					<view class="tn-flex tn-flex-row-between tn-flex-col-center">
 						<text>UID</text>
-						<text class="tn-margin-right">{{id}}</text>
+						<text class="tn-margin-right">{{account}}</text>
 					</view>
 				</tn-list-cell>
 				<tn-list-cell :unlined="true" :arrow="true" @tap="showNickname = true">
@@ -121,7 +121,7 @@
 			...mapState(['hasLogin', 'userInfo']), //从Store获取全局变量
 		},
 		onLoad() {
-			this.id = this.userInfo.id
+			this.account = this.userInfo.account
 			this.head_img = this.userInfo.head_img
 			this.nickname = this.userInfo.nickname
 			this.sex = this.userInfo.sex
@@ -131,7 +131,7 @@
 		},
 		data() {
 			return {
-				id: null,
+				account: null,
 				head_img: null,
 				nickname: null,
 				sex: null,

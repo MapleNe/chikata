@@ -516,7 +516,6 @@
 			this.params = params
 		},
 		beforeRouteLeave(to, from, next) {
-			console.log(to)
 			//退出前判断
 			switch (true) {
 				case this.swiperIndex > 0:
