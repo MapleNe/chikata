@@ -46,9 +46,10 @@
 								:size="30">
 								<view class="tn-color-gray--dark" style="font-size: 28rpx;">
 									<text>我已阅读并同意</text>
-									<text class="ch-color-primary">《用户协议》</text>
+									<text class="ch-color-primary"
+										@tap.stop.prevent="goAgreement($store.state.page,'agreement')">《用户协议》</text>
 									<text>和</text>
-									<text class="ch-color-primary">《隐私政策》</text>
+									<text class="ch-color-primary" @tap.stop.prevent="goAgreement($store.state.page,'privacy')">《隐私政策》</text>
 								</view>
 							</tn-checkbox>
 						</view>
@@ -315,7 +316,7 @@
 					cid: this.cid
 				}).then(res => {
 					console.log(res)
-					if (res.data.code === 200||res.data.code===201) {
+					if (res.data.code === 200 || res.data.code === 201) {
 						let data = res.data
 						let token = data.data['login-token']
 						this.setRefreshToken(res.data.data.refreshToken)
@@ -328,16 +329,16 @@
 							title: data.msg
 						});
 						this.realBack = true
-						if(res.data.code===200){
+						if (res.data.code === 200) {
 							setTimeout(() => {
 								this.back()
 							}, 800)
-						}else{
+						} else {
 							this.$Router.push({
-								path:'/pages/user/firstLogin/firstLogin'
+								path: '/pages/user/firstLogin/firstLogin'
 							})
 						}
-						
+
 					} else {
 						uni.showToast({
 							icon: 'none',
@@ -567,6 +568,19 @@
 					}, 2000)
 				}
 			},
+			// 协议页面
+			goAgreement(data, alias) {
+				for (let i = 0; i < data.length; i++) {
+					if (data[i].alias == alias) {
+						this.$Router.push({
+							path: '/pages/user/setting/agreement',
+							query: {
+								id: data[i].id
+							}
+						})
+					}
+				}
+			}
 		}
 	}
 </script>

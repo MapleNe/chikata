@@ -4,9 +4,12 @@
 		mapMutations,
 		mapState
 	} from 'vuex';
-	import config from './config/config.js';
+	import config from '@/config/config.js';
 	import WS from "@/utils/webSocket.js";
 	import APPUpdate from '@/uni_modules/zhouWei-APPUpdate/js_sdk/appUpdate';
+	import {
+		http
+	} from '@/utils/http.js'
 	export default {
 		data() {
 			return {
@@ -81,7 +84,11 @@
 			uni.preloadPage({
 				url: '/pages/tabbar/circle'
 			})
-			console.log('App 启动')
+
+			// 获取页面信息
+			const page = uni.getStorageSync('page')
+			if(page) this.setPage(page); else this.getPage()
+
 		},
 		beforeDestroy() {
 			this.ws && this.ws.closeSocket();
@@ -93,16 +100,12 @@
 				this.connectWebSocket()
 			}
 			// #endif
-
-		},
-		onHide: function() {
-			console.log('App 隐藏')
 		},
 		computed: {
 			...mapState(['hasLogin'])
 		},
 		methods: {
-			...mapMutations(['login', 'logout', 'updateNotice']),
+			...mapMutations(['login', 'logout', 'updateNotice', 'setPage']),
 			connectWebSocket() {
 				this.ws && this.ws.closeSocket();
 				this.ws = new WS(config.wss) // xxx 表示接口地址URL
@@ -129,6 +132,16 @@
 						// console.log(dataJson);
 					}
 				});
+			},
+			// 获取页面信息
+			getPage() {
+				http.get('/page/all').then(res => {
+					console.log(res)
+					if (res.data.code === 200) {
+						this.setPage(res.data.data.data)
+					}
+
+				})
 			}
 		}
 	}

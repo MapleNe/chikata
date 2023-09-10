@@ -200,51 +200,47 @@
 				"enablePullDownRefresh": false
 			}
 
+		}, {
+			"path": "pages/user/collect/collect",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"login": true
+			}
+
+		}, {
+			"path": "pages/user/collect/detail",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/common/article/comment/comment",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/favorite/favorite",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"login": true
+			}
+		}, {
+			"path": "pages/user/setting/agreement",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
 		}
-	    ,{
-            "path" : "pages/user/collect/collect",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            },
-			"meta": {
-				"login": true
-			}
-            
-        }
-        ,{
-            "path" : "pages/user/collect/detail",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/common/article/comment/comment",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        
-        ,{
-            "path" : "pages/user/favorite/favorite",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            },
-			"meta": {
-				"login": true
-			}
-            
-        }
-    ],
+	],
 	"tabBar": {
 		"backgroundColor": "#ffffff",
 		"color": "#949494",

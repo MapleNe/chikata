@@ -38,9 +38,12 @@
 		<tn-list-cell :arrow="true" :arrowRight="true">建议与反馈</tn-list-cell>
 		<tn-list-cell unlined :arrow="true" :arrowRight="true">检查更新</tn-list-cell>
 		<view class="tn-padding-xs tn-bg-gray--light"></view>
-		<tn-list-cell unlined :arrow="true" :arrowRight="true">用户协议</tn-list-cell>
-		<tn-list-cell unlined :arrow="true" :arrowRight="true">隐私政策</tn-list-cell>
-		<tn-list-cell unlined :arrow="true" :arrowRight="true">个人信息收集清单</tn-list-cell>
+		<tn-list-cell unlined :arrow="true" :arrowRight="true"
+			@click="goAgreement($store.state.page,'agreement')">用户协议</tn-list-cell>
+		<tn-list-cell unlined :arrow="true" :arrowRight="true"
+			@click="goAgreement($store.state.page,'privacy')">隐私政策</tn-list-cell>
+		<tn-list-cell unlined :arrow="true" :arrowRight="true"
+			@click="goAgreement($store.state.page,'permission')">个人信息收集清单</tn-list-cell>
 		<tn-list-cell unlined :arrow="true" :arrowRight="true">第三方共享个人信息清单</tn-list-cell>
 		<view class="tn-padding-xs tn-bg-gray--light"></view>
 		<view class="tn-padding tn-text-center" style="font-size: 28rpx;" @tap.stop.prevent="logout" v-if="hasLogin">
@@ -85,6 +88,20 @@
 				this.$Router.push({
 					path: '/pages/user/setting/block/block'
 				})
+			},
+			goAgreement(data, alias) {
+
+				for (let i = 0; i < data.length; i++) {
+					if (data[i].alias == alias) {
+						this.$Router.push({
+							path: '/pages/user/setting/agreement',
+							query: {
+								id: data[i].id
+							}
+						})
+					}
+				}
+
 			}
 		}
 	}
