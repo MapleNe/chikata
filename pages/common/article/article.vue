@@ -153,7 +153,8 @@
 										v-if="item.son.length>0"
 										@tap.stop.prevent="showComment= !showComment;subId=item.id;subCommentAuthor=item">
 										<!-- 这里只显示两条防止太多评论导致的过长 -->
-										<block v-for="(subComment, index) in item.son" :key="index" v-if="index<2">
+										<block v-for="(subComment, subIndex) in item.son" :key="subIndex"
+											v-if="subIndex<2">
 											<view class=" tn-text-md">
 												<text class="tn-color-indigo"
 													@tap.stop.prevent="goProfile(subComment.users_id)">{{subComment.nickname}}</text>
@@ -304,90 +305,90 @@
 									<text class="tn-icon-more-horizontal"></text>
 								</view>
 							</view>
-						</template>
-						<view class="tn-margin tn-no-margin-top" v-if="subCommentAuthor">
-							<view class="tn-flex tn-flex-col-center tn-text-md">
-								<tn-avatar :src="subCommentAuthor.expand.head_img"></tn-avatar>
-								<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
-									<view class="tn-flex tn-flex-col-center">
-										<text>{{subCommentAuthor.nickname}}</text>
-										<text v-if="article.users_id === subCommentAuthor.users_id"
-											class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
-											style="padding:5rpx 8rpx">楼主</text>
-										<text class="level tn-margin-left-xs level-text" :class="['lv-'+subCommentAuthor.expand.user.grade]"
-											:style="{'color':level[subCommentAuthor.expand.user.grade]}"></text>
+</template>
+<view class="tn-margin tn-no-margin-top" v-if="subCommentAuthor">
+	<view class="tn-flex tn-flex-col-center tn-text-md">
+		<tn-avatar :src="subCommentAuthor.expand.head_img"></tn-avatar>
+		<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
+			<view class="tn-flex tn-flex-col-center">
+				<text>{{subCommentAuthor.nickname}}</text>
+				<text v-if="article.users_id === subCommentAuthor.users_id"
+					class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
+					style="padding:5rpx 8rpx">楼主</text>
+				<text class="level tn-margin-left-xs level-text" :class="['lv-'+subCommentAuthor.expand.user.grade]"
+					:style="{'color':level[subCommentAuthor.expand.user.grade]}"></text>
 
-									</view>
-									<text class="tn-text-sm tn-color-grey--disabled">{{getDateDiff(subCommentAuthor.create_time)}}</text>
-								</view>
-							</view>
-							<view class="tn-margin tn-margin-top-sm tn-padding-left-xl" style="overflow: hidden;word-wrap: break-word"
-								@tap="subReply(subCommentAuthor)">
-								<!-- {{item.content}} -->
-								<mp-html :content="subCommentAuthor.content"></mp-html>
-							</view>
-						</view>
-						<view class="tn-padding-xs tn-bg-gray--light"></view>
-						<block v-for="(item,index) in subComment" :key="index">
-							<view class="tn-margin">
-								<view class="tn-flex tn-flex-col-center tn-text-md">
-									<tn-avatar :src="item.expand.head_img" @click="goProfile(item.users_id)"></tn-avatar>
-									<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
-										<view class="tn-flex tn-flex-col-center">
-											<text>{{item.nickname}}</text>
-											<text v-if="article.users_id === item.users_id"
-												class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
-												style="padding:5rpx 8rpx">楼主</text>
-											<text class="level tn-margin-left-xs level-text" :class="['lv-'+item.expand.user.grade]"
-												:style="{'color':level[item.expand.user.grade]}"></text>
-										</view>
-									</view>
-								</view>
-								<view class="tn-margin tn-margin-top-xs tn-padding-left-xl" @tap="subReply(item)">
-									<view>
-										<text class="tn-margin-right-xs" v-if="item.pid != subCommentAuthor.id">回复</text>
-										<text class="tn-color-indigo" @tap.stop.prevent="goProfile(item.expand.pid.users_id)"
-											v-if="item.pid != subCommentAuthor.id">{{item.expand.pid.nickname}}</text>
-										<text v-if="item.pid != subCommentAuthor.id">：</text>
-										<mp-html container-style="display:inline;white-space:nomarl;" :content="item.content"></mp-html>
-									</view>
-								</view>
-							</view>
-						</block>
-						<template #bottom>
-							<view class="tn-bg-gray--light tn-padding-sm">
-								<view class="tn-bg-white tn-padding-left tn-radius">
-									<tn-input :disabled="true" :placeholder="'回复：'+subCommentAuthor.nickname"
-										@click="commentAllow?subReply(subCommentAuthor):''"></tn-input>
-								</view>
-							</view>
-
-						</template>
-					</z-paging>
-
-				</tn-popup>
 			</view>
-		</swiper-item>
-		<swiper-item v-if="params">
-			<userProfile :users_id="Number(params.users_id)" @edit="is_edit = true"></userProfile>
-		</swiper-item>
-	</swiper>
-	<tn-popup mode="center" :borderRadius="20" v-model="showCancelFollow" length="80%">
-		<view class="tn-margin">
-			<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
-				<text>取消关注</text>
-				<text class="tn-padding-sm tn-color-gray--dark" style="font-size: 28rpx;">点击“确定”则取消关注该用户</text>
+			<text class="tn-text-sm tn-color-grey--disabled">{{getDateDiff(subCommentAuthor.create_time)}}</text>
+		</view>
+	</view>
+	<view class="tn-margin tn-margin-top-sm tn-padding-left-xl" style="overflow: hidden;word-wrap: break-word"
+		@tap="subReply(subCommentAuthor)">
+		<!-- {{item.content}} -->
+		<mp-html :content="subCommentAuthor.content"></mp-html>
+	</view>
+</view>
+<view class="tn-padding-xs tn-bg-gray--light"></view>
+<block v-for="(item,index) in subComment" :key="index">
+	<view class="tn-margin">
+		<view class="tn-flex tn-flex-col-center tn-text-md">
+			<tn-avatar :src="item.expand.head_img" @click="goProfile(item.users_id)"></tn-avatar>
+			<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
+				<view class="tn-flex tn-flex-col-center">
+					<text>{{item.nickname}}</text>
+					<text v-if="article.users_id === item.users_id"
+						class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
+						style="padding:5rpx 8rpx">楼主</text>
+					<text class="level tn-margin-left-xs level-text" :class="['lv-'+item.expand.user.grade]"
+						:style="{'color':level[item.expand.user.grade]}"></text>
+				</view>
 			</view>
 		</view>
-		<view class="tn-padding tn-color-gray--dark tn-bg-gray--light">
-			<view class="tn-flex tn-flex-row-around" style="font-size: 28rpx;">
-				<text @tap.stop.prevent="showCancelFollow = false">取消</text>
-				<text class="tn-color-grey--light">|</text>
-				<text class="ch-color-primary" @tap.stop.prevent="followUser();showCancelFollow = false">确定</text>
+		<view class="tn-margin tn-margin-top-xs tn-padding-left-xl" @tap="subReply(item)">
+			<view>
+				<text class="tn-margin-right-xs" v-if="item.pid != subCommentAuthor.id">回复</text>
+				<text class="tn-color-indigo" @tap.stop.prevent="goProfile(item.expand.pid.users_id)"
+					v-if="item.pid != subCommentAuthor.id">{{item.expand.pid.nickname}}</text>
+				<text v-if="item.pid != subCommentAuthor.id">：</text>
+				<mp-html container-style="display:inline;white-space:nomarl;" :content="item.content"></mp-html>
 			</view>
 		</view>
-	</tn-popup>
-	</z-paging-swiper>
+	</view>
+</block>
+<template #bottom>
+	<view class="tn-bg-gray--light tn-padding-sm">
+		<view class="tn-bg-white tn-padding-left tn-radius">
+			<tn-input :disabled="true" :placeholder="'回复：'+subCommentAuthor.nickname"
+				@click="commentAllow?subReply(subCommentAuthor):''"></tn-input>
+		</view>
+	</view>
+
+</template>
+</z-paging>
+
+</tn-popup>
+</view>
+</swiper-item>
+<swiper-item v-if="params">
+	<userProfile :users_id="Number(params.users_id)" @edit="is_edit = true"></userProfile>
+</swiper-item>
+</swiper>
+<tn-popup mode="center" :borderRadius="20" v-model="showCancelFollow" length="80%">
+	<view class="tn-margin">
+		<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
+			<text>取消关注</text>
+			<text class="tn-padding-sm tn-color-gray--dark" style="font-size: 28rpx;">点击“确定”则取消关注该用户</text>
+		</view>
+	</view>
+	<view class="tn-padding tn-color-gray--dark tn-bg-gray--light">
+		<view class="tn-flex tn-flex-row-around" style="font-size: 28rpx;">
+			<text @tap.stop.prevent="showCancelFollow = false">取消</text>
+			<text class="tn-color-grey--light">|</text>
+			<text class="ch-color-primary" @tap.stop.prevent="followUser();showCancelFollow = false">确定</text>
+		</view>
+	</view>
+</tn-popup>
+</z-paging-swiper>
 </template>
 
 <script>
@@ -514,6 +515,7 @@
 		},
 		onLoad(params) {
 			this.params = params
+			this.getArticle()
 		},
 		beforeRouteLeave(to, from, next) {
 			//退出前判断
@@ -548,17 +550,17 @@
 			}
 		},
 		created() {
-			this.getArticle()
 		},
 		computed: {},
 		methods: {
-			async getArticle() {
-				await this.$http.get('/article/one', {
+			getArticle() {
+				this.$http.get('/article/one', {
 					params: {
 						id: this.params.id,
 						mode: 'html'
 					}
 				}).then(res => {
+					console.log(res)
 					if (res.data.code == 200) {
 						this.article = res.data.data
 						this.commentDisAllow = res.data.data.opt.comments.allow
@@ -579,7 +581,6 @@
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
-
 						this.$refs.paging.complete(res.data.data.data)
 						setTimeout(() => {
 							const author = res.data.data.data.filter(item => item.users_id === this

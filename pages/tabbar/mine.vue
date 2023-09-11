@@ -40,9 +40,10 @@
 					<view class="tn-flex tn-flex-direction-column" v-if="hasLogin">
 						<view class="tn-flex">
 							<text class="tn-text-bold tn-text-xxl">{{userInfo.nickname}}</text>
-							<text class="level level-text tn-margin-left-sm" :class="['lv-'+userInfo.grade]" :style="{'color':level[userInfo.grade]}"></text>
+							<text class="level level-text tn-margin-left-sm" :class="['lv-'+userInfo.grade]"
+								:style="{'color':level[userInfo.grade]}"></text>
 						</view>
-						
+
 						<text class="tn-text-md tn-margin-top-xs">通行证ID: {{userInfo.account}}</text>
 					</view>
 					<view class="tn-flex tn-flex-direction-column" v-else @tap="goLogin()">
@@ -75,8 +76,8 @@
 				</view>
 			</view>
 			<view class="tn-padding-xs tn-bg-gray--light"></view>
-			<view class="tn-margin">
-				<tn-grid :col="4" hoverClass="none" class="tn-text-md">
+			<view class="tn-margin tn-no-margin-left tn-no-margin-right">
+				<tn-grid align="left" :col="col" hoverClass="none" class="tn-text-md">
 					<block v-for="(item, index) in btnList" :key="index">
 						<!-- H5 -->
 						<!-- #ifndef MP-WEIXIN -->
@@ -90,12 +91,13 @@
 
 						<!-- 微信小程序 -->
 						<!-- #ifdef MP-WEIXIN -->
-						<tn-grid-item :style="{width: gridItemWidth}">
-							<view class="tn-flex tn-flex-direction-column" @tap.stop.prevent="goPage(item)">>
-								<text :class="item.icon" class="tn-text-xxl"></text>
-								<text class="tn-margin-top-sm tn-margin-bottom">{{item.name}}</text>
+						<tn-grid-item :style="{width: gridItemWidth}" class="tn-flex tn-flex-row-between">
+							<view class="tn-flex tn-flex-direction-column" @tap.stop.prevent="goPage(item)">
+								<text :class="item.icon" class="ch-color-primary tn-text-xxl"></text>
+								<text class="tn-margin-top-sm tn-text-sm tn-margin-bottom">{{item.name}}</text>
 							</view>
-							<!-- #endif-->
+						</tn-grid-item>
+						<!-- #endif-->
 					</block>
 				</tn-grid>
 			</view>
@@ -137,6 +139,7 @@
 				content: [],
 				tabs: ['动态', '合集'],
 				tabsIndex: 0,
+				col: 4,
 				btnList: [{
 						name: '头像框',
 						page: 'avatar',

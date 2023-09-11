@@ -30,7 +30,7 @@
 						<view class="tn-margin">
 							<view class="tn-margin-left-xl tn-padding-sm tn-bg-gray--light ch-radius"
 								v-if="item.son.length>0">
-								<view v-for="(subComment, index) in item.son" :key="index">
+								<view v-for="(subComment, subIndex) in item.son" :key="subIndex">
 									<view class="tn-flex tn-flex-col-center">
 										<tn-avatar :src="subComment.expand.head_img"></tn-avatar>
 										<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">

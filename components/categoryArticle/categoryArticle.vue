@@ -45,7 +45,7 @@
 							</view>
 							<view v-if="item.expand.tag.length>0">
 								<view class="tn-flex tn-flex-col-center tn-flex-wrap ch-color-primary">
-									<view v-for="(tags,index) in item.expand.tag" :key="tags.id"
+									<view v-for="(tags,tagsIndex) in item.expand.tag" :key="tagsIndex"
 										class="tn-margin-right-xs tn-margin-bottom-sm">
 										<text class="tn-icon-topic"></text>
 										<text>{{tags.name}}</text>
@@ -54,23 +54,23 @@
 							</view>
 							<!-- 单张图片 -->
 							<view v-if="item.expand.images.length===1">
-								<image v-for="(images,index) in item.expand.images" :key="index" :src="images.src"
+								<image v-for="(images,subIndex) in item.expand.images" :key="subIndex" :src="images.src"
 									mode="aspectFill" style="height: 400rpx;width: 400rpx;border-radius:10rpx;"
-									@tap.stop="previewImage(item.expand.images,index)">
+									@tap.stop="previewImage(item.expand.images,subIndex)">
 								</image>
 							</view>
 							<!-- 单张结束 -->
 							<!-- 复数开始 -->
 							<view v-if="item.expand.images.length===2||item.expand.images.length===4">
 								<tn-grid align="left" :col="item.expand.images.length" hoverClass="none">
-									<block v-for="(images, index) in item.expand.images" :key="index">
+									<block v-for="(images, subIndex) in item.expand.images" :key="subIndex">
 										<!-- H5 -->
 										<!-- #ifndef MP-WEIXIN -->
 										<tn-grid-item
 											style="height: 256rpx;width: 256rpx;margin-right: 6rpx;margin-bottom: 6rpx;">
 											<image :src="images.src" mode="aspectFill"
 												style="height: 256rpx;width: 256rpx;border-radius: 10rpx;"
-												@tap.stop="previewImage(item.expand.images,index)">
+												@tap.stop="previewImage(item.expand.images,subIndex)">
 											</image>
 										</tn-grid-item>
 										<!-- #endif-->
@@ -86,14 +86,14 @@
 							</view>
 							<view v-if="item.expand.images.length>=3">
 								<tn-grid align="left" :col="3" hoverClass="none">
-									<block v-for="(images, index) in item.expand.images" :key="index">
+									<block v-for="(images, subIndex) in item.expand.images" :key="subIndex">
 										<!-- H5 -->
 										<!-- #ifndef MP-WEIXIN -->
 										<tn-grid-item
 											style="height: 220rpx;width: 220rpx;margin-right: 6rpx;margin-bottom: 6rpx">
 											<image :src="images.src" mode="aspectFill"
 												style="height: 220rpx;width: 220rpx;border-radius: 10rpx;"
-												@tap.stop="previewImage(item.expand.images,index)">
+												@tap.stop="previewImage(item.expand.images,subIndex)">
 											</image>
 										</tn-grid-item>
 										<!-- #endif-->
@@ -110,7 +110,7 @@
 							<!-- 点赞控件 -->
 							<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top">
 								<view class="tn-flex tn-flex-row-left">
-									<view v-for="(category,index) in item.expand.sort" :key="index"
+									<view v-for="(category,subIndex) in item.expand.sort" :key="subIndex"
 										class="tn-padding-right tn-round tn-border-solid tn-flex tn-flex-col-center">
 										<view class="tn-margin-right-sm">
 											<tn-avatar size="sm" :src="category.opt.head_img"></tn-avatar>
@@ -137,7 +137,6 @@
 						</view>
 					</ls-skeleton>
 				</view>
-
 				<!-- 间隔开始 -->
 				<view class="tn-bg-gray--light tn-padding-xs"></view>
 				<!-- 间隔结束 -->

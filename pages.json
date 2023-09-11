@@ -54,7 +54,7 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false,
-				"backgroundColor": " #f8f7f8"
+				"backgroundColor": "#f8f7f8"
 			},
 			"meta": {
 				"login": true
@@ -272,9 +272,6 @@
 		}
 	},
 	"globalStyle": {
-		"rpxCalcMaxDeviceWidth": 1024, // rpx 计算所支持的最大设备宽度，单位 px，默认值为 960
-		"rpxCalcBaseDeviceWidth": 375, // rpx 计算使用的基准设备宽度，设备实际宽度超出 rpx 计算所支持的最大设备宽度时将按基准宽度计算，单位 px，默认值为 375
-		"rpxCalcIncludeWidth": 750, // rpx 计算特殊处理的值，始终按实际的设备宽度计算，单位 rpx，默认值为 750
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",

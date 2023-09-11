@@ -53,6 +53,9 @@
 			// #ifdef APP-PLUS
 			const clientInfo = plus.push.getClientInfo()
 			this.$store.commit('setCID', clientInfo.clientid)
+			uni.preloadPage({
+				url: '/pages/tabbar/circle'
+			})
 			// #endif
 
 			// 消息通知
@@ -81,9 +84,7 @@
 				}
 			}, false)
 			// #endif
-			uni.preloadPage({
-				url: '/pages/tabbar/circle'
-			})
+			
 
 			// 获取页面信息
 			const page = uni.getStorageSync('page')

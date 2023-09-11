@@ -135,24 +135,24 @@
 
 									<!-- 单张图片 -->
 									<view v-if="item.expand.images.length===1">
-										<image v-for="(images,index) in item.expand.images" :key="index"
+										<image v-for="(images,subIndex) in item.expand.images" :key="subIndex"
 											:src="images.src" mode="aspectFill"
 											style="height: 400rpx;width: 400rpx;border-radius:10rpx;"
-											@tap.stop="previewImage(item.expand.images,index)">
+											@tap.stop="previewImage(item.expand.images,subIndex)">
 										</image>
 									</view>
 									<!-- 单张结束 -->
 									<!-- 复数开始 -->
 									<view v-if="item.expand.images.length===2 || item.expand.images.length===4">
 										<tn-grid align="left" :col="item.expand.images.length" hoverClass="none">
-											<block v-for="(images, index) in item.expand.images" :key="index">
+											<block v-for="(images, subIndex) in item.expand.images" :key="subIndex">
 												<!-- H5 -->
 												<!-- #ifndef MP-WEIXIN -->
 												<tn-grid-item
 													style="height: 256rpx;width: 256rpx;margin-right: 6rpx;margin-bottom: 6rpx;">
 													<image :src="images.src" mode="aspectFill"
 														style="height: 256rpx;width: 256rpx;border-radius: 10rpx;"
-														@tap.stop="previewImage(item.expand.images,index)">
+														@tap.stop="previewImage(item.expand.images,subIndex)">
 													</image>
 												</tn-grid-item>
 												<!-- #endif-->
@@ -162,7 +162,7 @@
 													style="margin-right: 6rpx;margin-bottom: 6rpx;">
 													<image :src="images.src" mode="aspectFill"
 														style="height: 256rpx;width: 256rpx;border-radius: 10rpx;"
-														@tap.stop="previewImage(item.expand.images,index)">
+														@tap.stop="previewImage(item.expand.images,subIndex)">
 													</image>
 												</tn-grid-item>
 												<!-- #endif-->
@@ -171,15 +171,15 @@
 									</view>
 									<view v-if="item.expand.images.length===3|| item.expand.images.length>4">
 										<tn-grid align="left" :col="3" hoverClass="none">
-											<block v-for="(images, index) in item.expand.images" :key="index"
-												v-if="index<9">
+											<block v-for="(images, subIndex) in item.expand.images" :key="subIndex"
+												v-if="subIndex<9">
 												<!-- H5 -->
 												<!-- #ifndef MP-WEIXIN -->
 												<tn-grid-item
 													style="height: 220rpx;width: 220rpx;margin-right: 6rpx;margin-bottom: 6rpx">
 													<image :src="images.src" mode="aspectFill"
 														style="height: 220rpx;width: 220rpx;border-radius: 10rpx;"
-														@tap.stop="previewImage(item.expand.images,index)">
+														@tap.stop="previewImage(item.expand.images,subIndex)">
 													</image>
 												</tn-grid-item>
 												<!-- #endif-->
@@ -189,7 +189,7 @@
 													style="margin-right: 6rpx;margin-bottom: 6rpx">
 													<image :src="images.src" mode="aspectFill"
 														style="height: 220rpx;width: 220rpx;border-radius: 10rpx;"
-														@tap.stop="previewImage(item.expand.images,index)">
+														@tap.stop="previewImage(item.expand.images,subIndex)">
 													</image>
 												</tn-grid-item>
 												<!-- #endif-->
