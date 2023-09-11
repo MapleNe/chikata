@@ -7,7 +7,10 @@
 						<tn-avatar :src="profile.head_img" border borderColor="#fff" :borderSize="4"></tn-avatar>
 						<text class="tn-margin-left-sm">{{profile.nickname}}</text>
 					</view>
-					<view class="tn-margin-right-xl tn-padding-right-lg" v-if="userInfo.id!=id&&profile.expand">
+					
+				</view>
+				<view class="tn-flex tn-flex-col-center tn-padding" slot="right">
+					<view class="tn-margin-right" v-if="userInfo.id!=id&&profile.expand" v-show="navAuthor">
 						<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29b7cb" fontColor="#29b7cb"
 							v-show="profile.expand&&!profile.expand.is_focus" @click="followUser()">
 							<view class="tn-flex tn-flex-col-center">
@@ -16,12 +19,12 @@
 							</view>
 						</tn-button>
 						<tn-button size="sm" padding="0 20rpx" backgroundColor="tn-bg-gray--light"
-							fontColor="tn-color-gray" @click="followUser()" v-show="profile.expand&&profile.expand.is_focus">
+							fontColor="tn-color-gray" @click="followUser()"
+							v-show="profile.expand&&profile.expand.is_focus">
 							<text>已关注</text>
 						</tn-button>
 					</view>
-				</view>
-				<view class="tn-flex tn-flex-col-center tn-padding" slot="right">
+					
 					<text class=" tn-text-xl tn-icon-search"></text>
 					<text class="tn-text-xl tn-margin-left tn-icon-more-vertical"
 						@tap.stop.prevent="showManage =!showManage" v-if="!hasLogin&&userInfo.id!=id">
@@ -31,7 +34,8 @@
 		</template>
 		<view style="position: relative;" id="userview">
 			<view v-if="profile.longtext">
-				<image :src="profile.longtext.background_img?profile.longtext.background_img:profile.head_img" mode="aspectFill" style="width: 100%;height: 420rpx;">
+				<image :src="profile.longtext.background_img?profile.longtext.background_img:profile.head_img"
+					mode="aspectFill" style="width: 100%;height: 420rpx;">
 				</image>
 			</view>
 			<!-- 第一层 -->
@@ -52,7 +56,8 @@
 						</view>
 						<view>
 							<tn-button :backgroundColor="profile.expand&&profile.expand.is_focus?'#29b7cb69':'#29b7cb'"
-								:fontColor="profile.expand&&profile.expand.is_focus?'#29b7cb':'tn-color-white'" padding="0 50rpx"
+								:fontColor="profile.expand&&profile.expand.is_focus?'#29b7cb':'tn-color-white'"
+								padding="0 50rpx"
 								@click="profile.expand&&profile.expand.is_focus?showCancelFollow = true:followUser()">
 								<text style="width:100rpx">{{profile.expand&&profile.expand.is_focus?'已关注':'关注'}}</text>
 							</tn-button>
@@ -359,15 +364,17 @@
 		},
 		onLoad(params) {
 			this.id = params.id
-			console.log(this.users)
 			this.getUserInfo()
 		},
-		onReady() {},
+		onReady() {
+			this.id = this.users_id
+			this.getUserInfo()
+		},
 		created() {
-			if (this.users_id != 0) {
-				this.id = this.users_id
-				this.getUserInfo()
-			}
+			// #ifndef MP
+			this.id = this.users_id
+			this.getUserInfo()
+			// #endif
 		},
 		computed: {
 			...mapState(['userInfo', 'hasLogin']),
@@ -411,11 +418,9 @@
 			getUserInfo() {
 				this.$http.get('/users/one', {
 					params: {
-						id: this.id
+						id: this.id ? this.id : this.users_id
 					}
-
 				}).then(res => {
-
 					this.profile = res.data.data
 				}).catch(err => {
 

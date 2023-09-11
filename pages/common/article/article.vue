@@ -8,12 +8,14 @@
 						<tn-nav-bar :zIndex="5" backTitle="">
 							<text v-show="!navAuthor"
 								v-if="article.expand.sort&&article.expand.sort.length>0">{{article.expand.sort[0].name}}</text>
-							<view class="tn-flex tn-flex-1 tn-flex-col-center tn-flex-row-between" v-show="navAuthor">
-								<view class="tn-flex tn-flex-col-center" @tap.stop="swiperIndex=1">
-									<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
-									<text class="tn-margin-left-sm">{{article.expand.author.nickname}}</text>
-								</view>
-								<view>
+							<view class="tn-flex tn-flex-col-center" @tap.stop.prevent="swiperIndex=1"
+								v-show="navAuthor">
+								<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
+								<text class="tn-margin-left-sm">{{article.expand.author.nickname}}</text>
+							</view>
+							<view slot="right" class="tn-padding tn-flex tn-flex-col-center"
+								@tap.stop.prevent="showShare = !showShare">
+								<view v-show="navAuthor">
 									<tn-button plain :fontSize="30" size="sm" padding="0 15rpx"
 										backgroundColor="#29b7cb" fontColor="#29b7cb" v-if="!article.expand.focus"
 										@click="followUser()">
@@ -28,9 +30,9 @@
 										<text>已关注</text>
 									</tn-button>
 								</view>
-							</view>
-							<view slot="right" class="tn-padding" @tap.stop.prevent="showShare = !showShare">
-								<text class="tn-text-bold tn-text-lg tn-icon-more-horizontal"></text>
+								<!-- #ifndef MP-WEIXIN-->
+								<text class="tn-text-bold tn-margin-left tn-text-lg tn-icon-more-horizontal"></text>
+								<!--#endif-->
 							</view>
 						</tn-nav-bar>
 						<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
@@ -51,7 +53,6 @@
 											:class="['lv-'+article.expand.author.grade]"
 											:style="{'color':level[article.expand.author.grade]}"></text>
 									</view>
-
 								</view>
 							</view>
 							<view>
@@ -510,9 +511,6 @@
 				showCancelFollow: false,
 			}
 		},
-		onPageScroll(e) {
-			console.log(e)
-		},
 		onLoad(params) {
 			this.params = params
 			this.getArticle()
@@ -549,8 +547,7 @@
 					break;
 			}
 		},
-		created() {
-		},
+		created() {},
 		computed: {},
 		methods: {
 			getArticle() {
