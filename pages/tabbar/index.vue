@@ -8,7 +8,7 @@
 						<tn-avatar :src="userInfo.head_img" @tap="hasLogin?goMine():goLogin()"></tn-avatar>
 						<view
 							class="tn-bg-gray--light tn-round tn-padding-left-sm tn-flex-1 tn-margin-left tn-margin-right">
-							<tn-input placeholder="Luck Day for you" :disabled="true" @tap="goSearch()"></tn-input>
+							<tn-input placeholder="Luck Day for you" :disabled="true" @click="goSearch()"></tn-input>
 						</view>
 						<view @tap.stop="goNotice()">
 							<text class="tn-text-xxl tn-icon-email"></text>

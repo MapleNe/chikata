@@ -557,7 +557,6 @@
 						mode: 'html'
 					}
 				}).then(res => {
-					console.log(res)
 					if (res.data.code == 200) {
 						this.article = res.data.data
 						this.commentDisAllow = res.data.data.opt.comments.allow
