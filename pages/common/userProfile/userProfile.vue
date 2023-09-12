@@ -7,7 +7,10 @@
 						<tn-avatar :src="profile.head_img" border borderColor="#fff" :borderSize="4"></tn-avatar>
 						<text class="tn-margin-left-sm">{{profile.nickname}}</text>
 					</view>
-					<view class="tn-margin-right-xl tn-padding-right-lg" v-if="userInfo.id!=id&&profile.expand">
+
+				</view>
+				<view class="tn-flex tn-flex-col-center tn-padding" slot="right">
+					<view class="tn-margin-right" v-if="userInfo.id!=id&&profile.expand" v-show="navAuthor">
 						<tn-button plain size="sm" padding="0 15rpx" backgroundColor="#29b7cb" fontColor="#29b7cb"
 							v-show="profile.expand&&!profile.expand.is_focus" @click="followUser()">
 							<view class="tn-flex tn-flex-col-center">
@@ -16,14 +19,14 @@
 							</view>
 						</tn-button>
 						<tn-button size="sm" padding="0 20rpx" backgroundColor="tn-bg-gray--light"
-							fontColor="tn-color-gray" @click="followUser()" v-show="profile.expand&&profile.expand.is_focus">
+							fontColor="tn-color-gray" @click="followUser()"
+							v-show="profile.expand&&profile.expand.is_focus">
 							<text>已关注</text>
 						</tn-button>
 					</view>
-				</view>
-				<view class="tn-flex tn-flex-col-center tn-padding" slot="right">
+
 					<text class=" tn-text-xl tn-icon-search"></text>
-					<text class="tn-text-xl tn-margin-left tn-icon-more-vertical"
+					<text class="tn-text-xl tn-margin-left tn-icon-more-horizontal"
 						@tap.stop.prevent="showManage =!showManage" v-if="!hasLogin&&userInfo.id!=id">
 					</text>
 				</view>
@@ -31,7 +34,8 @@
 		</template>
 		<view style="position: relative;" id="userview">
 			<view v-if="profile.longtext">
-				<image :src="profile.longtext.background_img?profile.longtext.background_img:profile.head_img" mode="aspectFill" style="width: 100%;height: 420rpx;">
+				<image :src="profile.longtext.background_img?profile.longtext.background_img:profile.head_img"
+					mode="aspectFill" style="width: 100%;height: 420rpx;">
 				</image>
 			</view>
 			<!-- 第一层 -->
@@ -52,7 +56,8 @@
 						</view>
 						<view>
 							<tn-button :backgroundColor="profile.expand&&profile.expand.is_focus?'#29b7cb69':'#29b7cb'"
-								:fontColor="profile.expand&&profile.expand.is_focus?'#29b7cb':'tn-color-white'" padding="0 50rpx"
+								:fontColor="profile.expand&&profile.expand.is_focus?'#29b7cb':'tn-color-white'"
+								padding="0 50rpx"
 								@click="profile.expand&&profile.expand.is_focus?showCancelFollow = true:followUser()">
 								<text style="width:100rpx">{{profile.expand&&profile.expand.is_focus?'已关注':'关注'}}</text>
 							</tn-button>
@@ -135,24 +140,24 @@
 
 									<!-- 单张图片 -->
 									<view v-if="item.expand.images.length===1">
-										<image v-for="(images,index) in item.expand.images" :key="index"
+										<image v-for="(images,subIndex) in item.expand.images" :key="subIndex"
 											:src="images.src" mode="aspectFill"
 											style="height: 400rpx;width: 400rpx;border-radius:10rpx;"
-											@tap.stop="previewImage(item.expand.images,index)">
+											@tap.stop="previewImage(item.expand.images,subIndex)">
 										</image>
 									</view>
 									<!-- 单张结束 -->
 									<!-- 复数开始 -->
 									<view v-if="item.expand.images.length===2 || item.expand.images.length===4">
 										<tn-grid align="left" :col="item.expand.images.length" hoverClass="none">
-											<block v-for="(images, index) in item.expand.images" :key="index">
+											<block v-for="(images, subIndex) in item.expand.images" :key="subIndex">
 												<!-- H5 -->
 												<!-- #ifndef MP-WEIXIN -->
 												<tn-grid-item
 													style="height: 256rpx;width: 256rpx;margin-right: 6rpx;margin-bottom: 6rpx;">
 													<image :src="images.src" mode="aspectFill"
 														style="height: 256rpx;width: 256rpx;border-radius: 10rpx;"
-														@tap.stop="previewImage(item.expand.images,index)">
+														@tap.stop="previewImage(item.expand.images,subIndex)">
 													</image>
 												</tn-grid-item>
 												<!-- #endif-->
@@ -162,7 +167,7 @@
 													style="margin-right: 6rpx;margin-bottom: 6rpx;">
 													<image :src="images.src" mode="aspectFill"
 														style="height: 256rpx;width: 256rpx;border-radius: 10rpx;"
-														@tap.stop="previewImage(item.expand.images,index)">
+														@tap.stop="previewImage(item.expand.images,subIndex)">
 													</image>
 												</tn-grid-item>
 												<!-- #endif-->
@@ -171,15 +176,15 @@
 									</view>
 									<view v-if="item.expand.images.length===3|| item.expand.images.length>4">
 										<tn-grid align="left" :col="3" hoverClass="none">
-											<block v-for="(images, index) in item.expand.images" :key="index"
-												v-if="index<9">
+											<block v-for="(images, subIndex) in item.expand.images" :key="subIndex"
+												v-if="subIndex<9">
 												<!-- H5 -->
 												<!-- #ifndef MP-WEIXIN -->
 												<tn-grid-item
 													style="height: 220rpx;width: 220rpx;margin-right: 6rpx;margin-bottom: 6rpx">
 													<image :src="images.src" mode="aspectFill"
 														style="height: 220rpx;width: 220rpx;border-radius: 10rpx;"
-														@tap.stop="previewImage(item.expand.images,index)">
+														@tap.stop="previewImage(item.expand.images,subIndex)">
 													</image>
 												</tn-grid-item>
 												<!-- #endif-->
@@ -189,7 +194,7 @@
 													style="margin-right: 6rpx;margin-bottom: 6rpx">
 													<image :src="images.src" mode="aspectFill"
 														style="height: 220rpx;width: 220rpx;border-radius: 10rpx;"
-														@tap.stop="previewImage(item.expand.images,index)">
+														@tap.stop="previewImage(item.expand.images,subIndex)">
 													</image>
 												</tn-grid-item>
 												<!-- #endif-->
@@ -268,6 +273,90 @@
 					</view>
 				</z-paging>
 
+			</swiper-item>
+			<swiper-item>
+				<z-paging ref="favorite" @query="getFavorite" v-model="favorite" :auto-clean-list-when-reload="false"
+					:auto-scroll-to-top-when-reload="false" :refresher-enabled="false" :use-page-scroll="swiperAction">
+					<block v-for="(item,index) in favorite">
+						<view class="tn-margin">
+							<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+								<view class="tn-flex tn-flex-col-center">
+									<tn-avatar :src="item.expand.author.head_img"
+										@tap="goUserProfile(index)"></tn-avatar>
+									<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
+										<view class="tn-flex tn-flex-col-center">
+											<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
+											<text v-if="item.expand.author.level==='admin'"
+												class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
+										</view>
+										<view class="tn-flex tn-flex-col-center tn-text-sm tn-color-gray--dark">
+											<text>{{getDateDiff(item.create_time)}}</text>
+											<view class="tn-flex tn-flex-col-center">
+												<text class="tn-margin-right-xs tn-margin-left-xs">·</text>
+												<text
+													v-if="item.expand.sort&&item.expand.sort.length>0">{{item.expand.sort[0].name}}</text>
+											</view>
+										</view>
+									</view>
+								</view>
+
+							</view>
+							<view @tap="goAticle(index)">
+								<view class="tn-margin-top">
+									<text class="tn-text-title">{{item.title}}</text>
+								</view>
+								<view class="tn-padding-sm tn-no-padding-left tn-color-gray--dark tn-padding-bottom-sm">
+									<rich-text :nodes="item.description"></rich-text>
+								</view>
+
+								<!-- 单张图片 -->
+								<view v-if="item.expand.images.length===1" style="height: 350rpx;width: 100%;">
+									<image :src="item.expand.images[0].src" mode="aspectFill"
+										style="height: 350rpx; width: 100%;border-radius:10rpx;"
+										@tap.stop="previewImage(item.expand.images,index)">
+									</image>
+
+								</view>
+								<!-- 单张结束 -->
+								<!-- 点赞控件 -->
+								<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top">
+									<!-- 只取第一个tag -->
+									<view v-if="item.expand.tag.length>0">
+										<view
+											class="tn-bg-grey--light tn-text-sm tn-color-gray--dark tn-margin-right-sm tn-padding-xs"
+											style="border-radius: 10rpx;">
+											<text>{{item.expand.tag[0].name}}</text>
+										</view>
+									</view>
+									<view
+										class="tn-flex tn-text-sm tn-flex-col-center tn-color-grey--disabled tn-flex-basic-sm tn-flex-row-between"
+										style="margin-left: auto;">
+										<view class="tn-flex tn-flex-col-bottom">
+											<text class="tn-text-xxl tn-icon-eye "></text>
+											<text class="tn-margin-left-xs">{{item.views}}</text>
+										</view>
+										<view class="tn-flex tn-flex-col-bottom" @tap.stop="showComments(index)">
+											<text class="tn-text-xxl tn-icon-comment"></text>
+											<text class="tn-margin-left-xs">{{item.expand.comments.count}}</text>
+										</view>
+										<view class="tn-flex tn-flex-col-bottom"
+											:class="item.expand.like.is_like?'tn-color-red':''"
+											@tap.stop="likeAction(index)">
+											<text class="tn-text-xxl"
+												:class="item.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
+											<text class="tn-margin-left-xs">{{item.expand.like.likes_count}}</text>
+										</view>
+									</view>
+								</view>
+
+							</view>
+						</view>
+
+						</view>
+						<!-- 间隔开始 -->
+						<view class="tn-bg-gray--light tn-padding-xs"></view>
+					</block>
+				</z-paging>
 			</swiper-item>
 		</swiper>
 		<tn-popup mode="bottom" v-model="showManage" :borderRadius="30">
@@ -349,6 +438,7 @@
 				background: 'rgba(255,255,255,0)',
 				swiperHeight: 1080,
 				comments: [],
+				favorite: [],
 				pageMethod: 'paging',
 				userviewHeight: 328,
 				navAuthor: false,
@@ -359,15 +449,23 @@
 		},
 		onLoad(params) {
 			this.id = params.id
-			console.log(this.users)
 			this.getUserInfo()
 		},
-		onReady() {},
+		onReady() {
+			// #ifdef MP
+			this.id = this.users_id
+			this.getUserInfo()
+			// #endif
+
+		},
 		created() {
+			// #ifndef MP
 			if (this.users_id != 0) {
 				this.id = this.users_id
 				this.getUserInfo()
 			}
+
+			// #endif
 		},
 		computed: {
 			...mapState(['userInfo', 'hasLogin']),
@@ -394,8 +492,21 @@
 					}
 				})
 			},
-			async getUserArticle(page, num) {
-				await this.$http.get('/article/sql', {
+			getFavorite(page, num) {
+				this.$http.get('/favorites/lookup', {
+					params: {
+						page: page,
+						limit: num,
+						uid: this.id ? this.id : this.users_id
+					}
+				}).then(res => {
+					if (res.data.code === 200) {
+						this.$refs.favorite.complete(res.data.data.article)
+					}
+				})
+			},
+			getUserArticle(page, num) {
+				this.$http.get('/article/sql', {
 					params: {
 						limit: num,
 						page: page,
@@ -411,11 +522,9 @@
 			getUserInfo() {
 				this.$http.get('/users/one', {
 					params: {
-						id: this.id
+						id: this.id ? this.id : this.users_id
 					}
-
 				}).then(res => {
-
 					this.profile = res.data.data
 				}).catch(err => {
 
@@ -506,6 +615,7 @@
 						this.$refs.comments.reload()
 						break;
 					case 2:
+						this.$refs.favorite.reload()
 						break;
 					default:
 						break;
@@ -611,6 +721,45 @@
 					current: index,
 					urls: data,
 				});
+			},
+			getDateDiff(data) {
+				// 传进来的data必须是日期格式，不能是时间戳
+				//var str = data;
+				//将字符串转换成时间格式
+				var timePublish = new Date(data);
+				var timeNow = new Date();
+				var minute = 1000 * 60;
+				var hour = minute * 60;
+				var day = hour * 24;
+				var month = day * 30;
+				var result = "";
+				var diffValue = timeNow - timePublish;
+				var diffMonth = diffValue / month;
+				var diffWeek = diffValue / (7 * day);
+				var diffDay = diffValue / day;
+				var diffHour = diffValue / hour;
+				var diffMinute = diffValue / minute;
+
+				// console.log('diffValue：'+diffValue+' ' +'diffMonth：'+diffMonth+' ' +'diffWeek：'+diffWeek+' ' +'diffDay：'+diffDay+' ' +'diffHour：'+diffHour+' ' +'diffMinute：'+diffMinute);
+
+				if (diffValue < 0) {} else if (diffMonth > 3) {
+					result = timePublish.getFullYear() + "-";
+					result += timePublish.getMonth() + "-";
+					result += timePublish.getDate();
+				} else if (diffMonth > 1) {
+					result = parseInt(diffMonth) + "月前";
+				} else if (diffWeek > 1) {
+					result = parseInt(diffWeek) + "周前";
+				} else if (diffDay > 1) {
+					result = parseInt(diffDay) + "天前";
+				} else if (diffHour > 1) {
+					result = parseInt(diffHour) + "小时前";
+				} else if (diffMinute > 1) {
+					result = parseInt(diffMinute) + "分钟前";
+				} else {
+					result = "刚刚";
+				}
+				return result;
 			},
 		}
 	}

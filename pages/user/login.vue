@@ -49,7 +49,8 @@
 									<text class="ch-color-primary"
 										@tap.stop.prevent="goAgreement($store.state.page,'agreement')">《用户协议》</text>
 									<text>和</text>
-									<text class="ch-color-primary" @tap.stop.prevent="goAgreement($store.state.page,'privacy')">《隐私政策》</text>
+									<text class="ch-color-primary"
+										@tap.stop.prevent="goAgreement($store.state.page,'privacy')">《隐私政策》</text>
 								</view>
 							</tn-checkbox>
 						</view>
@@ -73,12 +74,16 @@
 						<!-- 三方登录 -->
 						<view class="tn-margin-top-xl">
 							<view class="tn-flex tn-flex-col-center tn-flex-row-center ">
+								<!--#ifdef APP-PLUS || H5-->
 								<text class="tn-icon-qq tn-bg-blue tn-text-xxl tn-padding-sm tn-color-white tn-round"
 									style="font-size: 60rpx;" @tap.stop.prevent="qqLogin"></text>
+								<!--#endif-->
 								<text class="tn-margin-left tn-margin-right"></text>
+								<!--#ifdef APP-PLUS || MP-WEIXIN ||H5-->
 								<text
 									class="tn-icon-wechat-fill tn-bg-green tn-text-xxl tn-padding-sm tn-color-white tn-round"
 									style="font-size: 60rpx;"></text>
+								<!--#endif-->
 							</view>
 						</view>
 					</view>

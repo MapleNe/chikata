@@ -32,14 +32,14 @@
 					</view>
 					<view v-if="item.expand.images.length">
 						<tn-grid align="left" :col="3" hoverClass="none">
-							<block v-for="(images, index) in item.expand.images" :key="index" v-if="index<3">
+							<block v-for="(images, subIndex) in item.expand.images" :key="subIndex" v-if="subIndex<3">
 								<!-- H5 -->
 								<!-- #ifndef MP-WEIXIN -->
 								<tn-grid-item
 									style="height: 220rpx;width: 220rpx;margin-right: 6rpx;margin-bottom: 6rpx">
 									<image :src="images.src" mode="aspectFill"
 										style="height: 220rpx;width: 220rpx;border-radius: 10rpx;"
-										@tap.stop="previewImage(item.expand.images,index)">
+										@tap.stop="previewImage(item.expand.images,subIndex)">
 									</image>
 								</tn-grid-item>
 								<!-- #endif-->
@@ -50,7 +50,7 @@
 									style="margin-right: 6rpx;margin-bottom: 6rpx">
 									<image :src="images.src" mode="aspectFill"
 										style="height: 220rpx;width: 220rpx;border-radius: 10rpx;"
-										@tap.stop="previewImage(item.expand.images,index)">
+										@tap.stop="previewImage(item.expand.images,subIndex)">
 									</image>
 								</tn-grid-item>
 								<!-- #endif-->

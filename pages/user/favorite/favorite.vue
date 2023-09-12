@@ -170,9 +170,6 @@
 				var diffDay = diffValue / day;
 				var diffHour = diffValue / hour;
 				var diffMinute = diffValue / minute;
-
-				// console.log('diffValue：'+diffValue+' ' +'diffMonth：'+diffMonth+' ' +'diffWeek：'+diffWeek+' ' +'diffDay：'+diffDay+' ' +'diffHour：'+diffHour+' ' +'diffMinute：'+diffMinute);
-
 				if (diffValue < 0) {} else if (diffMonth > 3) {
 					result = timePublish.getFullYear() + "-";
 					result += timePublish.getMonth() + "-";

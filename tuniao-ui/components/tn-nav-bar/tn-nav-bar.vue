@@ -13,7 +13,9 @@
 				</view>
 				<view v-else class="tn-custom-nav-bar__bar__action" @tap="handlerBack">
 					<text class="tn-custom-nav-bar__bar__action--nav-back" :class="[`tn-icon-${backIcon}`]"></text>
+					<!--#ifndef MP-WEIXIN-->
 					<text class="tn-custom-nav-bar__bar__action--nav-back-text" v-if="backTitle">{{ backTitle }}</text>
+					<!--#endif-->
 				</view>
 			</view>
 			<view class="tn-custom-nav-bar__bar__content" :style="[contentStyle]">

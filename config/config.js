@@ -1,6 +1,8 @@
 const config = {
 	// API接口，必须是HTTPS开头
 	"api": "https://api.fantwo.cc/api",
+	// webSite 网页地址
+	"web": "https://h5.fantwo.cc/",
 	// WebSocket
 	"wss": "wss://api.fantwo.cc:9501",
 	// Token令牌，如果后端开启了，需要修改此项
