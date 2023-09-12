@@ -26,7 +26,7 @@
 					</view>
 
 					<text class=" tn-text-xl tn-icon-search"></text>
-					<text class="tn-text-xl tn-margin-left tn-icon-more-vertical"
+					<text class="tn-text-xl tn-margin-left tn-icon-more-horizontal"
 						@tap.stop.prevent="showManage =!showManage" v-if="!hasLogin&&userInfo.id!=id">
 					</text>
 				</view>
