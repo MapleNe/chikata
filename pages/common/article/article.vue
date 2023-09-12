@@ -268,7 +268,7 @@
 							<view
 								class="tn-flex tn-flex-col-center tn-text-lg tn-color-gray--dark tn-flex-direction-column"
 								v-for="(item,subIndex) in shareProvider" :key="subIndex"
-								@tap.stop="$appShare(item.scene,item.provider,article.title,$config.web+'pages/common/article/article?id='+article.id+'users_id='+article.users_id,article.expand.images.length?article.expand.images[0].src:'',article.description)">
+								@tap.stop="$appShare(item.scene,item.provider,article.title,$config.web+'pages/common/article/article?id='+article.id+'&&users_id='+article.users_id,article.expand.images.length?article.expand.images[0].src:'',article.description)">
 								<view :class="[item.icon,item.color]"
 									class="tn-round tn-color-white tn-text-xxl tn-padding">
 								</view>
