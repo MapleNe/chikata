@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<tn-nav-bar backTitle="">
+		<tn-nav-bar backTitle="" :zIndex="2">
 			设置
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
@@ -33,8 +33,13 @@
 			</view>
 		</tn-list-cell>
 		<view class="tn-padding-xs tn-bg-gray--light"></view>
-		<tn-list-cell :arrow="true" :arrowRight="true">关于APP</tn-list-cell>
-		<tn-list-cell :arrow="true" :arrowRight="true">清除缓存</tn-list-cell>
+		<tn-list-cell :arrow="true" :arrowRight="true" @click="goAbout">关于APP</tn-list-cell>
+		<tn-list-cell :arrow="true" :arrowRight="true" @click="showClearCache = !showClearCache">
+			<view class="tn-flex tn-flex-row-between tn-flex-col-center">
+				<text>清除缓存</text>
+				<text class="tn-margin-right tn-text-sm tn-color-gray--dark">{{cacheSize}}</text>
+			</view>
+		</tn-list-cell>
 		<tn-list-cell :arrow="true" :arrowRight="true">建议与反馈</tn-list-cell>
 		<tn-list-cell unlined :arrow="true" :arrowRight="true" @click="onAPPUpdate()">检查更新</tn-list-cell>
 		<view class="tn-padding-xs tn-bg-gray--light"></view>
@@ -49,6 +54,23 @@
 		<view class="tn-padding tn-text-center" style="font-size: 28rpx;" @tap.stop.prevent="logout" v-if="hasLogin">
 			<text>退出登录</text>
 		</view>
+
+		<!-- 清除缓存弹窗 -->
+		<tn-popup mode="center" :borderRadius="20" v-model="showClearCache" length="80%">
+			<view class="tn-margin">
+				<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
+					<text>清除缓存</text>
+					<text class="tn-padding-sm tn-color-gray--dark" style="font-size: 28rpx;">是否清除缓存？</text>
+				</view>
+			</view>
+			<view class="tn-padding tn-color-gray--dark tn-bg-gray--light">
+				<view class="tn-flex tn-flex-row-around" style="font-size: 28rpx;">
+					<text @tap.stop.prevent="showClearCache=!showClearCache">取消</text>
+					<text class="tn-color-grey--light">|</text>
+					<text class="ch-color-primary" @tap.stop.prevent="clearCache()">确定</text>
+				</view>
+			</view>
+		</tn-popup>
 	</view>
 </template>
 
@@ -64,7 +86,9 @@
 
 		data() {
 			return {
-				version: ''
+				version: '',
+				cacheSize: null,
+				showClearCache: false,
 			};
 		},
 		created() {
@@ -74,12 +98,43 @@
 				this.version = res.version;
 			});
 			// #endif
+			this.getCache()
 		},
 		computed: {
 			...mapState(['hasLogin'])
 		},
 		methods: {
 			...mapMutations(['logout']),
+			// 获取缓存信息
+			getCache() {
+				uni.getStorageInfo({
+					success: (res) => {
+						// 处理缓存大小单位
+						let size = res.currentSize
+						if (size < 1024) {
+							this.cacheSize = size + ' B';
+						} else if (size / 1024 >= 1 && size / 1024 / 1024 < 1) {
+							this.cacheSize = Math.floor(size / 1024 * 100) / 100 + ' KB';
+						} else if (size / 1024 / 1024 >= 1) {
+							this.cacheSize = Math.floor(size / 1024 / 1024 * 100) / 100 + ' M';
+						}
+
+					}
+				})
+			},
+			// 清除缓存 
+			clearCache() {
+				// 执行清除缓存的Key 可自行添加
+				uni.clearStorageSync('z-paging-cache-indexArticle')
+				// 关闭弹窗
+				this.showClearCache = !this.showClearCache
+				uni.showToast({
+					icon: 'none',
+					title: '已清除缓存'
+				})
+				//重新获取缓存
+				this.getCache()
+			},
 			// 检查APP是否有新版本
 			onAPPUpdate() {
 				// true 没有新版本的时候有提示，默认：false
@@ -103,6 +158,11 @@
 			goBlock() {
 				this.$Router.push({
 					path: '/pages/user/setting/block/block'
+				})
+			},
+			goAbout() {
+				this.$Router.push({
+					path: '/pages/user/setting/about/about'
 				})
 			},
 			goAgreement(data, alias) {

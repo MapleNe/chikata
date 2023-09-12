@@ -40,6 +40,14 @@
 				<view class="tn-color-gray--dark tn-text-md">
 					<text class="">全站热搜</text>
 				</view>
+				<view class="tn-flex tn-flex-col-center tn-flex-wrap">
+				  <block v-for="(name,index) in list" :key="index">
+				    <view v-if="typeof name == 'string' && name.length >= 4" 
+				      class="tn-bg-gray--light tn-radius tn-padding-left-xs tn-padding-right-xs">
+				      <text class="tn-text-md">{{name}}</text>
+				    </view>
+				  </block>  
+				</view>
 			</view>
 		</view>
 		<z-tabs ref="tabs" :current="tabsIndex" active-color="#29b7cb" @change="changeTab" :list="tabs"
@@ -76,14 +84,13 @@
 				content: [],
 			}
 		},
-		onShow() {
-
-
-		},
+		onShow() {},
 		created() {
 			this.hotList()
 		},
-		mounted() {},
+		computed: {
+			
+		},
 		methods: {
 			selectedKey(key) {
 				this.searchKey = key
@@ -111,6 +118,10 @@
 					}
 				}).then(res => {
 					console.log(res)
+					if (res.data.code === 200) {
+						this.hotSearchList = res.data.data
+					}
+
 				})
 			},
 			moreAction() {

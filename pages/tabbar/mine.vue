@@ -1,12 +1,14 @@
 <template>
 	<view>
 		<tn-nav-bar customBack alpha>
+			<!--#ifdef APP-PLUS-->
 			<view slot="right" class="tn-padding tn-color-white tn-text-xxl">
 				<text class="tn-margin-right-sm tn-icon-scan tn-padding-xs tn-round"
 					style="background-color: rgba(0,0,0,0.2);" @tap="" @tap.stop.prevent="scanQrcode"></text>
 				<text class="tn-icon-install tn-padding-xs tn-round" style="background-color: rgba(0,0,0,0.2);"
 					@tap.stop.prevent="goSetting"></text>
 			</view>
+			<!--#endif-->
 		</tn-nav-bar>
 
 		<view style="position: relative;">

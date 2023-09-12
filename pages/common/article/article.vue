@@ -267,7 +267,8 @@
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 							<view
 								class="tn-flex tn-flex-col-center tn-text-lg tn-color-gray--dark tn-flex-direction-column"
-								v-for="item in shareProvider" :key="item.provider">
+								v-for="(item,subIndex) in shareProvider" :key="subIndex"
+								@tap.stop="$appShare(item.scene,item.provider,article.title,$config.web+'pages/common/article/article?id='+article.id+'users_id='+article.users_id,article.expand.images.length?article.expand.images[0].src:'',article.description)">
 								<view :class="[item.icon,item.color]"
 									class="tn-round tn-color-white tn-text-xxl tn-padding">
 								</view>
@@ -282,7 +283,6 @@
 										class="tn-icon-warning tn-text-xxl tn-round tn-bg-gray--light tn-padding"></text>
 									<text class="tn-text-lg tn-margin-top-sm">举报</text>
 								</view>
-
 								<view class="tn-flex tn-color-gray--dark tn-flex-col-center tn-flex-direction-column"
 									v-if="article.users_id == userInfo.id" @tap.stop.prevent="goEdit">
 									<text class="tn-icon-edit tn-text-xxl tn-round tn-bg-gray--light tn-padding"></text>
@@ -431,28 +431,33 @@
 					}
 				],
 				shareProvider: [{
-						provider: 'wechat',
+						provider: 'weixin',
 						icon: 'tn-icon-wechat-fill',
 						color: 'tn-bg-green',
-						name: '微信'
+						name: '微信',
+						scene: 'WXSceneSession',
+
 					},
 					{
-						provider: 'friend',
+						provider: 'weixin',
 						icon: 'tn-icon-moments',
 						color: 'tn-bg-teal',
-						name: '朋友圈'
+						name: '朋友圈',
+						scene: 'WXSceneTimeline'
 					},
 					{
 						provider: 'qq',
 						icon: 'tn-icon-qq',
 						color: 'tn-bg-blue',
-						name: 'QQ'
+						name: 'QQ',
+						scene: 'WXSceneSession',
 					},
 					{
-						provider: 'qqZone',
+						provider: 'qq',
 						icon: 'tn-icon-star-fill',
 						color: 'tn-bg-orangeyellow',
-						name: 'QQ空间'
+						name: 'QQ空间',
+						scene: 'WXSceneTimeline',
 					},
 					{
 						provider: 'link',
