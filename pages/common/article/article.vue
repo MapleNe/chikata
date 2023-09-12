@@ -158,7 +158,7 @@
 											v-if="subIndex<2">
 											<view class=" tn-text-md">
 												<text class="tn-color-indigo"
-													@tap.stop.prevent="goProfile(subComment.users_id)">{{subComment.nickname}}</text>
+													@tap.stop.prevent="article.users_id == subComment.users_id?swiperIndex=1:goProfile(subComment.users_id)">{{subComment.nickname}}</text>
 												<text v-if="article.users_id === subComment.users_id"
 													class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
 													style="padding:5rpx 8rpx">楼主</text>
@@ -302,7 +302,7 @@
 						<template#top>
 							<view class="tn-margin">
 								<view class="tn-flex tn-flex-col-center  tn-text-xxl tn-text-bold tn-flex-row-between">
-									<text class="tn-icon-close"></text>
+									<text class="tn-icon-close" @tap.stop.prevent="showComment = false"></text>
 									<text class="tn-icon-more-horizontal"></text>
 								</view>
 							</view>
@@ -521,6 +521,7 @@
 			this.getArticle()
 		},
 		beforeRouteLeave(to, from, next) {
+			console.log(to)
 			//退出前判断
 			switch (true) {
 				case this.swiperIndex > 0:
@@ -539,6 +540,7 @@
 					break;
 				case this.commentBoxOpen:
 				case this.showComment:
+					if (to.meta.require) next();
 					this.commentBoxOpen = false;
 					this.showComment = false;
 					this.$Router.$lockStatus = false;

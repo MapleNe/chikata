@@ -47,6 +47,9 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"require": true
 			}
 
 		}, {
@@ -59,7 +62,6 @@
 			"meta": {
 				"login": true
 			}
-
 		}
 
 		, {
@@ -239,17 +241,15 @@
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
+		}, {
+			"path": "pages/user/setting/about/about",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
 		}
-	    ,{
-            "path" : "pages/user/setting/about/about",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-    ],
+	],
 	"tabBar": {
 		"backgroundColor": "#ffffff",
 		"color": "#949494",
