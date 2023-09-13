@@ -152,11 +152,10 @@
 									<text class="tn-text-xxl tn-icon-comment"></text>
 									<text class="tn-margin-left-xs">{{item.expand.comments.count}}</text>
 								</view>
-								<view class="tn-flex tn-flex-col-bottom"
-									:class="item.expand.like.is_like?'tn-color-red':''" @tap.stop="likeAction(index)">
+								<view class="tn-flex tn-flex-col-bottom" @tap.stop="likeAction(index)">
 									<text class="tn-text-xxl"
-										:class="item.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
-									<text class="tn-margin-left-xs">{{item.expand.like.likes_count}}</text>
+										:class="item.expand.like.is_like?'ch-color-primary tn-icon-praise-fill':'tn-icon-praise'"></text>
+									<text class="tn-margin-left-xs ">{{item.expand.like.likes_count}}</text>
 								</view>
 							</view>
 						</view>
@@ -179,10 +178,9 @@
 									<text class="tn-text-xxl tn-icon-comment"></text>
 									<text class="tn-margin-left-xs ">{{item.expand.comments.count}}</text>
 								</view>
-								<view class="tn-flex tn-flex-col-bottom"
-									:class="item.expand.like.is_like?'tn-color-red':''" @tap.stop="likeAction(index)">
+								<view class="tn-flex tn-flex-col-bottom" @tap.stop="likeAction(index)">
 									<text class="tn-text-xxl"
-										:class="item.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
+										:class="item.expand.like.is_like?'ch-color-primary tn-icon-praise-fill':'tn-icon-praise'"></text>
 									<text class="tn-margin-left-xs ">{{item.expand.like.likes_count}}</text>
 								</view>
 							</view>

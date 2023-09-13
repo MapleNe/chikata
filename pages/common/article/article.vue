@@ -199,9 +199,9 @@
 									<text>{{article.expand.comments.count}}</text>
 								</view>
 								<view class="tn-flex tn-flex-col-center tn-flex-direction-column"
-									:class="article.expand.like.is_like?'tn-color-red':''" @tap.stop="likeAction">
+									@tap.stop="likeAction">
 									<text class=" tn-text-xxl"
-										:class="article.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
+										:class="article.expand.like.is_like?'ch-color-primary tn-icon-praise-fill':'tn-icon-praise'"></text>
 									<text>{{article.expand.like.likes_count}}</text>
 								</view>
 							</view>
