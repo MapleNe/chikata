@@ -178,7 +178,7 @@
 		overflow: hidden;
 	}
 	.editot-pd {
-		padding: 30rpx 20rpx 100rpx;
+		// padding: 30rpx 20rpx 100rpx;
 	}
 
 	.lsj-edit-edit-container {

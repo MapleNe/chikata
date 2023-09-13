@@ -20,6 +20,7 @@
 							</text>
 							<tn-badge backgroundColor="tn-bg-red" :translateCenter="true" :absolute="true" :radius="20"
 								v-show="noticeNum.commnet_count>0"></tn-badge>
+
 						</view>
 						<text class="tn-margin-top-sm tn-color-gray--dark">评论和@</text>
 					</view>

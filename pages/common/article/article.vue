@@ -13,8 +13,7 @@
 								<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
 								<text class="tn-margin-left-sm">{{article.expand.author.nickname}}</text>
 							</view>
-							<view slot="right" class="tn-padding tn-flex tn-flex-col-center"
-								@tap.stop.prevent="showShare = !showShare">
+							<view slot="right" class="tn-padding tn-flex tn-flex-col-center">
 								<view v-show="navAuthor">
 									<tn-button plain :fontSize="30" size="sm" padding="0 15rpx"
 										backgroundColor="#29b7cb" fontColor="#29b7cb" v-if="!article.expand.focus"
@@ -31,7 +30,8 @@
 									</tn-button>
 								</view>
 								<!-- #ifndef MP-WEIXIN-->
-								<text class="tn-text-bold tn-margin-left tn-text-lg tn-icon-more-horizontal"></text>
+								<text class="tn-text-bold tn-margin-left tn-text-lg tn-icon-more-horizontal"
+									@tap.stop.prevent="showShare = !showShare"></text>
 								<!--#endif-->
 							</view>
 						</tn-nav-bar>
@@ -199,9 +199,9 @@
 									<text>{{article.expand.comments.count}}</text>
 								</view>
 								<view class="tn-flex tn-flex-col-center tn-flex-direction-column"
-									:class="article.expand.like.is_like?'tn-color-red':''" @tap.stop="likeAction">
+									@tap.stop="likeAction">
 									<text class=" tn-text-xxl"
-										:class="article.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
+										:class="article.expand.like.is_like?'ch-color-primary tn-icon-praise-fill':'tn-icon-praise'"></text>
 									<text>{{article.expand.like.likes_count}}</text>
 								</view>
 							</view>
@@ -628,7 +628,6 @@
 					return `<img src="${url}" class="emoji">`
 				})
 			},
-			followUserAction(data) {},
 			followUser() {
 				this.$http.put('/Focus/Record', {
 					userId: this.article.users_id

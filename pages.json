@@ -61,7 +61,8 @@
 			},
 			"meta": {
 				"login": true
-			}
+			},
+			"name": "publish"
 		}
 
 		, {
@@ -141,7 +142,8 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
-			}
+			},
+			"name":"searchTag"
 
 		}, {
 			"path": "pages/user/userFans/userFans",
