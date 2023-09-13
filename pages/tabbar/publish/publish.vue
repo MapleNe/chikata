@@ -8,7 +8,7 @@
 						存草稿
 					</tn-button>
 				</view>
-				<view @tap.stop.prevent="update?'':showArticleSet = !showArticleSet">
+				<view @tap.stop.prevent="showArticleSet = !showArticleSet">
 					<tn-button size="sm" backgroundColor="#29b7cb" fontColor="tn-color-white">
 						{{update?'更新':'发布'}}
 					</tn-button>
@@ -16,8 +16,11 @@
 			</view>
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
-		<lsj-edit ref="lsjEdit" placeholder="输入正文" @onReady="editReady" id="editorv"
-			:styles="{'overflow':'hidden','height':'60vh'}" :html="draft"></lsj-edit>
+		<view class="tn-margin tn-no-margin-top">
+			<lsj-edit ref="lsjEdit" placeholder="输入正文" @onReady="editReady"
+				:styles="{'overflow':'hidden','height':'60vh'}" :html="draft"></lsj-edit>
+		</view>
+
 
 		<view v-show="format" style="position: absolute;" :style="'bottom:'+bottom+40+'px'">
 			<scroll-view scroll-x="true" class="toolbar tn-bg-white tn-padding-xs">
@@ -246,7 +249,7 @@
 				<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-bottom-xl">
 					<text></text>
 					<text>设置权限</text>
-					<text @tap.stop.prevent="showPermission = !showPermission"class="ch-color-primary">确定</text>
+					<text @tap.stop.prevent="showPermission = !showPermission" class="ch-color-primary">确定</text>
 				</view>
 				<view class="tn-flex tn-flex-direction-column">
 					<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-bottom"
@@ -361,7 +364,6 @@
 				linkName: null,
 				update: false,
 				id: 0,
-
 				edit: null,
 				showArticleSet: false,
 				formatObj: null,
@@ -595,13 +597,16 @@
 			this.getTags()
 			this.getCollect()
 			this.getCategory()
+			if (params.update) {
+				this.getArticle()
+				return;
+			}
 			if (uni.getStorageSync('draft')) {
 				this.showDraft = true
 			}
 		},
 		beforeRouteLeave(to, from, next) {
-			console.log(to)
-			if (this.realback ||to.name=='searchTag') {
+			if (this.realback || to.name == 'searchTag' || this.update) {
 				next();
 			} else if (this.edit.textCount) {
 				this.showSaveDraft = true;
@@ -621,6 +626,27 @@
 		},
 
 		methods: {
+			// 获取文章内容 用于更新
+			getArticle() {
+				this.$http.get('/article/one', {
+					params: {
+						id: this.id
+					}
+				}).then(res => {
+					if (res.data.code === 200) {
+						this.draft = res.data.data.content
+						this.selectedCategory = res.data.data.expand.sort[0]
+						this.selectedTagsList = res.data.data.expand.tag
+						this.categoryName = res.data.data.expand.sort[0].name
+						this.articleTitle = res.data.data.title
+						this.description = res.data.data.description
+						this.tmpDes = res.data.data.description
+						this.articleOpt = res.data.data.opt
+					}
+				})
+			},
+
+			// 更新文章
 			// 保存草稿方法
 			saveDraftAction(data) {
 				if (data) {
@@ -864,9 +890,53 @@
 					return data.data
 				}).then(res => {
 					// console.log('替换完成,最终内容为', JSON.stringify(res.html));
-					this.addArtiCle(res)
+
+					if (this.update) {
+						// 更新文章
+						this.updateArticle(res)
+					} else {
+						// 发布文章
+						this.addArtiCle(res)
+					}
 				});
 			},
+			// 更新文章
+			updateArticle(res) {
+				const idTags = this.selectedTagsList.filter(t => t.id)
+				const newTags = this.selectedTagsList.filter(t => t.new)
+				const idList = idTags.map(t => t.id)
+				const newNameList = newTags.map(t => t.name)
+				this.$http.put('/article/save', {
+					id: this.id,
+					title: this.articleTitle ? this.articleTitle : res.text.substring(0, 10),
+					content: res.html,
+					description: this.description ? this.description : '',
+					sort_id: this.selectedCategory.id,
+					tag_id: idList,
+					collections_id: this.selectedCollect && this.selectedCollect.id ? this.selectedCollect.id : '',
+					tag_name: newNameList,
+					opt: JSON.stringify(this.articleOpt),
+				}).then(res => {
+					if (res.data.code === 200) {
+						this.realback = true
+						uni.hideLoading()
+						uni.showToast({
+							icon: 'none',
+							title: '发布' + res.data.msg
+						})
+						setTimeout(() => {
+							this.$Router.back(1)
+						}, 1000)
+					}
+				}).catch(err => {
+					console.log(err)
+					uni.showToast({
+						icon: 'none',
+						title: res.data.msg
+					})
+				})
+			},
+			// 发布文章
 			addArtiCle(res) {
 				const idTags = this.selectedTagsList.filter(t => t.id)
 				const newTags = this.selectedTagsList.filter(t => t.new)
@@ -890,13 +960,7 @@
 							title: '发布' + res.data.msg
 						})
 						setTimeout(() => {
-							this.$Router.replaceAll({
-								path: '/pages/common/article/article',
-								query: {
-									id: res.data.data,
-									users_id: store.userInfo.id
-								}
-							})
+							this.$Router.back(1)
 						}, 1000)
 					}
 				}).catch(err => {
@@ -950,10 +1014,6 @@
 
 <style lang="scss">
 	@import './static/iconfont.css';
-
-	page {
-		background-color: #f7f8f7;
-	}
 
 	.swiper {
 		height: 100%;
