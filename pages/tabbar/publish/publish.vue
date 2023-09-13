@@ -600,13 +600,15 @@
 			}
 		},
 		beforeRouteLeave(to, from, next) {
-			if (this.realback) next();
-
-			if (this.edit.textCount) {
-				this.showSaveDraft = true
-				next(false)
-			}else{
-				next()
+			console.log(to)
+			if (this.realback ||to.name=='searchTag') {
+				next();
+			} else if (this.edit.textCount) {
+				this.showSaveDraft = true;
+				next(false);
+				this.$Router.$lockStatus = false
+			} else {
+				next();
 			}
 		},
 		created() {
@@ -677,7 +679,7 @@
 				});
 				// 监听输入
 				this.edit.$on('edit:input', (e) => {
-					console.log('监听输入', e);
+					// console.log('监听输入', e);
 				});
 				// 监听光标指向不同样式时回调
 				this.edit.$on('edit:statuschange', this.statuschange)
@@ -861,7 +863,7 @@
 					})
 					return data.data
 				}).then(res => {
-					console.log('替换完成,最终内容为', JSON.stringify(res.html));
+					// console.log('替换完成,最终内容为', JSON.stringify(res.html));
 					this.addArtiCle(res)
 				});
 			},
@@ -882,7 +884,6 @@
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.realback = true
-						this.$Router.$lockStatus = false
 						uni.hideLoading()
 						uni.showToast({
 							icon: 'none',
@@ -896,14 +897,7 @@
 									users_id: store.userInfo.id
 								}
 							})
-						}, 2000)
-
-					} else {
-						uni.hideLoading()
-						uni.showToast({
-							icon: 'none',
-							title: res.data.msg
-						})
+						}, 1000)
 					}
 				}).catch(err => {
 					console.log(err)
