@@ -246,7 +246,7 @@
 				<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-bottom-xl">
 					<text></text>
 					<text>设置权限</text>
-					<text @tap.stop.prevent="showPermission = !showPermission">确定</text>
+					<text @tap.stop.prevent="showPermission = !showPermission"class="ch-color-primary">确定</text>
 				</view>
 				<view class="tn-flex tn-flex-direction-column">
 					<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-bottom"

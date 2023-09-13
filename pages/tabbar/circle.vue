@@ -22,11 +22,15 @@
 						</view>
 					</view>
 					<tn-scroll-list indicatorActiveColor="#29b7cb">
-						<view class="tn-margin tn-flex tn-flex-col-center tn-flex-row-between tn-flex-1">
+						<view class="tn-margin tn-flex tn-flex-col-center tn-flex-1">
 							<block v-for="(item,index) in categoryList" :key="index">
-								<image :src="item.opt.head_img" mode="aspectFill"
-									class="tn-border-solid tn-border-gray--light tn-bold-border tn-round"
-									style="width: 100rpx;height: 100rpx;" @tap="goCategory(index)"></image>
+								<view class="tn-flex tn-flex-col-center tn-flex-direction-column tn-margin-right"
+									@tap.stop.prevent="goCategory(index)">
+									<image :src="item.opt.head_img" mode="aspectFill"
+										class="tn-border-solid tn-border-gray--light tn-bold-border tn-round"
+										style="width: 100rpx;height: 100rpx;"></image>
+									<text class="tn-text-md tn-margin-top-sm">{{item.name}}</text>
+								</view>
 							</block>
 						</view>
 					</tn-scroll-list>
@@ -44,7 +48,8 @@
 						<template v-slot:list1>
 							<!-- 为了磨平部分平台的BUG，必须套一层view -->
 							<view>
-								<view v-for="(item, index) in list1" :key="item.id" v-if="item&&item.width&&item.expand.images.length>0"
+								<view v-for="(item, index) in list1" :key="item.id"
+									v-if="item&&item.width&&item.expand.images.length>0"
 									class="tn-margin-bottom-sm tn-padding-bottom-sm" :style="{width:item.width+'px'}"
 									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 20rpx;"
 									@tap.stop.prevent="goAticle(item)">
@@ -70,7 +75,8 @@
 						<template v-slot:list2>
 							<!-- 为了磨平部分平台的BUG，必须套一层view -->
 							<view>
-								<view v-for="(item, index) in list2" :key="item.id" v-if="item&&item.width&&item.expand.images.length>0"
+								<view v-for="(item, index) in list2" :key="item.id"
+									v-if="item&&item.width&&item.expand.images.length>0"
 									class="tn-margin-bottom-sm tn-padding-bottom-sm" :style="{width:item.width+'px'}"
 									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 20rpx;"
 									@tap.stop.prevent="goAticle(item)">
