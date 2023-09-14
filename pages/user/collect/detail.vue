@@ -4,11 +4,7 @@
 			<tn-nav-bar backTitle="">
 				{{name}}
 				<view class="tn-padding" slot="right">
-					<tn-button plain size="sm" fontColor="#29b7cb" backgroundColor="#29b7cb">
-						<view class="tn-flex tn-flex-col-center">
-							<text>管理作品</text>
-						</view>
-					</tn-button>
+					<text class="tn-icon-more-horizontal tn-text-xxl" @tap.stop.prevent="showMore= true"></text>
 				</view>
 			</tn-nav-bar>
 			<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
@@ -59,10 +55,47 @@
 			</block>
 		</view>
 
+		<!-- 菜单弹窗 -->
+		<tn-popup mode="bottom" :borderRadius="30" v-model="showMore">
+			<view class="tn-margin">
+				<view class="tn-flex tn-flex-row-center tn-margin-bottom">
+					<text class="tn-text-sm tn-color-gray">分享到</text>
+				</view>
+				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+					<view class="tn-flex tn-flex-col-center tn-text-lg tn-color-gray--dark tn-flex-direction-column"
+						v-for="(item,subIndex) in shareProvider" :key="subIndex"
+						@tap.stop="$appShare(item.scene,item.provider,name,$config.web+'pages/user/collect/detail?id='+id+'&&name='+name,info.image?info.image:'',info.descrip)">
+						<view :class="[item.icon,item.color]" class="tn-round tn-color-white tn-text-xxl tn-padding">
+						</view>
+						<text class="tn-margin-top-sm tn-text-md">{{item.name}}</text>
+					</view>
+				</view>
+				<view class="tn-margin-top-xl" v-if="userInfo.id==info.user_id">
+					<view class="tn-flex">
+						<view
+							class="tn-flex tn-color-gray--dark tn-flex-col-center tn-flex-direction-column tn-margin-right" @tap.stop.prevent="goUpdate()">
+							<text class="tn-icon-edit-write tn-text-xxl tn-round tn-bg-gray--light tn-padding"></text>
+							<text class="tn-margin-top-sm tn-text-md">编辑合集</text>
+						</view>
+						<view class="tn-flex tn-color-gray--dark tn-flex-col-center tn-flex-direction-column">
+							<text class="tn-icon-delete tn-text-xxl tn-round tn-bg-gray--light tn-padding"></text>
+							<text class="tn-text-md tn-margin-top-sm">删除合集</text>
+						</view>
+					</view>
+				</view>
+			</view>
+			<view class="tn-bg-gray--light tn-text-center tn-padding" @tap.stop.prevent="showMore = false">
+				<text class="tn-text-bold">取消</text>
+			</view>
+		</tn-popup>
+
 	</z-paging>
 </template>
 
 <script>
+	import {
+		mapState
+	} from 'vuex';
 	export default {
 		data() {
 			return {
@@ -70,13 +103,53 @@
 				info: {},
 				article_count: 0,
 				id: 0,
+				showMore: false,
+				shareProvider: [{
+						provider: 'weixin',
+						icon: 'tn-icon-wechat-fill',
+						color: 'tn-bg-green',
+						name: '微信',
+						scene: 'WXSceneSession',
+
+					},
+					{
+						provider: 'weixin',
+						icon: 'tn-icon-moments',
+						color: 'tn-bg-teal',
+						name: '朋友圈',
+						scene: 'WXSceneTimeline'
+					},
+					{
+						provider: 'qq',
+						icon: 'tn-icon-qq',
+						color: 'tn-bg-blue',
+						name: 'QQ',
+						scene: 'WXSceneSession',
+					},
+					{
+						provider: 'qq',
+						icon: 'tn-icon-star-fill',
+						color: 'tn-bg-orangeyellow',
+						name: 'QQ空间',
+						scene: 'WXSceneTimeline',
+					},
+					{
+						provider: 'link',
+						icon: 'tn-icon-link',
+						color: 'tn-bg-grey--disabled',
+						name: '复制链接'
+					}
+				],
 			};
+		},
+		computed: {
+			...mapState(['userInfo'])
 		},
 		onLoad(params) {
 			this.id = params.id
 			this.name = params.name
 			this.info = params.obj
-			console.log(this.info)
+
 		},
 		methods: {
 			getArticle(page, num) {
@@ -90,6 +163,16 @@
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.data)
 						this.article_count = res.data.data.count
+					}
+				})
+			},
+			goUpdate() {
+				this.$Router.push({
+					path: '/pages/user/collect/create',
+					query: {
+						update: true,
+						id: this.id,
+						obj: encodeURIComponent(JSON.stringify(this.info))
 					}
 				})
 			},

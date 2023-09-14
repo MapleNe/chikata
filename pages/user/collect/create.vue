@@ -1,9 +1,10 @@
 <template>
 	<view>
 		<tn-nav-bar backTitle="">
-			创建合集
+			{{update?'更新合集':'创建合集'}}
 			<view class="tn-padding" slot="right">
-				<text class="ch-color-primary tn-text-md" @tap.stop.prevent="create()">创建</text>
+				<text class="ch-color-primary tn-text-md"
+					@tap.stop.prevent="update?'':create()">{{update?'更新':'创建'}}</text>
 			</view>
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"> </view>
@@ -50,6 +51,18 @@
 				descriptionLength: 80,
 				showClipper: false,
 				head_img: '',
+				id: 0,
+				update: false,
+			}
+		},
+		onLoad(params) {
+			console.log(params)
+			if (params.update) {
+				this.update = params.update
+				this.id = params.obj.id
+				this.title = params.obj.name
+				this.description = params.obj.descrip
+				this.head_img = params.obj.image
 			}
 		},
 		methods: {

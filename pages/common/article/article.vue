@@ -272,21 +272,21 @@
 								<view :class="[item.icon,item.color]"
 									class="tn-round tn-color-white tn-text-xxl tn-padding">
 								</view>
-								<text class="tn-margin-top-sm">{{item.name}}</text>
+								<text class="tn-margin-top-sm tn-text-md">{{item.name}}</text>
 							</view>
 						</view>
-						<view class="tn-margin-top">
+						<view class="tn-margin-top-xl">
 							<view class="tn-flex">
 								<view
 									class="tn-flex tn-color-gray--dark tn-flex-col-center tn-flex-direction-column tn-margin-right">
 									<text
 										class="tn-icon-warning tn-text-xxl tn-round tn-bg-gray--light tn-padding"></text>
-									<text class="tn-text-lg tn-margin-top-sm">举报</text>
+									<text class="tn-text-md tn-margin-top-sm">举报</text>
 								</view>
 								<view class="tn-flex tn-color-gray--dark tn-flex-col-center tn-flex-direction-column"
 									v-if="article.users_id == userInfo.id" @tap.stop.prevent="goEdit">
 									<text class="tn-icon-edit tn-text-xxl tn-round tn-bg-gray--light tn-padding"></text>
-									<text class="tn-text-lg tn-margin-top-sm">编辑</text>
+									<text class="tn-text-md tn-margin-top-sm">编辑</text>
 								</view>
 							</view>
 						</view>
