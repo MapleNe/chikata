@@ -1,7 +1,7 @@
 <template>
 	<z-paging ref="paging" @query="getArticle" v-model="content">
 		<template #top>
-			<tn-nav-bar backTitle="">
+			<tn-nav-bar backTitle="" :zIndex="2">
 				{{name}}
 				<view class="tn-padding" slot="right">
 					<text class="tn-icon-more-horizontal tn-text-xxl" @tap.stop.prevent="showMore= true"></text>

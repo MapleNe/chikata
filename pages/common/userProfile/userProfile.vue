@@ -130,7 +130,7 @@
 								</view>
 							</view>
 							<view class="tn-margin-top-xs">
-								<view @tap="goAticle(index)">
+								<view @tap="goArticle(item)">
 									<view>
 										<text class="tn-text-xl">{{item.title}}</text>
 									</view>
@@ -247,7 +247,6 @@
 
 									<text
 										class="tn-text-bold tn-color-gray tn-text-xxl">{{getDate(item.create_time).isToday?getDate(item.create_time).hourDifference:getDate(item.create_time).day}}</text>
-
 									<text v-if="getDate(item.create_time).isToday" class="tn-margin-left-xs">小时前</text>
 									<text v-else
 										class="tn-margin-left-xs">{{getDate(item.create_time).month}}月/{{getDate(item.create_time).year}}年</text>
@@ -258,7 +257,8 @@
 									<mp-html :preview-img="false" :content="item.content"></mp-html>
 								</view>
 								<view class="tn-margin-top-sm tn-margin-bottom-sm">
-									<view class="tn-bg-gray--light tn-color-gray--dark tn-padding-sm">
+									<view class="tn-bg-gray--light tn-color-gray--dark tn-padding-sm"
+										@tap.stop.prevent="goArticle(item)">
 										<view class="tn-text-ellipsis-2">
 											<text>{{!item.pid?'回复帖子：':'回复评论：'}}</text>
 											<text>{{!item.pid?item.article_title:item.up_comment}}</text>
@@ -299,7 +299,7 @@
 								</view>
 
 							</view>
-							<view @tap="goAticle(index)">
+							<view @tap="goArticle(item)">
 								<view class="tn-margin-top">
 									<text class="tn-text-title">{{item.title}}</text>
 								</view>
@@ -565,12 +565,13 @@
 				this.showCommentsBox = !this.showCommentsBox
 			},
 
-			goAticle(index) {
+			goArticle(item) {
+				console.log(item)
 				this.$Router.push({
 					path: '/pages/common/article/article',
 					query: {
-						id: this.content[index].id,
-						users_id: this.users_id ? this.users_id : this.content[index].users_id,
+						id: item.article_id?item.article_id:item.id,
+						users_id: item.users_id
 					},
 				})
 			},
