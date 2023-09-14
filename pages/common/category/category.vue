@@ -64,14 +64,15 @@
 					<block v-for="(item,index) in article" :key="index">
 						<view class="tn-margin">
 							<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-								<view class="tn-flex tn-flex-col-center">
+								<view class="tn-flex tn-flex-col-center" style="position: relative;">
 									<tn-avatar :src="item.expand.author.head_img"
-										@tap="goUserProfile(item)"></tn-avatar>
+										@tap="type!=='user'?goUserProfile(index):''"></tn-avatar>
+									<text v-if="item.expand.author.level==='admin'"
+										class="tn-margin-left-xs tn-text-md tn-color-blue tn-icon-trusty-fill tn-bg-white tn-round"
+										style="position: absolute;top: 58rpx;left: 30rpx; z-index: 9999; padding: 2rpx;"></text>
 									<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 										<view class="tn-flex tn-flex-col-center">
 											<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
-											<text v-if="item.expand.author.level==='admin'"
-												class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
 											<text class="level tn-margin-left-xs level-text"
 												:class="['lv-'+item.expand.author.grade]"
 												:style="{'color':level[item.expand.author.grade]}"></text>
@@ -214,14 +215,18 @@
 					<block v-for="(item,index) in articleHot" :key="index">
 						<view class="tn-margin">
 							<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-								<view class="tn-flex tn-flex-col-center">
+								<view class="tn-flex tn-flex-col-center" style="position: relative;">
 									<tn-avatar :src="item.expand.author.head_img"
-										@tap="goUserProfile(item)"></tn-avatar>
+										@tap="type!=='user'?goUserProfile(index):''"></tn-avatar>
+									<text v-if="item.expand.author.level==='admin'"
+										class="tn-margin-left-xs tn-text-md tn-color-blue tn-icon-trusty-fill tn-bg-white tn-round"
+										style="position: absolute;top: 58rpx;left: 30rpx; z-index: 9999; padding: 2rpx;"></text>
 									<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 										<view class="tn-flex tn-flex-col-center">
 											<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
-											<text v-if="item.expand.author.level==='admin'"
-												class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
+											<text class="level tn-margin-left-xs level-text"
+												:class="['lv-'+item.expand.author.grade]"
+												:style="{'color':level[item.expand.author.grade]}"></text>
 										</view>
 										<view class="tn-flex tn-flex-col-center tn-text-sm tn-color-gray--dark">
 											<text>{{getDate(item.create_time)}}</text>
@@ -361,14 +366,18 @@
 					<block v-for="(item,index) in articleNew" :key="index">
 						<view class="tn-margin">
 							<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-								<view class="tn-flex tn-flex-col-center">
+								<view class="tn-flex tn-flex-col-center" style="position: relative;">
 									<tn-avatar :src="item.expand.author.head_img"
-										@tap="goUserProfile(item)"></tn-avatar>
+										@tap="type!=='user'?goUserProfile(index):''"></tn-avatar>
+									<text v-if="item.expand.author.level==='admin'"
+										class="tn-margin-left-xs tn-text-md tn-color-blue tn-icon-trusty-fill tn-bg-white tn-round"
+										style="position: absolute;top: 58rpx;left: 30rpx; z-index: 9999; padding: 2rpx;"></text>
 									<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 										<view class="tn-flex tn-flex-col-center">
 											<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
-											<text v-if="item.expand.author.level==='admin'"
-												class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
+											<text class="level tn-margin-left-xs level-text"
+												:class="['lv-'+item.expand.author.grade]"
+												:style="{'color':level[item.expand.author.grade]}"></text>
 										</view>
 										<view class="tn-flex tn-flex-col-center tn-text-sm tn-color-gray--dark">
 											<text>{{getDate(item.create_time)}}</text>
@@ -563,7 +572,7 @@
 				.boundingClientRect(data => {
 					if (data) {
 						this.headerHeight = data.height
-						
+
 					}
 				})
 				.exec();
@@ -685,10 +694,10 @@
 				switch (item.type) {
 					case 'article':
 						this.$Router.push({
-							path:'/pages/common/article/article',
-							query:{
-								id:item.opt.article_id,
-								users_id:item.opt.users_id
+							path: '/pages/common/article/article',
+							query: {
+								id: item.opt.article_id,
+								users_id: item.opt.users_id
 							}
 						})
 						break;

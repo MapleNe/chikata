@@ -43,8 +43,8 @@
 							<view class="tn-flex tn-flex-col-center" style="position: relative;">
 								<tn-avatar :src="article.expand.author.head_img" @click="swiperIndex=1"></tn-avatar>
 								<text v-if="article.expand.author.level==='admin'"
-									class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"
-									style="position: absolute;top: 40rpx;left: 30rpx; z-index: 9999;"></text>
+									class="tn-margin-left-xs tn-text-md tn-color-blue tn-icon-trusty-fill tn-bg-white tn-round"
+									style="position: absolute;top: 45rpx;left: 30rpx; z-index: 9999; padding: 2rpx;"></text>
 								<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 									<view class="tn-flex tn-flex-col-center">
 										<text class="tn-text-bold">{{article.expand.author.nickname}}</text>
@@ -707,21 +707,20 @@
 				}).then(res => {
 					console.log(res)
 					if (res.data.code === 200) {
+						this.commentText = ''
+						this.commentBoxOpen = false
 						uni.showToast({
 							icon: 'none',
 							title: '评论' + res.data.msg
 						})
-						this.commentText = ''
 					}
 					setTimeout(() => {
-						this.commentBoxOpen = false
 						if (this.showComment) {
 							this.$refs.subComment.reload()
 						} else {
 							this.$refs.paging.reload()
 						}
-
-					}, 800)
+					}, 400)
 				}).catch(err => {
 					console.log(err)
 					uni.showToast({

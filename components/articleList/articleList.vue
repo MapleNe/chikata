@@ -17,8 +17,8 @@
 							<tn-avatar :src="item.expand.author.head_img"
 								@tap="type!=='user'?goUserProfile(index):''"></tn-avatar>
 							<text v-if="item.expand.author.level==='admin'"
-								class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"
-								style="position: absolute;top: 50rpx;left: 30rpx; z-index: 9999;"></text>
+								class="tn-margin-left-xs tn-text-md tn-color-blue tn-icon-trusty-fill tn-bg-white tn-round"
+								style="position: absolute;top: 58rpx;left: 30rpx; z-index: 9999; padding: 2rpx;"></text>
 							<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 								<view class="tn-flex tn-flex-col-center">
 									<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
