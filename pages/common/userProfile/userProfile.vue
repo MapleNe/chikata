@@ -75,14 +75,13 @@
 							<text class="level tn-margin-left-sm level-text" :class="['lv-'+profile.grade]"
 								:style="{'color':level[profile.grade]}"></text>
 						</view>
-
 						<view class="tn-flex tn-margin-top tn-flex-top tn-color-gray--dark">
-							<text class="tn-icon-image-text tn-margin-right-xs"></text>
-							<text class="tn-text-ellipsis-2" style="max-width: 50%;">{{profile.description}}</text>
+							<text class="tn-icon-image-text"></text>
+							<text class="tn-margin-left-xs" style="word-break: break-all;">{{profile.description}}</text>
 						</view>
 					</view>
 				</view>
-				<view class="tn-margin-top-xl tn-margin-bottom-lg tn-flex">
+				<view class="tn-margin-top tn-margin-bottom-lg tn-flex">
 					<view class="tn-flex tn-flex-col-center tn-text-sm tn-flex-basic-md tn-flex-row-between">
 						<view class="tn-flex tn-flex-col-center ">
 							<text
@@ -459,13 +458,6 @@
 
 		},
 		created() {
-			// #ifndef MP
-			if (this.users_id != 0) {
-				this.id = this.users_id
-				this.getUserInfo()
-			}
-
-			// #endif
 		},
 		computed: {
 			...mapState(['userInfo', 'hasLogin']),
