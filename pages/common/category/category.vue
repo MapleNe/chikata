@@ -33,13 +33,13 @@
 			<!-- 圆弧 -->
 			<view style="position: absolute;top: 364rpx;width: 100%; border-radius: 35rpx 35rpx 0 0;"
 				class="tn-bg-white tn-padding"></view>
-			<view class="tn-margin tn-no-margin-top" v-if="categoryPlacard">
+			<view class="tn-margin tn-no-margin-top" v-if="categoryPlacard.length">
 				<view class="tn-bg-gray--light tn-padding-sm" style="border-radius: 10rpx;">
 					<view class="">
 						<text class="tn-text-bold tn-color-gray--dark">分区资讯</text>
 					</view>
 					<block v-for="(item,index) in categoryPlacard">
-						<view class="tn-flex tn-flex-col-center tn-margin-top-sm">
+						<view class="tn-flex tn-flex-col-center tn-margin-top-sm" @tap.stop.prevent="goPlacard(item)">
 							<view class="ch-bg-main tn-radius tn-margin-right-sm">
 								<text
 									class="tn-color-white tn-padding-left-xs tn-padding-right-xs tn-text-sm">{{type[item.type]}}</text>
@@ -563,7 +563,7 @@
 				.boundingClientRect(data => {
 					if (data) {
 						this.headerHeight = data.height
-						console.log(data.height)
+						
 					}
 				})
 				.exec();
@@ -679,6 +679,22 @@
 					current: index,
 					urls: data,
 				});
+			},
+			goPlacard(item) {
+				console.log(item)
+				switch (item.type) {
+					case 'article':
+						this.$Router.push({
+							path:'/pages/common/article/article',
+							query:{
+								id:item.opt.article_id,
+								users_id:item.opt.users_id
+							}
+						})
+						break;
+					default:
+						break;
+				}
 			},
 			getDate(data) {
 				// 传进来的data必须是日期格式，不能是时间戳
