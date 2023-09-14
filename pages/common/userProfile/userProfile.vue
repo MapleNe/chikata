@@ -77,7 +77,8 @@
 						</view>
 						<view class="tn-flex tn-margin-top tn-flex-top tn-color-gray--dark">
 							<text class="tn-icon-image-text"></text>
-							<text class="tn-margin-left-xs" style="word-break: break-all;">{{profile.description}}</text>
+							<text class="tn-margin-left-xs"
+								style="word-break: break-all;">{{profile.description}}</text>
 						</view>
 					</view>
 				</view>
@@ -219,11 +220,9 @@
 												<text class="tn-text-xxl tn-icon-comment"></text>
 												<text class="tn-margin-left-xs">{{item.expand.comments.count}}</text>
 											</view>
-											<view class="tn-flex tn-flex-col-center"
-												:class="item.expand.like.is_like?'tn-color-red':''"
-												@tap.stop="likeAction(index)">
+											<view class="tn-flex tn-flex-col-center" @tap.stop="likeAction(index)">
 												<text class="tn-text-xxl"
-													:class="item.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
+													:class="item.expand.like.is_like?'ch-color-primary tn-icon-praise-fill':'tn-icon-praise'"></text>
 												<text class="tn-margin-left-xs">{{item.expand.like.likes_count}}</text>
 											</view>
 										</view>
@@ -338,11 +337,9 @@
 											<text class="tn-text-xxl tn-icon-comment"></text>
 											<text class="tn-margin-left-xs">{{item.expand.comments.count}}</text>
 										</view>
-										<view class="tn-flex tn-flex-col-bottom"
-											:class="item.expand.like.is_like?'tn-color-red':''"
-											@tap.stop="likeAction(index)">
+										<view class="tn-flex tn-flex-col-bottom" @tap.stop="likeAction(index)">
 											<text class="tn-text-xxl"
-												:class="item.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
+												:class="item.expand.like.is_like?'ch-color-primary tn-icon-praise-fill':'tn-icon-praise'"></text>
 											<text class="tn-margin-left-xs">{{item.expand.like.likes_count}}</text>
 										</view>
 									</view>
@@ -446,21 +443,26 @@
 				showCancelFollow: false,
 			}
 		},
-		onLoad(params) {
-			this.id = params.id
-			this.getUserInfo()
-		},
-		onReady() {
-			// #ifdef MP
-			this.id = this.users_id
-			this.getUserInfo()
-			// #endif
-
-		},
-		created() {
-		},
 		computed: {
 			...mapState(['userInfo', 'hasLogin']),
+		},
+		onLoad(params) {
+			this.id = params.id
+			if (this.id) {
+				this.getUserInfo()
+			}
+		},
+		created() {
+			if (this.users_id) {
+				this.id = this.users_id
+				this.getUserInfo()
+			}
+		},
+		onReady() {
+			if (this.users_id) {
+				this.id = this.users_id
+				this.getUserInfo()
+			}
 		},
 		methods: {
 			getElementHeight(element) {
@@ -476,7 +478,7 @@
 						page: page,
 						limit: num,
 						type: 'icomment',
-						uid: this.users_id ? this.users_id : this.id
+						uid: this.id
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
@@ -489,10 +491,11 @@
 					params: {
 						page: page,
 						limit: num,
-						uid: this.id ? this.id : this.users_id
+						uid: this.id
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
+						console.log(res)
 						this.$refs.favorite.complete(res.data.data.article)
 					}
 				})
@@ -517,7 +520,9 @@
 						id: this.id ? this.id : this.users_id
 					}
 				}).then(res => {
-					this.profile = res.data.data
+					if (res.data.code === 200) {
+						this.profile = res.data.data
+					}
 				}).catch(err => {
 
 				})

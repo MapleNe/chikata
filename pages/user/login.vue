@@ -73,17 +73,26 @@
 						</view>
 						<!-- 三方登录 -->
 						<view class="tn-margin-top-xl">
-							<view class="tn-flex tn-flex-col-center tn-flex-row-center ">
-								<!--#ifdef APP-PLUS || H5-->
-								<text class="tn-icon-qq tn-bg-blue tn-text-xxl tn-padding-sm tn-color-white tn-round"
-									style="font-size: 60rpx;" @tap.stop.prevent="qqLogin"></text>
+							<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
+								<!-- #ifndef MP-WEIXIN-->
+								<view style="width: 60%;">
+									<tn-button backgroundColor="tn-bg-blue" width="100%" fontColor="white"
+										@click="qqLogin">
+										<view class="tn-flex tn-flex-col-center">
+											<text class="tn-icon-qq tn-text-xxl"></text>
+											<text class="tn-margin-left-xs">QQ登录</text>
+										</view>
+									</tn-button>
+								</view>
 								<!--#endif-->
-								<text class="tn-margin-left tn-margin-right"></text>
-								<!--#ifdef APP-PLUS || MP-WEIXIN ||H5-->
-								<text
-									class="tn-icon-wechat-fill tn-bg-green tn-text-xxl tn-padding-sm tn-color-white tn-round"
-									style="font-size: 60rpx;"></text>
-								<!--#endif-->
+								<view class="tn-margin-top" style="width: 60%;">
+									<tn-button backgroundColor="tn-bg-green" width="100%" fontColor="white">
+										<view class="tn-flex tn-flex-col-center">
+											<text class="tn-icon-wechat tn-text-xxl"></text>
+											<text class="tn-margin-left-xs">微信登录</text>
+										</view>
+									</tn-button>
+								</view>
 							</view>
 						</view>
 					</view>
@@ -101,7 +110,6 @@
 								<text class="ch-color-primary" :class="{'tn-color-gray--dark':seconds!==0}"
 									@tap.stop.prevent="!seconds?getLoginCode():''">{{seconds!==0?`重新获取（${this.seconds}）`:'获取验证码'}}</text>
 							</view>
-
 						</view>
 
 					</view>
@@ -449,6 +457,13 @@
 				}
 			},
 			qqLogin() {
+				if (!this.accept) {
+					uni.showToast({
+						icon: 'none',
+						title: '请先阅读并同意协议后再登录'
+					})
+					return;
+				}
 				uni.login({
 					provider: 'qq',
 					success: (res) => {

@@ -201,8 +201,9 @@
 			}
 		},
 		onLoad() {
-
+			this.getUserProfile()
 		},
+
 		computed: {
 			// 兼容小程序
 			gridItemWidth() {
@@ -374,7 +375,18 @@
 				this.showMenu = true
 				this.menuData = data
 			},
-
+			getUserProfile() {
+				this.$http.get('/users/one', {
+					params: {
+						id: this.userInfo.id
+					}
+				}).then(res => {
+					if (res.data.code === 200) {
+						this.$store.commit('setUserInfo', res.data.data)
+						console.log('用户数据更新完成')
+					}
+				})
+			},
 			// logout() {
 			// 	console.log('点击了退出')
 			// 	uni.clearStorageSync('token')

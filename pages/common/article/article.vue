@@ -776,14 +776,7 @@
 				}
 				this.commentBtn[index].active = !this.commentBtn[index].active
 			},
-			goComment(id) {
-				this.$Router.push({
-					path: '/pages/common/article/comment/comment',
-					query: {
-						id: id
-					}
-				})
-			},
+
 			goEdit() {
 				uni.$emit('editArticle', this.article)
 				this.$Router.push({
@@ -849,11 +842,9 @@
 						tree: false,
 					}
 				}).then(res => {
-					console.log(res, '评论')
 					if (res.data.code === 200) {
 						this.$refs.subComment.complete(res.data.data.son)
 					}
-
 				})
 			},
 			favorite() {

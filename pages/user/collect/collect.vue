@@ -1,10 +1,10 @@
 <template>
 	<z-paging ref="paging" @query="getCollect" v-model="content">
 		<template #top>
-			<tn-nav-bar backTitle="" :fixed="false">
+			<tn-nav-bar backTitle="">
 				合集列表
 				<view class="tn-padding" slot="right">
-					<tn-button plain backgroundColor="#29b7cb" padding="0 15rpx" fontColor="#29b7cb" size="sm">
+					<tn-button plain backgroundColor="#29b7cb" padding="0 15rpx" fontColor="#29b7cb" size="sm" @click="goCreate()">
 						<view class="tn-flex tn-flex-col-center">
 							<text class="tn-icon-add tn-margin-right-xs"></text>
 							<text>创建合集</text>
@@ -12,6 +12,7 @@
 					</tn-button>
 				</view>
 			</tn-nav-bar>
+			<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 		</template>
 		<view class="tn-margin">
 			<block v-for="(item,index) in content" :key="index">
@@ -65,6 +66,9 @@
 						obj: encodeURIComponent(JSON.stringify(this.content[index]))
 					}
 				})
+			},
+			goCreate(){
+				this.$Router.push({name:'collectCreate'})
 			},
 			getDate(data) {
 				// 传进来的data必须是日期格式，不能是时间戳

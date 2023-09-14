@@ -1,7 +1,7 @@
 <template>
 	<z-paging ref="paging" @query="getArticle" v-model="content">
 		<template #top>
-			<tn-nav-bar backTitle="" :fixed="false">
+			<tn-nav-bar backTitle="">
 				{{name}}
 				<view class="tn-padding" slot="right">
 					<tn-button plain size="sm" fontColor="#29b7cb" backgroundColor="#29b7cb">
@@ -11,6 +11,7 @@
 					</tn-button>
 				</view>
 			</tn-nav-bar>
+			<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 		</template>
 		<view class="tn-margin">
 			<view class="tn-bg-gray--light tn-padding tn-margin-bottom" style="border-radius: 10rpx;">
@@ -68,6 +69,7 @@
 				content: [],
 				info: {},
 				article_count: 0,
+				id: 0,
 			};
 		},
 		onLoad(params) {
@@ -82,10 +84,10 @@
 					params: {
 						page: page,
 						limit: num,
+						cid: this.id
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
-						console.log(res)
 						this.$refs.paging.complete(res.data.data.data)
 						this.article_count = res.data.data.count
 					}
