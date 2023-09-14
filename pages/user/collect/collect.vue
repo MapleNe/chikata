@@ -4,7 +4,8 @@
 			<tn-nav-bar backTitle="">
 				合集列表
 				<view class="tn-padding" slot="right">
-					<tn-button plain backgroundColor="#29b7cb" padding="0 15rpx" fontColor="#29b7cb" size="sm" @click="goCreate()">
+					<tn-button plain backgroundColor="#29b7cb" padding="0 15rpx" fontColor="#29b7cb" size="sm"
+						@click="goCreate()">
 						<view class="tn-flex tn-flex-col-center">
 							<text class="tn-icon-add tn-margin-right-xs"></text>
 							<text>创建合集</text>
@@ -48,6 +49,14 @@
 				content: [],
 			};
 		},
+		onLoad() {
+			uni.$on('delCollect', data => {
+				this.$refs.paging.reload()
+			})
+		},
+		onUnload() {
+			uni.$off('delCollect')
+		},
 		methods: {
 			getCollect(page, num) {
 				this.$http.get('/collections/Find', {}).then(res => {
@@ -67,8 +76,11 @@
 					}
 				})
 			},
-			goCreate(){
-				this.$Router.push({name:'collectCreate'})
+
+			goCreate() {
+				this.$Router.push({
+					name: 'collectCreate'
+				})
 			},
 			getDate(data) {
 				// 传进来的data必须是日期格式，不能是时间戳

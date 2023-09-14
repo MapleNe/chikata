@@ -73,7 +73,8 @@
 				<view class="tn-margin-top-xl" v-if="userInfo.id==info.user_id">
 					<view class="tn-flex">
 						<view
-							class="tn-flex tn-color-gray--dark tn-flex-col-center tn-flex-direction-column tn-margin-right" @tap.stop.prevent="goUpdate()">
+							class="tn-flex tn-color-gray--dark tn-flex-col-center tn-flex-direction-column tn-margin-right"
+							@tap.stop.prevent="goUpdate()">
 							<text class="tn-icon-edit-write tn-text-xxl tn-round tn-bg-gray--light tn-padding"></text>
 							<text class="tn-margin-top-sm tn-text-md">编辑合集</text>
 						</view>
@@ -183,6 +184,25 @@
 						id: this.content[index].id,
 						users_id: this.content[index].users_id
 					}
+				})
+			},
+			delete() {
+				this.$delete('/collections/Del', {
+					cid: this.id
+				}).then(res => {
+					console.log(res)
+					if (res.data.code === 200) {
+						uni.showToast({
+							icon: 'none',
+							title: '删除' + res.data.msg
+						})
+						uni.$emit('delCollect', true)
+						setTimeout(() => {
+							this.$Router.back(1)
+						}, 800)
+					}
+				}).catch(err => {
+					console.log(err)
 				})
 			},
 			getDate(data) {

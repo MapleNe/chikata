@@ -56,7 +56,6 @@
 			}
 		},
 		onLoad(params) {
-			console.log(params)
 			if (params.update) {
 				this.update = params.update
 				this.id = params.obj.id
