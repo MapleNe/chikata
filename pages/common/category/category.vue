@@ -33,7 +33,7 @@
 			<!-- 圆弧 -->
 			<view style="position: absolute;top: 364rpx;width: 100%; border-radius: 35rpx 35rpx 0 0;"
 				class="tn-bg-white tn-padding"></view>
-			<view class="tn-margin tn-no-margin-top">
+			<view class="tn-margin tn-no-margin-top" v-if="categoryPlacard">
 				<view class="tn-bg-gray--light tn-padding-sm" style="border-radius: 10rpx;">
 					<view class="">
 						<text class="tn-text-bold tn-color-gray--dark">分区资讯</text>
