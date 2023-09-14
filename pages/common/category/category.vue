@@ -563,10 +563,10 @@
 		},
 		onLoad(params) {
 			this.id = Number(params.id)
-			this.getcategoryInfo()
-			this.getCategoryPlacard()
 		},
 		onReady() {
+			this.getcategoryInfo()
+			this.getCategoryPlacard()
 			uni.createSelectorQuery()
 				.select('#contentview') // 使用选择器选择元素
 				.boundingClientRect(data => {

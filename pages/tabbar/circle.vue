@@ -16,7 +16,7 @@
 				<z-paging ref="paging" v-model="content" @query="getArticle">
 					<view class="tn-margin-left tn-margin-right tn-flex tn-flex-col-center tn-flex-row-between">
 						<text class="tn-text-bold tn-text-md">分区列表</text>
-						<view class="tn-flex tn-flex-col-center tn-text-md tn-color-gray--dark">
+						<view class="tn-flex tn-flex-col-center tn-text-md tn-color-gray--dark" @tap.stop.prevent="goCategoryList()">
 							<text class="tn-margin-right-xs">全部</text>
 							<text class="tn-icon-right"></text>
 						</view>
@@ -203,6 +203,11 @@
 			changeTab(index) {
 				this.tabsIndex = index
 			},
+			goCategoryList(){
+				this.$Router.push({
+					path:'/pagesA/categories/categories'
+				})
+			},
 			getBanner() {
 				this.$http.get('/banner').then(res => {
 					if (res.data.code === 200) {
@@ -214,7 +219,6 @@
 				})
 			},
 			goCategory(index) {
-				console.log(index)
 				this.$Router.push({
 					path: '/pages/common/category/category',
 					query: {

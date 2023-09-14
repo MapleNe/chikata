@@ -255,7 +255,16 @@
 	],
 	"subPackages": [{
 		"root": "pagesA",
-		"pages": []
+		"pages": [{
+                    "path" : "categories/categories",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
 	}],
 	"tabBar": {
 		"backgroundColor": "#ffffff",
