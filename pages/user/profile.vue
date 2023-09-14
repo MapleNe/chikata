@@ -11,8 +11,6 @@
 				<text class="tn-icon-add tn-color-white"></text>
 			</view>
 		</view>
-
-
 		<view class="tn-margin-xs">
 			<tn-list-view :card="true" unlined="all">
 				<tn-list-cell :unlined="true" :arrow="false">
@@ -29,8 +27,10 @@
 				</tn-list-cell>
 				<tn-list-cell :unlined="true" :arrow="true" @tap="showDescription = true">
 					<view class="tn-flex tn-flex-row-between tn-flex-col-center">
-						<text>简介</text>
-						<view class="tn-text-right" style="width: 300rpx; overflow: hidden; text-overflow: ellipsis;">
+						<view class="tn-flex-basic-md">
+							<text>简介</text>
+						</view>
+						<view class="tn-text-right tn-text-ellipsis">
 							<text class="tn-margin-right">{{description}}</text>
 						</view>
 
@@ -121,6 +121,7 @@
 			...mapState(['hasLogin', 'userInfo']), //从Store获取全局变量
 		},
 		onLoad() {
+			this.id = this.userInfo.id
 			this.account = this.userInfo.account
 			this.head_img = this.userInfo.head_img
 			this.nickname = this.userInfo.nickname
@@ -131,6 +132,7 @@
 		},
 		data() {
 			return {
+				id: null,
 				account: null,
 				head_img: null,
 				nickname: null,
