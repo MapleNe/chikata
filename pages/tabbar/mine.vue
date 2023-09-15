@@ -311,6 +311,11 @@
 					path: '/pagesA/history/history'
 				})
 			},
+			goShop() {
+				this.$Router.push({
+					path: '/pagesA/shop/shop'
+				})
+			},
 			goPage(item) {
 				switch (item.page) {
 					case 'profile':
@@ -334,6 +339,9 @@
 						break;
 					case 'history':
 						this.goHistory()
+						break;
+					case 'shop':
+						this.goShop()
 						break;
 
 					default:

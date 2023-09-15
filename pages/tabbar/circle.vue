@@ -16,7 +16,8 @@
 				<z-paging ref="paging" v-model="content" @query="getArticle">
 					<view class="tn-margin-left tn-margin-right tn-flex tn-flex-col-center tn-flex-row-between">
 						<text class="tn-text-bold tn-text-md">分区列表</text>
-						<view class="tn-flex tn-flex-col-center tn-text-md tn-color-gray--dark" @tap.stop.prevent="goCategoryList()">
+						<view class="tn-flex tn-flex-col-center tn-text-md tn-color-gray--dark"
+							@tap.stop.prevent="goCategoryList()">
 							<text class="tn-margin-right-xs">全部</text>
 							<text class="tn-icon-right"></text>
 						</view>
@@ -50,14 +51,12 @@
 							<view>
 								<view v-for="(item, index) in list1" :key="item.id"
 									v-if="item&&item.width&&item.expand.images.length>0"
-									class="tn-margin-bottom-sm tn-padding-bottom-sm" :style="{width:item.width+'px'}"
+									class="tn-margin-bottom-sm tn-padding-bottom-sm" :style="imageStyle(item)"
 									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 20rpx;"
-									@tap.stop.prevent="goAticle(item)">
-									<view class="">
-										<image :src="item.expand.images[0].src" mode="widthFix"
-											:style="{width:item.width+'px'}" style="border-radius: 20rpx 20rpx 0 0;">
-										</image>
-									</view>
+									@tap.stop.prevent="goArticle(item)">
+									<image :src="item.expand.images[0].src" mode="widthFix"
+										:style="{width:item.width+'px'}" style="border-radius: 20rpx 20rpx 0 0;">
+									</image>
 									<view class="tn-padding-xs">
 										<view class="tn-text-ellipsis-2 tn-text-md">
 											<text>{{item.description}}</text>
@@ -79,7 +78,7 @@
 									v-if="item&&item.width&&item.expand.images.length>0"
 									class="tn-margin-bottom-sm tn-padding-bottom-sm" :style="{width:item.width+'px'}"
 									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 20rpx;"
-									@tap.stop.prevent="goAticle(item)">
+									@tap.stop.prevent="goArticle(item)">
 									<view class="">
 										<image :src="item.expand.images[0].src" mode="widthFix"
 											:style="{width:item.width+'px'}" style="border-radius: 20rpx 20rpx 0 0;">
@@ -135,6 +134,9 @@
 				content: [],
 				list1: [],
 				list2: [],
+				leftGap: 13,
+				rightGap: 13,
+				columnGap: 8
 
 			}
 		},
@@ -143,15 +145,21 @@
 			this.getCategory()
 		},
 		mounted() {
-			this.$nextTick(() => {
-				uni.createSelectorQuery().in(this).select('.left').boundingClientRect(res => {
-					this.columnWidth = res.width
-					//方法1
-					this.setWaterFallLayout()
-					//方法2
-					// this.setWaterFallLayout2()
-				}).exec()
-			})
+
+		},
+		computed: {
+			imageStyle(item) {
+				return item => {
+					const v = uni.upx2px(750) - this.leftGap - this.rightGap - this.columnGap;
+					const w = v / 2;
+					const rate = w / item.w;
+					const h = rate * item.h;
+					return {
+						width: w + 'px',
+						height: h + 'px'
+					}
+				}
+			}
 		},
 		methods: {
 			changeList(e) {
@@ -183,7 +191,7 @@
 					}
 				})
 			},
-			goAticle(item) {
+			goArticle(item) {
 				this.$Router.push({
 					path: '/pages/common/article/article',
 					query: {
@@ -203,9 +211,9 @@
 			changeTab(index) {
 				this.tabsIndex = index
 			},
-			goCategoryList(){
+			goCategoryList() {
 				this.$Router.push({
-					path:'/pagesA/categories/categories'
+					path: '/pagesA/categories/categories'
 				})
 			},
 			getBanner() {

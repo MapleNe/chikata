@@ -61,6 +61,7 @@
 		onLoad() {
 			this.initData()
 		},
+		
 		methods: {
 			initData() {
 				this.list = uni.getStorageSync('history')
