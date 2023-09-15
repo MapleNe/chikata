@@ -103,7 +103,7 @@
 							</tn-grid>
 						</view>
 						<view v-if="item.expand.images.length===3|| item.expand.images.length>4">
-							<tn-grid align="left" :col="3" hoverClass="none">
+							<tn-grid align="left" :col="col" hoverClass="none">
 								<block v-for="(images, subIndex) in item.expand.images" :key="subIndex"
 									v-if="subIndex<9">
 									<!-- H5 -->
@@ -248,6 +248,7 @@
 				showMenu: false,
 				isLongTap: true,
 				api: null,
+				col:3
 
 			};
 		},

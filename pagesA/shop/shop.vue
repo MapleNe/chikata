@@ -16,7 +16,7 @@
 				<!-- 为了磨平部分平台的BUG，必须套一层view -->
 				<view>
 					<block v-for="(item,index) in list1" :key="item.id">
-						<view class="tn-bg-white tn-margin-top" style="border-radius: 20rpx;">
+						<view class="tn-bg-white tn-margin-top" style="border-radius: 20rpx;" @tap.stop.prevent="goDetail(item)">
 							<view class="tn-flex tn-flex-direction-column" :style="imageStyle(item)">
 								<image :src="item.image" mode="widthFix" style="border-radius: 20rpx 20rpx 0 0;"
 									:style="{width:item.width+'px'}"></image>
@@ -43,7 +43,7 @@
 				<!-- 为了磨平部分平台的BUG，必须套一层view -->
 				<view>
 					<block v-for="(item,index) in list2" :key="item.id">
-						<view class="tn-bg-white tn-margin-top" style="border-radius: 20rpx;">
+						<view class="tn-bg-white tn-margin-top" style="border-radius: 20rpx;" @tap.stop.prevent="goDetail(item)">
 							<view class="tn-flex tn-flex-direction-column" :style="imageStyle(item)">
 								<image :src="item.image" mode="widthFix" style="border-radius: 20rpx 20rpx 0 0;"
 									:style="{width:item.width+'px'}"></image>
@@ -128,6 +128,14 @@
 			changeList(e) {
 				this[e.name].push(e.value);
 			},
+			goDetail(item){
+				this.$Router.push({
+					path:'/pagesA/shop/detail',
+					query:{
+						id:item.id
+					}
+				})
+			}
 		}
 	}
 </script>
