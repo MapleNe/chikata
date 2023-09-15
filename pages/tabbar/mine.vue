@@ -104,7 +104,7 @@
 				</tn-grid>
 			</view>
 			<view class="tn-padding-xs tn-bg-gray--light"></view>
-			<tn-list-cell :arrow="true">
+			<tn-list-cell :arrow="true" @click="goActive()">
 				<view class="tn-flex tn-flex-col-center">
 					<text class="tn-icon-gift tn-text-xxl"></text>
 					<text class="tn-margin-left-sm">活动</text>
@@ -201,8 +201,9 @@
 			}
 		},
 		onLoad() {
-
+			this.getUserProfile()
 		},
+
 		computed: {
 			// 兼容小程序
 			gridItemWidth() {
@@ -218,7 +219,13 @@
 				this.swiperIndex = event.detail.current
 				this.tabsIndex = event.detail.current
 			},
-			//前往登录
+			// 前往活动
+			goActive() {
+				this.$Router.push({
+					path: '/pagesA/active/active'
+				})
+			},
+			// 前往登录
 			goLogin() {
 				console.log('点击了登录')
 				this.$Router.push({
@@ -299,6 +306,16 @@
 					path: '/pages/user/favorite/favorite'
 				})
 			},
+			goHistory() {
+				this.$Router.push({
+					path: '/pagesA/history/history'
+				})
+			},
+			goShop() {
+				this.$Router.push({
+					path: '/pagesA/shop/shop'
+				})
+			},
 			goPage(item) {
 				switch (item.page) {
 					case 'profile':
@@ -319,6 +336,12 @@
 						break;
 					case 'collect':
 						this.goCollect()
+						break;
+					case 'history':
+						this.goHistory()
+						break;
+					case 'shop':
+						this.goShop()
 						break;
 
 					default:
@@ -374,7 +397,18 @@
 				this.showMenu = true
 				this.menuData = data
 			},
-
+			getUserProfile() {
+				this.$http.get('/users/one', {
+					params: {
+						id: this.userInfo.id
+					}
+				}).then(res => {
+					if (res.data.code === 200) {
+						this.$store.commit('setUserInfo', res.data.data)
+						console.log('用户数据更新完成')
+					}
+				})
+			},
 			// logout() {
 			// 	console.log('点击了退出')
 			// 	uni.clearStorageSync('token')

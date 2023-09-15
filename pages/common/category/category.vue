@@ -33,24 +33,20 @@
 			<!-- 圆弧 -->
 			<view style="position: absolute;top: 364rpx;width: 100%; border-radius: 35rpx 35rpx 0 0;"
 				class="tn-bg-white tn-padding"></view>
-			<view class="tn-margin tn-no-margin-top">
+			<view class="tn-margin tn-no-margin-top" v-if="categoryPlacard.length">
 				<view class="tn-bg-gray--light tn-padding-sm" style="border-radius: 10rpx;">
-					<view class="tn-margin-bottom-sm">
-						<text class="tn-text-bold">分区资讯</text>
+					<view class="">
+						<text class="tn-text-bold tn-color-gray--dark">分区资讯</text>
 					</view>
-
-					<view class="tn-flex tn-flex-col-center tn-margin-bottom-sm">
-						<view class="ch-bg-main tn-radius tn-margin-right-sm">
-							<text class="tn-color-white tn-padding-left-xs tn-padding-right-xs tn-text-sm">资讯</text>
+					<block v-for="(item,index) in categoryPlacard">
+						<view class="tn-flex tn-flex-col-center tn-margin-top-sm" @tap.stop.prevent="goPlacard(item)">
+							<view class="ch-bg-main tn-radius tn-margin-right-sm">
+								<text
+									class="tn-color-white tn-padding-left-xs tn-padding-right-xs tn-text-sm">{{type[item.type]}}</text>
+							</view>
+							<text class="tn-text-md">{{item.title}}</text>
 						</view>
-						<text class="tn-text-md">【开启】下北泽即将被泛二替代</text>
-					</view>
-					<view class="tn-flex tn-flex-col-center">
-						<view class="ch-bg-main tn-radius tn-margin-right-sm">
-							<text class="tn-color-white tn-padding-left-xs tn-padding-right-xs tn-text-sm">公告</text>
-						</view>
-						<text class="tn-text-md">【开启】APP即将进入试运行状态</text>
-					</view>
+					</block>
 				</view>
 			</view>
 		</view>
@@ -68,14 +64,15 @@
 					<block v-for="(item,index) in article" :key="index">
 						<view class="tn-margin">
 							<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-								<view class="tn-flex tn-flex-col-center">
+								<view class="tn-flex tn-flex-col-center" style="position: relative;">
 									<tn-avatar :src="item.expand.author.head_img"
-										@tap="goUserProfile(item)"></tn-avatar>
+										@tap="type!=='user'?goUserProfile(index):''"></tn-avatar>
+									<text v-if="item.expand.author.level==='admin'"
+										class="tn-margin-left-xs tn-text-md tn-color-blue tn-icon-trusty-fill tn-bg-white tn-round"
+										style="position: absolute;top: 58rpx;left: 30rpx; z-index: 9999; padding: 2rpx;"></text>
 									<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 										<view class="tn-flex tn-flex-col-center">
 											<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
-											<text v-if="item.expand.author.level==='admin'"
-												class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
 											<text class="level tn-margin-left-xs level-text"
 												:class="['lv-'+item.expand.author.grade]"
 												:style="{'color':level[item.expand.author.grade]}"></text>
@@ -111,8 +108,9 @@
 
 								<!-- 单张图片 -->
 								<view v-if="item.expand.images.length===1">
-									<image v-for="(images,subIndex) in item.expand.images" :key="subIndex" :src="images.src"
-										mode="aspectFill" style="height: 400rpx;width: 400rpx;border-radius:10rpx;"
+									<image v-for="(images,subIndex) in item.expand.images" :key="subIndex"
+										:src="images.src" mode="aspectFill"
+										style="height: 400rpx;width: 400rpx;border-radius:10rpx;"
 										@tap.stop="previewImage(item.expand.images,subIndex)">
 									</image>
 								</view>
@@ -194,11 +192,9 @@
 											<text class="tn-text-xxl tn-icon-comment"></text>
 											<text class="tn-margin-left-xs">{{item.expand.comments.count}}</text>
 										</view>
-										<view class="tn-flex tn-flex-col-bottom"
-											:class="item.expand.like.is_like?'tn-color-red':''"
-											@tap.stop="likeAction(index)">
+										<view class="tn-flex tn-flex-col-bottom" @tap.stop="likeAction(index)">
 											<text class="tn-text-xxl"
-												:class="item.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
+												:class="item.expand.like.is_like?'ch-color-primary tn-icon-praise-fill':'tn-icon-praise'"></text>
 											<text class="tn-margin-left-xs">{{item.expand.like.likes_count}}</text>
 										</view>
 									</view>
@@ -219,14 +215,18 @@
 					<block v-for="(item,index) in articleHot" :key="index">
 						<view class="tn-margin">
 							<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-								<view class="tn-flex tn-flex-col-center">
+								<view class="tn-flex tn-flex-col-center" style="position: relative;">
 									<tn-avatar :src="item.expand.author.head_img"
-										@tap="goUserProfile(item)"></tn-avatar>
+										@tap="type!=='user'?goUserProfile(index):''"></tn-avatar>
+									<text v-if="item.expand.author.level==='admin'"
+										class="tn-margin-left-xs tn-text-md tn-color-blue tn-icon-trusty-fill tn-bg-white tn-round"
+										style="position: absolute;top: 58rpx;left: 30rpx; z-index: 9999; padding: 2rpx;"></text>
 									<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 										<view class="tn-flex tn-flex-col-center">
 											<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
-											<text v-if="item.expand.author.level==='admin'"
-												class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
+											<text class="level tn-margin-left-xs level-text"
+												:class="['lv-'+item.expand.author.grade]"
+												:style="{'color':level[item.expand.author.grade]}"></text>
 										</view>
 										<view class="tn-flex tn-flex-col-center tn-text-sm tn-color-gray--dark">
 											<text>{{getDate(item.create_time)}}</text>
@@ -259,8 +259,9 @@
 
 								<!-- 单张图片 -->
 								<view v-if="item.expand.images.length===1">
-									<image v-for="(images,subIndex) in item.expand.images" :key="subIndex" :src="images.src"
-										mode="aspectFill" style="height: 400rpx;width: 400rpx;border-radius:10rpx;"
+									<image v-for="(images,subIndex) in item.expand.images" :key="subIndex"
+										:src="images.src" mode="aspectFill"
+										style="height: 400rpx;width: 400rpx;border-radius:10rpx;"
 										@tap.stop="previewImage(item.expand.images,subIndex)">
 									</image>
 								</view>
@@ -342,11 +343,9 @@
 											<text class="tn-text-xxl tn-icon-comment"></text>
 											<text class="tn-margin-left-xs">{{item.expand.comments.count}}</text>
 										</view>
-										<view class="tn-flex tn-flex-col-bottom"
-											:class="item.expand.like.is_like?'tn-color-red':''"
-											@tap.stop="likeAction(index)">
+										<view class="tn-flex tn-flex-col-bottom" @tap.stop="likeAction(index)">
 											<text class="tn-text-xxl"
-												:class="item.expand.like.is_like?' tn-icon-praise-fill':'tn-icon-praise'"></text>
+												:class="item.expand.like.is_like?'ch-color-primary tn-icon-praise-fill':'tn-icon-praise'"></text>
 											<text class="tn-margin-left-xs">{{item.expand.like.likes_count}}</text>
 										</view>
 									</view>
@@ -367,14 +366,18 @@
 					<block v-for="(item,index) in articleNew" :key="index">
 						<view class="tn-margin">
 							<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-								<view class="tn-flex tn-flex-col-center">
+								<view class="tn-flex tn-flex-col-center" style="position: relative;">
 									<tn-avatar :src="item.expand.author.head_img"
-										@tap="goUserProfile(item)"></tn-avatar>
+										@tap="type!=='user'?goUserProfile(index):''"></tn-avatar>
+									<text v-if="item.expand.author.level==='admin'"
+										class="tn-margin-left-xs tn-text-md tn-color-blue tn-icon-trusty-fill tn-bg-white tn-round"
+										style="position: absolute;top: 58rpx;left: 30rpx; z-index: 9999; padding: 2rpx;"></text>
 									<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 										<view class="tn-flex tn-flex-col-center">
 											<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
-											<text v-if="item.expand.author.level==='admin'"
-												class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"></text>
+											<text class="level tn-margin-left-xs level-text"
+												:class="['lv-'+item.expand.author.grade]"
+												:style="{'color':level[item.expand.author.grade]}"></text>
 										</view>
 										<view class="tn-flex tn-flex-col-center tn-text-sm tn-color-gray--dark">
 											<text>{{getDate(item.create_time)}}</text>
@@ -407,8 +410,9 @@
 
 								<!-- 单张图片 -->
 								<view v-if="item.expand.images.length===1">
-									<image v-for="(images,subIndex) in item.expand.images" :key="subIndex" :src="images.src"
-										mode="aspectFill" style="height: 400rpx;width: 400rpx;border-radius:10rpx;"
+									<image v-for="(images,subIndex) in item.expand.images" :key="subIndex"
+										:src="images.src" mode="aspectFill"
+										style="height: 400rpx;width: 400rpx;border-radius:10rpx;"
 										@tap.stop="previewImage(item.expand.images,subIndex)">
 									</image>
 								</view>
@@ -544,6 +548,13 @@
 				navAuthor: false,
 				isloadedHot: false,
 				isloadedNew: false,
+				categoryPlacard: [],
+				type: {
+					'article': '帖子',
+					'all': '全局',
+					'home': '首页',
+					'active': '活动'
+				},
 			}
 		},
 
@@ -552,16 +563,16 @@
 		},
 		onLoad(params) {
 			this.id = Number(params.id)
-			this.getcategoryInfo()
-			this.getCategoryPlacard()
 		},
 		onReady() {
+			this.getcategoryInfo()
+			this.getCategoryPlacard()
 			uni.createSelectorQuery()
 				.select('#contentview') // 使用选择器选择元素
 				.boundingClientRect(data => {
 					if (data) {
 						this.headerHeight = data.height
-						console.log(data.height)
+
 					}
 				})
 				.exec();
@@ -641,7 +652,10 @@
 						where: `sort = ${this.id}`
 					}
 				}).then(res => {
-
+					console.log(res)
+					if (res.data.code === 200) {
+						this.categoryPlacard = res.data.data.data
+					}
 				})
 			},
 			changeTab(index) {
@@ -674,6 +688,22 @@
 					current: index,
 					urls: data,
 				});
+			},
+			goPlacard(item) {
+				console.log(item)
+				switch (item.type) {
+					case 'article':
+						this.$Router.push({
+							path: '/pages/common/article/article',
+							query: {
+								id: item.opt.article_id,
+								users_id: item.opt.users_id
+							}
+						})
+						break;
+					default:
+						break;
+				}
 			},
 			getDate(data) {
 				// 传进来的data必须是日期格式，不能是时间戳

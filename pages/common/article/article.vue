@@ -43,8 +43,8 @@
 							<view class="tn-flex tn-flex-col-center" style="position: relative;">
 								<tn-avatar :src="article.expand.author.head_img" @click="swiperIndex=1"></tn-avatar>
 								<text v-if="article.expand.author.level==='admin'"
-									class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"
-									style="position: absolute;top: 40rpx;left: 30rpx; z-index: 9999;"></text>
+									class="tn-margin-left-xs tn-text-md tn-color-blue tn-icon-trusty-fill tn-bg-white tn-round"
+									style="position: absolute;top: 45rpx;left: 30rpx; z-index: 9999; padding: 2rpx;"></text>
 								<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 									<view class="tn-flex tn-flex-col-center">
 										<text class="tn-text-bold">{{article.expand.author.nickname}}</text>
@@ -272,21 +272,21 @@
 								<view :class="[item.icon,item.color]"
 									class="tn-round tn-color-white tn-text-xxl tn-padding">
 								</view>
-								<text class="tn-margin-top-sm">{{item.name}}</text>
+								<text class="tn-margin-top-sm tn-text-md">{{item.name}}</text>
 							</view>
 						</view>
-						<view class="tn-margin-top">
+						<view class="tn-margin-top-xl">
 							<view class="tn-flex">
 								<view
 									class="tn-flex tn-color-gray--dark tn-flex-col-center tn-flex-direction-column tn-margin-right">
 									<text
 										class="tn-icon-warning tn-text-xxl tn-round tn-bg-gray--light tn-padding"></text>
-									<text class="tn-text-lg tn-margin-top-sm">举报</text>
+									<text class="tn-text-md tn-margin-top-sm">举报</text>
 								</view>
 								<view class="tn-flex tn-color-gray--dark tn-flex-col-center tn-flex-direction-column"
 									v-if="article.users_id == userInfo.id" @tap.stop.prevent="goEdit">
 									<text class="tn-icon-edit tn-text-xxl tn-round tn-bg-gray--light tn-padding"></text>
-									<text class="tn-text-lg tn-margin-top-sm">编辑</text>
+									<text class="tn-text-md tn-margin-top-sm">编辑</text>
 								</view>
 							</view>
 						</view>
@@ -565,13 +565,34 @@
 				}).then(res => {
 					if (res.data.code == 200) {
 						this.article = res.data.data
+						this.setHistory(res)
 						this.commentDisAllow = res.data.data.opt.comments.allow
 						if (!res.data.data.opt.comments.allow) this.commentBoxText = '作者关闭了评论...';
 					}
-
-				}).catch(err => {
-
 				})
+			},
+			setHistory(res) {
+				let history = uni.getStorageSync('history');
+
+				// 检查是否成功获取到历史数据
+				if (!history) {
+					history = [];
+				}
+
+				// 检查是否已存在相同的数据
+				const existingDataIndex = history.findIndex(item => item.id === res.data.data.id);
+
+				if (existingDataIndex !== -1) {
+					// 如果已存在相同的数据，更新它
+					history[existingDataIndex] = res.data.data;
+					// 将已存在的数据移动到数组的第一位
+					history.unshift(history.splice(existingDataIndex, 1)[0]);
+				} else {
+					// 否则，添加新数据并放到数组的第一位
+					history.unshift(res.data.data);
+				}
+
+				uni.setStorageSync('history', history);
 			},
 			getComment(page, num) {
 				this.$http.get('/comments/article', {
@@ -707,21 +728,20 @@
 				}).then(res => {
 					console.log(res)
 					if (res.data.code === 200) {
+						this.commentText = ''
+						this.commentBoxOpen = false
 						uni.showToast({
 							icon: 'none',
 							title: '评论' + res.data.msg
 						})
-						this.commentText = ''
 					}
 					setTimeout(() => {
-						this.commentBoxOpen = false
 						if (this.showComment) {
 							this.$refs.subComment.reload()
 						} else {
 							this.$refs.paging.reload()
 						}
-
-					}, 800)
+					}, 400)
 				}).catch(err => {
 					console.log(err)
 					uni.showToast({
@@ -776,14 +796,7 @@
 				}
 				this.commentBtn[index].active = !this.commentBtn[index].active
 			},
-			goComment(id) {
-				this.$Router.push({
-					path: '/pages/common/article/comment/comment',
-					query: {
-						id: id
-					}
-				})
-			},
+
 			goEdit() {
 				uni.$emit('editArticle', this.article)
 				this.$Router.push({
@@ -849,11 +862,9 @@
 						tree: false,
 					}
 				}).then(res => {
-					console.log(res, '评论')
 					if (res.data.code === 200) {
 						this.$refs.subComment.complete(res.data.data.son)
 					}
-
 				})
 			},
 			favorite() {

@@ -4,6 +4,7 @@
 			<tn-nav-bar :alpha="true">
 				合集详情
 			</tn-nav-bar>
+			
 		</template>
 		<view class="image-wrapper">
 			<image :src="collectInfo.image" mode="aspectFill" style="width: 100%;height: 400rpx;"></image>

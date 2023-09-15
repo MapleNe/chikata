@@ -17,8 +17,8 @@
 							<tn-avatar :src="item.expand.author.head_img"
 								@tap="type!=='user'?goUserProfile(index):''"></tn-avatar>
 							<text v-if="item.expand.author.level==='admin'"
-								class="tn-margin-left-xs tn-color-blue tn-icon-trusty-fill"
-								style="position: absolute;top: 50rpx;left: 30rpx; z-index: 9999;"></text>
+								class="tn-margin-left-xs tn-text-md tn-color-blue tn-icon-trusty-fill tn-bg-white tn-round"
+								style="position: absolute;top: 58rpx;left: 30rpx; z-index: 9999; padding: 2rpx;"></text>
 							<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 								<view class="tn-flex tn-flex-col-center">
 									<text class="tn-text-bold">{{item.expand.author.nickname}}</text>
@@ -58,7 +58,7 @@
 							</tn-button>
 						</view> -->
 					</view>
-					<view @tap="goAticle(index)">
+					<view @tap="goArticle(index)">
 						<view class="tn-margin-top">
 							<text class="tn-text-title">{{item.title}}</text>
 						</view>
@@ -103,7 +103,7 @@
 							</tn-grid>
 						</view>
 						<view v-if="item.expand.images.length===3|| item.expand.images.length>4">
-							<tn-grid align="left" :col="3" hoverClass="none">
+							<tn-grid align="left" :col="col" hoverClass="none">
 								<block v-for="(images, subIndex) in item.expand.images" :key="subIndex"
 									v-if="subIndex<9">
 									<!-- H5 -->
@@ -248,6 +248,7 @@
 				showMenu: false,
 				isLongTap: true,
 				api: null,
+				col:3
 
 			};
 		},
@@ -367,7 +368,7 @@
 					this.$emit('getMenuInfo', data)
 				}
 			},
-			goAticle(index) {
+			goArticle(index) {
 				this.$Router.push({
 					path: '/pages/common/article/article',
 					query: {

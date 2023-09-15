@@ -41,7 +41,7 @@
 					<text class="">全站热搜</text>
 				</view>
 				<view class="tn-flex tn-flex-col-center tn-flex-wrap">
-				  <block v-for="(name,index) in list" :key="index">
+				  <block v-for="(name,index) in hotSearchList" :key="index">
 				    <view v-if="typeof name == 'string' && name.length >= 4" 
 				      class="tn-bg-gray--light tn-radius tn-padding-left-xs tn-padding-right-xs">
 				      <text class="tn-text-md">{{name}}</text>

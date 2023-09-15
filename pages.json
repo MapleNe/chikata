@@ -97,16 +97,6 @@
 			}
 
 		}, {
-			"path": "pages/user/createCollect",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			},
-			"meta": {
-				"login": true
-			}
-
-		}, {
 			"path": "pages/common/userProfile/userProfile",
 			"style": {
 				"navigationBarTitleText": "",
@@ -143,7 +133,7 @@
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			},
-			"name":"searchTag"
+			"name": "searchTag"
 
 		}, {
 			"path": "pages/user/userFans/userFans",
@@ -250,8 +240,68 @@
 				"enablePullDownRefresh": false
 			}
 
+		}, {
+			"path": "pages/user/collect/create",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			},
+			"meta": {
+				"login": true
+			},
+			"name":"collectCreate"
+
 		}
 	],
+	"subPackages": [{
+		"root": "pagesA",
+		"pages": [{
+                    "path" : "categories/categories",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+                ,{
+                    "path" : "active/active",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+                ,{
+                    "path" : "history/history",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+                ,{
+                    "path" : "shop/shop",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+                ,{
+                    "path" : "shop/detail",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
+	}],
 	"tabBar": {
 		"backgroundColor": "#ffffff",
 		"color": "#949494",

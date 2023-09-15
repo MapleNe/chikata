@@ -1,7 +1,7 @@
 <template>
 	<z-paging-swiper>
 		<template #top>
-			<tn-nav-bar backTitle="">关注</tn-nav-bar>
+			<tn-nav-bar backTitle="">粉丝</tn-nav-bar>
 			<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 		</template>
 		<swiper style="height: 100%;">

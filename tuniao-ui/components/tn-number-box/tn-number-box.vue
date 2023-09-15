@@ -358,7 +358,7 @@
     
     &__btn {
       &__plus,&__minus {
-        width: 60rpx;
+        padding: 8rpx;
         display: flex;
         flex-direction: row;
         justify-content: center;
@@ -367,11 +367,11 @@
       }
       
       &__plus {
-        border-radius: 0 8rpx 8rpx 0;
+        border-radius: 10rpx;
       }
       
       &__minus {
-        border-radius: 8rpx 0 0 8rpx;
+        border-radius: 10rpx;
       }
       
       &--disabled {
@@ -388,13 +388,12 @@
       position: relative;
       text-align: center;
       box-sizing: border-box;
-      padding: 0 4rpx;
       margin: 0 6rpx;
-      background-color: $tn-font-holder-color;
+      // background-color: $tn-font-holder-color;
       
       &--disabled {
         color: $tn-font-sub-color !important;
-        background: $tn-font-holder-color !important;
+        background: rgba(0, 0, 0, 0) !important;
       }
     }
   }
