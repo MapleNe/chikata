@@ -565,13 +565,34 @@
 				}).then(res => {
 					if (res.data.code == 200) {
 						this.article = res.data.data
+						this.setHistory(res)
 						this.commentDisAllow = res.data.data.opt.comments.allow
 						if (!res.data.data.opt.comments.allow) this.commentBoxText = '作者关闭了评论...';
 					}
-
-				}).catch(err => {
-
 				})
+			},
+			setHistory(res) {
+				let history = uni.getStorageSync('history');
+
+				// 检查是否成功获取到历史数据
+				if (!history) {
+					history = [];
+				}
+
+				// 检查是否已存在相同的数据
+				const existingDataIndex = history.findIndex(item => item.id === res.data.data.id);
+
+				if (existingDataIndex !== -1) {
+					// 如果已存在相同的数据，更新它
+					history[existingDataIndex] = res.data.data;
+					// 将已存在的数据移动到数组的第一位
+					history.unshift(history.splice(existingDataIndex, 1)[0]);
+				} else {
+					// 否则，添加新数据并放到数组的第一位
+					history.unshift(res.data.data);
+				}
+
+				uni.setStorageSync('history', history);
 			},
 			getComment(page, num) {
 				this.$http.get('/comments/article', {

@@ -104,7 +104,7 @@
 				</tn-grid>
 			</view>
 			<view class="tn-padding-xs tn-bg-gray--light"></view>
-			<tn-list-cell :arrow="true">
+			<tn-list-cell :arrow="true" @click="goActive()">
 				<view class="tn-flex tn-flex-col-center">
 					<text class="tn-icon-gift tn-text-xxl"></text>
 					<text class="tn-margin-left-sm">活动</text>
@@ -219,7 +219,13 @@
 				this.swiperIndex = event.detail.current
 				this.tabsIndex = event.detail.current
 			},
-			//前往登录
+			// 前往活动
+			goActive() {
+				this.$Router.push({
+					path: '/pagesA/active/active'
+				})
+			},
+			// 前往登录
 			goLogin() {
 				console.log('点击了登录')
 				this.$Router.push({
@@ -300,6 +306,11 @@
 					path: '/pages/user/favorite/favorite'
 				})
 			},
+			goHistory() {
+				this.$Router.push({
+					path: '/pagesA/history/history'
+				})
+			},
 			goPage(item) {
 				switch (item.page) {
 					case 'profile':
@@ -320,6 +331,9 @@
 						break;
 					case 'collect':
 						this.goCollect()
+						break;
+					case 'history':
+						this.goHistory()
 						break;
 
 					default:

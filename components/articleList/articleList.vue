@@ -58,7 +58,7 @@
 							</tn-button>
 						</view> -->
 					</view>
-					<view @tap="goAticle(index)">
+					<view @tap="goArticle(index)">
 						<view class="tn-margin-top">
 							<text class="tn-text-title">{{item.title}}</text>
 						</view>
@@ -367,7 +367,7 @@
 					this.$emit('getMenuInfo', data)
 				}
 			},
-			goAticle(index) {
+			goArticle(index) {
 				this.$Router.push({
 					path: '/pages/common/article/article',
 					query: {
