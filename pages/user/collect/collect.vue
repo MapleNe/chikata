@@ -53,14 +53,22 @@
 			uni.$on('delCollect', data => {
 				this.$refs.paging.reload()
 			})
+			uni.$on('updateCollect', data => {
+				this.$refs.paging.reload()
+			})
 		},
 		onUnload() {
+			uni.$off('updateCollect')
 			uni.$off('delCollect')
 		},
 		methods: {
 			getCollect(page, num) {
-				this.$http.get('/collections/Find', {}).then(res => {
-					console.log(res)
+				this.$http.get('/collections/Find', {
+					params: {
+						page: page,
+						limit: num,
+					}
+				}).then(res => {
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data)
 					}
