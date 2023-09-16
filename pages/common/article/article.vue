@@ -580,13 +580,13 @@
 				}
 
 				// 检查是否已存在相同的数据
-				const existingDataIndex = history.findIndex(item => item.id === res.data.data.id);
+				const index = history.findIndex(item => item.id === res.data.data.id);
 
-				if (existingDataIndex !== -1) {
+				if (index !== -1) {
 					// 如果已存在相同的数据，更新它
-					history[existingDataIndex] = res.data.data;
+					history[index] = res.data.data;
 					// 将已存在的数据移动到数组的第一位
-					history.unshift(history.splice(existingDataIndex, 1)[0]);
+					history.unshift(history.splice(index, 1)[0]);
 				} else {
 					// 否则，添加新数据并放到数组的第一位
 					history.unshift(res.data.data);

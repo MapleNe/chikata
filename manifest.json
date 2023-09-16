@@ -2,8 +2,8 @@
     "name" : "泛二",
     "appid" : "__UNI__EE93837",
     "description" : "泛二",
-    "versionName" : "1.0.2",
-    "versionCode" : 2,
+    "versionName" : "1.0.3",
+    "versionCode" : 3,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
@@ -135,7 +135,9 @@
             "urlCheck" : false
         },
         "usingComponents" : true,
-		"optimization":{"subPackages":true}
+        "optimization" : {
+            "subPackages" : true
+        }
     },
     "mp-alipay" : {
         "usingComponents" : true

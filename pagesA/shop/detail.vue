@@ -68,8 +68,8 @@
 						<view class="tn-flex tn-flex-col-center">
 							<text class="tn-text-md">{{good.shop.name}}</text>
 							<view class="tn-bg-yellow--light tn-color-orangeyellow tn-margin-left"
-								style="padding: 2rpx 4rpx;" v-if="good.shop.offical">
-								<text class="tn-text-xs">官方</text>
+								v-if="good.shop.offical">
+								<text class="tn-text-xs" style="padding: 2rpx 4rpx;">官方</text>
 							</view>
 						</view>
 						<text class="tn-text-sm tn-color-gray--dark">{{good.shop.goods}}件商品在售</text>
@@ -107,10 +107,11 @@
 		<view style="position: fixed;bottom: 0;width: 100%;" class="tn-bg-white tn-border-solid-top">
 			<view class="tn-margin-sm tn-margin-left tn-margin-right">
 				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-					<view class="tn-flex tn-flex-col-center tn-text-xxl tn-flex-row-between">
+					<view class="tn-flex tn-flex-col-center tn-text-xxl tn-flex-row-between tn-margin-right">
 						<text class="tn-icon-shop"></text>
 						<text class="tn-margin-left tn-icon-service-simple"></text>
-						<text class="tn-margin-left tn-margin-right tn-icon-cart"></text>
+						<text class="tn-margin-left tn-margin-right tn-icon-cart"
+							@tap.stop.prevent="showCart = true"></text>
 					</view>
 					<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-flex-1">
 						<tn-button backgroundColor="#29b7cb4c" shape="round" size="lg" width="100%" fontColor="#29b7cb">
@@ -157,10 +158,12 @@
 					<text>规格</text>
 					<view
 						class="tn-flex tn-flex-col-center tn-flex-wrap tn-margin-top tn-border-solid-bottom tn-border-gray--light">
-						<block v-for="(item,index) in good.size" :key="index">
+						<block v-for="(item,index) in good.specifications" :key="index">
 							<view
-								class="tn-text-md tn-margin-bottom tn-bg-gray--light tn-padding-sm tn-padding-top-xs tn-padding-bottom-xs"
-								style="border-radius: 20rpx;">
+								class="tn-text-md tn-margin-bottom tn-padding-sm tn-padding-top-xs tn-margin-right-sm tn-padding-bottom-xs"
+								:class="selectedGood.id == item.id?'tn-border-solid ch-color-primary':'tn-bg-gray--light'"
+								:style="{'borderColor':'#29b7cb'}" style="border-radius: 20rpx;"
+								@tap.stop.prevent="selectGood(item)">
 								<text>{{item.name}}</text>
 							</view>
 						</block>
@@ -178,7 +181,8 @@
 				<!-- 购买加入控件 -->
 				<view class="tn-margin-top-xl tn-padding-top-xl">
 					<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-						<tn-button backgroundColor="#29b7cb4c" shape="round" size="lg" width="100%" fontColor="#29b7cb">
+						<tn-button backgroundColor="#29b7cb4c" shape="round" size="lg" width="100%" fontColor="#29b7cb"
+							@click="cartAdd(selectedGood)">
 							<view class="tn-padding-left tn-padding-right">
 								<text class="tn-text-md">加入购物车</text>
 							</view>
@@ -194,6 +198,43 @@
 				</view>
 			</view>
 		</tn-popup>
+		<!-- 购物车弹窗 -->
+		<tn-popup v-model="showCart" mode="bottom" :borderRadius="20" length="60%" backgroundColor="#f8f8f8">
+			<scroll-view scroll-y style="height: 100rpx;" class="tn-bg-white">
+				<view class="tn-margin">
+					<view class="tn-flex tn-flex-row-between">
+						<text>购物车</text>
+						<text class="tn-icon-close tn-text-xxl" @tap.stop.prevent="showCart = false"></text>
+					</view>
+				</view>
+			</scroll-view>
+			<view v-if="!shopCartItem"
+				class="tn-margin-top-xl tn-padding-top-xl tn-text-center tn-color-gray--dark tn-text-md">
+				<text>干净整洁，去挑选喜欢的吧~</text>
+			</view>
+			<tn-swipe-action v-if="shopCartItem&&shopCartItem.specifications">
+				<tn-swipe-action-item class="tn-text-md tn-margin tn-bg-white" style="border-radius: 10rpx;"
+					:options="options" v-for="(item,index) in shopCartItem.specifications" :key="item.id" :name="index"
+					@click="menuBtn">
+					<view class="tn-flex tn-padding-sm">
+						<view class="tn-margin-right-sm ">
+							<image :src="item.image" mode="aspectFill"
+								style="height: 150rpx; width: 150rpx;border-radius: 10rpx;">
+							</image>
+						</view>
+						<view class="tn-flex tn-flex-direction-column tn-flex-row-between"
+							style="white-space: nowrap;overflow: hidden;">
+							<text class="tn-text-bold tn-text-ellipsis">规格：{{item.name}}</text>
+							<text>数量：{{item.quantity}}</text>
+							<view class="tn-flex tn-flex-col-bottom">
+								<text class="tn-text-sm">￥</text>
+								<text class="tn-text-xl">{{item.price}}</text>
+							</view>
+						</view>
+					</view>
+				</tn-swipe-action-item>
+			</tn-swipe-action>
+		</tn-popup>
 	</view>
 </template>
 
@@ -204,15 +245,32 @@
 				swiperList: [{
 					src: 'http://img-qn.51miz.com/preview/element/00/01/29/78/E-1297822-3991F801.jpg!/quality/90/unsharp/true/compress/true/fwfh/800x800'
 				}],
+				options: [{
+					text: '删除',
+					icon: 'delete',
+					style: {
+						backgroundColor: 'red',
+						flexDirection: 'column',
+					}
+				}],
 				good: {
 					title: '七彩杯子',
 					price: 50,
 					specifications: [{
-						name: '七彩杯子',
-						image: 'http://img-qn.51miz.com/preview/element/00/01/29/78/E-1297822-3991F801.jpg!/quality/90/unsharp/true/compress/true/fwfh/800x800',
-						price: 50,
-						num: 1145,
-					}],
+							id: 1,
+							name: '七彩杯子',
+							image: 'http://img-qn.51miz.com/preview/element/00/01/29/78/E-1297822-3991F801.jpg!/quality/90/unsharp/true/compress/true/fwfh/800x800',
+							price: 50,
+							num: 1145,
+						},
+						{
+							id: 2,
+							name: '五彩杯子',
+							image: 'http://img-qn.51miz.com/preview/element/00/01/29/78/E-1297822-3991F801.jpg!/quality/90/unsharp/true/compress/true/fwfh/800x800',
+							price: 50,
+							num: 1145,
+						}
+					],
 					shop: {
 						id: 1,
 						name: '七彩万事屋',
@@ -241,9 +299,12 @@
 						create_time: '2023-09-15',
 					}]
 				},
+				selectedGood: null,
 				showSize: false,
+				showCart: false,
 				buyNum: 1,
 				col: 3,
+				shopCartItem: {},
 			};
 		},
 		computed: {
@@ -251,7 +312,122 @@
 				return 100 / this.col + '%'
 			}
 		},
+		onLoad() {
+			// 初始化选择商品
+			this.selectedGood = this.good.specifications[0]
+		},
+		onReady() {
+			// 初始化该店铺下的购物车信息
+			this.getShopCart()
+		},
 		methods: {
+			menuBtn(obj) {
+				let cart = uni.getStorageSync('cart');
+				// 判断购物车是否为空
+				if (!cart) {
+					return; // 如果购物车为空，不执行任何操作
+				}
+
+				// 查找与指定店铺ID匹配的购物车项
+				const shopIndex = cart.findIndex(item => item.shopId === this.good.shop.id);
+
+				if (shopIndex !== -1) {
+					// 找到匹配的店铺购物车项
+					const shopItem = cart[shopIndex];
+
+					// 查找与规格名称匹配的购物车规格项
+					const specIndex = shopItem.specifications.findIndex(spec => spec.id === this.shopCartItem
+						.specifications[obj.name].id);
+
+					if (specIndex !== -1) {
+						// 找到匹配的规格项，将其从购物车中删除
+						shopItem.specifications.splice(specIndex, 1);
+
+						// 如果规格项为空，将整个店铺项从购物车中删除
+						if (shopItem.specifications.length === 0) {
+							cart.splice(shopIndex, 1);
+						}
+
+						// 更新购物车数据
+						uni.setStorageSync('cart', cart);
+						this.getShopCart()
+					}
+				}
+				// this.shopCartItem.specifications.splice(item.name, 1)
+
+			},
+			selectGood(item) {
+				if (this.selectedGood.id == item.id) return;
+				this.selectedGood = item
+				this.buyNum = 1
+			},
+			getShopCart() {
+				let cart = uni.getStorageSync('cart')
+				if (!cart) cart = []; //为空时重置为数组
+				if (cart || this.good.shop.id) {
+					const shopCartItem = cart.find(item => item.shopId == this.good.shop.id)
+					this.shopCartItem = shopCartItem //赋值
+				}
+			},
+			cartAdd(good) {
+				console.log(good)
+				let cart = uni.getStorageSync('cart');
+
+				// 判断购物车是否为空，如果为空则初始化为一个空数组
+				if (!cart) {
+					cart = [];
+				}
+				// 检查购物车中是否已存在与商品店铺ID和商品规格名称一致的商品
+				const existingShopIndex = cart.findIndex(item =>
+					item.shopId === this.good.shop.id
+				);
+
+				if (existingShopIndex !== -1) {
+					// 如果已存在相同店铺，继续检查规格是否存在
+					const existingSpecIndex = cart[existingShopIndex].specifications.findIndex(spec =>
+						spec.id === this.selectedGood.id
+					);
+
+					if (existingSpecIndex !== -1) {
+						// 如果已存在相同规格，增加商品数量
+						cart[existingShopIndex].specifications[existingSpecIndex].quantity += this.buyNum;
+					} else {
+						// 如果不存在相同规格，将新规格添加到该店铺下
+						cart[existingShopIndex].specifications.push({
+							id: good.id,
+							name: good.name,
+							image: good.image,
+							price: good.price,
+							quantity: this.buyNum // 获取数量
+						});
+					}
+				} else {
+					// 如果不存在相同店铺，将新店铺和规格添加到购物车
+					const newCartItem = {
+						shopId: this.good.shop.id, // return中定义的参数
+						shopName: this.good.shop.name, // return中定义的参数
+						shopHeadImg: this.good.shop.head_img, // return中定义的参数
+						specifications: [{
+							id: good.id,
+							name: good.name, // 方法传参
+							image: good.image, // 方法传参
+							price: good.price, // 方法传参
+							quantity: this.buyNum // Initially setting quantity to 1
+						}]
+					};
+					cart.push(newCartItem);
+				}
+				// 将更新后的购物车存储回本地存储
+				uni.setStorageSync('cart', cart);
+				this.getShopCart()
+				// 提示并关闭弹窗
+				this.showSize = false
+				uni.showToast({
+					icon: 'none',
+					title: '添加购物车成功！'
+				})
+
+			},
 			previewImage(images, index) {
 				let data = [];
 				for (let i = 0; i < images.length; i++) {

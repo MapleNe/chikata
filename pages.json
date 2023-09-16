@@ -300,6 +300,15 @@
                 }
                 
                 }
+                ,{
+                    "path" : "shop/cart",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
             ]
 	}],
 	"tabBar": {
