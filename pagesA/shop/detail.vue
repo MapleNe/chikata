@@ -323,10 +323,11 @@
 		},
 		methods: {
 			goOrder() {
+				
 				this.$Router.push({
 					path: '/pagesA/shop/order',
 					query: {
-						goods:encodeURIComponent(JSON.stringify(footerData))
+						goods:encodeURIComponent(JSON.stringify())
 					}
 				})
 			},
