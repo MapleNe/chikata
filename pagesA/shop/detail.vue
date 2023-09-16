@@ -19,13 +19,13 @@
 		<view class="tn-padding-xs tn-bg-gray--light"></view>
 		<view class="tn-margin">
 			<tn-list-cell :arrow="true" unlined padding="0rpx" @click="showSize = true">
-				<text>商品评价</text>
+				<text class="tn-text-lg">商品评价</text>
 				<text class="tn-margin-left-sm tn-color-gray--dark">{{good.reviews.length}}</text>
 			</tn-list-cell>
 			<view class="tn-margin-top">
 				<block v-for="(item,index) in good.reviews" :key="index">
 					<view class="tn-flex tn-flex-col-center">
-						<tn-avatar :src="item.expand.author.head_img"></tn-avatar>
+						<tn-avatar :src="item.expand.author.head_img" border></tn-avatar>
 						<text class="tn-margin-left-sm tn-text-sm">{{item.expand.author.nickname}}</text>
 					</view>
 					<view class="tn-margin-top-xs tn-margin-bottom-xs">
@@ -63,7 +63,7 @@
 		<view class="tn-margin">
 			<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 				<view class="tn-flex tn-flex-col-center">
-					<tn-avatar :src="good.shop.head_img"></tn-avatar>
+					<tn-avatar :src="good.shop.head_img" border></tn-avatar>
 					<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
 						<view class="tn-flex tn-flex-col-center">
 							<text class="tn-text-md">{{good.shop.name}}</text>
@@ -114,17 +114,15 @@
 							@tap.stop.prevent="showCart = true"></text>
 					</view>
 					<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-flex-1">
-						<tn-button backgroundColor="#29b7cb4c" shape="round" size="lg" width="100%" fontColor="#29b7cb">
-							<view class="">
-								<text class="tn-text-md">加入购物车</text>
-							</view>
+						<tn-button backgroundColor="#29b7cb4c" shape="round" size="lg" width="100%" fontColor="#29b7cb"
+							@click="showSize = true;is_cart= true">
+							<text class="tn-text-md">加入购物车</text>
 						</tn-button>
 						<!-- 间隔 -->
 						<view class="tn-margin-left-xs tn-margin-right-xs"></view>
-						<tn-button backgroundColor="#29b7cb" shape="round" size="lg" width="100%" fontColor="white">
-							<view class=" ">
-								<text class="tn-text-md">立即购买</text>
-							</view>
+						<tn-button backgroundColor="#29b7cb" shape="round" size="lg" width="100%" fontColor="white"
+							@click="showSize = true;is_buy= true">
+							<text class="tn-text-md">立即购买</text>
 						</tn-button>
 					</view>
 				</view>
@@ -132,7 +130,7 @@
 
 		</view>
 		<!-- 规格选择弹窗 -->
-		<tn-popup v-model="showSize" mode="bottom" :borderRadius="20">
+		<tn-popup v-model="showSize" mode="bottom" :borderRadius="20" @close="is_buy = false;is_cart = false">
 			<view class="tn-margin">
 				<view style="position: absolute;right: 0;" class="tn-margin-right" @tap.stop.prevent="showSize = false">
 					<text class="tn-icon-close tn-text-xxl"></text>
@@ -182,14 +180,15 @@
 				<view class="tn-margin-top-xl tn-padding-top-xl">
 					<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 						<tn-button backgroundColor="#29b7cb4c" shape="round" size="lg" width="100%" fontColor="#29b7cb"
-							@click="cartAdd(selectedGood)">
+							@click="cartAdd(selectedGood)" v-if="!is_buy">
 							<view class="tn-padding-left tn-padding-right">
 								<text class="tn-text-md">加入购物车</text>
 							</view>
 						</tn-button>
 						<!-- 间隔 -->
-						<view class="tn-margin-left-xs tn-margin-right-xs"></view>
-						<tn-button backgroundColor="#29b7cb" shape="round" size="lg" width="100%" fontColor="white">
+						<view class="tn-margin-left-xs tn-margin-right-xs" v-if="!is_buy&&!is_cart"></view>
+						<tn-button backgroundColor="#29b7cb" shape="round" size="lg" width="100%" fontColor="white"
+							v-if="!is_cart" @click="goOrder()">
 							<view class="tn-padding-left tn-padding-right">
 								<text class="tn-text-md">立即购买</text>
 							</view>
@@ -305,6 +304,8 @@
 				buyNum: 1,
 				col: 3,
 				shopCartItem: {},
+				is_cart: false, // 用与展示单个按钮
+				is_buy: false, // 用与展示单个按钮
 			};
 		},
 		computed: {
@@ -321,6 +322,14 @@
 			this.getShopCart()
 		},
 		methods: {
+			goOrder() {
+				this.$Router.push({
+					path: '/pagesA/shop/order',
+					query: {
+						goods:encodeURIComponent(JSON.stringify(footerData))
+					}
+				})
+			},
 			menuBtn(obj) {
 				let cart = uni.getStorageSync('cart');
 				// 判断购物车是否为空

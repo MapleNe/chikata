@@ -309,6 +309,15 @@
                 }
                 
                 }
+                ,{
+                    "path" : "shop/order",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
             ]
 	}],
 	"tabBar": {
