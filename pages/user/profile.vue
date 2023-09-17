@@ -219,7 +219,7 @@
 			upload() {
 				const filePath = this.$isBase64(this.head_img) ? this.head_img : 'file://' + plus.io
 					.convertLocalFileSystemURL(this.head_img)
-				this.$http.upload('/file/upload', {
+				this.$http.upload('/file/uploadImg', {
 					filePath: filePath,
 					name: 'file'
 				}).then(res => {

@@ -3,7 +3,8 @@
 		<swiper class="swiper" :current="swiperIndex" @animationfinish="swiperAnimationfinish">
 			<swiper-item>
 				<z-paging ref="paging" @query="getComment" v-model="comments" :safe-area-inset-bottom="true"
-					:auto-scroll-to-top-when-reload="false" :auto-clean-list-when-reload="false" @scroll="onScroll">
+					:auto-scroll-to-top-when-reload="false" :auto-clean-list-when-reload="false" @scroll="onScroll"
+					@onRefresh="onRefresh()">
 					<template #top>
 						<tn-nav-bar :zIndex="5" backTitle="">
 							<text v-show="!navAuthor"
@@ -147,7 +148,37 @@
 									style="overflow: hidden;word-wrap: break-word" @tap="subReply(item)">
 									<!-- {{item.content}} -->
 									<mp-html :content="item.content"></mp-html>
+									<view v-if="item.images.length>0">
+										<tn-grid align=" left" :col="col" hoverClass="none">
+											<block v-for="(images, subIndex) in item.images" :key="subIndex"
+												v-if="subIndex<9">
+												<!-- H5 -->
+												<!-- #ifndef MP-WEIXIN -->
+												<tn-grid-item
+													style="height: 180rpx;width: 180rpx;margin-right: 6rpx;margin-bottom: 6rpx">
+													<image :src="images" mode="aspectFill"
+														style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
+														@tap.stop="previewImage(item.images,subIndex)">
+													</image>
+												</tn-grid-item>
+												<!-- #endif-->
+
+												<!-- 微信小程序 -->
+												<!-- #ifdef MP-WEIXIN -->
+												<tn-grid-item :style="{width: gridItemWidth,height:gridItemWidth}"
+													style="margin-right: 6rpx;margin-bottom: 6rpx">
+													<image :src="images.src" mode="aspectFill"
+														style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
+														@tap.stop="previewImage(item.images,subIndex)">
+													</image>
+												</tn-grid-item>
+												<!-- #endif-->
+											</block>
+										</tn-grid>
+									</view>
 								</view>
+
+
 								<!-- 子评论 -->
 								<view class="tn-margin">
 									<view class="tn-margin-left-xl tn-padding-sm tn-bg-gray--light ch-radius"
@@ -232,6 +263,21 @@
 								blockRepeatClick @click="commentCheck">发送~</tn-button>
 						</view>
 					</view>
+					<!-- 图片 -->
+					<scroll-view scroll-x="true" style="height: 200rpx;"
+						class="tn-padding tn-padding-top-xs tn-no-padding-bottom" v-if="images.length">
+						<view class="tn-flex">
+							<block v-for="(item,index) in images" :key="index">
+								<view style="height: 140rpx;width: 140rpx;position: relative;"
+									class="tn-margin-right-xs">
+									<image :src="item" style="height: 140rpx;width: 140rpx;" mode="aspectFill"></image>
+									<text style="position: absolute;top: 0;z-index: 10;right: 0;"
+										class="tn-icon-close-circle tn-color-white"
+										@tap.stop.prevent="deleteImage(index)"></text>
+								</view>
+							</block>
+						</view>
+					</scroll-view>
 					<view v-show="showEmoji">
 						<v-tabs v-model="emojiIndex" :tabs="emojiTabs" @change="changeTab" lineHeight="8rpx"
 							lineColor="#29b7cb" activeColor="#29b7cb" :lineScale="0.2"></v-tabs>
@@ -327,6 +373,32 @@
 		@tap="subReply(subCommentAuthor)">
 		<!-- {{item.content}} -->
 		<mp-html :content="subCommentAuthor.content"></mp-html>
+		<view v-if="subCommentAuthor.images.length>0">
+			<tn-grid align=" left" :col="col" hoverClass="none">
+				<block v-for="(images, subIndex) in subCommentAuthor.images" :key="subIndex" v-if="subIndex<9">
+					<!-- H5 -->
+					<!-- #ifndef MP-WEIXIN -->
+					<tn-grid-item style="height: 180rpx;width: 180rpx;margin-right: 6rpx;margin-bottom: 6rpx">
+						<image :src="images" mode="aspectFill"
+							style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
+							@tap.stop="previewImage(subCommentAuthor.images,subIndex)">
+						</image>
+					</tn-grid-item>
+					<!-- #endif-->
+
+					<!-- 微信小程序 -->
+					<!-- #ifdef MP-WEIXIN -->
+					<tn-grid-item :style="{width: gridItemWidth,height:gridItemWidth}"
+						style="margin-right: 6rpx;margin-bottom: 6rpx">
+						<image :src="images.src" mode="aspectFill"
+							style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
+							@tap.stop="previewImage(subCommentAuthor.images,subIndex)">
+						</image>
+					</tn-grid-item>
+					<!-- #endif-->
+				</block>
+			</tn-grid>
+		</view>
 	</view>
 </view>
 <view class="tn-padding-xs tn-bg-gray--light"></view>
@@ -352,6 +424,32 @@
 					v-if="item.pid != subCommentAuthor.id">{{item.expand.pid.nickname}}</text>
 				<text v-if="item.pid != subCommentAuthor.id">：</text>
 				<mp-html container-style="display:inline;white-space:nomarl;" :content="item.content"></mp-html>
+			</view>
+			<view v-if="item.images.length>0">
+				<tn-grid align=" left" :col="col" hoverClass="none">
+					<block v-for="(images, subIndex) in item.images" :key="subIndex" v-if="subIndex<9">
+						<!-- H5 -->
+						<!-- #ifndef MP-WEIXIN -->
+						<tn-grid-item style="height: 180rpx;width: 180rpx;margin-right: 6rpx;margin-bottom: 6rpx">
+							<image :src="images" mode="aspectFill"
+								style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
+								@tap.stop="previewImage(item.images,subIndex)">
+							</image>
+						</tn-grid-item>
+						<!-- #endif-->
+
+						<!-- 微信小程序 -->
+						<!-- #ifdef MP-WEIXIN -->
+						<tn-grid-item :style="{width: gridItemWidth,height:gridItemWidth}"
+							style="margin-right: 6rpx;margin-bottom: 6rpx">
+							<image :src="images.src" mode="aspectFill"
+								style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
+								@tap.stop="previewImage(item.images,subIndex)">
+							</image>
+						</tn-grid-item>
+						<!-- #endif-->
+					</block>
+				</tn-grid>
 			</view>
 		</view>
 	</view>
@@ -402,6 +500,7 @@
 		data() {
 			return {
 				tabs: ['全部评论', '只看楼主'],
+				col: 3,
 				tabsIndex: 0,
 				swiperIndex: 0,
 				commentBoxText: '我想说...', //底部盒子显示的信息
@@ -507,6 +606,7 @@
 				authorComments: [],
 				commentAllow: true,
 				imgMenu: true,
+				images: [],
 				showAt: false,
 				subId: null,
 				subComment: [],
@@ -554,7 +654,11 @@
 			}
 		},
 		created() {},
-		computed: {},
+		computed: {
+			gridItemWidth() {
+				return (100 / this.col - 2) + '%'
+			},
+		},
 		methods: {
 			getArticle() {
 				this.$http.get('/article/one', {
@@ -603,6 +707,7 @@
 						tree: false
 					}
 				}).then(res => {
+					console.log(res)
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.data)
 						setTimeout(() => {
@@ -676,9 +781,9 @@
 			},
 			commentAction() {
 				if (store.state.hasLogin && uni.getStorageSync('token')) {
-					this.commentBoxOpen = true,
-						this.commentBoxText = '我想说...',
-						this.pid = 0
+					this.commentBoxOpen = true
+					this.commentBoxText = '我想说...'
+					this.pid = 0
 				} else {
 					this.$Router.push({
 						path: '/pages/user/login',
@@ -710,7 +815,7 @@
 				}
 			},
 			commentCheck() {
-				if (this.commentText === '') {
+				if (this.commentText == ''&&!this.images) {
 					uni.showToast({
 						icon: 'none',
 						title: '不说点什么？'
@@ -721,9 +826,12 @@
 				}
 			},
 			commentSend() {
+				// 将数组改为字符串
+				const images = this.images.join(',')
 				this.$http.post('/comments/add', {
 					article_id: this.article.id,
 					content: this.renderEmoji(this.commentText),
+					images: images,
 					pid: this.pid,
 				}).then(res => {
 					console.log(res)
@@ -749,6 +857,10 @@
 						title: err.data.msg
 					})
 				})
+			},
+			onRefresh() {
+				// 刷新文章
+				this.getArticle()
 			},
 			likeAction(index) {
 				this.$http.put('/Article-like/Record', {
@@ -944,19 +1056,49 @@
 			},
 			imageChoose() {
 				uni.chooseImage({
-					count: 1,
+					count: 9,
 					success: (res) => {
-						console.log(res)
+						console.log(res.tempFilePaths)
+						this.imageUpload(res.tempFilePaths)
 					}
 				})
-			}
+			},
+			async imageUpload(images) {
+				try {
+					for (const image of images) {
+						const res = await this.$http.upload('/file/uploadImg', {
+							filePath: image,
+							name: 'file'
+						});
+						// 在这里可以处理上传成功的逻辑
+						if (res.data.code === 200) {
+							this.images.push(res.data.data)
+							// 上传成功推入
+						}
+
+					}
+				} catch (error) {
+					console.error(error);
+					// 在这里可以处理上传失败后的逻辑
+				}
+			},
+			deleteImage(index) {
+				console.log(index);
+				this.images.splice(index, 1);
+			},
+			previewImage(images, index) {
+				uni.previewImage({
+					current: index,
+					urls: images,
+				});
+			},
 		}
 	}
 </script>
 
 <style lang="scss">
 	page {
-		height: auto;
+		height: 100%;
 	}
 
 	.swiper {
