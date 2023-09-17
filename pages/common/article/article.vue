@@ -815,15 +815,16 @@
 				}
 			},
 			commentCheck() {
-				if (this.commentText == ''&&!this.images) {
+				if (this.commentText == '' && this.images) {
+					this.commentText = '【图片】'
+				} else if (this.commentText == '' && !this.images) {
 					uni.showToast({
 						icon: 'none',
-						title: '不说点什么？'
+						title: '再说点呗~'
 					})
 					return
-				} else {
-					this.commentSend()
 				}
+				this.commentSend()
 			},
 			commentSend() {
 				// 将数组改为字符串
@@ -834,10 +835,10 @@
 					images: images,
 					pid: this.pid,
 				}).then(res => {
-					console.log(res)
 					if (res.data.code === 200) {
 						this.commentText = ''
 						this.commentBoxOpen = false
+						this.images = []
 						uni.showToast({
 							icon: 'none',
 							title: '评论' + res.data.msg
