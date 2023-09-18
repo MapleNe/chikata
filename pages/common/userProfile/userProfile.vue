@@ -400,7 +400,11 @@
 	export default {
 		props: {
 			users_id: {
-				type: Number,
+				type: [Number, String],
+				default: 0,
+			},
+			article_id: {
+				type: [Number, String],
 				default: 0,
 			},
 		},
@@ -566,11 +570,15 @@
 			},
 
 			goArticle(item) {
-				console.log(item)
+				if (item.article_id ? item.article_id : item.id == this.article_id) {
+					this.$emit('goArticle', true)
+					return
+				}
+
 				this.$Router.push({
 					path: '/pages/common/article/article',
 					query: {
-						id: item.article_id?item.article_id:item.id,
+						id: item.article_id ? item.article_id : item.id,
 						users_id: item.users_id
 					},
 				})
