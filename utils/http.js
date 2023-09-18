@@ -77,6 +77,7 @@ http.interceptors.request.use((config) => {
 							icon: 'none',
 							title: '登录失效请重新登录'
 						})
+						store.commit('logout')
 						router.push({
 							path: '/pages/user/login',
 						})

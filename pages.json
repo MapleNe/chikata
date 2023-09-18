@@ -252,7 +252,16 @@
 			"name":"collectCreate"
 
 		}
-	],
+	    ,{
+            "path" : "pages/user/setting/account/security",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
 	"subPackages": [{
 		"root": "pagesA",
 		"pages": [{

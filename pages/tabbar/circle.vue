@@ -51,7 +51,7 @@
 							<view>
 								<view v-for="(item, index) in list1" :key="item.id"
 									v-if="item&&item.width&&item.expand.images.length>0"
-									class="tn-margin-bottom-sm tn-padding-bottom-sm" :style="imageStyle(item)"
+									class="tn-margin-bottom-sm tn-padding-bottom-sm"
 									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 20rpx;"
 									@tap.stop.prevent="goArticle(item)">
 									<image :src="item.expand.images[0].src" mode="widthFix"
