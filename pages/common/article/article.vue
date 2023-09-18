@@ -7,8 +7,8 @@
 					@onRefresh="onRefresh()">
 					<template #top>
 						<tn-nav-bar :zIndex="5" backTitle="">
-							<text v-show="!navAuthor"
-								v-if="article.expand.sort&&article.expand.sort.length>0">{{article.expand.sort[0].name}}</text>
+							<text v-show="!navAuthor" v-if="article.expand.sort&&article.expand.sort.length>0"
+								@tap.stop.prevent="goCategory(article.expand.sort[0])">{{article.expand.sort[0].name}}</text>
 							<view class="tn-flex tn-flex-col-center" @tap.stop.prevent="swiperIndex=1"
 								v-show="navAuthor">
 								<tn-avatar :src="article.expand.author.head_img"></tn-avatar>
@@ -469,7 +469,7 @@
 </view>
 </swiper-item>
 <swiper-item v-if="params">
-	<userProfile :users_id="Number(params.users_id)" @edit="is_edit = true"></userProfile>
+	<userProfile :users_id="params.users_id" :article_id="params.id" @edit="is_edit = true" @goArticle="goArticle"></userProfile>
 </swiper-item>
 </swiper>
 <tn-popup mode="center" :borderRadius="20" v-model="showCancelFollow" length="80%">
@@ -1093,6 +1093,11 @@
 					urls: images,
 				});
 			},
+			goArticle(info){
+				if(info){
+					this.swiperIndex = 0
+				}
+			}
 		}
 	}
 </script>
