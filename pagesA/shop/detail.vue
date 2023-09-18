@@ -245,6 +245,7 @@
 					src: 'http://img-qn.51miz.com/preview/element/00/01/29/78/E-1297822-3991F801.jpg!/quality/90/unsharp/true/compress/true/fwfh/800x800'
 				}],
 				options: [{
+					id: 0,
 					text: '删除',
 					icon: 'delete',
 					style: {
@@ -323,15 +324,16 @@
 		},
 		methods: {
 			goOrder() {
-				
+
 				this.$Router.push({
 					path: '/pagesA/shop/order',
 					query: {
-						goods:encodeURIComponent(JSON.stringify())
+						goods: encodeURIComponent(JSON.stringify())
 					}
 				})
 			},
 			menuBtn(obj) {
+
 				let cart = uni.getStorageSync('cart');
 				// 判断购物车是否为空
 				if (!cart) {
@@ -349,7 +351,7 @@
 					const specIndex = shopItem.specifications.findIndex(spec => spec.id === this.shopCartItem
 						.specifications[obj.name].id);
 
-					if (specIndex !== -1) {
+					if (specIndex !== -1 && obj.type == 'button') {
 						// 找到匹配的规格项，将其从购物车中删除
 						shopItem.specifications.splice(specIndex, 1);
 
