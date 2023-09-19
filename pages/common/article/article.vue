@@ -249,7 +249,7 @@
 								class="tn-flex tn-text-sm tn-flex-col-center tn-color-gray--dark tn-flex-basic-sm tn-flex-row-between"
 								style="margin-left: auto;">
 								<view class="tn-flex tn-flex-col-center tn-flex-direction-column"
-									v-if="article.expand.favorites" @tap.stop="favorite()">
+									@tap.stop="favorite()">
 									<text class="tn-text-xxl"
 										:class="article.expand.favorites.is_favorites?'tn-icon-star-fill tn-color-orangered':'tn-icon-star'"></text>
 									<text>{{article.expand.favorites.favorites_count}}</text>
@@ -670,9 +670,11 @@
 						like: {
 
 						},
-						comments: {
-
-						}
+						favorites: {
+							is_favorites: 0,
+							favorites_count: null,
+						},
+						comments: {}
 					}
 				},
 				params: [], //页面传参

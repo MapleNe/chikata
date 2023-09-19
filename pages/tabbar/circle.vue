@@ -24,7 +24,7 @@
 					</view>
 					<view class="tn-margin tn-no-margin-top">
 						<tn-grid align="left" :col="5" hoverClass="none">
-							<block v-for="(item,index) in categoryList" :key="index">
+							<block v-for="(item,index) in categoryList" :key="index" v-if="index<10">
 								<tn-grid-item>
 									<view
 										class="tn-margin-top tn-flex tn-flex-col-center tn-flex-direction-column tn-margin-right"
@@ -35,6 +35,19 @@
 										<text class="tn-text-ellipsis tn-text-md tn-margin-top-sm">{{item.name}}</text>
 									</view>
 								</tn-grid-item>
+								<!-- 微信小程序 -->
+								<!-- #ifdef MP-WEIXIN -->
+								<tn-grid-item :style="{width: gridItemWidth}">
+									<view
+										class="tn-margin-top tn-flex tn-flex-col-center tn-flex-direction-column tn-margin-right"
+										@tap.stop.prevent="goCategory(index)">
+										<image :src="item.opt.head_img" mode="aspectFill"
+											class="tn-border-solid tn-border-gray--light tn-bold-border tn-round"
+											style="width: 100rpx;height: 100rpx;"></image>
+										<text class="tn-text-ellipsis tn-text-md tn-margin-top-sm">{{item.name}}</text>
+									</view>
+								</tn-grid-item>
+								<!-- #endif-->
 
 							</block>
 						</tn-grid>
@@ -153,6 +166,9 @@
 
 		},
 		computed: {
+			gridItemWidth() {
+				return 100 / this.col + '%'
+			},
 			imageStyle(item) {
 				return item => {
 					const v = uni.upx2px(750) - this.leftGap - this.rightGap - this.columnGap;
