@@ -1,5 +1,5 @@
 <template>
-	<z-paging ref="paging" @query="getArticle" use-cache cache-key="indexArticle" v-model="content" :auto="false"
+	<z-paging ref="paging" @query="getArticle" use-cache :cache-key="`indexArticle${tabsIndex}`" v-model="content" :auto="false"
 		:auto-clean-list-when-reload="false" :auto-scroll-to-top-when-reload="false" @onRefresh="onRefresh"
 		@onRestore="onRestore">
 		<view v-show="tabsIndex===0">
