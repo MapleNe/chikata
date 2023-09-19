@@ -1,5 +1,5 @@
 <template>
-	<z-paging ref="paging" @query="getArticle" v-model="content">
+	<z-paging ref="paging" @query="getArticle" v-model="content" use-cache :cache-key="`collectArticle_${id}`" :auto-clean-list-when-reload="false" :auto-scroll-to-top-when-reload="false">
 		<template #top>
 			<tn-nav-bar backTitle="" :zIndex="2">
 				{{name}}
