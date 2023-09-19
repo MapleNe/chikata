@@ -3,7 +3,7 @@
 		<swiper class="swiper" :current="swiperIndex" @animationfinish="swiperAnimationfinish">
 			<swiper-item>
 				<z-paging ref="paging" @query="getComment" v-model="comments" :safe-area-inset-bottom="true"
-					:auto-scroll-to-top-when-reload="false" :auto-clean-list-when-reload="false" @scroll="onScroll"
+					:auto-scroll-to-top-when-reload="false" use-cache :cache-key="`comments_${params.id}`" :auto-clean-list-when-reload="false" @scroll="onScroll"
 					@onRefresh="onRefresh()">
 					<template #top>
 						<tn-nav-bar :zIndex="5" backTitle="">
