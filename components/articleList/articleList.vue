@@ -389,7 +389,8 @@
 				this.$Router.push({
 					path: '/pages/common/article/article',
 					query: {
-						id: this.swiperList[index].opt.article_id
+						id: this.swiperList[index].opt.article_id,
+						users_id:this.swiperList[index].opt.users_id
 					},
 				})
 			},
