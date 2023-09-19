@@ -500,7 +500,6 @@
 						// uni.setStorageSync('userInfo', data.data.user)
 						this.login(data.data.user)
 						uni.$emit('loginComplete', true)
-
 						uni.showToast({
 							icon: 'none',
 							title: data.msg

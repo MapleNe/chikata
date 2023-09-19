@@ -93,6 +93,7 @@
 					head_img: this.avatar,
 					nickname: this.nickname,
 				}).then(res => {
+					console.log(res)
 					if (res.data.code === 200) {
 						//每次更新都需要获取最新用户数据否则无法实时更新
 						this.getUserProfile()
@@ -100,6 +101,8 @@
 							this.$Router.replaceAll('/pages/tabbar/index')
 						}
 					}
+				}).catch(err=>{
+					console.log(res)
 				})
 			},
 			getUserProfile() {
