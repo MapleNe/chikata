@@ -9,8 +9,8 @@
 				<!-- H5 -->
 				<!-- #ifndef MP-WEIXIN -->
 				<tn-grid-item>
-					<view class="tn-flex tn-flex-direction-column tn-flex-col-center tn-color-gray--dark"
-						@tap.stop.prevent="goCategory(index)">
+					<view class="tn-bg-gray--light tn-padding-sm tn-flex tn-flex-direction-column tn-margin-bottom-sm tn-flex-col-center tn-text-ellipsis tn-color-gray--dark"
+						@tap.stop.prevent="goCategory(index)" style="border-radius: 10rpx;white-space: normal;overflow: hidden;">
 						<image :src="item.opt.head_img" mode="aspectFill" style="width: 100rpx;height: 100rpx;"></image>
 						<text class="tn-margin-top-sm tn-text-md">{{item.name}}</text>
 					</view>
@@ -20,7 +20,8 @@
 				<!-- 微信小程序 -->
 				<!-- #ifdef MP-WEIXIN -->
 				<tn-grid-item :style="{width: gridItemWidth}">
-					<view class="tn-flex tn-flex-direction-column tn-flex-col-center tn-color-gray--dark">
+					<view class="tn-bg-gray--light tn-padding-sm tn-flex tn-flex-direction-column tn-margin-bottom-sm tn-flex-col-center tn-text-ellipsis tn-color-gray--dark"
+						@tap.stop.prevent="goCategory(index)" style="border-radius: 10rpx;white-space: normal;overflow: hidden;">
 						<image :src="item.opt.head_img" mode="aspectFill" style="width: 100rpx;height: 100rpx;"></image>
 						<text class="tn-margin-top-sm tn-text-md">{{item.name}}</text>
 					</view>

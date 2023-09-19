@@ -22,19 +22,24 @@
 							<text class="tn-icon-right"></text>
 						</view>
 					</view>
-					<tn-scroll-list indicatorActiveColor="#29b7cb">
-						<view class="tn-margin tn-flex tn-flex-col-center tn-flex-1">
+					<view class="tn-margin tn-no-margin-top">
+						<tn-grid align="left" :col="5" hoverClass="none">
 							<block v-for="(item,index) in categoryList" :key="index">
-								<view class="tn-flex tn-flex-col-center tn-flex-direction-column tn-margin-right"
-									@tap.stop.prevent="goCategory(index)">
-									<image :src="item.opt.head_img" mode="aspectFill"
-										class="tn-border-solid tn-border-gray--light tn-bold-border tn-round"
-										style="width: 100rpx;height: 100rpx;"></image>
-									<text class="tn-text-md tn-margin-top-sm">{{item.name}}</text>
-								</view>
+								<tn-grid-item>
+									<view
+										class="tn-margin-top tn-flex tn-flex-col-center tn-flex-direction-column tn-margin-right"
+										@tap.stop.prevent="goCategory(index)">
+										<image :src="item.opt.head_img" mode="aspectFill"
+											class="tn-border-solid tn-border-gray--light tn-bold-border tn-round"
+											style="width: 100rpx;height: 100rpx;"></image>
+										<text class="tn-text-ellipsis tn-text-md tn-margin-top-sm">{{item.name}}</text>
+									</view>
+								</tn-grid-item>
+
 							</block>
-						</view>
-					</tn-scroll-list>
+						</tn-grid>
+					</view>
+
 					<view class="tn-margin">
 						<tn-swiper :list="swiperList" :height="300" name="img" backgroundColor="tn-bg-gray--light"
 							:radius="10">
