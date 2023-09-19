@@ -59,7 +59,7 @@
 			@animationfinish="swiperAnimationfinish">
 			<swiper-item style="overflow: auto;">
 				<z-paging @query="getAticle" v-model="article" ref="article" :use-page-scroll="swiperAction"
-					:auto-clean-list-when-reload="false" use-cache :cache-key="`article_${id}`" :auto-scroll-to-top-when-reload="false"
+					:auto-clean-list-when-reload="false" use-cache :cache-key="`category_article_${id}`" :auto-scroll-to-top-when-reload="false"
 					:refresher-enabled="false">
 					<block v-for="(item,index) in article" :key="index">
 						<view class="tn-margin">
@@ -210,7 +210,7 @@
 			</swiper-item>
 			<swiper-item style="overflow: auto;">
 				<z-paging @query="getAticle" v-model="articleHot" ref="articleHot" :use-page-scroll="swiperAction"
-					:auto-clean-list-when-reload="false" use-cache :cache-key="`articleHot_${id}`" :auto-scroll-to-top-when-reload="false"
+					:auto-clean-list-when-reload="false" use-cache :cache-key="`category_articleHot_${id}`" :auto-scroll-to-top-when-reload="false"
 					:refresher-enabled="false">
 					<block v-for="(item,index) in articleHot" :key="index">
 						<view class="tn-margin">
@@ -361,7 +361,7 @@
 			</swiper-item>
 			<swiper-item style="overflow: auto;">
 				<z-paging @query="getAticle" v-model="articleNew" ref="articleNew" :use-page-scroll="swiperAction"
-					:auto-clean-list-when-reload="false" use-cache :cache-key="`articleNew_${id}`" :auto-scroll-to-top-when-reload="false"
+					:auto-clean-list-when-reload="false" use-cache :cache-key="`category_articleNew_${id}`" :auto-scroll-to-top-when-reload="false"
 					:refresher-enabled="false">
 					<block v-for="(item,index) in articleNew" :key="index">
 						<view class="tn-margin">
