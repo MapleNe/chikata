@@ -153,7 +153,8 @@
 									class="tn-flex tn-flex-direction-column tn-margin-left-xl tn-padding-bottom-xs tn-border-solid-bottom tn-border-gray--light">
 									<!-- 父评论 -->
 									<view style="overflow: hidden;word-wrap: break-word" @tap="subReply(item)">
-										<mp-html :content="item.content"></mp-html>
+										<mp-html :content="item.content" :img-cache="true"
+											:preview-img="false"></mp-html>
 										<view v-if="item.images.length>0">
 											<tn-grid align=" left" :col="col" hoverClass="none">
 												<block v-for="(images, subIndex) in item.images" :key="subIndex"
@@ -198,7 +199,8 @@
 														style="padding:5rpx 8rpx">楼主</text>
 													<text class="tn-margin-left-xs">：</text>
 													<mp-html container-style="display:inline;white-space:nomarl;"
-														:content="subComment.content" :selectable="true"></mp-html>
+														:content="subComment.content" :img-cache="true"
+														:preview-img="false" :selectable="true"></mp-html>
 												</view>
 											</block>
 											<view
@@ -214,8 +216,8 @@
 									<view class="tn-color-grey--disabled tn-text-sm tn-margin-top-sm">
 										<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 											<text>{{getDateDiff(item.create_time)}}</text>
-											<view
-												class="tn-flex tn-flex-col-center tn-flex-row-between" style="flex-basis: 35%;">
+											<view class="tn-flex tn-flex-col-center tn-flex-row-between"
+												style="flex-basis: 35%;">
 												<view class="tn-flex-col-center">
 													<text class="tn-text-md tn-icon-comment"></text>
 													<text class="tn-margin-left-xs">回复</text>
@@ -424,7 +426,8 @@
 									<view style="overflow: hidden;word-wrap: break-word"
 										@tap="subReply(subCommentAuthor)">
 										<!-- {{item.content}} -->
-										<mp-html :content="subCommentAuthor.content"></mp-html>
+										<mp-html :preview-img="false" :img-cache="true"
+											:content="subCommentAuthor.content"></mp-html>
 										<view v-if="subCommentAuthor.images.length>0">
 											<tn-grid align=" left" :col="col" hoverClass="none">
 												<block v-for="(images, subIndex) in subCommentAuthor.images"
@@ -456,7 +459,8 @@
 									</view>
 									<view
 										class="tn-flex tn-flex-col-center tn-text-md tn-flex-row-between tn-margin-top-sm">
-										<text class="ch-color-primary" @tap.stop.prevent="showComment = false">查看原帖</text>
+										<text class="ch-color-primary"
+											@tap.stop.prevent="showComment = false">查看原帖</text>
 										<view
 											class="tn-flex tn-flex-col-center tn-color-grey--disabled tn-flex-row-between tn-flex-basic-xs">
 											<view class="tn-flex tn-flex-col-center"
@@ -503,7 +507,8 @@
 												v-if="item.pid != subCommentAuthor.id">{{item.expand.pid.nickname}}</text>
 											<text v-if="item.pid != subCommentAuthor.id">：</text>
 											<mp-html container-style="display:inline;white-space:nomarl;"
-												:content="item.content"></mp-html>
+												:content="item.content" :preview-img="false"
+												:img-cache="true"></mp-html>
 										</view>
 										<view v-if="item.images.length>0">
 											<tn-grid align=" left" :col="col" hoverClass="none">
@@ -538,8 +543,8 @@
 										<view class="tn-color-grey--disabled tn-text-sm tn-margin-top-sm">
 											<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 												<text>{{getDateDiff(item.create_time)}}</text>
-												<view
-													class="tn-flex tn-flex-col-center tn-flex-row-between" style="flex-basis: 35%;">
+												<view class="tn-flex tn-flex-col-center tn-flex-row-between"
+													style="flex-basis: 35%;">
 													<view class="tn-flex-col-center">
 														<text class="tn-text-md tn-icon-comment"></text>
 														<text class="tn-margin-left-xs">回复</text>
