@@ -215,7 +215,7 @@
 										<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 											<text>{{getDateDiff(item.create_time)}}</text>
 											<view
-												class="tn-flex tn-flex-col-center tn-flex-row-between tn-flex-basic-xx">
+												class="tn-flex tn-flex-col-center tn-flex-row-between" style="flex-basis: 35%;">
 												<view class="tn-flex-col-center">
 													<text class="tn-text-md tn-icon-comment"></text>
 													<text class="tn-margin-left-xs">回复</text>
@@ -539,7 +539,7 @@
 											<view class="tn-flex tn-flex-col-center tn-flex-row-between">
 												<text>{{getDateDiff(item.create_time)}}</text>
 												<view
-													class="tn-flex tn-flex-col-center tn-flex-row-between tn-flex-basic-xx">
+													class="tn-flex tn-flex-col-center tn-flex-row-between" style="flex-basis: 35%;">
 													<view class="tn-flex-col-center">
 														<text class="tn-text-md tn-icon-comment"></text>
 														<text class="tn-margin-left-xs">回复</text>
