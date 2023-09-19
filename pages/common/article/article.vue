@@ -117,9 +117,16 @@
 					<view class="tn-padding-xs tn-bg-gray--light"></view><!-- 间隔 -->
 					<!-- 文章详情 结束 -->
 					<!-- 评论区 开始 -->
-					<view class="tn-color-grey" style="position: sticky;top: 0;z-index: 9999;">
+					<view
+						class="tn-color-grey--disabled tn-text-md tn-border-solid-bottom tn-border-gray--light tn-flex tn-flex-col-center"
+						style="position: sticky;top: 0;z-index: 9999;">
 						<z-tabs ref="tabs" :current="tabsIndex" active-color="#29b7cb" :scrollCount="1"
 							@change="changeCommentTab" :list="tabs"></z-tabs>
+						<view v-if="!tabsIndex" class="tn-flex tn-flex-col-center tn-margin-right tn-flex-row-between tn-flex-basic-xx">
+							<block v-for="(item,index) in sort" :key="index"">
+								<text :class=" {'tn-color-black': item.active}" @tap.stop.prevent="sortTap(index)">{{item.name}}</text>
+							</block>
+						</view>
 					</view>
 					<view class="tn-margin">
 						<view v-for="(item,index) in comments" :key="index" class="tn-margin-top-sm">
@@ -140,7 +147,8 @@
 								</view>
 							</view>
 							<view class="tn-margin-top tn-margin-left">
-								<view class="tn-flex tn-flex-direction-column tn-margin-left-xl tn-padding-bottom-xs tn-border-solid-bottom tn-border-gray--light">
+								<view
+									class="tn-flex tn-flex-direction-column tn-margin-left-xl tn-padding-bottom-xs tn-border-solid-bottom tn-border-gray--light">
 									<!-- 父评论 -->
 									<view style="overflow: hidden;word-wrap: break-word" @tap="subReply(item)">
 										<mp-html :content="item.content"></mp-html>
@@ -625,6 +633,22 @@
 					'line-sm*3'
 				],
 				showEmoji: false,
+				sort: [{
+						name: '最新',
+						type: 'new',
+						active: true,
+					},
+					{
+						name: '最早',
+						type: 'old',
+						active: false,
+					},
+					// {
+					// 	name: '最新',
+					// 	type: 'new',
+					// 	active: false,
+					// }
+				],
 				emojiTabs: [],
 				emojiIndex: 0,
 				emojiList: [],
@@ -641,6 +665,7 @@
 				is_edit: false,
 				goLogin: false,
 				showCancelFollow: false,
+				sortOrder: null,
 			}
 		},
 		onLoad(params) {
@@ -732,10 +757,11 @@
 						limit: num,
 						page: page,
 						tree: false,
-						users_id: this.tabsIndex ? this.params.users_id : ''
+						order: this.sortOrder,
+						users_id: this.tabsIndex ? this.params.users_id : '',
+						
 					}
 				}).then(res => {
-					console.log(res)
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.data)
 					}
@@ -1098,7 +1124,6 @@
 							this.images.push(res.data.data)
 							// 上传成功推入
 						}
-
 					}
 				} catch (error) {
 					console.error(error);
@@ -1119,6 +1144,20 @@
 				if (info) {
 					this.swiperIndex = 0
 				}
+			},
+			sortTap(index) {
+				this.sort.forEach((item, i) => {
+					item.active = (i === index);
+				});
+				switch (this.sort[index].type) {
+					case 'old':
+						this.sortOrder = 'create_time asc'
+						break;
+					default:
+						this.sortOrder = ''
+						break;
+				}
+				this.$refs.paging.reload()
 			}
 		}
 	}
