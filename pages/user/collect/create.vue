@@ -114,7 +114,8 @@
 						});
 						uni.$emit('updateCollect', true)
 						setTimeout(() => {
-							this.$Router.back(2)
+							if(this.update)this.$Router.back(2);
+							else this.$Router.back(1)
 						}, 800)
 
 					}

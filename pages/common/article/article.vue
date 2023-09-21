@@ -2,9 +2,9 @@
 	<z-paging-swiper>
 		<swiper class="swiper" :current="swiperIndex" @animationfinish="swiperAnimationfinish">
 			<swiper-item>
-				<z-paging ref="paging" @query="getComment" v-model="comments" :safe-area-inset-bottom="true"
-					:auto-scroll-to-top-when-reload="false" :auto-clean-list-when-reload="false" @scroll="onScroll"
-					@onRefresh="onRefresh()">
+				<z-paging ref="paging" @query="getComments" v-model="comments" :safe-area-inset-bottom="true"
+					:auto-scroll-to-top-when-reload="false" use-cache :cache-key="`commentsArticle_${params.id}`"
+					:auto-clean-list-when-reload="false" @scroll="onScroll" @onRefresh="onRefresh()">
 					<template #top>
 						<tn-nav-bar :zIndex="5" backTitle="">
 							<text v-show="!navAuthor" v-if="article.expand.sort&&article.expand.sort.length>0"
@@ -82,7 +82,6 @@
 								</view>
 							</view>
 						</view>
-
 						<view class="tn-margin-top" style="max-width: 100%;" @touchend="touchEnd"
 							@touchmove="touchMove">
 							<mp-html :tag-style="{img:'border-radius:10rpx'}" :img-cache="true" :show-img-menu="imgMenu"
@@ -118,95 +117,125 @@
 					<view class="tn-padding-xs tn-bg-gray--light"></view><!-- 间隔 -->
 					<!-- 文章详情 结束 -->
 					<!-- 评论区 开始 -->
-					<view class="tn-color-grey" style="position: sticky;top: 0;z-index: 9999;">
+					<view
+						class="tn-color-grey--disabled tn-text-md tn-bg-white tn-border-solid-bottom tn-border-gray--light tn-flex tn-flex-col-center"
+						style="position: sticky;top: 0;z-index: 9999;">
 						<z-tabs ref="tabs" :current="tabsIndex" active-color="#29b7cb" :scrollCount="1"
-							@change="changeComentTab" :list="tabs"></z-tabs>
-
+							@change="changeCommentTab" :list="tabs"></z-tabs>
+						<view v-if="!tabsIndex"
+							class="tn-flex tn-flex-col-center tn-margin-right tn-flex-row-between tn-flex-basic-xx">
+							<block v-for="(item,index) in sort" :key="index">
+								<text :class=" {'tn-color-gray--dark': item.active}"
+									@tap.stop.prevent="sortTap(index)">{{item.name}}</text>
+							</block>
+						</view>
 					</view>
 					<view class="tn-margin">
-						<view class="tn-margin-top">
-							<view v-for="(item,index) in comments" :key="index">
-								<view class="tn-flex tn-flex-col-center tn-text-md">
-									<tn-avatar :src="item.expand.head_img"
-										@click="article.users_id==item.users_id?swiperIndex=1:goProfile(item.users_id)"></tn-avatar>
-									<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
-										<view class="tn-flex tn-flex-col-center">
-											<text>{{item.nickname}}</text>
-											<text v-if="article.users_id === item.users_id"
-												class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
-												style="padding:5rpx 8rpx">楼主</text>
-
-											<text class="level tn-margin-left-xs level-text"
-												:class="['lv-'+item.expand.user.grade]"
-												:style="{'color':level[item.expand.user.grade]}"></text>
-
-										</view>
-
+						<view v-for="(item,index) in comments" :key="index" class="tn-margin-top-sm">
+							<view class="tn-flex tn-flex-col-center tn-text-md">
+								<tn-avatar :src="item.expand.head_img"
+									@click="article.users_id==item.users_id?swiperIndex=1:goProfile(item.users_id)"></tn-avatar>
+								<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
+									<view class="tn-flex tn-flex-col-center">
+										<text>{{item.nickname}}</text>
+										<text v-if="article.users_id === item.users_id"
+											class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
+											style="padding:5rpx 8rpx">楼主</text>
+										<text class="level tn-margin-left-xs level-text"
+											:class="['lv-'+item.expand.user.grade]"
+											:style="{'color':level[item.expand.user.grade]}"></text>
 									</view>
+									<text class="tn-text-sm tn-color-grey--disabled">{{item.ip.province}}</text>
 								</view>
-								<view class="tn-margin tn-margin-top-sm tn-padding-left-xl"
-									style="overflow: hidden;word-wrap: break-word" @tap="subReply(item)">
-									<!-- {{item.content}} -->
-									<mp-html :content="item.content"></mp-html>
-									<view v-if="item.images.length>0">
-										<tn-grid align=" left" :col="col" hoverClass="none">
-											<block v-for="(images, subIndex) in item.images" :key="subIndex"
-												v-if="subIndex<9">
-												<!-- H5 -->
-												<!-- #ifndef MP-WEIXIN -->
-												<tn-grid-item
-													style="height: 180rpx;width: 180rpx;margin-right: 6rpx;margin-bottom: 6rpx">
-													<image :src="images" mode="aspectFill"
-														style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
-														@tap.stop="previewImage(item.images,subIndex)">
-													</image>
-												</tn-grid-item>
-												<!-- #endif-->
-
-												<!-- 微信小程序 -->
-												<!-- #ifdef MP-WEIXIN -->
-												<tn-grid-item :style="{width: gridItemWidth,height:gridItemWidth}"
-													style="margin-right: 6rpx;margin-bottom: 6rpx">
-													<image :src="images.src" mode="aspectFill"
-														style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
-														@tap.stop="previewImage(item.images,subIndex)">
-													</image>
-												</tn-grid-item>
-												<!-- #endif-->
-											</block>
-										</tn-grid>
-									</view>
-								</view>
-
-
-								<!-- 子评论 -->
-								<view class="tn-margin">
-									<view class="tn-margin-left-xl tn-padding-sm tn-bg-gray--light ch-radius"
-										v-if="item.son.length>0"
-										@tap.stop.prevent="showComment= !showComment;subId=item.id;subCommentAuthor=item">
-										<!-- 这里只显示两条防止太多评论导致的过长 -->
-										<block v-for="(subComment, subIndex) in item.son" :key="subIndex"
-											v-if="subIndex<2">
-											<view class=" tn-text-md">
-												<text class="tn-color-indigo"
-													@tap.stop.prevent="article.users_id == subComment.users_id?swiperIndex=1:goProfile(subComment.users_id)">{{subComment.nickname}}</text>
-												<text v-if="article.users_id === subComment.users_id"
-													class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
-													style="padding:5rpx 8rpx">楼主</text>
-												<text class="tn-margin-left-xs">：</text>
-												<mp-html container-style="display:inline;white-space:nomarl;"
-													:content="subComment.content" :selectable="true"></mp-html>
-											</view>
-										</block>
-										<view class="tn-flex tn-flex-col-center tn-margin-top-sm tn-color-gray--dark"
-											v-if="item.son.length>2">
-											<text>全部{{item.son.length}}条评论</text>
-											<text class="tn-icon-right tn-text-md"></text>
-										</view>
-									</view>
-								</view>
-
 							</view>
+							<view class="tn-margin-top tn-margin-left">
+								<view
+									class="tn-flex tn-flex-direction-column tn-margin-left-xl tn-padding-bottom-xs tn-border-solid-bottom tn-border-gray--light">
+									<!-- 父评论 -->
+									<view style="overflow: hidden;word-wrap: break-word" @tap="subReply(item)">
+										<mp-html :content="item.content" :img-cache="true"
+											:preview-img="false"></mp-html>
+										<view v-if="item.images.length>0">
+											<tn-grid align=" left" :col="col" hoverClass="none">
+												<block v-for="(images, subIndex) in item.images" :key="subIndex"
+													v-if="subIndex<9">
+													<!-- H5 -->
+													<!-- #ifndef MP-WEIXIN -->
+													<tn-grid-item
+														style="height: 180rpx;width: 180rpx;margin-right: 6rpx;margin-bottom: 6rpx">
+														<image :src="images" mode="aspectFill"
+															style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
+															@tap.stop="previewImage(item.images,subIndex)">
+														</image>
+													</tn-grid-item>
+													<!-- #endif-->
+													<!-- 微信小程序 -->
+													<!-- #ifdef MP-WEIXIN -->
+													<tn-grid-item :style="{width: gridItemWidth,height:gridItemWidth}"
+														style="margin-right: 6rpx;margin-bottom: 6rpx">
+														<image :src="images.src" mode="aspectFill"
+															style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
+															@tap.stop="previewImage(item.images,subIndex)">
+														</image>
+													</tn-grid-item>
+													<!-- #endif-->
+												</block>
+											</tn-grid>
+										</view>
+									</view>
+									<!-- 主评论结束 -->
+									<!-- 子评论 -->
+									<view class="tn-margin-top-sm" v-if="item.son.length>0">
+										<view class="tn-padding-sm tn-bg-gray--light ch-radius"
+											@tap.stop.prevent="showComment= !showComment;subId=item.id;subCommentAuthor=item">
+											<!-- 这里只显示两条防止太多评论导致的过长 -->
+											<block v-for="(subComment, subIndex) in item.son" :key="subIndex"
+												v-if="subIndex<2">
+												<view class=" tn-text-md">
+													<text class="tn-color-indigo"
+														@tap.stop.prevent="article.users_id == subComment.users_id?swiperIndex=1:goProfile(subComment.users_id)">{{subComment.nickname}}</text>
+													<text v-if="article.users_id === subComment.users_id"
+														class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
+														style="padding:5rpx 8rpx">楼主</text>
+													<text class="tn-margin-left-xs">：</text>
+													<mp-html container-style="display:inline;white-space:nomarl;"
+														:content="subComment.content" :img-cache="true"
+														:preview-img="false" :selectable="true"></mp-html>
+												</view>
+											</block>
+											<view
+												class="tn-flex tn-flex-col-center tn-margin-top-sm tn-color-gray--dark"
+												v-if="item.son.length>2">
+												<text>全部{{item.son.length}}条评论</text>
+												<text class="tn-icon-right tn-text-md"></text>
+											</view>
+										</view>
+									</view>
+									<!-- 子评论结束 -->
+									<!-- 评论底部控件 -->
+									<view class="tn-color-grey--disabled tn-text-sm tn-margin-top-sm">
+										<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+											<text>{{getDateDiff(item.create_time)}}</text>
+											<view class="tn-flex tn-flex-col-center tn-flex-row-between"
+												style="flex-basis: 35%;">
+												<view class="tn-flex-col-center">
+													<text class="tn-text-md tn-icon-comment"></text>
+													<text class="tn-margin-left-xs">回复</text>
+												</view>
+												<view class="tn-flex tn-flex-col-cen-ter"
+													@tap.stop.prevent="commentLike(index)">
+													<text class="tn-text-md tn-icon-praise-simple"></text>
+													<text class="tn-margin-left-xs"
+														v-if="item.opt">{{item.opt.like}}</text>
+												</view>
+
+												<text class="tn-text-md tn-icon-tread-simple"></text>
+											</view>
+										</view>
+									</view>
+								</view>
+							</view>
+
 						</view>
 					</view>
 					<template #bottom>
@@ -220,7 +249,7 @@
 								class="tn-flex tn-text-sm tn-flex-col-center tn-color-gray--dark tn-flex-basic-sm tn-flex-row-between"
 								style="margin-left: auto;">
 								<view class="tn-flex tn-flex-col-center tn-flex-direction-column"
-									v-if="article.expand.favorites" @tap.stop="favorite()">
+									@tap.stop="favorite()">
 									<text class="tn-text-xxl"
 										:class="article.expand.favorites.is_favorites?'tn-icon-star-fill tn-color-orangered':'tn-icon-star'"></text>
 									<text>{{article.expand.favorites.favorites_count}}</text>
@@ -230,7 +259,7 @@
 									<text>{{article.expand.comments.count}}</text>
 								</view>
 								<view class="tn-flex tn-flex-col-center tn-flex-direction-column"
-									@tap.stop="likeAction">
+									@tap.stop="articleLike">
 									<text class=" tn-text-xxl"
 										:class="article.expand.like.is_like?'ch-color-primary tn-icon-praise-fill':'tn-icon-praise'"></text>
 									<text>{{article.expand.like.likes_count}}</text>
@@ -239,7 +268,6 @@
 						</view>
 						<!-- 底部 结束 -->
 					</template>
-
 				</z-paging>
 
 
@@ -295,14 +323,32 @@
 									<!-- 微信小程序 -->
 									<!-- #ifdef MP-WEIXIN -->
 									<tn-grid-item :style="{width: gridItemWidth}">
-										<view style="padding: 30rpx;">{{ item }}</view>
+										<image :src="item" mode="aspectFill" style="height: 50rpx;width: 50rpx;"
+											@tap.stop="insertEmoji(index)"></image>
 									</tn-grid-item>
 									<!-- #endif-->
 								</block>
 							</tn-grid>
 						</scroll-view>
 					</view>
-
+				</tn-popup>
+				<!-- 关注弹出层 -->
+				<tn-popup mode="center" :borderRadius="20" v-model="showCancelFollow" length="80%">
+					<view class="tn-margin">
+						<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
+							<text>取消关注</text>
+							<text class="tn-padding-sm tn-color-gray--dark"
+								style="font-size: 28rpx;">点击“确定”则取消关注该用户</text>
+						</view>
+					</view>
+					<view class="tn-padding tn-color-gray--dark tn-bg-gray--light">
+						<view class="tn-flex tn-flex-row-around" style="font-size: 28rpx;">
+							<text @tap.stop.prevent="showCancelFollow = false">取消</text>
+							<text class="tn-color-grey--light">|</text>
+							<text class="ch-color-primary"
+								@tap.stop.prevent="followUser();showCancelFollow = false">确定</text>
+						</view>
+					</view>
 				</tn-popup>
 				<!-- 分享 -->
 				<tn-popup mode="bottom" :borderRadius="30" v-model="showShare">
@@ -343,151 +389,200 @@
 					</view>
 				</tn-popup>
 				<!-- 评论详情 -->
-				<tn-popup v-model="showComment" mode="bottom" length="70%" :borderRadius="20" :zIndex="3">
-					<z-paging ref="subComment" @query="getSubComment" v-model="subComment" :refresher-enabled="false">
-						<template#top>
+				<tn-popup v-model="showComment" mode="bottom" length="80%" :borderRadius="20" :zIndex="3">
+					<z-paging ref="subComment" @query="getSubComment" v-model="subComment"
+						:auto-scroll-to-top-when-reload="false" use-cache
+						:cache-key="`subCommentsArticle_${subCommentAuthor && subCommentAuthor.id}`"
+						:auto-clean-list-when-reload="false" :refresher-enabled="false">
+						<template #top>
 							<view class="tn-margin">
-								<view class="tn-flex tn-flex-col-center  tn-text-xxl tn-text-bold tn-flex-row-between">
+								<view class="tn-flex tn-flex-col-center  tn-text-xxl tn-flex-row-between">
 									<text class="tn-icon-close" @tap.stop.prevent="showComment = false"></text>
 									<text class="tn-icon-more-horizontal"></text>
 								</view>
 							</view>
-</template>
-<view class="tn-margin tn-no-margin-top" v-if="subCommentAuthor">
-	<view class="tn-flex tn-flex-col-center tn-text-md">
-		<tn-avatar :src="subCommentAuthor.expand.head_img"></tn-avatar>
-		<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
-			<view class="tn-flex tn-flex-col-center">
-				<text>{{subCommentAuthor.nickname}}</text>
-				<text v-if="article.users_id === subCommentAuthor.users_id"
-					class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
-					style="padding:5rpx 8rpx">楼主</text>
-				<text class="level tn-margin-left-xs level-text" :class="['lv-'+subCommentAuthor.expand.user.grade]"
-					:style="{'color':level[subCommentAuthor.expand.user.grade]}"></text>
+						</template>
+						<view class="tn-margin tn-no-margin-top" v-if="subCommentAuthor">
+							<view class="tn-flex tn-flex-col-center tn-text-md">
+								<tn-avatar :src="subCommentAuthor.expand.head_img"></tn-avatar>
+								<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
+									<view class="tn-flex tn-flex-col-center">
+										<text>{{subCommentAuthor.nickname}}</text>
+										<text v-if="article.users_id === subCommentAuthor.users_id"
+											class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
+											style="padding:5rpx 8rpx">楼主</text>
+										<text class="level tn-margin-left-xs level-text"
+											:class="['lv-'+subCommentAuthor.expand.user.grade]"
+											:style="{'color':level[subCommentAuthor.expand.user.grade]}"></text>
+									</view>
+									<view class="tn-flex tn-text-sm tn-color-grey--disabled tn-flex-col-center">
+										<text>{{getDateDiff(subCommentAuthor.create_time)}}</text>
+										<text class="tn-margin-left-sm">{{subCommentAuthor.ip.province}}</text>
+									</view>
+								</view>
+							</view>
+							<view class="tn-margin-top tn-margin-left">
+								<view class="tn-flex tn-flex-direction-column tn-margin-left-xl">
+									<view style="overflow: hidden;word-wrap: break-word"
+										@tap="subReply(subCommentAuthor)">
+										<!-- {{item.content}} -->
+										<mp-html :preview-img="false" :img-cache="true"
+											:content="subCommentAuthor.content"></mp-html>
+										<view v-if="subCommentAuthor.images.length>0">
+											<tn-grid align=" left" :col="col" hoverClass="none">
+												<block v-for="(images, subIndex) in subCommentAuthor.images"
+													:key="subIndex" v-if="subIndex<9">
+													<!-- H5 -->
+													<!-- #ifndef MP-WEIXIN -->
+													<tn-grid-item
+														style="height: 180rpx;width: 180rpx;margin-right: 6rpx;margin-bottom: 6rpx">
+														<image :src="images" mode="aspectFill"
+															style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
+															@tap.stop="previewImage(subCommentAuthor.images,subIndex)">
+														</image>
+													</tn-grid-item>
+													<!-- #endif-->
 
-			</view>
-			<text class="tn-text-sm tn-color-grey--disabled">{{getDateDiff(subCommentAuthor.create_time)}}</text>
-		</view>
-	</view>
-	<view class="tn-margin tn-margin-top-sm tn-padding-left-xl" style="overflow: hidden;word-wrap: break-word"
-		@tap="subReply(subCommentAuthor)">
-		<!-- {{item.content}} -->
-		<mp-html :content="subCommentAuthor.content"></mp-html>
-		<view v-if="subCommentAuthor.images.length>0">
-			<tn-grid align=" left" :col="col" hoverClass="none">
-				<block v-for="(images, subIndex) in subCommentAuthor.images" :key="subIndex" v-if="subIndex<9">
-					<!-- H5 -->
-					<!-- #ifndef MP-WEIXIN -->
-					<tn-grid-item style="height: 180rpx;width: 180rpx;margin-right: 6rpx;margin-bottom: 6rpx">
-						<image :src="images" mode="aspectFill"
-							style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
-							@tap.stop="previewImage(subCommentAuthor.images,subIndex)">
-						</image>
-					</tn-grid-item>
-					<!-- #endif-->
+													<!-- 微信小程序 -->
+													<!-- #ifdef MP-WEIXIN -->
+													<tn-grid-item :style="{width: gridItemWidth,height:gridItemWidth}"
+														style="margin-right: 6rpx;margin-bottom: 6rpx">
+														<image :src="images.src" mode="aspectFill"
+															style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
+															@tap.stop="previewImage(subCommentAuthor.images,subIndex)">
+														</image>
+													</tn-grid-item>
+													<!-- #endif-->
+												</block>
+											</tn-grid>
+										</view>
+									</view>
+									<view
+										class="tn-flex tn-flex-col-center tn-text-md tn-flex-row-between tn-margin-top-sm">
+										<text class="ch-color-primary"
+											@tap.stop.prevent="showComment = false">查看原帖</text>
+										<view
+											class="tn-flex tn-flex-col-center tn-color-grey--disabled tn-flex-row-between tn-flex-basic-xs">
+											<view class="tn-flex tn-flex-col-center"
+												@tap.stop.prevent="commentLike(subCommentAuthor,'comments')">
+												<text class="tn-icon-praise-simple"></text>
+												<text class="tn-margin-left-xs"
+													v-if="subCommentAuthor.opt">{{subCommentAuthor.opt.like}}</text>
+											</view>
+											<text class="tn-icon-tread-simple"></text>
+										</view>
 
-					<!-- 微信小程序 -->
-					<!-- #ifdef MP-WEIXIN -->
-					<tn-grid-item :style="{width: gridItemWidth,height:gridItemWidth}"
-						style="margin-right: 6rpx;margin-bottom: 6rpx">
-						<image :src="images.src" mode="aspectFill"
-							style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
-							@tap.stop="previewImage(subCommentAuthor.images,subIndex)">
-						</image>
-					</tn-grid-item>
-					<!-- #endif-->
-				</block>
-			</tn-grid>
-		</view>
-	</view>
-</view>
-<view class="tn-padding-xs tn-bg-gray--light"></view>
-<block v-for="(item,index) in subComment" :key="index">
-	<view class="tn-margin">
-		<view class="tn-flex tn-flex-col-center tn-text-md">
-			<tn-avatar :src="item.expand.head_img" @click="goProfile(item.users_id)"></tn-avatar>
-			<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
-				<view class="tn-flex tn-flex-col-center">
-					<text>{{item.nickname}}</text>
-					<text v-if="article.users_id === item.users_id"
-						class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
-						style="padding:5rpx 8rpx">楼主</text>
-					<text class="level tn-margin-left-xs level-text" :class="['lv-'+item.expand.user.grade]"
-						:style="{'color':level[item.expand.user.grade]}"></text>
-				</view>
-			</view>
-		</view>
-		<view class="tn-margin tn-margin-top-xs tn-padding-left-xl" @tap="subReply(item)">
-			<view>
-				<text class="tn-margin-right-xs" v-if="item.pid != subCommentAuthor.id">回复</text>
-				<text class="tn-color-indigo" @tap.stop.prevent="goProfile(item.expand.pid.users_id)"
-					v-if="item.pid != subCommentAuthor.id">{{item.expand.pid.nickname}}</text>
-				<text v-if="item.pid != subCommentAuthor.id">：</text>
-				<mp-html container-style="display:inline;white-space:nomarl;" :content="item.content"></mp-html>
-			</view>
-			<view v-if="item.images.length>0">
-				<tn-grid align=" left" :col="col" hoverClass="none">
-					<block v-for="(images, subIndex) in item.images" :key="subIndex" v-if="subIndex<9">
-						<!-- H5 -->
-						<!-- #ifndef MP-WEIXIN -->
-						<tn-grid-item style="height: 180rpx;width: 180rpx;margin-right: 6rpx;margin-bottom: 6rpx">
-							<image :src="images" mode="aspectFill"
-								style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
-								@tap.stop="previewImage(item.images,subIndex)">
-							</image>
-						</tn-grid-item>
-						<!-- #endif-->
+									</view>
+								</view>
+							</view>
+						</view>
+						<!-- 间隔 -->
+						<view class="tn-padding-xs tn-bg-gray--light"></view>
+						<view class="tn-margin">
+							<block v-for="(item,index) in subComment" :key="index">
+								<view class="tn-flex tn-flex-col-center tn-margin-top-sm tn-text-md">
+									<tn-avatar :src="item.expand.head_img"
+										@click="goProfile(item.users_id)"></tn-avatar>
+									<view class="tn-flex tn-col-center tn-flex-direction-column tn-margin-left-sm">
+										<view class="tn-flex tn-flex-col-center">
+											<text>{{item.nickname}}</text>
+											<text v-if="article.users_id === item.users_id"
+												class="tn-margin-left-xs tn-text-xs tn-radius ch-bg-main--light ch-color-primary"
+												style="padding:5rpx 8rpx">楼主</text>
+											<text class="level tn-margin-left-xs level-text"
+												:class="['lv-'+item.expand.user.grade]"
+												:style="{'color':level[item.expand.user.grade]}"></text>
+										</view>
+										<text class="tn-text-sm tn-color-grey--disabled">{{item.ip.province}}</text>
+									</view>
+								</view>
+								<view class="tn-margin-top tn-margin-left">
+									<view
+										class="tn-flex tn-flex-direction-column tn-margin-left-xl tn-padding-bottom-xs tn-border-solid-bottom tn-border-gray--light">
+										<view @tap="subReply(item)">
+											<text class="tn-margin-right-xs"
+												v-if="item.pid != subCommentAuthor.id">回复</text>
+											<text class="tn-color-indigo"
+												@tap.stop.prevent="goProfile(item.expand.pid.users_id)"
+												v-if="item.pid != subCommentAuthor.id">{{item.expand.pid.nickname}}</text>
+											<text v-if="item.pid != subCommentAuthor.id">：</text>
+											<mp-html container-style="display:inline;white-space:nomarl;"
+												:content="item.content" :preview-img="false"
+												:img-cache="true"></mp-html>
+										</view>
+										<view v-if="item.images.length>0">
+											<tn-grid align=" left" :col="col" hoverClass="none">
+												<block v-for="(images, subIndex) in item.images" :key="subIndex"
+													v-if="subIndex<9">
+													<!-- H5 -->
+													<!-- #ifndef MP-WEIXIN -->
+													<tn-grid-item
+														style="height: 180rpx;width: 180rpx;margin-right: 6rpx;margin-bottom: 6rpx">
+														<image :src="images" mode="aspectFill"
+															style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
+															@tap.stop="previewImage(item.images,subIndex)">
+														</image>
+													</tn-grid-item>
+													<!-- #endif-->
 
-						<!-- 微信小程序 -->
-						<!-- #ifdef MP-WEIXIN -->
-						<tn-grid-item :style="{width: gridItemWidth,height:gridItemWidth}"
-							style="margin-right: 6rpx;margin-bottom: 6rpx">
-							<image :src="images.src" mode="aspectFill"
-								style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
-								@tap.stop="previewImage(item.images,subIndex)">
-							</image>
-						</tn-grid-item>
-						<!-- #endif-->
-					</block>
-				</tn-grid>
-			</view>
-		</view>
-	</view>
-</block>
-<template #bottom>
-	<view class="tn-bg-gray--light tn-padding-sm">
-		<view class="tn-bg-white tn-padding-left tn-radius">
-			<tn-input :disabled="true" :placeholder="'回复：'+subCommentAuthor.nickname"
-				@click="commentAllow?subReply(subCommentAuthor):''"></tn-input>
-		</view>
-	</view>
+													<!-- 微信小程序 -->
+													<!-- #ifdef MP-WEIXIN -->
+													<tn-grid-item :style="{width: gridItemWidth,height:gridItemWidth}"
+														style="margin-right: 6rpx;margin-bottom: 6rpx">
+														<image :src="images.src" mode="aspectFill"
+															style="height: 180rpx;width: 180rpx;border-radius: 10rpx;"
+															@tap.stop="previewImage(item.images,subIndex)">
+														</image>
+													</tn-grid-item>
+													<!-- #endif-->
+												</block>
+											</tn-grid>
+										</view>
 
-</template>
-</z-paging>
+										<!-- 评论底部控件 -->
+										<view class="tn-color-grey--disabled tn-text-sm tn-margin-top-sm">
+											<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+												<text>{{getDateDiff(item.create_time)}}</text>
+												<view class="tn-flex tn-flex-col-center tn-flex-row-between"
+													style="flex-basis: 35%;">
+													<view class="tn-flex-col-center">
+														<text class="tn-text-md tn-icon-comment"></text>
+														<text class="tn-margin-left-xs">回复</text>
+													</view>
+													<view class="tn-flex tn-flex-col-cen-ter"
+														@tap.stop.prevent="commentLike(index,'subComment')">
+														<text class="tn-text-md tn-icon-praise-simple"></text>
+														<text class="tn-margin-left-xs"
+															v-if="item.opt">{{item.opt.like}}</text>
+													</view>
 
-</tn-popup>
-</view>
-</swiper-item>
-<swiper-item v-if="params">
-	<userProfile :users_id="params.users_id" :article_id="params.id" @edit="is_edit = true" @goArticle="goArticle"></userProfile>
-</swiper-item>
-</swiper>
-<tn-popup mode="center" :borderRadius="20" v-model="showCancelFollow" length="80%">
-	<view class="tn-margin">
-		<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
-			<text>取消关注</text>
-			<text class="tn-padding-sm tn-color-gray--dark" style="font-size: 28rpx;">点击“确定”则取消关注该用户</text>
-		</view>
-	</view>
-	<view class="tn-padding tn-color-gray--dark tn-bg-gray--light">
-		<view class="tn-flex tn-flex-row-around" style="font-size: 28rpx;">
-			<text @tap.stop.prevent="showCancelFollow = false">取消</text>
-			<text class="tn-color-grey--light">|</text>
-			<text class="ch-color-primary" @tap.stop.prevent="followUser();showCancelFollow = false">确定</text>
-		</view>
-	</view>
-</tn-popup>
-</z-paging-swiper>
+													<text class="tn-text-md tn-icon-tread-simple"></text>
+												</view>
+											</view>
+										</view>
+									</view>
+								</view>
+							</block>
+						</view>
+						<template #bottom>
+							<view class="tn-bg-gray--light tn-padding-sm">
+								<view class="tn-bg-white tn-padding-left tn-radius">
+									<tn-input :disabled="true" :placeholder="'回复：'+subCommentAuthor.nickname"
+										@click="commentAllow?subReply(subCommentAuthor):''"></tn-input>
+								</view>
+							</view>
+
+						</template>
+					</z-paging>
+				</tn-popup>
+			</swiper-item>
+			<swiper-item v-if="params">
+				<userProfile :users_id="params.users_id" :article_id="params.id" @edit="is_edit = true"
+					@goArticle="goArticle">
+				</userProfile>
+			</swiper-item>
+		</swiper>
+	</z-paging-swiper>
 </template>
 
 <script>
@@ -575,9 +670,11 @@
 						like: {
 
 						},
-						comments: {
-
-						}
+						favorites: {
+							is_favorites: 0,
+							favorites_count: null,
+						},
+						comments: {}
 					}
 				},
 				params: [], //页面传参
@@ -598,6 +695,22 @@
 					'line-sm*3'
 				],
 				showEmoji: false,
+				sort: [{
+						name: '最新',
+						type: 'new',
+						active: true,
+					},
+					{
+						name: '最早',
+						type: 'old',
+						active: false,
+					},
+					// {
+					// 	name: '最新',
+					// 	type: 'new',
+					// 	active: false,
+					// }
+				],
 				emojiTabs: [],
 				emojiIndex: 0,
 				emojiList: [],
@@ -614,6 +727,7 @@
 				is_edit: false,
 				goLogin: false,
 				showCancelFollow: false,
+				sortOrder: null,
 			}
 		},
 		onLoad(params) {
@@ -698,31 +812,39 @@
 
 				uni.setStorageSync('history', history);
 			},
-			getComment(page, num) {
+			getComments(page, num) {
 				this.$http.get('/comments/article', {
 					params: {
 						article_id: this.params.id,
 						limit: num,
 						page: page,
-						tree: false
+						tree: false,
+						order: !this.tabsIndex ? this.sortOrder : '',
+						users_id: this.tabsIndex ? this.params.users_id : '',
+
+					}
+				}).then(res => {
+					if (res.data.code === 200) {
+						this.$refs.paging.complete(res.data.data.data)
+					}
+				}).catch(err => {
+					this.$refs.paging.complete(false)
+				})
+			},
+			getAuthorComments(page, num) {
+				this.$http.get('/comments/author', {
+					params: {
+						page: page,
+						limit: num,
+						tree: false,
+						article_id: this.params.id,
+						users_id: this.params.users_id
 					}
 				}).then(res => {
 					console.log(res)
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.data)
-						setTimeout(() => {
-							const author = res.data.data.data.filter(item => item.users_id === this
-								.article.users_id);
-							const uniqueAuthor = author.filter(item => !this.authorComments.some(
-								comment => comment.id === item.id));
-							this.authorComments = this.authorComments.concat(uniqueAuthor);
-
-						}, 10)
-
-
 					}
-				}).catch(err => {
-					this.$refs.paging.complete(false)
 				})
 			},
 			getEmojiList() {
@@ -760,21 +882,13 @@
 				}).then(res => {
 					switch (res.data.code) {
 						case 200:
-							uni.showToast({
-								icon: 'none',
-								title: res.data.msg
-							});
-
 							this.article.expand.focus = !this.article.expand.focus
 							break;
-						case 400:
+						default:
 							uni.showToast({
 								icon: 'none',
 								title: res.data.msg
 							});
-							break;
-						default:
-							// 处理其他情况
 							break;
 					}
 				});
@@ -863,7 +977,7 @@
 				// 刷新文章
 				this.getArticle()
 			},
-			likeAction(index) {
+			articleLike(index) {
 				this.$http.put('/Article-like/Record', {
 					article_id: this.article.id
 				}).then(res => {
@@ -877,6 +991,31 @@
 						uni.showToast({
 							icon: 'none',
 							title: res.data.msg
+						})
+					}
+				})
+			},
+			commentLike(index, type) {
+				this.$http.post('/comments/like', {
+					id: type == 'subAuthor' ? index.id : type == 'subComment' ? this.subComment[index].id : this
+						.comments[index].id,
+				}).then(res => {
+					console.log(res)
+					if (res.data.code === 200) {
+						switch (type) {
+							case 'subAuthor':
+								this.subCommentAuthor.opt.like++
+								break;
+							case 'subComment':
+								this.subComment[index].opt.like++
+								break;
+							default:
+								this.comments[index].opt.like++
+								break;
+						}
+						uni.showToast({
+							icon: 'none',
+							title: '点赞' + res.data.msg
 						})
 					}
 				})
@@ -939,13 +1078,9 @@
 					})
 				}
 			},
-			changeComentTab(index) {
+			changeCommentTab(index) {
 				this.tabsIndex = index
-				if (this.tabsIndex) {
-					this.$refs.paging.complete(this.authorComments)
-				} else {
-					this.$refs.paging.reload()
-				}
+				this.$refs.paging.reload()
 			},
 			onScroll(e) {
 				const scrollTop = e.detail.scrollTop
@@ -1076,7 +1211,6 @@
 							this.images.push(res.data.data)
 							// 上传成功推入
 						}
-
 					}
 				} catch (error) {
 					console.error(error);
@@ -1093,10 +1227,24 @@
 					urls: images,
 				});
 			},
-			goArticle(info){
-				if(info){
+			goArticle(info) {
+				if (info) {
 					this.swiperIndex = 0
 				}
+			},
+			sortTap(index) {
+				this.sort.forEach((item, i) => {
+					item.active = (i === index);
+				});
+				switch (this.sort[index].type) {
+					case 'old':
+						this.sortOrder = 'create_time asc'
+						break;
+					default:
+						this.sortOrder = ''
+						break;
+				}
+				this.$refs.paging.reload()
 			}
 		}
 	}

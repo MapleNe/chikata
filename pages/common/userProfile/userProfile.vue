@@ -1,7 +1,7 @@
 <template>
 	<z-paging ref="paging" refresher-only @onRefresh="onRefresh" @scroll="getScroll">
 		<template #top>
-			<tn-nav-bar backTitle="" :backgroundColor="background" :fontColor="!navAuthor?'tn-color-white':''">
+			<tn-nav-bar backTitle="" :zIndex="11" :backgroundColor="background" :fontColor="!navAuthor?'tn-color-white':''">
 				<view class="tn-flex tn-flex-1 tn-flex-col-center tn-flex-row-between" v-show="navAuthor">
 					<view class="tn-flex tn-flex-col-center">
 						<tn-avatar :src="profile.head_img" border borderColor="#fff" :borderSize="4"></tn-avatar>
@@ -112,7 +112,7 @@
 			class="swiper">
 			<swiper-item>
 				<z-paging @query="getUserArticle" v-model="content" ref="article" :auto-clean-list-when-reload="false"
-					:auto-scroll-to-top-when-reload="false" :refresher-enabled="false" :use-page-scroll="swiperAction">
+					:auto-scroll-to-top-when-reload="false" use-cache :cache-key="`article_${id}`" :refresher-enabled="false" :use-page-scroll="swiperAction">
 					<block v-for="(item,index) in content" :key="index">
 						<view class="tn-margin">
 							<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-color-gray tn-text-sm">
@@ -239,7 +239,7 @@
 			</swiper-item>
 			<swiper-item>
 				<z-paging @query="getComments" v-model="comments" ref="comments" :auto-clean-list-when-reload="false"
-					:auto-scroll-to-top-when-reload="false" :refresher-enabled="false" :use-page-scroll="swiperAction">
+					:auto-scroll-to-top-when-reload="false" use-cache :cache-key="`comments_${id}`" :refresher-enabled="false" :use-page-scroll="swiperAction">
 					<view class="tn-margin">
 						<block v-for="(item,index) in comments" :key="index">
 							<view class="tn-margin-bottom-sm">
@@ -274,7 +274,7 @@
 			</swiper-item>
 			<swiper-item>
 				<z-paging ref="favorite" @query="getFavorite" v-model="favorite" :auto-clean-list-when-reload="false"
-					:auto-scroll-to-top-when-reload="false" :refresher-enabled="false" :use-page-scroll="swiperAction">
+					:auto-scroll-to-top-when-reload="false" use-cache :cache-key="`favorite_${id}`" :refresher-enabled="false" :use-page-scroll="swiperAction">
 					<block v-for="(item,index) in favorite">
 						<view class="tn-margin">
 							<view class="tn-flex tn-flex-col-center tn-flex-row-between">

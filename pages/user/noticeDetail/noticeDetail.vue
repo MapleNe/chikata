@@ -42,9 +42,9 @@
 									class="tn-color-gray tn-text-sm tn-text-xs">{{getDateDiff(item.create_time)}}</text>
 							</view>
 						</view>
-						<view>
+						<view class="tn-text-md">
 							<text class="tn-color-gray--dark">点赞了你</text>
-							<text class="tn-text-xxl tn-icon-like-fill tn-color-red"></text>
+							<text class="tn-icon-praise tn-color-red"></text>
 						</view>
 					</view>
 					<view class="tn-margin-left-xl tn-bg-gray--light tn-padding-sm tn-margin-top tn-margin-bottom"
@@ -118,7 +118,7 @@
 					path: '/pages/common/userProfile/userProfile',
 					query: {
 						id: this.noticeList[index].users_id ? this.noticeList[index].users_id : this.noticeList[
-							index].fansid
+							index].fuserId
 					}
 				})
 			},

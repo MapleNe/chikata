@@ -22,19 +22,37 @@
 							<text class="tn-icon-right"></text>
 						</view>
 					</view>
-					<tn-scroll-list indicatorActiveColor="#29b7cb">
-						<view class="tn-margin tn-flex tn-flex-col-center tn-flex-1">
-							<block v-for="(item,index) in categoryList" :key="index">
-								<view class="tn-flex tn-flex-col-center tn-flex-direction-column tn-margin-right"
-									@tap.stop.prevent="goCategory(index)">
-									<image :src="item.opt.head_img" mode="aspectFill"
-										class="tn-border-solid tn-border-gray--light tn-bold-border tn-round"
-										style="width: 100rpx;height: 100rpx;"></image>
-									<text class="tn-text-md tn-margin-top-sm">{{item.name}}</text>
-								</view>
+					<view class="tn-margin tn-no-margin-top">
+						<tn-grid align="left" :col="5" hoverClass="none">
+							<block v-for="(item,index) in categoryList" :key="index" v-if="index<10">
+								<tn-grid-item>
+									<view
+										class="tn-margin-top tn-flex tn-flex-col-center tn-flex-direction-column tn-margin-right"
+										@tap.stop.prevent="goCategory(index)">
+										<image :src="item.opt.head_img" mode="aspectFill"
+											class="tn-border-solid tn-border-gray--light tn-bold-border tn-round"
+											style="width: 100rpx;height: 100rpx;"></image>
+										<text class="tn-text-ellipsis tn-text-md tn-margin-top-sm">{{item.name}}</text>
+									</view>
+								</tn-grid-item>
+								<!-- 微信小程序 -->
+								<!-- #ifdef MP-WEIXIN -->
+								<tn-grid-item :style="{width: gridItemWidth}">
+									<view
+										class="tn-margin-top tn-flex tn-flex-col-center tn-flex-direction-column tn-margin-right"
+										@tap.stop.prevent="goCategory(index)">
+										<image :src="item.opt.head_img" mode="aspectFill"
+											class="tn-border-solid tn-border-gray--light tn-bold-border tn-round"
+											style="width: 100rpx;height: 100rpx;"></image>
+										<text class="tn-text-ellipsis tn-text-md tn-margin-top-sm">{{item.name}}</text>
+									</view>
+								</tn-grid-item>
+								<!-- #endif-->
+
 							</block>
-						</view>
-					</tn-scroll-list>
+						</tn-grid>
+					</view>
+
 					<view class="tn-margin">
 						<tn-swiper :list="swiperList" :height="300" name="img" backgroundColor="tn-bg-gray--light"
 							:radius="10">
@@ -51,7 +69,7 @@
 							<view>
 								<view v-for="(item, index) in list1" :key="item.id"
 									v-if="item&&item.width&&item.expand.images.length>0"
-									class="tn-margin-bottom-sm tn-padding-bottom-sm" :style="imageStyle(item)"
+									class="tn-margin-bottom-sm tn-padding-bottom-sm"
 									style="box-shadow: 0 0 18rpx 2rpx rgba(0,0,0,0.1);border-radius: 20rpx;"
 									@tap.stop.prevent="goArticle(item)">
 									<image :src="item.expand.images[0].src" mode="widthFix"
@@ -148,6 +166,9 @@
 
 		},
 		computed: {
+			gridItemWidth() {
+				return 100 / this.col + '%'
+			},
 			imageStyle(item) {
 				return item => {
 					const v = uni.upx2px(750) - this.leftGap - this.rightGap - this.columnGap;

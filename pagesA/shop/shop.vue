@@ -17,7 +17,7 @@
 				<view>
 					<block v-for="(item,index) in list1" :key="item.id">
 						<view class="tn-bg-white tn-margin-top" style="border-radius: 20rpx;" @tap.stop.prevent="goDetail(item)">
-							<view class="tn-flex tn-flex-direction-column" :style="imageStyle(item)">
+							<view class="tn-flex tn-flex-direction-column">
 								<image :src="item.image" mode="widthFix" style="border-radius: 20rpx 20rpx 0 0;"
 									:style="{width:item.width+'px'}"></image>
 								<view class="tn-margin-top tn-padding-sm">
@@ -44,7 +44,7 @@
 				<view>
 					<block v-for="(item,index) in list2" :key="item.id">
 						<view class="tn-bg-white tn-margin-top" style="border-radius: 20rpx;" @tap.stop.prevent="goDetail(item)">
-							<view class="tn-flex tn-flex-direction-column" :style="imageStyle(item)">
+							<view class="tn-flex tn-flex-direction-column">
 								<image :src="item.image" mode="widthFix" style="border-radius: 20rpx 20rpx 0 0;"
 									:style="{width:item.width+'px'}"></image>
 								<view class="tn-margin-top tn-padding-sm">

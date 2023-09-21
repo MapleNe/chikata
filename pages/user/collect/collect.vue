@@ -1,5 +1,5 @@
 <template>
-	<z-paging ref="paging" @query="getCollect" v-model="content">
+	<z-paging ref="paging" @query="getCollect" v-model="content"  use-cache :cache-key="`collections`" :auto-clean-list-when-reload="false" :auto-scroll-to-top-when-reload="false">
 		<template #top>
 			<tn-nav-bar backTitle="">
 				合集列表
