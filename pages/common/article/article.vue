@@ -1,5 +1,6 @@
 <template>
 	<z-paging-swiper>
+		
 		<swiper class="swiper" :current="swiperIndex" @animationfinish="swiperAnimationfinish">
 			<swiper-item>
 				<z-paging ref="paging" @query="getComments" v-model="comments" :safe-area-inset-bottom="true"
@@ -582,6 +583,7 @@
 				</userProfile>
 			</swiper-item>
 		</swiper>
+		</ls-skeleton>
 	</z-paging-swiper>
 </template>
 

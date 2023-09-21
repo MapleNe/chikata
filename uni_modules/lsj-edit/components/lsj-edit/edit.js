@@ -23,6 +23,7 @@ export class Edit extends Observer {
 		if (typeof(this.ctx[fn]) === 'function') {
 			this.ctx[fn](arg);
 		}
+		uni.hideKeyboard()
 		return this;
 	}
 
@@ -146,6 +147,21 @@ export class Edit extends Observer {
 			}
 		});
 		return arr;
+	}
+	
+	/**
+	 * 插入表情
+	 */
+	
+	insertEmoji(src){
+		this.tool('insertImage',{
+			src:src,
+			alt:'emoji',
+			width:'35px',
+			height:'35px'
+		})
+		this.tool('scrollIntoView')
+		return this;
 	}
 	
 	/**
@@ -329,7 +345,7 @@ export class Edit extends Observer {
 		detail
 	}) {
 		this.debounce(()=> {
-			this.input(detail);
+			this.$fire('edit:focus',detail);
 		}, 100,false);
 	}
 	// 监听焦点离开

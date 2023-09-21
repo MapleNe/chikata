@@ -1,24 +1,9 @@
 <template>
 	<view class="lsj-edit-container">
-		<view class="lsj-edit-scrollview">
-			<view v-if="edit" class="lsj-edit-btns">
-				<slot name="btns" :edit="edit"></slot>
-			</view>
-			<view class="editot-pd">
-				<editor id="editor" ref="editot" class="lsj-edit-edit-container" 
-				:style="customStyle"
-				:placeholder="placeholderText" 
-				:readOnly="onreadOnly" 
-				:showImgSize="showImgSize" 
-				:showImgToolbar="showImgToolbar"
-				:showImgResize="showImgResize" 
-				@ready="onEditorReady" 
-				@statuschange="statuschange" 
-				@focus="editFocus"
-				@blur="editBlur" 
-				@input="onInput"></editor>
-			</view>
-		</view>
+		<editor id="editor" ref="editot" class="lsj-edit-edit-container" :style="customStyle"
+			:placeholder="placeholderText" :readOnly="onreadOnly" :showImgSize="showImgSize"
+			:showImgToolbar="showImgToolbar" :showImgResize="showImgResize" @ready="onEditorReady"
+			@statuschange="statuschange" read-only @focus="editFocus" @blur="editBlur" @input="onInput"></editor>
 	</view>
 </template>
 
@@ -26,12 +11,14 @@
 	/**
 	 * 插件详细使用方式可查看readme.md文档
 	 */
-	import {Edit} from './edit.js'
+	import {
+		Edit
+	} from './edit.js'
 	export default {
 		props: {
 			// 最大输入字符数
 			maxCount: {
-				type: [Number,String],
+				type: [Number, String],
 				default: 0
 			},
 			// 占位符
@@ -63,7 +50,7 @@
 			},
 			styles: {
 				type: Object,
-				default:()=>{}
+				default: () => {}
 			}
 		},
 		watch: {
@@ -83,7 +70,10 @@
 		},
 		computed: {
 			customStyle() {
-				let style = {minHeight:this.minHeight + 'rpx',...this.styles};
+				let style = {
+					minHeight: this.minHeight + 'rpx',
+					...this.styles
+				};
 				return style
 			},
 			placeholderText() {
@@ -92,21 +82,22 @@
 		},
 		mounted() {
 			// #ifdef APP-PLUS
-			setTimeout(()=>{
+			setTimeout(() => {
 				// #ifdef APP-NVUE
 				plus.webview.currentWebview().setStyle({
 					softinputMode: 'adjustResize'
 				});
 				// #endif
 				// #ifndef APP-NVUE
-					this.$root.$scope.$getAppWebview().setStyle({
-						softinputMode: 'adjustResize'
-					});
+				this.$root.$scope.$getAppWebview().setStyle({
+					softinputMode: 'adjustResize'
+				});
 				// #endif
-			},300);
+			}, 300);
 			// #endif
 		},
 		methods: {
+	
 			// 初始化
 			onEditorReady(e) {
 				uni.createSelectorQuery()
@@ -116,7 +107,10 @@
 						size: true,
 						context: true
 					}, res => {
-						this.edit = new Edit({context: res.context,maxCount: this.maxCount});
+						this.edit = new Edit({
+							context: res.context,
+							maxCount: this.maxCount
+						});
 						this.edit.ready(this.html);
 
 						this.$emit('onReady', this.edit);
@@ -129,9 +123,11 @@
 			},
 			// 输入回调处理
 			onInput({
-				detail={}
+				detail = {}
 			}) {
-				if (!detail.delta) {return;}
+				if (!detail.delta) {
+					return;
+				}
 				this.edit.eventLink(detail);
 			},
 			// 状态变化监听并发送通知
@@ -161,7 +157,7 @@
 	// /deep/ p{
 	//   line-height: 80rpx !important;
 	// }
-	
+
 	.lsj-edit-container {
 		/* #ifndef APP-NVUE */
 		box-sizing: border-box;
@@ -171,14 +167,16 @@
 		overflow: hidden;
 		// background-color: #CCCCCC;
 	}
+
 	.lsj-edit-scrollview {
 		flex: 1;
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
 	}
+
 	.editot-pd {
-		// padding: 30rpx 20rpx 100rpx;
+		padding: 30rpx 20rpx 100rpx;
 	}
 
 	.lsj-edit-edit-container {
@@ -194,6 +192,7 @@
 		width: 710rpx;
 		/* #endif */
 	}
+
 	.keyHeight {
 		display: inline-block;
 		width: 100%;

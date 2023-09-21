@@ -21,6 +21,7 @@ http.setConfig((config) => {
 	return config
 })
 // 刷新请求
+const is_fresh = false
 const refresh = new Request()
 refresh.setConfig((config) => {
 	/* 设置全局配置 */
@@ -60,7 +61,7 @@ http.interceptors.request.use((config) => {
 		})
 		return Promise.reject(config)
 	}
-	if (token && uni.getStorageSync('refreshToken') && store.state.hasLogin) {
+	if (token && uni.getStorageSync('refreshToken') && !is_fresh && store.state.hasLogin) {
 		if (uni.getStorageSync('loginExp') <= nowtime) {
 			try {
 				console.log('开始请求')
@@ -72,6 +73,7 @@ http.interceptors.request.use((config) => {
 					if (res.data.code === 200) {
 						uni.setStorageSync('loginExp', res.data.data.loginExp)
 						uni.setStorageSync('token', res.data.data['login-token'])
+						is_fresh = true
 					} else {
 						uni.showToast({
 							icon: 'none',
