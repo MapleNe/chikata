@@ -146,7 +146,7 @@
 											:class="['lv-'+item.expand.user.grade]"
 											:style="{'color':level[item.expand.user.grade]}"></text>
 									</view>
-									<text class="tn-text-sm tn-color-grey--disabled">{{item.ip.province}}</text>
+									<text class="tn-text-sm tn-color-grey--disabled">{{item.ip.province?item.ip.province:item.ip.country}}</text>
 								</view>
 							</view>
 							<view class="tn-margin-top tn-margin-left">
@@ -494,7 +494,7 @@
 												:class="['lv-'+item.expand.user.grade]"
 												:style="{'color':level[item.expand.user.grade]}"></text>
 										</view>
-										<text class="tn-text-sm tn-color-grey--disabled">{{item.ip.province}}</text>
+										<text class="tn-text-sm tn-color-grey--disabled">{{item.ip.province?item.ip.province:item.ip.country}}</text>
 									</view>
 								</view>
 								<view class="tn-margin-top tn-margin-left">
@@ -716,6 +716,7 @@
 				emojiTabs: [],
 				emojiIndex: 0,
 				emojiList: [],
+				emojiAll:{},
 				isBackCount: 0,
 				navAuthor: false,
 				authorComments: [],
@@ -769,6 +770,9 @@
 					break;
 			}
 		},
+		mounted() {
+			this.getEmojiAllList()
+		},
 		created() {},
 		computed: {
 			gridItemWidth() {
@@ -785,6 +789,7 @@
 				}).then(res => {
 					if (res.data.code == 200) {
 						this.article = res.data.data
+						this.article.content = this.renderEmoji(this.article.content)
 						this.setHistory(res)
 						this.commentDisAllow = res.data.data.opt.comments.allow
 						if (!res.data.data.opt.comments.allow) this.commentBoxText = '作者关闭了评论...';
@@ -868,14 +873,21 @@
 					}
 				})
 			},
+			getEmojiAllList(){
+				this.$http.get('/emoji/all').then(res=>{
+					if(res.data.code===200){
+						this.emojiAll = res.data.data
+					}
+				})
+			},
 			insertEmoji(index) {
 				console.log(index)
-				this.commentText += `[${index}]`
+				this.commentText += `_(${index})`
 			},
 			renderEmoji(content) {
-				return content.replace(/\[([^\]]+)\]/g, (_, name) => {
-					const url = this.emojiList[name]
-					return `<img src="${url}" class="emoji">`
+				return content.replace(/_\(([^)]+)\)/g, (_, name) => {
+					const url = this.emojiAll[name]
+					return `<img src="${url}" style="height:25px;width:25px">`
 				})
 			},
 			followUser() {

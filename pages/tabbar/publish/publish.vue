@@ -4,13 +4,14 @@
 			发布
 			<view class="tn-padding tn-flex tn-flex-col-center" slot="right">
 				<text class="tn-margin-right-sm tn-color-gray--dark">草稿箱</text>
-				<tn-button size="sm" plain fontColor="#29b7cb" backgroundColor="#29b7cb">
+				<tn-button size="sm" plain fontColor="#29b7cb" backgroundColor="#29b7cb" @click="publish">
 					发布
 				</tn-button>
 			</view>
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 		<view class="tn-flex tn-flex-direction-column tn-flex-row-between">
+
 			<view :style="{height:screenHeight - 100 - editHeight - keyHeight +'px',overflow:'scroll'}"
 				class="tn-margin">
 				<view class="tn-color-grey--disabled tn-flex tn-flex-col-center">
@@ -18,9 +19,15 @@
 						:clearable="false" placeholder="标题(必填)" />
 					<text class="tn-text-sm">{{articleInfo.title.length}}/{{titleMAX}}</text>
 				</view>
-				<lsj-edit ref="lsjEdit" @onReady="editReady" placeholder="请尽情发挥吧..." :max-count="contentMAX"></lsj-edit>
+
+
+				<lsj-edit ref="lsjEdit" :onreadOnly="!isReady" @onReady="editReady" placeholder="请尽情发挥吧..."
+					:max-count="contentMAX" @tap="showCurrent = null"></lsj-edit>
+				<!-- 遮罩 -->
+				<view v-if="!isReady" @tap="showCurrent =null"
+					style="position: fixed;top: 0;width: 100%;height: 100vh;"></view>
 			</view>
-			<view style="position: absolute;bottom: 0;width: 100%;" id="contentBtn">
+			<view style="position: absolute;bottom: 0;width: 100%;" class="tn-bg-white" id="contentBtn">
 				<view class="tn-text-right tn-margin">
 					<text class="tn-color-grey--disabled tn-text-sm">{{edit&&edit.textCount}}/{{contentMAX}}</text>
 				</view>
@@ -61,7 +68,7 @@
 							<text :class="'tn-icon-'+item.icon" @tap.stop.prevent="btnAction(item.type)"></text>
 						</block>
 						<view class="tn-margin-left-xl">
-							<text class="tn-icon-install" @tap.stop.prevent="showCurrent = 'set'"></text>
+							<text class="tn-icon-install" @tap.stop.prevent="btnAction('set')"></text>
 						</view>
 					</view>
 					<!-- 表情 -->
@@ -106,16 +113,59 @@
 					</view>
 
 					<!-- 设置 -->
-					<view v-if="showCurrent == 'set'" class="tn-margin-top">
+					<view v-if="showCurrent == 'set'">
 						<scroll-view scroll-y style="height: 300rpx;">
 							<view
-								class="tn-flex tn-flex-col-center tn-flex-row-between tn-border-solid-bottom tn-padding-bottom-sm tn-border-gray--light"
+								class="tn-flex tn-flex-col-center tn-margin-top tn-flex-row-between tn-border-solid-bottom tn-padding-bottom-sm tn-border-gray--light"
 								@tap.stop.prevent="showCollect = true">
 								<text>加入合集</text>
-								<i class="tn-icon-right"></i>
+								<view class="tn-flex tn-flex-col-center">
+									<text
+										class="tn-margin-right-xs tn-color-grey--disabled">{{articleInfo.collect&&articleInfo.collect.name}}</text>
+									<i class="tn-icon-right"></i>
+								</view>
+							</view>
+							<!-- 创作设置 -->
+							<view
+								class="tn-flex tn-flex-col-center tn-flex-row-between tn-border-solid-bottom tn-border-gray--light">
+								<view class="tn-flex tn-flex-direction-column">
+									<text>创作设置</text>
+									<view>
+										<text class="tn-text-sm tn-color-grey--disabled">
+											启用后代表独立创作|阅读并接受
+										</text>
+										<text class="ch-color-primary">《内容创作协议》</text>
+									</view>
+								</view>
+								<tn-switch v-model="creative" activeColor="#29b7cb" :size="40"></tn-switch>
+							</view>
+							<!-- 公开可见 -->
+							<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top-sm">
+								<view class="tn-flex tn-flex-direction-column">
+									<text>公开可见</text>
+									<text class="tn-text-sm tn-color-grey--disabled">开启后文章可被所有人查看</text>
+								</view>
+								<tn-switch v-model="auth" activeColor="#29b7cb" :size="40"
+									@input="authChange"></tn-switch>
+							</view>
+							<view v-if="creative">
+								<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top-sm">
+									<view class="tn-flex tn-flex-direction-column">
+										<text>允许评论发图片</text>
+										<text class="tn-text-sm tn-color-grey--disabled">
+											关闭后评论无法发送图片
+										</text>
+									</view>
+									<tn-switch v-model="articleInfo.opt.comments.image" activeColor="#29b7cb"
+										:size="40"></tn-switch>
+								</view>
+								<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top-sm">
+									<text>允许规范转载</text>
+									<tn-switch v-model="articleInfo.opt.transport" activeColor="#29b7cb"
+										:size="40"></tn-switch>
+								</view>
 							</view>
 						</scroll-view>
-
 					</view>
 				</view>
 			</view>
@@ -209,7 +259,7 @@
 		</tn-popup>
 		<!-- 选择合集 -->
 		<tn-popup mode="bottom" v-model="showCollect" :borderRadius="20" length="50%">
-			<z-paging ref="collect" @query="getCollect" v-model="collect">
+			<z-paging ref="collect" @query="getCollect" v-model="collect" :refresher-enabled="false">
 				<template #top>
 					<view class="tn-margin tn-flex tn-flex-col-center tn-flex-row-between">
 						<text>选择合集</text>
@@ -218,7 +268,7 @@
 				</template>
 				<view class="tn-flex tn-flex-direction-column">
 					<view class="tn-flex tn-flex-col-center tn-text-md tn-flex-row-between tn-margin"
-						@tap.stop.prevent="articleInfo.collect=null">
+						@tap.stop.prevent="articleInfo.collect=null;showCollect=false">
 						<text>不加入合集</text>
 						<view class="tn-round" :class="[!articleInfo.collect?'ch-border-primary':'tn-border-solid']"
 							style="height: 32rpx; width: 32rpx;"></view>
@@ -226,7 +276,7 @@
 					<view class="tn-margin">
 						<block v-for="(item,index) in collect" :key="index">
 							<view class="tn-flex tn-margin-bottom tn-flex-col-center tn-text-md tn-flex-row-between"
-								@tap.stop.prevent="articleInfo.collect = item">
+								@tap.stop.prevent="articleInfo.collect = item;showCollect=false">
 								<view class="tn-flex tn-flex-col-center">
 									<tn-avatar :src="item.image" siz="lg" shape="square"></tn-avatar>
 									<view class="tn-margin-left">
@@ -253,6 +303,7 @@
 	export default {
 		data() {
 			return {
+				onreadOnly: false,
 				col: 4,
 				params: null,
 				titleMAX: 30,
@@ -263,6 +314,10 @@
 				btnList: [{
 						type: 'image',
 						icon: 'image',
+					},
+					{
+						type: 'emoji',
+						icon: 'emoji-good',
 					},
 					{
 						type: 'at',
@@ -293,7 +348,16 @@
 					tags: [],
 					sort: null,
 					collect: null,
-
+					opt: {
+						password: '',
+						auth: 'anyone',
+						comments: {
+							show: true,
+							allow: true,
+							image: true,
+						},
+						transport: true,
+					}
 				},
 				//表情
 				emoji: {
@@ -334,6 +398,10 @@
 				searchTag: '',
 				// 显示合集
 				showCollect: false,
+
+				// 创作
+				creative: false,
+				auth: true,
 			}
 		},
 		onLoad(params) {
@@ -362,7 +430,11 @@
 			// 兼容小程序
 			gridItemWidth() {
 				return 100 / this.col + '%'
-			}
+			},
+			// 是否为编辑
+			isReady() {
+				return this.showCurrent == null
+			},
 		},
 		created() {
 
@@ -477,7 +549,6 @@
 
 			//切换颜色
 			colorTap(type, color) {
-			
 				this.edit.format(type, color);
 			},
 			// 插入表情
@@ -492,6 +563,97 @@
 			goCreateCollect() {
 				this.$Router.push({
 					path: '/pages/user/collect/create'
+				})
+			},
+			// 切换权限
+			authChange(e) {
+				if (e) this.articleInfo.opt.auth = 'anyone';
+				else this.articleInfo.opt.auth = 'private';
+			},
+
+			// 发布准备
+			async publish() {
+				// 获取插入的图片列表
+				let imgs = await this.edit.getImages()
+				// 判断是否允许提交
+				if (!this.articleInfo.sort) {
+					uni.showToast({
+						icon: 'none',
+						title: '未选择分区'
+					});
+					return;
+				}
+				if (!this.articleInfo.title) {
+					uni.showToast({
+						icon: 'none',
+						title: '标题未填写~'
+					});
+					return;
+				}
+				if (!this.edit.textCount && !imgs.length) {
+					uni.showToast({
+						icon: 'none',
+						title: '再多说点吧~'
+					});
+					return;
+				}
+				uni.showLoading({
+					title: '发布中...'
+				})
+				// 将所有未上传的本地图片上传到服务器并替换到编辑器
+				this.edit.replaceImage(async (img) => {
+					// 已上传的无需再上传
+					// img.indexOf('http') = 0说明这个图片已经是网络地址，无需替换就直接跳过
+					if (img.indexOf('http') === 0) {
+						return img;
+					}
+					// 上传并替换图片
+					let {
+						data
+					} = await this.$http.upload('/file/uploadImg', {
+						filePath: img,
+						name: 'file',
+					})
+					return data.data
+				}).then(res => {
+					// console.log('替换完成,最终内容为', JSON.stringify(res.html));
+					// 在这全局替换表情
+					const pattern = /<img[^>]+src="[^"]+\/([^/]+)\.[^"]*"[^>]*alt="emoji"[^>]*>/g;
+					res.html = res.html.replace(pattern, '_($1)')
+					// 发布文章
+					this.addArticle(res)
+
+				});
+			},
+			addArticle(res) {
+				const idTags = this.articleInfo.tags.filter(t => t.id)
+				const idList = idTags.map(t => t.id)
+				this.$http.post('/article/save', {
+					title: this.articleInfo.title ? this.articleInfo.title : res.text.substring(0, 10),
+					content: res.html,
+					sort_id: this.articleInfo.sort.id,
+					tag_id: idList,
+					collections_id: this.articleInfo.collect && this.articleInfo.collect.id ? this.articleInfo
+						.collect.id : '',
+					opt: JSON.stringify(this.articleInfo.opt),
+				}).then(res => {
+					if (res.data.code === 200) {
+						this.realback = true
+						uni.hideLoading()
+						uni.showToast({
+							icon: 'none',
+							title: '发布' + res.data.msg
+						})
+						setTimeout(() => {
+							this.$Router.back(1)
+						}, 1000)
+					}
+				}).catch(err => {
+					console.log(err)
+					uni.showToast({
+						icon: 'none',
+						title: res.data.msg
+					})
 				})
 			},
 			// 点击按钮
@@ -511,6 +673,7 @@
 					case 'emoji':
 					case 'font':
 					case 'more':
+					case 'set':
 						if (this.showCurrent == type) this.showCurrent = null;
 						else this.showCurrent = type;
 						break;

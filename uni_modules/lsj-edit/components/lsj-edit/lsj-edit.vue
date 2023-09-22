@@ -3,7 +3,7 @@
 		<editor id="editor" ref="editot" class="lsj-edit-edit-container" :style="customStyle"
 			:placeholder="placeholderText" :readOnly="onreadOnly" :showImgSize="showImgSize"
 			:showImgToolbar="showImgToolbar" :showImgResize="showImgResize" @ready="onEditorReady"
-			@statuschange="statuschange" read-only @focus="editFocus" @blur="editBlur" @input="onInput"></editor>
+			@statuschange="statuschange" auto-blur @focus="editFocus" @blur="editBlur" @input="onInput"></editor>
 	</view>
 </template>
 
@@ -16,6 +16,11 @@
 	} from './edit.js'
 	export default {
 		props: {
+			// 是否可写
+			onreadOnly: {
+				type: Boolean,
+				default: false,
+			},
 			// 最大输入字符数
 			maxCount: {
 				type: [Number, String],
@@ -65,7 +70,6 @@
 				minHeight: 300,
 				edit: null,
 				isFocus: false,
-				onreadOnly: false,
 			}
 		},
 		computed: {
@@ -97,7 +101,7 @@
 			// #endif
 		},
 		methods: {
-	
+
 			// 初始化
 			onEditorReady(e) {
 				uni.createSelectorQuery()
@@ -128,19 +132,23 @@
 				if (!detail.delta) {
 					return;
 				}
+
 				this.edit.eventLink(detail);
 			},
 			// 状态变化监听并发送通知
 			statuschange(e) {
+
 				this.edit.statuschange(e);
 			},
 			// 焦点进入并发送通知
 			editFocus(e) {
+
 				this.isFocus = true
 				this.edit.focus(e);
 			},
 			// 焦点离开并发送通知
 			editBlur(e) {
+
 				this.isFocus = false
 				this.edit.blur(e);
 			}
