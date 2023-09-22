@@ -146,7 +146,8 @@
 											:class="['lv-'+item.expand.user.grade]"
 											:style="{'color':level[item.expand.user.grade]}"></text>
 									</view>
-									<text class="tn-text-sm tn-color-grey--disabled">{{item.ip.province?item.ip.province:item.ip.country}}</text>
+									
+									<text class="tn-text-sm tn-color-grey--disabled">{{item.ip.province!=0?item.ip.province:item.ip.country}}</text>
 								</view>
 							</view>
 							<view class="tn-margin-top tn-margin-left">
