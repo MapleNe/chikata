@@ -258,6 +258,7 @@
 			})
 		},
 		created() {
+			
 			this.getBanner()
 			// this.getPlacard()
 			uni.$on('deleteArticleOk', data => {
@@ -314,6 +315,7 @@
 						order: this.tabsIndex === 1 ? 'create_time desc views desc' : ''
 					}
 				}).then(res => {
+					
 					if (res.data.code === 200) {
 
 						this.$refs.paging.complete(res.data.data.data)
@@ -324,6 +326,7 @@
 						}, 400)
 					}
 				}).catch(err => {
+					
 					this.$refs.paging.complete(false)
 				})
 			},

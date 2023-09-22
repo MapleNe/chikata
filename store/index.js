@@ -160,11 +160,11 @@ const store = new Vuex.Store({
 		// 退出登录
 		logout(state) {
 			state.userInfo = {
-					longtext: {
-						background_img: '', //必须定义 为什么我也不知道
-					}
-				},
-				state.hasLogin = false,
+				longtext: {
+					background_img: '', //必须定义 为什么我也不知道
+				}
+			}
+			state.hasLogin = false,
 				uni.removeStorage({
 					key: 'userInfo',
 				})
