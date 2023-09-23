@@ -64,6 +64,7 @@ const store = new Vuex.Store({
 		chatData: null,
 		cid: null,
 		page: [],
+		emojiList: null,
 	},
 	mutations: {
 		$tStore(state, payload) {
@@ -192,7 +193,10 @@ const store = new Vuex.Store({
 				key: 'page',
 				data: payload,
 			})
-
+		},
+		//保存表情
+		setEmoji(state, payload) {
+			state.emojiList = payload
 		}
 	},
 	actions: {}

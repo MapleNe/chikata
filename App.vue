@@ -89,6 +89,9 @@
 			// 获取页面信息
 			const page = uni.getStorageSync('page')
 			if(page) this.setPage(page); else this.getPage()
+			
+			//获取表情
+			this.getEmoji()
 
 		},
 		beforeDestroy() {
@@ -106,7 +109,7 @@
 			...mapState(['hasLogin'])
 		},
 		methods: {
-			...mapMutations(['login', 'logout', 'updateNotice', 'setPage']),
+			...mapMutations(['login', 'logout', 'updateNotice', 'setPage','setEmoji']),
 			connectWebSocket() {
 				this.ws && this.ws.closeSocket();
 				this.ws = new WS(config.wss) // xxx 表示接口地址URL
@@ -141,6 +144,14 @@
 						this.setPage(res.data.data.data)
 					}
 
+				})
+			},
+			// 获取所有表情
+			getEmoji(){
+				http.get('/emoji/all').then(res=>{
+					if(res.data.code===200){
+						this.setEmoji(res.data.data)
+					}
 				})
 			}
 		}

@@ -1,6 +1,6 @@
 <template>
 	<z-paging-swiper>
-		
+
 		<swiper class="swiper" :current="swiperIndex" @animationfinish="swiperAnimationfinish">
 			<swiper-item>
 				<z-paging ref="paging" @query="getComments" v-model="comments" :safe-area-inset-bottom="true"
@@ -146,8 +146,9 @@
 											:class="['lv-'+item.expand.user.grade]"
 											:style="{'color':level[item.expand.user.grade]}"></text>
 									</view>
-									
-									<text class="tn-text-sm tn-color-grey--disabled">{{item.ip.province!=0?item.ip.province:item.ip.country}}</text>
+
+									<text
+										class="tn-text-sm tn-color-grey--disabled">{{item.ip.province!=0?item.ip.province:item.ip.country}}</text>
 								</view>
 							</view>
 							<view class="tn-margin-top tn-margin-left">
@@ -313,7 +314,7 @@
 							lineColor="#29b7cb" activeColor="#29b7cb" :lineScale="0.2"></v-tabs>
 						<scroll-view scroll-y style="height: 20vh;" class="tn-margin-top-xs">
 							<tn-grid :col="8">
-								<block v-for="(item, index) in emojiList" :key="index">
+								<block v-for="(item, index) in emoji.list" :key="index">
 									<!-- H5 -->
 									<!-- #ifndef MP-WEIXIN -->
 									<tn-grid-item>
@@ -495,9 +496,11 @@
 												:class="['lv-'+item.expand.user.grade]"
 												:style="{'color':level[item.expand.user.grade]}"></text>
 										</view>
-										<text class="tn-text-sm tn-color-grey--disabled">{{item.ip.province?item.ip.province:item.ip.country}}</text>
+										<text
+											class="tn-text-sm tn-color-grey--disabled">{{item.ip.province?item.ip.province:item.ip.country}}</text>
 									</view>
 								</view>
+
 								<view class="tn-margin-top tn-margin-left">
 									<view
 										class="tn-flex tn-flex-direction-column tn-margin-left-xl tn-padding-bottom-xs tn-border-solid-bottom tn-border-gray--light">
@@ -589,6 +592,9 @@
 </template>
 
 <script>
+	import {
+		mapState
+	} from 'vuex';
 	import userProfile from '@/pages/common/userProfile/userProfile';
 	import store from '../../../store';
 	export default {
@@ -716,8 +722,10 @@
 				],
 				emojiTabs: [],
 				emojiIndex: 0,
-				emojiList: [],
-				emojiAll:{},
+				emoji: {
+					list: null
+				},
+				emojiAll: {},
 				isBackCount: 0,
 				navAuthor: false,
 				authorComments: [],
@@ -771,14 +779,13 @@
 					break;
 			}
 		},
-		mounted() {
-			this.getEmojiAllList()
-		},
+
 		created() {},
 		computed: {
 			gridItemWidth() {
 				return (100 / this.col - 2) + '%'
 			},
+			...mapState(['emojiList'])
 		},
 		methods: {
 			getArticle() {
@@ -870,24 +877,18 @@
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
-						this.emojiList = res.data.data
+						this.emoji.list = res.data.data
 					}
 				})
 			},
-			getEmojiAllList(){
-				this.$http.get('/emoji/all').then(res=>{
-					if(res.data.code===200){
-						this.emojiAll = res.data.data
-					}
-				})
-			},
+
 			insertEmoji(index) {
 				console.log(index)
 				this.commentText += `_(${index})`
 			},
 			renderEmoji(content) {
 				return content.replace(/_\(([^)]+)\)/g, (_, name) => {
-					const url = this.emojiAll[name]
+					const url = this.emojiList[name]
 					return `<img src="${url}" style="height:25px;width:25px">`
 				})
 			},
