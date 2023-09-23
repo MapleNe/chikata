@@ -158,7 +158,7 @@
 									<view style="overflow: hidden;word-wrap: break-word" @tap="subReply(item)">
 										<mp-html :content="item.content" :img-cache="true"
 											:preview-img="false"></mp-html>
-										<view v-if="item.images.length>0">
+										<view v-if="item.images && item.images.length>0">
 											<tn-grid align=" left" :col="col" hoverClass="none">
 												<block v-for="(images, subIndex) in item.images" :key="subIndex"
 													v-if="subIndex<9">
@@ -515,7 +515,7 @@
 												:content="item.content" :preview-img="false"
 												:img-cache="true"></mp-html>
 										</view>
-										<view v-if="item.images.length>0">
+										<view v-if="item.images && item.images.length>0">
 											<tn-grid align=" left" :col="col" hoverClass="none">
 												<block v-for="(images, subIndex) in item.images" :key="subIndex"
 													v-if="subIndex<9">
@@ -839,6 +839,7 @@
 
 					}
 				}).then(res => {
+					console.log(res)
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.data)
 					}
@@ -961,7 +962,7 @@
 				const images = this.images.join(',')
 				this.$http.post('/comments/add', {
 					article_id: this.article.id,
-					content: this.renderEmoji(this.commentText),
+					content: this.commentText,
 					images: images,
 					pid: this.pid,
 				}).then(res => {
