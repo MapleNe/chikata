@@ -91,7 +91,7 @@ http.interceptors.request.use((config) => {
 		}
 
 	}
-	if (config.method == 'GET') config.params.token = inisENV.token
+	config.params.token = inisENV.token
 	if (token) {
 		config.header['Authorization'] = uni.getStorageSync('token');
 	}
