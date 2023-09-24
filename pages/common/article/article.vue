@@ -430,7 +430,7 @@
 										@tap="subReply(subCommentAuthor)">
 										<!-- {{item.content}} -->
 										<mp-html :preview-img="false" :img-cache="true"
-											:content="subCommentAuthor.content"></mp-html>
+											:content="renderEmoji(subCommentAuthor.content)"></mp-html>
 										<view v-if="subCommentAuthor.images && subCommentAuthor.images.length>0">
 											<tn-grid align=" left" :col="col" hoverClass="none">
 												<block v-for="(images, subIndex) in subCommentAuthor.images"
@@ -512,7 +512,7 @@
 												v-if="item.pid != subCommentAuthor.id">{{item.expand.pid.nickname}}</text>
 											<text v-if="item.pid != subCommentAuthor.id">：</text>
 											<mp-html container-style="display:inline;white-space:nomarl;"
-												:content="item.content" :preview-img="false"
+												:content="renderEmoji(item.content)" :preview-img="false"
 												:img-cache="true"></mp-html>
 										</view>
 										<view v-if="item.images && item.images.length>0">
