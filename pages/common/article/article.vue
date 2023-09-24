@@ -188,7 +188,7 @@
 									</view>
 									<!-- 主评论结束 -->
 									<!-- 子评论 -->
-									<view class="tn-margin-top-sm" v-if="item.son.length>0">
+									<view class="tn-margin-top-sm" v-if="item.son && item.son.length>0">
 										<view class="tn-padding-sm tn-bg-gray--light ch-radius"
 											@tap.stop.prevent="showComment= !showComment;subId=item.id;subCommentAuthor=item">
 											<!-- 这里只显示两条防止太多评论导致的过长 -->
@@ -208,7 +208,7 @@
 											</block>
 											<view
 												class="tn-flex tn-flex-col-center tn-margin-top-sm tn-color-gray--dark"
-												v-if="item.son.length>2">
+												v-if="item.son && item.son.length>2">
 												<text>全部{{item.son.length}}条评论</text>
 												<text class="tn-icon-right tn-text-md"></text>
 											</view>
@@ -431,7 +431,7 @@
 										<!-- {{item.content}} -->
 										<mp-html :preview-img="false" :img-cache="true"
 											:content="subCommentAuthor.content"></mp-html>
-										<view v-if="subCommentAuthor.images.length>0">
+										<view v-if="subCommentAuthor.images && subCommentAuthor.images.length>0">
 											<tn-grid align=" left" :col="col" hoverClass="none">
 												<block v-for="(images, subIndex) in subCommentAuthor.images"
 													:key="subIndex" v-if="subIndex<9">
