@@ -24,8 +24,8 @@
 				<lsj-edit ref="lsjEdit" :onreadOnly="isReady" @onReady="editReady" placeholder="请尽情发挥吧..."
 					:max-count="contentMAX" @tap="showCurrent = null"></lsj-edit>
 				<!-- 遮罩 -->
-				<view v-if="isReady" @tap="showCurrent =null"
-					style="position: fixed;top: 0;width: 100%;height: 100vh;"></view>
+				<view v-if="isReady" @tap="showCurrent =null" style="position: fixed;top: 0;width: 100%;height: 100vh;">
+				</view>
 			</view>
 			<view style="position: absolute;bottom: 0;width: 100%;" class="tn-bg-white" id="contentBtn">
 				<view class="tn-text-right tn-margin">
@@ -172,7 +172,7 @@
 		</view>
 		<!-- 弹出层开始 -->
 		<!-- 选择板块 -->
-		<tn-popup mode="bottom" :borderRadius="20" length="80%" v-model="showCategory">
+		<tn-popup mode="bottom" :borderRadius="20" length="60%" v-model="showCategory">
 			<view class="tn-flex tn-flex-row-between tn-margin tn-flex-col-center">
 				<text>选择板块</text>
 				<text class="tn-icon-close tn-text-xxl" @tap.stop.prevent="showCategory = false"></text>
@@ -210,37 +210,37 @@
 		</tn-popup>
 		<!-- 选择话题 -->
 		<tn-popup mode="bottom" v-model="showTag" :borderRadius="20" length="80%">
-			<scroll-view style="height: 100rpx;" scroll-y>
-				<view class="tn-margin tn-flex tn-flex-row-between tn-flex-col-center">
-					<text class="tn-icon-close tn-text-xxl" @tap.stop.prevent="showTag = false"></text>
-					<text>选择话题</text>
-					<text class="ch-color-primary" @tap.stop.prevent="showTag = false">确认</text>
-				</view>
-			</scroll-view>
-			<view class="tn-flex tn-text-md tn-margin tn-flex-col-center tn-radius tn-flex-wrap"
-				style="min-height: 60rpx;">
-				<text class="tn-text-bold">话题：</text>
-				<block v-for="(item,index) in articleInfo.tags" :key="index">
-					<view
-						class="tn-margin-xs tn-no-margin-right tn-no-margin-top tn-bg-gray--light tn-padding-xs tn-padding-left-sm tn-padding-right-sm"
-						@tap.stop.prevent="tagTap(item)">
-						<text>{{item.name}}</text>
-						<text class="tn-margin-left-xs tn-icon-close-fill tn-color-gray"></text>
+			<z-paging ref="tags" @query="getTag" v-model="tag">
+				<template #top>
+					<view class="tn-margin tn-flex tn-flex-row-between tn-flex-col-center">
+						<text class="tn-icon-close tn-text-xxl" @tap.stop.prevent="showTag = false"></text>
+						<text>选择话题</text>
+						<text class="ch-color-primary" @tap.stop.prevent="showTag = false">确认</text>
 					</view>
-				</block>
-			</view>
-			<!-- 搜索 -->
-
-			<view
-				class="tn-bg-gray--light tn-radius tn-margin tn-padding-left-sm tn-padding-right-sm tn-flex tn-flex-col-center">
-				<text class="tn-icon-search tn-padding-right-sm"></text>
-				<tn-input v-model="searchTag" :clearable="false" placeholder="搜索话题" />
-			</view>
-
-			<!-- 推荐话题 -->
-			<view class="tn-margin tn-text-md tn-margin-top-xl">
-				<text class="tn-text-bold">推荐话题：</text>
-				<view class="tn-margin-top-xl">
+					<view class="tn-flex tn-text-md tn-margin tn-flex-col-center tn-radius tn-flex-wrap"
+						style="min-height: 60rpx;">
+						<text class="tn-text-bold">话题：</text>
+						<block v-for="(item,index) in articleInfo.tags" :key="index">
+							<view
+								class="tn-margin-xs tn-no-margin-right tn-no-margin-top tn-bg-gray--light tn-padding-xs tn-padding-left-sm tn-padding-right-sm"
+								@tap.stop.prevent="tagTap(item)">
+								<text>{{item.name}}</text>
+								<text class="tn-margin-left-xs tn-icon-close-fill tn-color-gray"></text>
+							</view>
+						</block>
+					</view>
+					<!-- 搜索 -->
+					<view
+						class="tn-bg-gray--light tn-radius tn-margin tn-padding-left-sm tn-padding-right-sm tn-flex tn-flex-col-center">
+						<text class="tn-icon-search tn-padding-right-sm"></text>
+						<tn-input v-model="searchKey" :clearable="false" placeholder="搜索话题" @input="searchTag" />
+					</view>
+					<view class="tn-margin tn-text-md tn-margin-top-xl">
+						<text class="tn-text-bold">推荐话题：</text>
+					</view>
+				</template>
+				<!-- 推荐话题 -->
+				<view class="tn-margin tn-text-md">
 					<block v-for="(item,index) in tag" :key="index">
 						<view class="tn-flex tn-flex-col-center tn-margin-bottom" @tap.stop.prevent="tagTap(item)">
 							<tn-avatar :src="item.opt.head_img" shape="square"></tn-avatar>
@@ -254,8 +254,7 @@
 						</view>
 					</block>
 				</view>
-			</view>
-
+			</z-paging>
 		</tn-popup>
 		<!-- 选择合集 -->
 		<tn-popup mode="bottom" v-model="showCollect" :borderRadius="20" length="50%">
@@ -310,7 +309,7 @@
 				contentMAX: 30000,
 				category: null,
 				collect: [],
-				tag: null,
+				tag: [],
 				btnList: [{
 						type: 'image',
 						icon: 'image',
@@ -394,8 +393,8 @@
 				showCategory: false,
 				//话题
 				showTag: false,
-
-				searchTag: '',
+				// 搜索关键词
+				searchKey: '',
 				// 显示合集
 				showCollect: false,
 
@@ -434,19 +433,14 @@
 			// 是否为编辑
 			isReady() {
 				let status = false
-				if(this.showCurrent!='font'&&this.showCurrent!=null) status = true
+				if (this.showCurrent != 'font' && this.showCurrent != null) status = true
 				return status
 			},
-		},
-		created() {
-
 		},
 		methods: {
 			initData() {
 				// 获取分类
 				this.getCategory()
-				// 过去话题标签
-				this.getTag()
 				// 获取表情
 				this.getEmoji()
 			},
@@ -461,17 +455,31 @@
 					}
 				})
 			},
+			// 获取标签
 			getTag(page, limit) {
 				this.$http.get('/tag/all', {
 					params: {
-						page,
-						limit: 10
+						page: page,
+						limit: 20
 					}
 				}).then(res => {
-
+					console.log(res)
 					if (res.data.code === 200) {
-						this.tag = res.data.data.data
+						this.$refs.tags.complete(res.data.data.data)
 					}
+				})
+			},
+			// 搜索标签
+			searchTag(page, limit) {
+				this.$http.get('/tag/sql', {
+					params: {
+						page,
+						limit,
+						where: `name like '%${this.searchKey}%'`
+					}
+				}).then(res => {
+					console.log(res)
+					this.$refs.tags.complete(res.data.data.data)
 				})
 			},
 			getEmoji() {
@@ -489,7 +497,6 @@
 					}
 
 				}).then(res => {
-
 					if (res.data.code === 200) {
 						this.emoji.list.push(res.data.data)
 					}
@@ -635,7 +642,8 @@
 					content: res.html,
 					sort_id: this.articleInfo.sort.id,
 					tag_id: idList,
-					collections_id: this.articleInfo.collect && this.articleInfo.collect.id ? this.articleInfo
+					collections_id: this.articleInfo.collect && this.articleInfo.collect.id ? this
+						.articleInfo
 						.collect.id : '',
 					opt: JSON.stringify(this.articleInfo.opt),
 				}).then(res => {
@@ -668,7 +676,6 @@
 					case 'at':
 						this.showAt = !this.showAt
 						break;
-
 					case 'video':
 						this.showFont = !this.showFont
 						break;
