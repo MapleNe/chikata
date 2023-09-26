@@ -1,6 +1,6 @@
 const config = {
 	// API接口，必须是HTTPS开头
-	"api": "https://api.xboundless.com/api",
+	"api": "https://api.guan.asia/api",
 	// webSite 网页地址
 	"web": "https://h5.xboundless.com/",
 	// WebSocket

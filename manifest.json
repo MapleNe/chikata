@@ -2,8 +2,8 @@
     "name" : "校元",
     "appid" : "__UNI__48D041B",
     "description" : "校元",
-    "versionName" : "1.0.2",
-    "versionCode" : 2,
+    "versionName" : "1.0.3",
+    "versionCode" : 3,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {

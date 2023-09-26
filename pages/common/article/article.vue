@@ -290,13 +290,15 @@
 								:class="item.icon" @tap.stop="commentBtnTap(index)"></text>
 						</view>
 						<view class="">
-							<tn-button :plain="true" size="sm" backgroundColor="#29b7cb" fontColor="#29b7cb"
-								blockRepeatClick @click="commentCheck">发送~</tn-button>
+							<tn-button :plain="true" size="sm"
+								:backgroundColor="images&&images.length||commentText?'#29b7cb':'#aaa'"
+								:fontColor="images&&images.length||commentText?'#29b7cb':'#aaa'" blockRepeatClick
+								@click="images&&images.length||commentText?commentSend():''">发送~</tn-button>
 						</view>
 					</view>
 					<!-- 图片 -->
 					<scroll-view scroll-x="true" style="height: 200rpx;"
-						class="tn-padding tn-padding-top-xs tn-no-padding-bottom" v-if="images.length">
+						class="tn-padding tn-padding-top-xs tn-no-padding-bottom" v-if="images&&images.length">
 						<view class="tn-flex">
 							<block v-for="(item,index) in images" :key="index">
 								<view style="height: 140rpx;width: 140rpx;position: relative;"
@@ -945,24 +947,20 @@
 					})
 				}
 			},
-			commentCheck() {
-				if (this.commentText == '' && this.images) {
-					this.commentText = '【图片】'
-				} else if (this.commentText == '' && !this.images) {
+
+			commentSend() {
+				if (!this.commentText && !this.images.length) {
 					uni.showToast({
 						icon: 'none',
-						title: '再说点呗~'
+						title: '再多说点什么吧~'
 					})
 					return
 				}
-				this.commentSend()
-			},
-			commentSend() {
 				// 将数组改为字符串
 				const images = this.images.join(',')
 				this.$http.post('/comments/add', {
 					article_id: this.article.id,
-					content: this.commentText,
+					content: this.commentText?this.commentText:images?'[图片]':'',
 					images: images,
 					pid: this.pid,
 				}).then(res => {
