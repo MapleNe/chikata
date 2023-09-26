@@ -21,10 +21,10 @@
 				</view>
 
 
-				<lsj-edit ref="lsjEdit" :onreadOnly="!isReady" @onReady="editReady" placeholder="请尽情发挥吧..."
+				<lsj-edit ref="lsjEdit" :onreadOnly="isReady" @onReady="editReady" placeholder="请尽情发挥吧..."
 					:max-count="contentMAX" @tap="showCurrent = null"></lsj-edit>
 				<!-- 遮罩 -->
-				<view v-if="!isReady" @tap="showCurrent =null"
+				<view v-if="isReady" @tap="showCurrent =null"
 					style="position: fixed;top: 0;width: 100%;height: 100vh;"></view>
 			</view>
 			<view style="position: absolute;bottom: 0;width: 100%;" class="tn-bg-white" id="contentBtn">
@@ -433,7 +433,9 @@
 			},
 			// 是否为编辑
 			isReady() {
-				return this.showCurrent == null
+				let status = false
+				if(this.showCurrent!='font'&&this.showCurrent!=null) status = true
+				return status
 			},
 		},
 		created() {
