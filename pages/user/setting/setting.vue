@@ -63,11 +63,15 @@
 					<text class="tn-padding-sm tn-color-gray--dark" style="font-size: 28rpx;">是否清除缓存？</text>
 				</view>
 			</view>
-			<view class="tn-padding tn-color-gray--dark tn-bg-gray--light">
-				<view class="tn-flex tn-flex-row-around" style="font-size: 28rpx;">
-					<text @tap.stop.prevent="showClearCache=!showClearCache">取消</text>
+			<view class="tn-color-gray--dark tn-bg-gray--light">
+				<view class="tn-padding tn-flex tn-flex-row-around" style="font-size: 28rpx;">
+					<view class="tn-flex-1" @tap.stop.prevent="showClearCache = false">
+						<text>取消</text>
+					</view>
 					<text class="tn-color-grey--light">|</text>
-					<text class="ch-color-primary" @tap.stop.prevent="clearCache()">确定</text>
+					<view class="tn-flex-1" @tap.stop.prevent="clearCache()">
+						<text class="ch-color-primary">确定</text>
+					</view>
 				</view>
 			</view>
 		</tn-popup>

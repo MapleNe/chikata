@@ -1,11 +1,16 @@
 <template>
 	<view>
 		<tn-nav-bar backTitle="" :zIndex="2">
-			发布
+			编辑
 			<view class="tn-padding tn-flex tn-flex-col-center" slot="right">
-				<text class="tn-margin-right-sm tn-color-gray--dark">草稿箱</text>
+				<view class="tn-margin-right-sm" v-if="!params.update">
+					<tn-button size="sm" plain @click="showDraftList = true">
+						草稿箱
+					</tn-button>
+				</view>
+
 				<tn-button size="sm" plain fontColor="#29b7cb" backgroundColor="#29b7cb" @click="publish">
-					发布
+					{{params.update?'更新':'发布'}}
 				</tn-button>
 			</view>
 		</tn-nav-bar>
@@ -21,8 +26,9 @@
 				</view>
 
 
-				<lsj-edit ref="lsjEdit" :onreadOnly="isReady" :html="articleInfo.content" @onReady="editReady" placeholder="请尽情发挥吧..."
-					:max-count="contentMAX" @tap="showCurrent = null"></lsj-edit>
+				<lsj-edit ref="lsjEdit" :onreadOnly="isReady" :html="params.update?articleInfo.content:''"
+					@onReady="editReady" placeholder="请尽情发挥吧..." :max-count="contentMAX"
+					@tap="showCurrent = null"></lsj-edit>
 				<!-- 遮罩 -->
 				<view v-if="isReady" @tap="showCurrent =null" style="position: fixed;top: 0;width: 100%;height: 100vh;">
 				</view>
@@ -291,6 +297,55 @@
 				</view>
 			</z-paging>
 		</tn-popup>
+		<!-- 草稿列表 -->
+		<tn-popup mode="bottom" v-model="showDraftList" :borderRadius="20" length="60%">
+			<view class="tn-margin tn-flex tn-flex-row-between tn-flex-col-center">
+				<text class="tn-icon-close tn-text-xxl" @tap.stop.prevent="showDraftList = false"></text>
+				<text class="ch-color-primary">清空</text>
+			</view>
+			<view class="tn-margin">
+
+				<block v-for="(item,index) in draftList" :key="index">
+					<view class="tn-margin-bottom tn-flex tn-flex-direction-column tn-color-gray tn-text-md">
+						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+							<text>编辑于 刚刚</text>
+							<text>删除</text>
+						</view>
+						<view class="tn-flex tn-margin-top-sm">
+							<view class=" tn-bg-grey--light tn-flex tn-flex-col-center tn-flex-row-center"
+								style="width: 120rpx;height: 120rpx;border-radius: 10rpx;">
+								<text class="tn-icon-image-text tn-text-xl-xxl"></text>
+							</view>
+							<view
+								class="tn-margin-left-sm tn-flex tn-flex-direction-column tn-flex-row-between tn-text-ellipsis">
+								<text>{{item.title}}</text>
+								<text class="tn-text-ellipsis-2">{{item.content}}</text>
+							</view>
+						</view>
+					</view>
+				</block>
+			</view>
+		</tn-popup>
+		<!-- 保存草稿 -->
+		<tn-popup mode="center" :borderRadius="20" v-model="showSaveDraft" length="80%" :zIndex="5">
+			<view class="tn-margin">
+				<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
+					<text>保存草稿</text>
+					<text class="tn-padding-sm tn-color-gray--dark" style="font-size: 28rpx;">是否保存草稿？</text>
+				</view>
+			</view>
+			<view class="tn-padding tn-color-gray--dark tn-bg-gray--light">
+				<view class="tn-flex tn-flex-row-around" style="font-size: 28rpx;">
+					<view class="tn-flex-1 tn-text-center" @tap.stop.prevent="showSaveDraft= false">
+						<text>取消</text>
+					</view>
+					<text class="tn-color-grey--light">|</text>
+					<view class="tn-flex-1 tn-text-center" @tap.stop.prevent="saveDraft()">
+						<text class="ch-color-primary">确定</text>
+					</view>
+				</view>
+			</view>
+		</tn-popup>
 	</view>
 </template>
 
@@ -397,7 +452,12 @@
 				searchKey: '',
 				// 显示合集
 				showCollect: false,
-
+				realBack: false,
+				// 显示草稿
+				showSaveDraft: false,
+				// 草稿列表
+				showDraftList: false,
+				draftList: [],
 				// 创作
 				creative: false,
 				auth: true,
@@ -408,22 +468,20 @@
 		},
 
 		beforeRouteLeave(to, from, next) {
+			this.$Router.$lockStatus = false
+			if (this.edit.textCount >= 10 && !this.realBack) {
+				this.showSaveDraft = true
+				next(false)
+				return
+			}
 			next()
 		},
 		onReady() {
-			// 获取元素高度
-			uni.createSelectorQuery().in(this).select('#contentBtn').boundingClientRect(data => {
-				this.editHeight = data.height
-			}).exec()
-			this.screenHeight = uni.getSystemInfoSync().windowHeight
-
-			// 监听键盘高度
-			uni.onKeyboardHeightChange(data => {
-				this.keyHeight = data.height
-			})
-
-			//初始化数据
 			this.initData()
+			// 获取草稿
+			this.draftList = uni.getStorageSync('draft')
+			if (!this.draftList) this.draftList = [];
+
 		},
 		computed: {
 			// 兼容小程序
@@ -447,13 +505,13 @@
 					this.getArticle()
 				}
 			},
-			getArticle(){
-				this.$http.get('/article/one',{
-					params:{
-						id:this.params.id
+			getArticle() {
+				this.$http.get('/article/one', {
+					params: {
+						id: this.params.id
 					}
-				}).then(res=>{
-					if(res.data.code===200){
+				}).then(res => {
+					if (res.data.code === 200) {
 						console.log(res)
 						this.articleInfo.title = res.data.data.title
 						this.articleInfo.content = res.data.data.content
@@ -712,6 +770,23 @@
 					default:
 						break;
 				}
+			},
+			// 保存草稿
+			async saveDraft() {
+				let article = this.articleInfo
+				let content = await this.edit.getContents()
+				article.content = content.html
+				this.draftList.push(article)
+				this.realBack = true
+				uni.setStorageSync('draft', this.draftList)
+				uni.showToast({
+					icon: 'none',
+					title: '保存成功！'
+				})
+				setTimeout(() => {
+					this.$Router.back(1)
+				}, 500)
+
 			}
 		}
 	}
