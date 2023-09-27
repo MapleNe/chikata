@@ -17,6 +17,7 @@
 				"navigationBarTitleText": "文章详情",
 				"enablePullDownRefresh": false
 			}
+			
 
 		}, {
 			"path": "pages/tabbar/circle",
@@ -247,6 +248,7 @@
             }
             
         }
+        
     ],
 	"subPackages": [{
 		"root": "pagesA",
@@ -351,6 +353,7 @@
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F7F8",
 		"navigationStyle": "custom",
+		"pageOrientation": "auto",
 		"app-plus": {
 			"animationDuration": 250,
 			"bounce": "none",

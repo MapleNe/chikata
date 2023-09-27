@@ -368,6 +368,7 @@
 					cid: this.cid,
 					//#endif
 				}).then(res => {
+					console.log(res)
 					if (res.data.code === 200) {
 						let data = res.data
 						let token = data.data['login-token']

@@ -602,7 +602,7 @@
 	import store from '../../../store';
 	export default {
 		components: {
-			userProfile
+			userProfile,
 		},
 		data() {
 			return {

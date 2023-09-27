@@ -21,7 +21,7 @@
 				</view>
 
 
-				<lsj-edit ref="lsjEdit" :onreadOnly="isReady" @onReady="editReady" placeholder="请尽情发挥吧..."
+				<lsj-edit ref="lsjEdit" :onreadOnly="isReady" :html="articleInfo.content" @onReady="editReady" placeholder="请尽情发挥吧..."
 					:max-count="contentMAX" @tap="showCurrent = null"></lsj-edit>
 				<!-- 遮罩 -->
 				<view v-if="isReady" @tap="showCurrent =null" style="position: fixed;top: 0;width: 100%;height: 100vh;">
@@ -443,6 +443,26 @@
 				this.getCategory()
 				// 获取表情
 				this.getEmoji()
+				if (this.params.update) {
+					this.getArticle()
+				}
+			},
+			getArticle(){
+				this.$http.get('/article/one',{
+					params:{
+						id:this.params.id
+					}
+				}).then(res=>{
+					if(res.data.code===200){
+						console.log(res)
+						this.articleInfo.title = res.data.data.title
+						this.articleInfo.content = res.data.data.content
+						this.articleInfo.tags = res.data.data.expand.tag
+						this.articleInfo.sort = res.data.data.expand.sort[0]
+						this.articleInfo.opt = res.data.data.opt
+						this.articleInfo.collect = res.data.data.expand.collections
+					}
+				})
 			},
 			getCategory() {
 				this.$http.get('/article-sort/all', {
@@ -481,6 +501,7 @@
 					this.$refs.tags.complete(res.data.data.data)
 				})
 			},
+			// 获取表情
 			getEmoji() {
 				this.$http.get('/emoji/list', {}).then(res => {
 					if (res.data.code === 200) {
@@ -489,6 +510,7 @@
 					}
 				})
 			},
+			// 获取表情列表
 			getEmojiList(emoji) {
 				this.$http.get('/emoji/one', {
 					params: {
@@ -500,13 +522,15 @@
 					}
 				})
 			},
+			// 获取合集
 			getCollect(page, limit) {
-				this.$http.get('/collections/Find', {
+				this.$http.get('/collections/users', {
 					params: {
 						page,
 						limit
 					}
 				}).then(res => {
+					console.log(res)
 					if (res.data.code === 200) {
 						this.$refs.collect.complete(res.data.data)
 
@@ -539,7 +563,7 @@
 				this.edit = edit;
 				// 监听光标进入
 				this.edit.$on('edit:focus', (e) => {
-					this.showCurrent = null
+
 				});
 				// 监听输入
 				this.edit.$on('edit:input', (e) => {
@@ -636,6 +660,7 @@
 				const idTags = this.articleInfo.tags.filter(t => t.id)
 				const idList = idTags.map(t => t.id)
 				this.$http.post('/article/save', {
+					id: this.params.update ? this.params.id : '',
 					title: this.articleInfo.title ? this.articleInfo.title : res.text.substring(0, 10),
 					content: res.html,
 					sort_id: this.articleInfo.sort.id,
