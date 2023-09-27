@@ -241,18 +241,19 @@
 
 						</view>
 					</view>
+					<!-- 底部开始 -->
 					<template #bottom>
-						<!-- 底部开始 -->
 						<view class="tn-padding tn-bg-white tn-flex tn-flex-col-center">
 							<view class="tn-bg-gray--light tn-padding-left tn-round tn-margin-right">
-								<tn-input :disabled="true" placeholder="我想说..."
-									@click="commentAllow?commentAction():''"></tn-input>
+								<tn-input :disabled="true"
+									:placeholder="article.opt&&!article.opt.comments.allow?'作者关闭了评论区':'我想说...'"
+									@click="article&&article.opt.comments.allow?commentAction():''"></tn-input>
 							</view>
 							<view
 								class="tn-flex tn-text-sm tn-flex-col-center tn-color-gray--dark tn-flex-basic-sm tn-flex-row-between"
 								style="margin-left: auto;">
 								<view class="tn-flex tn-flex-col-center tn-flex-direction-column"
-									@tap.stop="favorite()">
+									@tap.stop.prevent="favorite">
 									<text class="tn-text-xxl"
 										:class="article.expand.favorites.is_favorites?'tn-icon-star-fill tn-color-orangered':'tn-icon-star'"></text>
 									<text>{{article.expand.favorites.favorites_count}}</text>
@@ -269,8 +270,8 @@
 								</view>
 							</view>
 						</view>
-						<!-- 底部 结束 -->
 					</template>
+					<!-- 底部 结束 -->
 				</z-paging>
 
 
@@ -469,7 +470,7 @@
 										<view
 											class="tn-flex tn-flex-col-center tn-color-grey--disabled tn-flex-row-between tn-flex-basic-xs">
 											<view class="tn-flex tn-flex-col-center"
-												@tap.stop.prevent="commentLike(subCommentAuthor,'comments')">
+												@tap.stop.prevent="commentLike(subCommentAuthor,'subAuthor')">
 												<text class="tn-icon-praise-simple"></text>
 												<text class="tn-margin-left-xs"
 													v-if="subCommentAuthor.opt">{{subCommentAuthor.opt.like}}</text>
@@ -797,12 +798,14 @@
 						mode: 'html'
 					}
 				}).then(res => {
+					console.log(res)
 					if (res.data.code == 200) {
+						// 设置文章
 						this.article = res.data.data
+						// 渲染表情
 						this.article.content = this.renderEmoji(this.article.content)
+						// 写入历史
 						this.setHistory(res)
-						this.commentDisAllow = res.data.data.opt.comments.allow
-						if (!res.data.data.opt.comments.allow) this.commentBoxText = '作者关闭了评论...';
 					}
 				})
 			},
@@ -913,7 +916,7 @@
 				});
 			},
 			commentAction() {
-				if (store.state.hasLogin && uni.getStorageSync('token')) {
+				if (store.state.hasLogin) {
 					this.commentBoxOpen = true
 					this.commentBoxText = '我想说...'
 					this.pid = 0
@@ -926,6 +929,7 @@
 						},
 					})
 				}
+
 			},
 			//关闭popup重置placeholder
 			resetComment() {
@@ -960,7 +964,7 @@
 				const images = this.images.join(',')
 				this.$http.post('/comments/add', {
 					article_id: this.article.id,
-					content: this.commentText?this.commentText:images?'[图片]':'',
+					content: this.commentText ? this.commentText : images ? '[图片]' : '',
 					images: images,
 					pid: this.pid,
 				}).then(res => {
@@ -1219,7 +1223,12 @@
 					for (const image of images) {
 						const res = await this.$http.upload('/file/uploadImg', {
 							filePath: image,
-							name: 'file'
+							name: 'file',
+							getTask: (task, options) => {
+								task.onProgressUpdate((res) => {
+									console.log(res)
+								})
+							}
 						});
 						// 在这里可以处理上传成功的逻辑
 						console.log(res)
