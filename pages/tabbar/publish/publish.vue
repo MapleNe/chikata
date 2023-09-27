@@ -463,7 +463,6 @@
 						limit: 20
 					}
 				}).then(res => {
-					console.log(res)
 					if (res.data.code === 200) {
 						this.$refs.tags.complete(res.data.data.data)
 					}
@@ -478,7 +477,7 @@
 						where: `name like '%${this.searchKey}%'`
 					}
 				}).then(res => {
-					console.log(res)
+
 					this.$refs.tags.complete(res.data.data.data)
 				})
 			},
@@ -495,7 +494,6 @@
 					params: {
 						name: emoji
 					}
-
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.emoji.list.push(res.data.data)

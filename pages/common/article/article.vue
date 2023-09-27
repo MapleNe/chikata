@@ -1222,6 +1222,7 @@
 							name: 'file'
 						});
 						// 在这里可以处理上传成功的逻辑
+						console.log(res)
 						if (res.data.code === 200) {
 							this.images.push(res.data.data)
 							// 上传成功推入
