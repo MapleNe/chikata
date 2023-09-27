@@ -798,7 +798,7 @@
 						mode: 'html'
 					}
 				}).then(res => {
-					console.log(res)
+
 					if (res.data.code == 200) {
 						// 设置文章
 						this.article = res.data.data
@@ -844,7 +844,7 @@
 
 					}
 				}).then(res => {
-					console.log(res)
+
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.data)
 					}
@@ -862,7 +862,7 @@
 						users_id: this.params.users_id
 					}
 				}).then(res => {
-					console.log(res)
+
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.data)
 					}
@@ -889,7 +889,7 @@
 			},
 
 			insertEmoji(index) {
-				console.log(index)
+
 				this.commentText += `_(${index})`
 			},
 			renderEmoji(content) {
@@ -985,7 +985,7 @@
 						}
 					}, 400)
 				}).catch(err => {
-					console.log(err)
+
 					uni.showToast({
 						icon: "none",
 						title: err.data.msg
@@ -1019,7 +1019,7 @@
 					id: type == 'subAuthor' ? index.id : type == 'subComment' ? this.subComment[index].id : this
 						.comments[index].id,
 				}).then(res => {
-					console.log(res)
+
 					if (res.data.code === 200) {
 						switch (type) {
 							case 'subAuthor':
@@ -1108,7 +1108,7 @@
 			getElementHeight(element) {
 				let query = uni.createSelectorQuery().in(this);
 				query.select(element).boundingClientRect(data => {
-					console.log(data.height);
+
 					this.articleHeight = data.height;
 				}).exec()
 			},
@@ -1213,7 +1213,7 @@
 				uni.chooseImage({
 					count: 9,
 					success: (res) => {
-						console.log(res.tempFilePaths)
+
 						this.imageUpload(res.tempFilePaths)
 					}
 				})
@@ -1226,24 +1226,24 @@
 							name: 'file',
 							getTask: (task, options) => {
 								task.onProgressUpdate((res) => {
-									console.log(res)
+
 								})
 							}
 						});
 						// 在这里可以处理上传成功的逻辑
-						console.log(res)
+
 						if (res.data.code === 200) {
 							this.images.push(res.data.data)
 							// 上传成功推入
 						}
 					}
 				} catch (error) {
-					console.error(error);
+
 					// 在这里可以处理上传失败后的逻辑
 				}
 			},
 			deleteImage(index) {
-				console.log(index);
+
 				this.images.splice(index, 1);
 			},
 			previewImage(images, index) {
