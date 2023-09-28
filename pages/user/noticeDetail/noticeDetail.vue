@@ -152,7 +152,7 @@
 								</view>
 							</view>
 							<view class="tn-flex tn-flex-col-center tn-text-md tn-flex-row-between tn-margin-top-sm">
-								<text class="ch-color-primary" @tap.stop.prevent="showComment = false">查看原帖</text>
+								<text class="ch-color-primary" @tap.stop.prevent="goArticle()">查看原帖</text>
 								<view
 									class="tn-flex tn-flex-col-center tn-color-grey--disabled tn-flex-row-between tn-flex-basic-xs">
 									<view class="tn-flex tn-flex-col-center"
@@ -170,7 +170,7 @@
 				</view>
 				<!-- 间隔 -->
 				<view class="tn-padding-xs tn-bg-gray--light"></view>
-				<view class="tn-margin">
+				<view class="tn-margin" v-if="commentAuthor">
 					<block v-for="(item,index) in comments" :key="index">
 						<view class="tn-flex tn-flex-col-center tn-margin-top-sm tn-text-md">
 							<tn-avatar :src="item.expand.head_img" @click="goProfile(item.users_id)"></tn-avatar>
@@ -258,8 +258,7 @@
 				<template #bottom>
 					<view class="tn-bg-gray--light tn-padding-sm">
 						<view class="tn-bg-white tn-padding-left tn-radius" v-if="commentAuthor">
-							<tn-input :disabled="true"
-								:placeholder="'回复：' + commentAuthor.nickname"
+							<tn-input :disabled="true" :placeholder="'回复：' + commentAuthor.nickname"
 								@click="commentAuthor.expand&& commentAuthor.expand.article.opt.comments.allow?subReply(commentAuthor):''"></tn-input>
 						</view>
 					</view>
@@ -598,13 +597,55 @@
 						this.$refs.comments.reload()
 					}, 400)
 				}).catch(err => {
-			
+
 					uni.showToast({
 						icon: "none",
 						title: err.data.msg
 					})
 				})
 			},
+			goProfile(id) {
+				this.$Router.push({
+					path: '/pages/common/userProfile/userProfile',
+					query: {
+						id: id
+					}
+				})
+			},
+			commentLike(index, type) {
+				this.$http.post('/comments/like', {
+					id: type == 'subAuthor' ? index.id : type == 'subComment' ? this.subComment[index].id : this
+						.comments[index].id,
+				}).then(res => {
+
+					if (res.data.code === 200) {
+						switch (type) {
+							case 'subAuthor':
+								this.commentAuthor.opt.like++
+								break;
+							case 'subComment':
+								this.comments[index].opt.like++
+								break;
+							default:
+
+								break;
+						}
+						uni.showToast({
+							icon: 'none',
+							title: '点赞' + res.data.msg
+						})
+					}
+				})
+			},
+			goArticle(){
+				this.$Router.push({
+					path:'/pages/common/article/article',
+					query:{
+						id:this.commentAuthor.expand.article.id,
+						users_id:this.commentAuthor.expand.article.users_id
+					}
+				})
+			}
 		}
 	}
 </script>
