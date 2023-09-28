@@ -86,7 +86,7 @@
 						<view class="tn-margin-top" style="max-width: 100%;" @touchend="touchEnd"
 							@touchmove="touchMove">
 							<mp-html :tag-style="{img:'border-radius:10rpx'}" :img-cache="true" :show-img-menu="imgMenu"
-								:content="article.content" :selectable="true" />
+								:content="article.content" container-style="word-break: break-all;" :selectable="true" />
 						</view>
 						<view class="tn-margin-top-sm">
 							<view class="tn-margin-top-xs">

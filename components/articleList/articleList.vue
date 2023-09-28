@@ -62,7 +62,7 @@
 						<view class="tn-margin-top">
 							<text class="tn-text-title">{{item.title}}</text>
 						</view>
-						<view class="tn-padding-sm tn-no-padding-left tn-color-gray--dark tn-padding-bottom-sm">
+						<view class="tn-padding-sm tn-no-padding-left tn-color-gray--dark tn-padding-bottom-sm" style="word-break: break-all;">
 							<rich-text :nodes="item.description"></rich-text>
 						</view>
 

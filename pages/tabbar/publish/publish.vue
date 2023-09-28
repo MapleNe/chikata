@@ -26,9 +26,8 @@
 				</view>
 
 
-				<lsj-edit ref="lsjEdit" :onreadOnly="isReady" :html="params.update?articleInfo.content:''"
-					@onReady="editReady" placeholder="请尽情发挥吧..." :max-count="contentMAX"
-					@tap="showCurrent = null"></lsj-edit>
+				<lsj-edit ref="lsjEdit" :onreadOnly="isReady" :html="articleInfo.content" @onReady="editReady"
+					placeholder="请尽情发挥吧..." :max-count="contentMAX" @tap="showCurrent = null"></lsj-edit>
 				<!-- 遮罩 -->
 				<view v-if="isReady" @tap="showCurrent =null" style="position: fixed;top: 0;width: 100%;height: 100vh;">
 				</view>
@@ -301,15 +300,15 @@
 		<tn-popup mode="bottom" v-model="showDraftList" :borderRadius="20" length="60%">
 			<view class="tn-margin tn-flex tn-flex-row-between tn-flex-col-center">
 				<text class="tn-icon-close tn-text-xxl" @tap.stop.prevent="showDraftList = false"></text>
-				<text class="ch-color-primary">清空</text>
+				<text class="ch-color-primary" @tap.stop.prevent="deleteDraft(0,'all')">清空</text>
 			</view>
-			<view class="tn-margin">
-
+			<view class="tn-margin" v-if="draftList.length">
 				<block v-for="(item,index) in draftList" :key="index">
-					<view class="tn-margin-bottom tn-flex tn-flex-direction-column tn-color-gray tn-text-md">
+					<view class="tn-margin-bottom tn-flex tn-flex-direction-column tn-color-gray tn-text-md"
+						@tap.stop.prevent="getDraft(item)">
 						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-							<text>编辑于 刚刚</text>
-							<text>删除</text>
+							<text>编辑于 {{item&&item.update_time}}</text>
+							<text @tap.stop.prevent="deleteDraft(index)">删除</text>
 						</view>
 						<view class="tn-flex tn-margin-top-sm">
 							<view class=" tn-bg-grey--light tn-flex tn-flex-col-center tn-flex-row-center"
@@ -318,12 +317,16 @@
 							</view>
 							<view
 								class="tn-margin-left-sm tn-flex tn-flex-direction-column tn-flex-row-between tn-text-ellipsis">
-								<text>{{item.title}}</text>
-								<text class="tn-text-ellipsis-2">{{item.content}}</text>
+								<text>{{item&&item.title}}</text>
+								<text class="tn-text-ellipsis-2">{{item&&item.content}}</text>
 							</view>
 						</view>
 					</view>
 				</block>
+			</view>
+			<view class="tn-margin tn-margin-top-xl tn-padding-top-xl tn-flex tn-flex-row-center tn-flex-col-center"
+				v-else>
+				<text class="tn-text-md tn-color-grey--disabled">干净清爽...</text>
 			</view>
 		</tn-popup>
 		<!-- 保存草稿 -->
@@ -729,14 +732,26 @@
 					opt: JSON.stringify(this.articleInfo.opt),
 				}).then(res => {
 					if (res.data.code === 200) {
-						this.realback = true
+						this.realBack = true
 						uni.hideLoading()
 						uni.showToast({
 							icon: 'none',
 							title: '发布' + res.data.msg
 						})
+						// 如果articleInfo.id存在且等于草稿中的id，则删除草稿
+						const index = this.draftList.findIndex(draft => draft.id === this.articleInfo
+							.id);
+						if (index !== -1) {
+							this.draftList.splice(index, 1);
+							uni.setStorageSync('draft', this.draftList);
+						}
 						setTimeout(() => {
-							this.$Router.back(1)
+							this.$Router.replaceAll({
+								path: '/pages/common/article/article',
+								query: {
+									id: res.data.data
+								}
+							})
 						}, 1000)
 					}
 				}).catch(err => {
@@ -773,20 +788,46 @@
 			},
 			// 保存草稿
 			async saveDraft() {
-				let article = this.articleInfo
-				let content = await this.edit.getContents()
-				article.content = content.html
-				this.draftList.push(article)
-				this.realBack = true
-				uni.setStorageSync('draft', this.draftList)
+				let nowTime = new Date().toLocaleDateString();
+				let article = this.articleInfo;
+				let content = await this.edit.getContents();
+				article.content = content.html;
+				article.update_time = nowTime;
+
+				// 检查是否已存在相同ID的草稿
+				let index = this.draftList.findIndex(draft => draft.id === article.id);
+
+				if (index !== -1) {
+					// 如果存在相同ID的草稿，更新草稿
+					this.draftList[index] = article;
+				} else {
+					// 否则，添加新的草稿到列表
+					article.id = this.draftList.length++; // 请注意这里的写法
+					this.draftList.push(article);
+				}
+
+				this.realBack = true;
+				uni.setStorageSync('draft', this.draftList);
 				uni.showToast({
 					icon: 'none',
 					title: '保存成功！'
-				})
+				});
 				setTimeout(() => {
-					this.$Router.back(1)
-				}, 500)
+					this.$Router.back(1);
+				}, 500);
+			},
+			// 删除草稿
+			deleteDraft(index, type) {
+				if (type == 'all') this.draftList = [];
+				else this.draftList.splice(index, 1); // 删除指定索引的元素
+				uni.setStorageSync('draft', this.draftList);
+				this.draftList = uni.getStorageSync('draft');
+			},
 
+			// 设置草稿
+			getDraft(article) {
+				console.log(article)
+				this.articleInfo = article
 			}
 		}
 	}
