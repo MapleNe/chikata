@@ -1,5 +1,6 @@
 <template>
 	<z-paging-swiper>
+
 		<swiper class="swiper" :current="swiperIndex" @animationfinish="swiperAnimationfinish">
 			<swiper-item>
 				<z-paging ref="paging" @query="getComments" v-model="comments" :safe-area-inset-bottom="true"
@@ -85,7 +86,7 @@
 						<view class="tn-margin-top" style="max-width: 100%;" @touchend="touchEnd"
 							@touchmove="touchMove">
 							<mp-html :tag-style="{img:'border-radius:10rpx'}" :img-cache="true" :show-img-menu="imgMenu"
-								:content="article.content" :selectable="true" />
+								:content="article.content" container-style="word-break: break-all;" :selectable="true" />
 						</view>
 						<view class="tn-margin-top-sm">
 							<view class="tn-margin-top-xs">
@@ -145,7 +146,9 @@
 											:class="['lv-'+item.expand.user.grade]"
 											:style="{'color':level[item.expand.user.grade]}"></text>
 									</view>
-									<text class="tn-text-sm tn-color-grey--disabled">{{item.ip.province}}</text>
+
+									<text
+										class="tn-text-sm tn-color-grey--disabled">{{item.ip.province!=0?item.ip.province:item.ip.country}}</text>
 								</view>
 							</view>
 							<view class="tn-margin-top tn-margin-left">
@@ -155,7 +158,7 @@
 									<view style="overflow: hidden;word-wrap: break-word" @tap="subReply(item)">
 										<mp-html :content="item.content" :img-cache="true"
 											:preview-img="false"></mp-html>
-										<view v-if="item.images.length>0">
+										<view v-if="item.images && item.images.length>0">
 											<tn-grid align=" left" :col="col" hoverClass="none">
 												<block v-for="(images, subIndex) in item.images" :key="subIndex"
 													v-if="subIndex<9">
@@ -185,7 +188,7 @@
 									</view>
 									<!-- 主评论结束 -->
 									<!-- 子评论 -->
-									<view class="tn-margin-top-sm" v-if="item.son.length>0">
+									<view class="tn-margin-top-sm" v-if="item.son && item.son.length>0">
 										<view class="tn-padding-sm tn-bg-gray--light ch-radius"
 											@tap.stop.prevent="showComment= !showComment;subId=item.id;subCommentAuthor=item">
 											<!-- 这里只显示两条防止太多评论导致的过长 -->
@@ -205,7 +208,7 @@
 											</block>
 											<view
 												class="tn-flex tn-flex-col-center tn-margin-top-sm tn-color-gray--dark"
-												v-if="item.son.length>2">
+												v-if="item.son && item.son.length>2">
 												<text>全部{{item.son.length}}条评论</text>
 												<text class="tn-icon-right tn-text-md"></text>
 											</view>
@@ -238,18 +241,19 @@
 
 						</view>
 					</view>
+					<!-- 底部开始 -->
 					<template #bottom>
-						<!-- 底部开始 -->
 						<view class="tn-padding tn-bg-white tn-flex tn-flex-col-center">
 							<view class="tn-bg-gray--light tn-padding-left tn-round tn-margin-right">
-								<tn-input :disabled="true" placeholder="我想说..."
-									@click="commentAllow?commentAction():''"></tn-input>
+								<tn-input :disabled="true"
+									:placeholder="article.opt&&!article.opt.comments.allow?'作者关闭了评论区':'我想说...'"
+									@click="article&&article.opt.comments.allow?commentAction():''"></tn-input>
 							</view>
 							<view
 								class="tn-flex tn-text-sm tn-flex-col-center tn-color-gray--dark tn-flex-basic-sm tn-flex-row-between"
 								style="margin-left: auto;">
 								<view class="tn-flex tn-flex-col-center tn-flex-direction-column"
-									@tap.stop="favorite()">
+									@tap.stop.prevent="favorite">
 									<text class="tn-text-xxl"
 										:class="article.expand.favorites.is_favorites?'tn-icon-star-fill tn-color-orangered':'tn-icon-star'"></text>
 									<text>{{article.expand.favorites.favorites_count}}</text>
@@ -266,8 +270,8 @@
 								</view>
 							</view>
 						</view>
-						<!-- 底部 结束 -->
 					</template>
+					<!-- 底部 结束 -->
 				</z-paging>
 
 
@@ -287,13 +291,15 @@
 								:class="item.icon" @tap.stop="commentBtnTap(index)"></text>
 						</view>
 						<view class="">
-							<tn-button :plain="true" size="sm" backgroundColor="#29b7cb" fontColor="#29b7cb"
-								blockRepeatClick @click="commentCheck">发送~</tn-button>
+							<tn-button :plain="true" size="sm"
+								:backgroundColor="images&&images.length||commentText?'#29b7cb':'#aaa'"
+								:fontColor="images&&images.length||commentText?'#29b7cb':'#aaa'" blockRepeatClick
+								@click="images&&images.length||commentText?commentSend():''">发送~</tn-button>
 						</view>
 					</view>
 					<!-- 图片 -->
 					<scroll-view scroll-x="true" style="height: 200rpx;"
-						class="tn-padding tn-padding-top-xs tn-no-padding-bottom" v-if="images.length">
+						class="tn-padding tn-padding-top-xs tn-no-padding-bottom" v-if="images&&images.length">
 						<view class="tn-flex">
 							<block v-for="(item,index) in images" :key="index">
 								<view style="height: 140rpx;width: 140rpx;position: relative;"
@@ -311,7 +317,7 @@
 							lineColor="#29b7cb" activeColor="#29b7cb" :lineScale="0.2"></v-tabs>
 						<scroll-view scroll-y style="height: 20vh;" class="tn-margin-top-xs">
 							<tn-grid :col="8">
-								<block v-for="(item, index) in emojiList" :key="index">
+								<block v-for="(item, index) in emoji.list" :key="index">
 									<!-- H5 -->
 									<!-- #ifndef MP-WEIXIN -->
 									<tn-grid-item>
@@ -427,8 +433,8 @@
 										@tap="subReply(subCommentAuthor)">
 										<!-- {{item.content}} -->
 										<mp-html :preview-img="false" :img-cache="true"
-											:content="subCommentAuthor.content"></mp-html>
-										<view v-if="subCommentAuthor.images.length>0">
+											:content="renderEmoji(subCommentAuthor.content)"></mp-html>
+										<view v-if="subCommentAuthor.images && subCommentAuthor.images.length>0">
 											<tn-grid align=" left" :col="col" hoverClass="none">
 												<block v-for="(images, subIndex) in subCommentAuthor.images"
 													:key="subIndex" v-if="subIndex<9">
@@ -464,7 +470,7 @@
 										<view
 											class="tn-flex tn-flex-col-center tn-color-grey--disabled tn-flex-row-between tn-flex-basic-xs">
 											<view class="tn-flex tn-flex-col-center"
-												@tap.stop.prevent="commentLike(subCommentAuthor,'comments')">
+												@tap.stop.prevent="commentLike(subCommentAuthor,'subAuthor')">
 												<text class="tn-icon-praise-simple"></text>
 												<text class="tn-margin-left-xs"
 													v-if="subCommentAuthor.opt">{{subCommentAuthor.opt.like}}</text>
@@ -493,9 +499,11 @@
 												:class="['lv-'+item.expand.user.grade]"
 												:style="{'color':level[item.expand.user.grade]}"></text>
 										</view>
-										<text class="tn-text-sm tn-color-grey--disabled">{{item.ip.province}}</text>
+										<text
+											class="tn-text-sm tn-color-grey--disabled">{{item.ip.province?item.ip.province:item.ip.country}}</text>
 									</view>
 								</view>
+
 								<view class="tn-margin-top tn-margin-left">
 									<view
 										class="tn-flex tn-flex-direction-column tn-margin-left-xl tn-padding-bottom-xs tn-border-solid-bottom tn-border-gray--light">
@@ -507,10 +515,10 @@
 												v-if="item.pid != subCommentAuthor.id">{{item.expand.pid.nickname}}</text>
 											<text v-if="item.pid != subCommentAuthor.id">：</text>
 											<mp-html container-style="display:inline;white-space:nomarl;"
-												:content="item.content" :preview-img="false"
+												:content="renderEmoji(item.content)" :preview-img="false"
 												:img-cache="true"></mp-html>
 										</view>
-										<view v-if="item.images.length>0">
+										<view v-if="item.images && item.images.length>0">
 											<tn-grid align=" left" :col="col" hoverClass="none">
 												<block v-for="(images, subIndex) in item.images" :key="subIndex"
 													v-if="subIndex<9">
@@ -582,15 +590,19 @@
 				</userProfile>
 			</swiper-item>
 		</swiper>
+		</ls-skeleton>
 	</z-paging-swiper>
 </template>
 
 <script>
+	import {
+		mapState
+	} from 'vuex';
 	import userProfile from '@/pages/common/userProfile/userProfile';
 	import store from '../../../store';
 	export default {
 		components: {
-			userProfile
+			userProfile,
 		},
 		data() {
 			return {
@@ -713,7 +725,10 @@
 				],
 				emojiTabs: [],
 				emojiIndex: 0,
-				emojiList: [],
+				emoji: {
+					list: null
+				},
+				emojiAll: {},
 				isBackCount: 0,
 				navAuthor: false,
 				authorComments: [],
@@ -767,11 +782,13 @@
 					break;
 			}
 		},
+
 		created() {},
 		computed: {
 			gridItemWidth() {
 				return (100 / this.col - 2) + '%'
 			},
+			...mapState(['emojiList'])
 		},
 		methods: {
 			getArticle() {
@@ -781,11 +798,14 @@
 						mode: 'html'
 					}
 				}).then(res => {
+
 					if (res.data.code == 200) {
+						// 设置文章
 						this.article = res.data.data
+						// 渲染表情
+						this.article.content = this.renderEmoji(this.article.content)
+						// 写入历史
 						this.setHistory(res)
-						this.commentDisAllow = res.data.data.opt.comments.allow
-						if (!res.data.data.opt.comments.allow) this.commentBoxText = '作者关闭了评论...';
 					}
 				})
 			},
@@ -824,6 +844,7 @@
 
 					}
 				}).then(res => {
+
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.data)
 					}
@@ -841,7 +862,7 @@
 						users_id: this.params.users_id
 					}
 				}).then(res => {
-					console.log(res)
+
 					if (res.data.code === 200) {
 						this.$refs.paging.complete(res.data.data.data)
 					}
@@ -862,18 +883,19 @@
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
-						this.emojiList = res.data.data
+						this.emoji.list = res.data.data
 					}
 				})
 			},
+
 			insertEmoji(index) {
-				console.log(index)
-				this.commentText += `[${index}]`
+
+				this.commentText += `_(${index})`
 			},
 			renderEmoji(content) {
-				return content.replace(/\[([^\]]+)\]/g, (_, name) => {
+				return content.replace(/_\(([^)]+)\)/g, (_, name) => {
 					const url = this.emojiList[name]
-					return `<img src="${url}" class="emoji">`
+					return `<img src="${url}" style="height:25px;width:25px">`
 				})
 			},
 			followUser() {
@@ -894,7 +916,7 @@
 				});
 			},
 			commentAction() {
-				if (store.state.hasLogin && uni.getStorageSync('token')) {
+				if (store.state.hasLogin) {
 					this.commentBoxOpen = true
 					this.commentBoxText = '我想说...'
 					this.pid = 0
@@ -907,6 +929,7 @@
 						},
 					})
 				}
+
 			},
 			//关闭popup重置placeholder
 			resetComment() {
@@ -928,24 +951,20 @@
 					})
 				}
 			},
-			commentCheck() {
-				if (this.commentText == '' && this.images) {
-					this.commentText = '【图片】'
-				} else if (this.commentText == '' && !this.images) {
+
+			commentSend() {
+				if (!this.commentText && !this.images.length) {
 					uni.showToast({
 						icon: 'none',
-						title: '再说点呗~'
+						title: '再多说点什么吧~'
 					})
 					return
 				}
-				this.commentSend()
-			},
-			commentSend() {
 				// 将数组改为字符串
 				const images = this.images.join(',')
 				this.$http.post('/comments/add', {
 					article_id: this.article.id,
-					content: this.renderEmoji(this.commentText),
+					content: this.commentText ? this.commentText : images ? '[图片]' : '',
 					images: images,
 					pid: this.pid,
 				}).then(res => {
@@ -966,7 +985,7 @@
 						}
 					}, 400)
 				}).catch(err => {
-					console.log(err)
+
 					uni.showToast({
 						icon: "none",
 						title: err.data.msg
@@ -1000,7 +1019,7 @@
 					id: type == 'subAuthor' ? index.id : type == 'subComment' ? this.subComment[index].id : this
 						.comments[index].id,
 				}).then(res => {
-					console.log(res)
+
 					if (res.data.code === 200) {
 						switch (type) {
 							case 'subAuthor':
@@ -1089,7 +1108,7 @@
 			getElementHeight(element) {
 				let query = uni.createSelectorQuery().in(this);
 				query.select(element).boundingClientRect(data => {
-					console.log(data.height);
+
 					this.articleHeight = data.height;
 				}).exec()
 			},
@@ -1194,7 +1213,7 @@
 				uni.chooseImage({
 					count: 9,
 					success: (res) => {
-						console.log(res.tempFilePaths)
+
 						this.imageUpload(res.tempFilePaths)
 					}
 				})
@@ -1204,21 +1223,27 @@
 					for (const image of images) {
 						const res = await this.$http.upload('/file/uploadImg', {
 							filePath: image,
-							name: 'file'
+							name: 'file',
+							getTask: (task, options) => {
+								task.onProgressUpdate((res) => {
+
+								})
+							}
 						});
 						// 在这里可以处理上传成功的逻辑
+
 						if (res.data.code === 200) {
 							this.images.push(res.data.data)
 							// 上传成功推入
 						}
 					}
 				} catch (error) {
-					console.error(error);
+
 					// 在这里可以处理上传失败后的逻辑
 				}
 			},
 			deleteImage(index) {
-				console.log(index);
+
 				this.images.splice(index, 1);
 			},
 			previewImage(images, index) {

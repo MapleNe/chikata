@@ -62,7 +62,7 @@
 						<view class="tn-margin-top">
 							<text class="tn-text-title">{{item.title}}</text>
 						</view>
-						<view class="tn-padding-sm tn-no-padding-left tn-color-gray--dark tn-padding-bottom-sm">
+						<view class="tn-padding-sm tn-no-padding-left tn-color-gray--dark tn-padding-bottom-sm" style="word-break: break-all;">
 							<rich-text :nodes="item.description"></rich-text>
 						</view>
 
@@ -258,6 +258,7 @@
 			})
 		},
 		created() {
+			
 			this.getBanner()
 			// this.getPlacard()
 			uni.$on('deleteArticleOk', data => {
@@ -314,6 +315,7 @@
 						order: this.tabsIndex === 1 ? 'create_time desc views desc' : ''
 					}
 				}).then(res => {
+					
 					if (res.data.code === 200) {
 
 						this.$refs.paging.complete(res.data.data.data)
@@ -324,6 +326,7 @@
 						}, 400)
 					}
 				}).catch(err => {
+					
 					this.$refs.paging.complete(false)
 				})
 			},

@@ -101,10 +101,10 @@
 					return;
 				}
 				this.$http.post('/collections/save', {
+					id: this.update ? this.id : '',
 					name: this.title,
-					img: this.head_img,
-					descrip: this.description,
-					id: this.update ? this.id : ''
+					image: this.head_img,
+					description: this.description,
 				}).then(res => {
 					if (res.data.code == 200) {
 						const message = this.update ? '更新' : '创建';
@@ -114,7 +114,7 @@
 						});
 						uni.$emit('updateCollect', true)
 						setTimeout(() => {
-							if(this.update)this.$Router.back(2);
+							if (this.update) this.$Router.back(2);
 							else this.$Router.back(1)
 						}, 800)
 

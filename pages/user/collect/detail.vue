@@ -154,11 +154,11 @@
 		},
 		methods: {
 			getArticle(page, num) {
-				this.$http.get('/collections/postFind', {
+				this.$http.get('/collections/article', {
 					params: {
 						page: page,
 						limit: num,
-						cid: this.id
+						id: this.id
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
@@ -187,8 +187,8 @@
 				})
 			},
 			delete() {
-				this.$delete('/collections/Del', {
-					cid: this.id
+				this.$http.delete('/collections/del', {
+					id: this.id
 				}).then(res => {
 					console.log(res)
 					if (res.data.code === 200) {

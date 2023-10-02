@@ -25,7 +25,7 @@
 						</view>
 						<view class="tn-flex tn-flex-direction-column">
 							<text class="tn-margin-bottom-xs">{{item.name}}</text>
-							<text class="tn-color-gray--dark tn-margin-bottom-xs tn-text-md">{{item.descrip}}</text>
+							<text class="tn-color-gray--dark tn-margin-bottom-xs tn-text-md">{{item.description}}</text>
 							<view class="tn-flex tn-flex-col-center tn-text-sm tn-color-grey--disabled">
 								<text>0篇作品</text>
 								<text class="tn-margin-left-xs tn-margin-right-xs">·</text>
@@ -63,7 +63,7 @@
 		},
 		methods: {
 			getCollect(page, num) {
-				this.$http.get('/collections/Find', {
+				this.$http.get('/collections/users', {
 					params: {
 						page: page,
 						limit: num,

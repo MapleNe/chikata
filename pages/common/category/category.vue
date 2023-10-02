@@ -591,7 +591,7 @@
 						limit: num,
 						id: this.id,
 						order: this.tabsIndex == 0 ? 'create_time desc views asc' : this.tabsIndex == 1 ?
-							'views desc create_time desc' : this.tabsInde == 2 ? 'create_time asc' : ''
+							'views desc create_time desc' : 'create_time desc'
 					}
 				}).then(res => {
 					if (res.data.code === 200) {

@@ -499,7 +499,6 @@
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
-						console.log(res)
 						this.$refs.favorite.complete(res.data.data.article)
 					}
 				})

@@ -1,7 +1,7 @@
 {
-    "name" : "泛二",
-    "appid" : "__UNI__EE93837",
-    "description" : "泛二",
+    "name" : "校元",
+    "appid" : "__UNI__48D041B",
+    "description" : "校元",
     "versionName" : "1.0.3",
     "versionCode" : 3,
     "transformPx" : false,
@@ -72,13 +72,13 @@
                 },
                 "oauth" : {
                     "qq" : {
-                        "appid" : "102064645",
+                        "appid" : "102065886",
                         "UniversalLinks" : ""
                     }
                 },
                 "share" : {
                     "qq" : {
-                        "appid" : "102064645",
+                        "appid" : "102065886",
                         "UniversalLinks" : ""
                     }
                 }

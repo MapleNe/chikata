@@ -184,10 +184,10 @@ class WebSocketClass {
 			clearInterval(this.timeoutObj)
 			this.ws.close({
 				success(res) {
-					console.log("关闭成功", res)
+					// console.log("关闭成功", res)
 				},
 				fail(err) {
-					console.log("关闭失败", err)
+					// console.log("关闭失败", err)
 				}
 			});
 		}

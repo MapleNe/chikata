@@ -1,354 +1,354 @@
 <template>
 	<view>
-		<tn-nav-bar backTitle="" :zIndex="5">
-			{{update?'编辑':'发布'}}
-			<view slot="right" class="tn-padding tn-flex tn-flex-col-center">
-				<view class="tn-margin-right-sm" v-show="!update" @tap.stop.prevent="saveDraft()">
-					<tn-button size="sm" plain>
-						存草稿
+		<tn-nav-bar backTitle="" :zIndex="2">
+			编辑
+			<view class="tn-padding tn-flex tn-flex-col-center" slot="right">
+				<view class="tn-margin-right-sm" v-if="!params.update">
+					<tn-button size="sm" plain @click="showDraftList = true">
+						草稿箱
 					</tn-button>
 				</view>
-				<view @tap.stop.prevent="showArticleSet = !showArticleSet">
-					<tn-button size="sm" backgroundColor="#29b7cb" fontColor="tn-color-white">
-						{{update?'更新':'发布'}}
-					</tn-button>
-				</view>
+
+				<tn-button size="sm" plain fontColor="#29b7cb" backgroundColor="#29b7cb" @click="publish">
+					{{params.update?'更新':'发布'}}
+				</tn-button>
 			</view>
 		</tn-nav-bar>
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
-		<view class="tn-margin tn-no-margin-top">
-			<lsj-edit ref="lsjEdit" placeholder="输入正文" @onReady="editReady"
-				:styles="{'overflow':'hidden','height':'60vh'}" :html="draft"></lsj-edit>
-		</view>
+		<view class="tn-flex tn-flex-direction-column tn-flex-row-between">
+
+			<view :style="{height:screenHeight - 100 - editHeight - keyHeight +'px',overflow:'scroll'}"
+				class="tn-margin">
+				<view class="tn-color-grey--disabled tn-flex tn-flex-col-center">
+					<tn-input v-model="articleInfo.title" :maxLength="titleMAX" placeholder-style="color:#C6D1D8"
+						:clearable="false" placeholder="标题(必填)" />
+					<text class="tn-text-sm">{{articleInfo.title.length}}/{{titleMAX}}</text>
+				</view>
 
 
-		<view v-show="format" style="position: absolute;" :style="'bottom:'+bottom+40+'px'">
-			<scroll-view scroll-x="true" class="toolbar tn-bg-white tn-padding-xs">
-				<view class="tn-flex">
-					<text v-for="(item,index) in fontFormat" :key="index "
-						class="tn-margin-sm tn-flex-basic tn-text-xxl"
-						:class="[item.icon,{'tn-color-cyan--dark':(formatObj && formatObj.hasOwnProperty(item.type) && formatObj[item.type]==item.id)}]"
-						@tap.stop.prevent="formatTap(item)"></text>
-				</view>
-			</scroll-view>
-		</view>
-		<!-- 颜色 -->
-		<view v-show="formatColor" style="position: absolute;" :style="'bottom:'+bottom+40+'px'" id="formatBar">
-			<scroll-view scroll-x="true" class="toolbar tn-bg-white tn-padding-xs">
-				<view class="tn-padding-xs tn-flex tn-flex-col-center">
-					<text class="tn-margin-right">文字</text>
-					<text v-for="(item,index) in fontColor" :key="index" :style="{backgroundColor:item}"
-						class="tn-round tn-margin-right-sm tn-padding-sm"
-						:class="[{'tn-shadow':formatObj && formatObj.color ==item.toLowerCase()}]"
-						@tap.stop.prevent="colorTap('color',item)"></text>
-				</view>
-				<view class="tn-padding-xs tn-flex tn-flex-col-center">
-					<text class="tn-margin-right">背景</text>
-					<text v-for="(item,index) in bgColor" :key="index" :style="{backgroundColor:item}"
-						class="tn-padding-sm tn-margin-right-sm tn-round"
-						:class="[{'tn-shadow':formatObj && formatObj.backgroundColor ==item.toLowerCase()}]"
-						@tap.stop.prevent="colorTap('backgroundColor',item)"></text>
-				</view>
-
-			</scroll-view>
-		</view>
-		<view class="tn-flex tn-flex-col-center tn-bg-white tn-padding tn-flex-row-between"
-			style="width: 100%; position: absolute;" :style="'bottom:'+bottom+'px'">
-			<text v-for="(item,index) in btnList" :key="index"
-				:class="[item.icon,item.type==='format'&&format||item.type==='color'&& formatColor?'tn-color-cyan--dark':'']"
-				class="tn-text-xxl" @tap.stop.prevent="switchBtn(item)"></text>
-		</view>
-		<!-- 发布设置 -->
-		<tn-modal v-model="showArticleSet" custom padding="0rpx" width="90%" showCloseBtn :zIndex="10">
-			<view @touchmove.stop.prevent>
-				<view class="tn-margin">
-					<view class="tn-flex tn-flex-col-center">
-						<text class="tn-icon-set tn-text-bold"></text>
-						<text class="tn-margin-left-sm">发布设置</text>
-					</view>
-					<view class="tn-border-solid-bottom">
-						<tn-input v-model="articleTitle" :maxLength="40" placeholder="请输入标题(必填)" :clearable="false" />
-					</view>
-					<tn-list-view :card="true" unlined="all">
-						<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx" @click="showSetting = true">
-							<view class="tn-flex tn-flex-row-between tn-flex-col-center">
-								<view class="tn-flex -tn-flex-col-center">
-									<text>分区和标签</text>
-									<text class="tn-margin-left-sm tn-color-gray">(必填)</text>
-								</view>
-								<text class="tn-color-gray--dark tn-margin-right-xl">{{selectedCategory.name}}</text>
-							</view>
-						</tn-list-cell>
-						<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx"
-							@click="showDescription = !showDescription">
-							<view class="tn-flex tn-flex-col-center">
-								<text class="tn-margin-right-sm tn-flex-nowrap" style="flex-shrink: 0;">简介</text>
-								<text
-									class="tn-color-gray--dark tn-flex-1 tn-margin-right tn-text-ellipsis">{{description}}</text>
-							</view>
-						</tn-list-cell>
-					</tn-list-view>
-				</view>
-				<view class="tn-bg-gray--light" style="padding:6rpx"></view>
-				<view class="tn-margin">
-					<view class="tn-margin-bottom-sm">
-						<text>帖子设置</text>
-					</view>
-					<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx" @click="showCollect = !showCollect">
-						<view class="tn-flex tn-flex-row-between tn-flex-col-center">
-							<text>加入合集</text>
-							<text
-								class="tn-color-gray--dark tn-margin-right-xl">{{selectedCollect&& selectedCollect.name}}</text>
-						</view>
-					</tn-list-cell>
-					<tn-list-cell unlined :arrow="true" padding="20rpx 0rpx"
-						@click="showPermission = !showPermission">设置权限</tn-list-cell>
-					<view class="tn-margin-top-xl">
-						<view class="tn-flex-col-center tn-flex tn-flex-row-center" @tap.stop.prevent="publish()">
-							<tn-button shape="round" backgroundColor="#29b7cb" fontColor="tn-color-white"
-								style="width: 100%;">确认发布</tn-button>
-						</view>
-					</view>
+				<lsj-edit ref="lsjEdit" :onreadOnly="isReady" :html="articleInfo.content" @onReady="editReady"
+					placeholder="请尽情发挥吧..." :max-count="contentMAX" @tap="showCurrent = null"></lsj-edit>
+				<!-- 遮罩 -->
+				<view v-if="isReady" @tap="showCurrent =null" style="position: fixed;top: 0;width: 100%;height: 100vh;">
 				</view>
 			</view>
-		</tn-modal>
-		<!-- 文章设置 -->
-		<tn-popup mode="bottom" :borderRadius="20" v-model="showSetting" backgroundColor="#f8f8f8" safeAreaInsetBottom>
-			<view class="tn-margin">
-				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-					<text @tap.stop.prevent="showSetting = !showSetting">取消</text>
-					<text class="tn-text-bold">选择分区和话题</text>
-					<text @tap.stop.prevent="showSetting = !showSetting">确定</text>
+			<view style="position: absolute;bottom: 0;width: 100%;" class="tn-bg-white" id="contentBtn">
+				<view class="tn-text-right tn-margin">
+					<text class="tn-color-grey--disabled tn-text-sm">{{edit&&edit.textCount}}/{{contentMAX}}</text>
 				</view>
-				<view class="tn-flex tn-flex-col-center tn-bg-white tn-flex-row-between tn-padding-sm tn-margin-top"
-					style="border-radius: 10rpx;" @tap.stop.prevent="showCategory =!showCategory">
-					<text>分区</text>
-					<view class="tn-flex tn-col-center tn-color-gray tn-text-sm">
-						<text class="tn-margin-right-sm">{{selectedCategory.name}}</text>
-						<text :class="showCategory? 'tn-icon-down':'tn-icon-right'"></text>
-					</view>
-				</view>
-				<view class="tn-bg-white tn-padding-sm tn-margin-top" style="border-radius: 10rpx;"
-					v-show="!showCategory">
-					<scroll-view scroll-y style="height: 450rpx;">
-						<view v-show="selectedTagsList.length>0">
-							<view class="tn-margin-bottom-sm">
-								<text class="tn-text-sm tn-color-gray">还可添加{{10-selectedTagsList.length}}个标签</text>
-							</view>
-							<view class="tn-flex tn-flex-col-center tn-flex-wrap">
-								<view
-									class="tn-padding-xs tn-round tn-margin-right-sm tn-margin-bottom-sm tn-color-white tagsbg"
-									style="position: relative;" v-for="(item,index) in selectedTagsList" :key="index"
-									@tap.stop.prevent="tagsTap(item)">
-									<text class="tn-padding-xs">{{item.name}}</text>
-									<text class="tn-icon-close-fill tn-color-black"
-										style="position: absolute;top:-10rpx; right: -10rpx;"></text>
-								</view>
-							</view>
-
-						</view>
-						<view class="tn-flex tn-flex-col-center tn-flex-row-between"
-							v-show="selectedTagsList.length==0">
-							<text>推荐标签</text>
-							<text class="tn-color-gray tn-text-xs">可添加10个标签</text>
-						</view>
+				<view
+					class="tn-flex tn-margin tn-text-md tn-flex-direction-column tn-border-solid-top tn-border-gray--light tn-padding-top-sm">
+					<view class="tn-flex tn-flex-col-center tn-flex-row-between" @tap.stop.prevent="showCategory = true"
+						style="height: 50rpx;">
+						<text>选择发布位置</text>
 						<view class="tn-flex tn-flex-col-center">
-							<view class="tn-padding-xs tn-round tn-margin-right-sm"
-								:class="selectedTagsList && selectedTagsList.map(tags => tags.name).includes(item.name)?'tagsbg':'tn-bg-gray--light tn-color-gray--dark'"
-								v-for="(item,index) in tags" :key="index" v-if="index < 2"
-								@tap.stop.prevent="tagsTap(item)">
-								<text class="tn-padding-xs">{{item.name}}</text>
-							</view>
-							<tn-button plain shape="round" size="sm" @click="showTagCreate= true">
-								<view class=" tn-flex tn-flex-col-center">
-									<text class="tn-icon-add"></text>
-									<text>自定义标签</text>
-								</view>
-							</tn-button>
-						</view>
-						<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-top tn-margin-bottom-sm">
-							<text>所有标签</text>
-							<view @tap.stop.prevent="goSearch">
-								<tn-button plain size="sm" shape="round">搜索</tn-button>
-							</view>
-
-						</view>
-						<view class="tn-flex tn-flex-col-center tn-flex-wrap">
 							<view
-								class="tn-flex tn-margin-bottom-sm tn-margin-right-sm tn-flex-col-center tn-round tn-padding-xs"
-								:class="selectedTagsList && selectedTagsList.map(tags => tags.name).includes(item.name)?'tagsbg':'tn-bg-gray--light tn-color-gray--dark'"
-								v-for="(item,index) in tags" :key="index" @tap.stop.prevent="tagsTap(item)">
-								<text class="tn-icon-topic"
-									:class="{'ch-color':!selectedTagsList.map(tags => tags.name).includes(item.name)}"></text>
-								<text class="tn-margin-left-xs">{{item.name}}</text>
+								class="tn-margin-right-sm ch-color-primary ch-bg-main--light tn-padding-left-sm tn-radius tn-padding-xs tn-padding-right-sm"
+								v-if="articleInfo.sort">
+								{{articleInfo.sort.name}}
 							</view>
+							<text class="tn-icon-right"></text>
 						</view>
-					</scroll-view>
-				</view>
-				<view class="tn-bg-white tn-padding-sm tn-margin-top" style="border-radius: 10rpx;"
-					v-show="showCategory">
-					<scroll-view scroll-y style="height: 450rpx;">
-						<text>选择分区</text>
-						<view class="tn-margin-top tn-flex tn-flex-direction-column">
-							<view class="tn-flex tn-margin-top" v-for="(item,index) in category" :key="index"
-								hover-class="tn-hover" hover-stay-time="150" @tap.stop.prevent="categoryTap(item)">
-								<view>
-									<image :src="item.opt.head_img" mode="aspectFill" class="tn-round"
-										style="height: 60rpx;width: 60rpx;"></image>
-								</view>
-								<view class="tn-flex tn-flex-direction-column tn-margin-left-sm">
-									<text class="tn-text-bold">{{item.name}}</text>
-									<view class="tn-bg-gray--light tn-padding-xs tn-margin-top-xs tn-text-ellipsis-2"
-										style="border-radius: 20rpx;">
-										<text class="tn-padding-xs tn-color-gray">{{item.description}}</text>
+					</view>
+					<view class="tn-flex tn-flex-col-center tn-margin-top-xl" @tap.stop.prevent="showTag = true">
+						<view class="tn-flex tn-flex-col-center" style="flex-shrink: 0;">
+							<text>参与话题</text>
+							<text class="tn-icon-right-triangle tn-text-lg"></text>
+						</view>
+						<scroll-view scroll-x>
+							<view class="tn-flex" style="white-space: nowrap;">
+								<block v-for="(item,index) in articleInfo.tags" :key="index">
+									<view
+										class="tn-margin-left-sm tn-flex-nowrap ch-color-primary ch-bg-main--light tn-padding-left-sm tn-radius tn-padding-xs tn-padding-right-sm">
+										<text>{{item.name}}</text>
+									</view>
+								</block>
+							</view>
+						</scroll-view>
+					</view>
+					<!-- 按钮 -->
+					<view class="tn-flex tn-felx-col-center tn-flex-row-between tn-margin-top-xl"
+						style="font-size: 45rpx;">
+						<block v-for="(item,index) in btnList" :key="item.type">
+							<text :class="'tn-icon-'+item.icon" @tap.stop.prevent="btnAction(item.type)"></text>
+						</block>
+						<view class="tn-margin-left-xl">
+							<text class="tn-icon-install" @tap.stop.prevent="btnAction('set')"></text>
+						</view>
+					</view>
+					<!-- 表情 -->
+					<view v-if="showCurrent == 'emoji'">
+						<scroll-view scroll-y style="height: 300rpx;">
+							<view class="tn-flex tn-flex-col-center tn-flex-wrap tn-flex-row-between">
+								<block v-for="(item,index) in emoji.list[0]" :key="index">
+									<image style="height: 50rpx;width: 50rpx;" :src="item" class="tn-margin-xs"
+										@tap.stop.prevent="insertEmoji(item)"></image>
+								</block>
+							</view>
+						</scroll-view>
+					</view>
+					<!-- 格式 -->
+					<view v-if="showCurrent == 'font'" style="height: 300rpx">
+						<view class="tn-margin-top-sm tn-margin-bottom-sm">
+							<text>文字颜色</text>
+						</view>
+						<view class="tn-flex tn-flex-row-between tn-flex-col-center" style="height: 50rpx;">
+							<block v-for="(color,index) in format.color.font">
+								<view class="tn-padding-sm tn-round" :style="[{backgroundColor:color}]"
+									@tap="colorTap('color',color)">
+									<view
+										:class="[{'tn-bg-white tn-round tn-padding-xs':format.format && format.format.color == color.toLowerCase()}]">
 									</view>
 								</view>
+							</block>
+						</view>
+						<view class="tn-margin-top-sm tn-margin-bottom-sm">
+							<text>背景颜色</text>
+						</view>
+						<view class="tn-flex tn-flex-row-between tn-flex-col-center" style="height: 50rpx;">
+							<block v-for="(background,index) in format.color.background">
+								<view class="tn-padding-sm tn-round" :style="[{backgroundColor:background}]"
+									@tap="colorTap('background',background)">
+									<view
+										:class="[{'tn-bg-white tn-round tn-padding-xs':format.format && format.format.background == background.toLowerCase()}]">
+									</view>
+								</view>
+							</block>
+						</view>
+					</view>
+
+					<!-- 设置 -->
+					<view v-if="showCurrent == 'set'">
+						<scroll-view scroll-y style="height: 300rpx;">
+							<view
+								class="tn-flex tn-flex-col-center tn-margin-top tn-flex-row-between tn-border-solid-bottom tn-padding-bottom-sm tn-border-gray--light"
+								@tap.stop.prevent="showCollect = true">
+								<text>加入合集</text>
+								<view class="tn-flex tn-flex-col-center">
+									<text
+										class="tn-margin-right-xs tn-color-grey--disabled">{{articleInfo.collect&&articleInfo.collect.name}}</text>
+									<i class="tn-icon-right"></i>
+								</view>
+							</view>
+							<!-- 创作设置 -->
+							<view
+								class="tn-flex tn-flex-col-center tn-flex-row-between tn-border-solid-bottom tn-border-gray--light">
+								<view class="tn-flex tn-flex-direction-column">
+									<text>创作设置</text>
+									<view>
+										<text class="tn-text-sm tn-color-grey--disabled">
+											启用后代表独立创作|阅读并接受
+										</text>
+										<text class="ch-color-primary">《内容创作协议》</text>
+									</view>
+								</view>
+								<tn-switch v-model="creative" activeColor="#29b7cb" :size="40"></tn-switch>
+							</view>
+							<!-- 公开可见 -->
+							<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top-sm">
+								<view class="tn-flex tn-flex-direction-column">
+									<text>公开可见</text>
+									<text class="tn-text-sm tn-color-grey--disabled">开启后文章可被所有人查看</text>
+								</view>
+								<tn-switch v-model="auth" activeColor="#29b7cb" :size="40"
+									@input="authChange"></tn-switch>
+							</view>
+							<view v-if="creative">
+								<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top-sm">
+									<view class="tn-flex tn-flex-direction-column">
+										<text>允许评论发图片</text>
+										<text class="tn-text-sm tn-color-grey--disabled">
+											关闭后评论无法发送图片
+										</text>
+									</view>
+									<tn-switch v-model="articleInfo.opt.comments.image" activeColor="#29b7cb"
+										:size="40"></tn-switch>
+								</view>
+								<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-top-sm">
+									<text>允许规范转载</text>
+									<tn-switch v-model="articleInfo.opt.transport" activeColor="#29b7cb"
+										:size="40"></tn-switch>
+								</view>
+							</view>
+						</scroll-view>
+					</view>
+				</view>
+			</view>
+		</view>
+		<!-- 弹出层开始 -->
+		<!-- 选择板块 -->
+		<tn-popup mode="bottom" :borderRadius="20" length="60%" v-model="showCategory">
+			<view class="tn-flex tn-flex-row-between tn-margin tn-flex-col-center">
+				<text>选择板块</text>
+				<text class="tn-icon-close tn-text-xxl" @tap.stop.prevent="showCategory = false"></text>
+			</view>
+			<tn-grid align="left" :col="col" hoverClass="none">
+				<block v-for="(item, index) in category" :key="index">
+					<!-- H5 -->
+					<!-- #ifndef MP-WEIXIN -->
+					<tn-grid-item>
+						<view class="tn-margin-bottom tn-flex tn-flex-direction-column tn-flex-col-center tn-text-md"
+							@tap.stop.prevent="articleInfo.sort = item;showCategory = false">
+							<tn-avatar :src="item.opt.head_img" size="lg" shape="square">
+							</tn-avatar>
+							<view class="tn-margin-top-sm">
+								<text>{{item.name}}</text>
 							</view>
 						</view>
-					</scroll-view>
-				</view>
-			</view>
-		</tn-popup>
-		<!-- 创建标签 -->
-		<tn-popup mode="bottom" v-model="showTagCreate" safeAreaInsetBottom>
-			<view class="tn-margin">
-				<view class="tn-flex tn-flex-col-center tn-flex-row-between">
-					<text @tap.stop.prevent="showTagCreate = !showTagCreate">取消</text>
-					<text>
-						填写标签
-					</text>
-					<text @tap.stop.prevent="createTag(tagName)">
-						确定
-					</text>
-				</view>
-				<view class="tn-bg-gray--light tn-margin-top tn-padding-sm tn-padding-top-xs"
-					style="border-radius: 10rpx;">
-					<tn-input type="text" confirmType="完成" v-model="tagName" :clearable="false"
-						placeholder="输入标签,至多20个字符" focus :maxLength="20" />
-				</view>
-			</view>
-		</tn-popup>
-		<!-- 填写简介 -->
-		<tn-popup mode="bottom" v-model="showDescription" safeAreaInsetBottom>
-			<view class="tn-margin">
-				<view class="tn-flex tn-flex-row-between tn-flex-col-center">
-					<text @tap.stop.prevent="showDescription = !showDescription">取消</text>
-					<text>填写简介</text>
-					<text @tap.stop.prevent="setDescription">确定</text>
-				</view>
-				<view class="tn-bg-gray--light tn-margin-top tn-padding-sm tn-padding-top-xs"
-					style="border-radius: 10rpx;">
-					<tn-input type="textarea" confirmType="完成" v-model="tmpDes" focus :clearable="false"
-						placeholder="输入简介,至多1000个字符" :maxLength="1000" />
-				</view>
-			</view>
-		</tn-popup>
-		<!-- 权限设置 -->
-		<tn-popup mode="bottom" v-model="showPermission" safeAreaInsetBottom>
-			<view class="tn-margin">
-				<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-bottom-xl">
-					<text></text>
-					<text>设置权限</text>
-					<text @tap.stop.prevent="showPermission = !showPermission" class="ch-color-primary">确定</text>
-				</view>
-				<view class="tn-flex tn-flex-direction-column">
-					<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-bottom"
-						@click="changePermission('auth')">
-						<text>谁人可见</text>
-						<text>{{articleOpt.auth=='anyone'?'已公开':'已私有'}}</text>
-					</view>
-					<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-bottom"
-						@click="changePermission('comments','allow')">
-						<text>允许评论</text>
-						<text>{{articleOpt.comments.allow?'已允许':'不允许'}}</text>
-					</view>
-					<view class="tn-flex tn-flex-row-between tn-flex-col-center tn-margin-bottom"
-						@click="changePermission('comments','show')">
-						<text>评论可见</text>
-						<text>{{articleOpt.comments.show?'已允许':'不允许'}}</text>
-					</view>
-				</view>
-			</view>
-		</tn-popup>
-		<!-- 合集设置 -->
-		<tn-popup mode="bottom" v-model="showCollect" :borderRadius="20" backgroundColor="#f8f8f8" safeAreaInsetBottom>
-			<view class="tn-margin">
-				<view class="tn-flex tn-flex-col-center tn-flex-row-between tn-margin-bottom">
-					<text @tap.stop.prevent="showCollect = !showCollect">取消</text>
-					<text class="tn-text-bold">选择合集</text>
-					<text @tap.stop.prevent="showCollect = !showCollect">确定</text>
-				</view>
-				<view class="tn-flex tn-flex-direction-column">
-					<view class="tn-flex tn-flex-col-center tn-margin-bottom" v-for="(item,index) in collects"
-						:key="index"
-						:class="selectedCollect && selectedCollect.id == item.id?'tn-round tn-padding-sm tn-bg-white':''"
-						@tap.stop.prevent="collectsTap(item)">
-						<tn-avatar shape="square" size="sm" :src="item.image"></tn-avatar>
-						<text class="tn-margin-left-sm">{{item.name}}</text>
-					</view>
+					</tn-grid-item>
+					<!-- #endif-->
 
-				</view>
-			</view>
+					<!-- 微信小程序 -->
+					<!-- #ifdef MP-WEIXIN -->
+					<tn-grid-item :style="{width: gridItemWidth}">
+						<view class="tn-margin-bottom tn-flex tn-flex-direction-column tn-flex-col-center tn-text-md">
+							<tn-avatar :src="item.opt.head_img" size="lg" shape="square">
+							</tn-avatar>
+							<view class="tn-margin-top-sm">
+								<text>{{item.name}}</text>
+							</view>
+						</view>
+					</tn-grid-item>
+					<!-- #endif-->
+				</block>
+			</tn-grid>
 		</tn-popup>
-		<!-- 添加链接 -->
-		<tn-modal v-model="showAddLink" padding="0rpx" custom width="80%" showCloseBtn>
-			<view class="tn-margin" @touchmove.stop.prevent>
-				<view class="tn-flex-row-center tn-flex tn-margin-bottom">
-					<text class="tn-text-bold">添加链接</text>
+		<!-- 选择话题 -->
+		<tn-popup mode="bottom" v-model="showTag" :borderRadius="20" length="80%">
+			<z-paging ref="tags" @query="getTag" v-model="tag">
+				<template #top>
+					<view class="tn-margin tn-flex tn-flex-row-between tn-flex-col-center">
+						<text class="tn-icon-close tn-text-xxl" @tap.stop.prevent="showTag = false"></text>
+						<text>选择话题</text>
+						<text class="ch-color-primary" @tap.stop.prevent="showTag = false">确认</text>
+					</view>
+					<view class="tn-flex tn-text-md tn-margin tn-flex-col-center tn-radius tn-flex-wrap"
+						style="min-height: 60rpx;">
+						<text class="tn-text-bold">话题：</text>
+						<block v-for="(item,index) in articleInfo.tags" :key="index">
+							<view
+								class="tn-margin-xs tn-no-margin-right tn-no-margin-top tn-bg-gray--light tn-padding-xs tn-padding-left-sm tn-padding-right-sm"
+								@tap.stop.prevent="tagTap(item)">
+								<text>{{item.name}}</text>
+								<text class="tn-margin-left-xs tn-icon-close-fill tn-color-gray"></text>
+							</view>
+						</block>
+					</view>
+					<!-- 搜索 -->
+					<view
+						class="tn-bg-gray--light tn-radius tn-margin tn-padding-left-sm tn-padding-right-sm tn-flex tn-flex-col-center">
+						<text class="tn-icon-search tn-padding-right-sm"></text>
+						<tn-input v-model="searchKey" :clearable="false" placeholder="搜索话题" @input="searchTag" />
+					</view>
+					<view class="tn-margin tn-text-md tn-margin-top-xl">
+						<text class="tn-text-bold">推荐话题：</text>
+					</view>
+				</template>
+				<!-- 推荐话题 -->
+				<view class="tn-margin tn-text-md">
+					<block v-for="(item,index) in tag" :key="index">
+						<view class="tn-flex tn-flex-col-center tn-margin-bottom" @tap.stop.prevent="tagTap(item)">
+							<tn-avatar :src="item.opt.head_img" shape="square"></tn-avatar>
+							<view class="tn-flex-1 tn-margin-left tn-flex tn-flex-direction-column">
+								<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+									<text>{{item.name}}</text>
+									<text class="tn-color-grey--disabled tn-text-sm">{{item.expand.count}}篇文章</text>
+								</view>
+								<text>{{item.description}}</text>
+							</view>
+						</view>
+					</block>
 				</view>
+			</z-paging>
+		</tn-popup>
+		<!-- 选择合集 -->
+		<tn-popup mode="bottom" v-model="showCollect" :borderRadius="20" length="50%">
+			<z-paging ref="collect" @query="getCollect" v-model="collect" :refresher-enabled="false">
+				<template #top>
+					<view class="tn-margin tn-flex tn-flex-col-center tn-flex-row-between">
+						<text>选择合集</text>
+						<text class="ch-color-primary tn-text-md" @tap.stop.prevent="goCreateCollect()">创建合集</text>
+					</view>
+				</template>
 				<view class="tn-flex tn-flex-direction-column">
-					<view class="tn-flex tn-flex-col-center tn-bg-gray--light tn-round tn-margin-bottom">
-						<text class="tn-icon-link tn-padding-left-sm tn-padding-right-sm"></text>
-						<view class="tn-padding-right-sm tn-flex-1">
-							<tn-input v-model="link" :clearable="false" placeholder="https://" />
+					<view class="tn-flex tn-flex-col-center tn-text-md tn-flex-row-between tn-margin"
+						@tap.stop.prevent="articleInfo.collect=null;showCollect=false">
+						<text>不加入合集</text>
+						<view class="tn-round" :class="[!articleInfo.collect?'ch-border-primary':'tn-border-solid']"
+							style="height: 32rpx; width: 32rpx;"></view>
+					</view>
+					<view class="tn-margin">
+						<block v-for="(item,index) in collect" :key="index">
+							<view class="tn-flex tn-margin-bottom tn-flex-col-center tn-text-md tn-flex-row-between"
+								@tap.stop.prevent="articleInfo.collect = item;showCollect=false">
+								<view class="tn-flex tn-flex-col-center">
+									<tn-avatar :src="item.image" siz="lg" shape="square"></tn-avatar>
+									<view class="tn-margin-left">
+										<text>{{item.name}}</text>
+									</view>
+								</view>
+								<view class="tn-round"
+									:class="[articleInfo.collect && articleInfo.collect.id == item.id?'ch-border-primary':'tn-border-solid']"
+									style="height: 32rpx; width: 32rpx;"></view>
+							</view>
+						</block>
+					</view>
+				</view>
+			</z-paging>
+		</tn-popup>
+		<!-- 草稿列表 -->
+		<tn-popup mode="bottom" v-model="showDraftList" :borderRadius="20" length="60%">
+			<view class="tn-margin tn-flex tn-flex-row-between tn-flex-col-center">
+				<text class="tn-icon-close tn-text-xxl" @tap.stop.prevent="showDraftList = false"></text>
+				<text class="ch-color-primary" @tap.stop.prevent="deleteDraft(0,'all')">清空</text>
+			</view>
+			<view class="tn-margin" v-if="draftList.length">
+				<block v-for="(item,index) in draftList" :key="index">
+					<view class="tn-margin-bottom tn-flex tn-flex-direction-column tn-color-gray tn-text-md"
+						@tap.stop.prevent="getDraft(item)">
+						<view class="tn-flex tn-flex-col-center tn-flex-row-between">
+							<text>编辑于 {{item&&item.update_time}}</text>
+							<text @tap.stop.prevent="deleteDraft(index)">删除</text>
+						</view>
+						<view class="tn-flex tn-margin-top-sm">
+							<view class=" tn-bg-grey--light tn-flex tn-flex-col-center tn-flex-row-center"
+								style="width: 120rpx;height: 120rpx;border-radius: 10rpx;">
+								<text class="tn-icon-image-text tn-text-xl-xxl"></text>
+							</view>
+							<view
+								class="tn-margin-left-sm tn-flex tn-flex-direction-column tn-flex-row-between tn-text-ellipsis">
+								<text>{{item&&item.title}}</text>
+								<text class="tn-text-ellipsis-2">{{item&&item.content}}</text>
+							</view>
 						</view>
 					</view>
-					<view class="tn-flex tn-flex-col-center tn-bg-gray--light tn-round tn-margin-bottom">
-						<text class="tn-icon-image-text tn-padding-left-sm tn-padding-right-sm"></text>
-						<view class="tn-padding-right-sm tn-flex-1">
-							<tn-input v-model="linkName" :clearable="false" placeholder="链接展示的文本" />
-						</view>
-					</view>
-					<view class="tn-margin-top" @tap.stop.prevent="addLink()">
-						<tn-button backgroundColor="#29b7cb" shape="round" fontColor="tn-color-white"
-							style="width: 100%;">添加链接</tn-button>
-					</view>
-
-				</view>
+				</block>
 			</view>
-		</tn-modal>
+			<view class="tn-margin tn-margin-top-xl tn-padding-top-xl tn-flex tn-flex-row-center tn-flex-col-center"
+				v-else>
+				<text class="tn-text-md tn-color-grey--disabled">干净清爽...</text>
+			</view>
+		</tn-popup>
 		<!-- 保存草稿 -->
-		<tn-popup mode="center" :borderRadius="20" v-model="showDraft" length="80%">
+		<tn-popup mode="center" :borderRadius="20" v-model="showSaveDraft" length="80%" :zIndex="5">
 			<view class="tn-margin">
 				<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
-					<text>草稿</text>
-					<text class="tn-padding-sm tn-color-gray--dark" style="font-size: 28rpx;">点击“确定”将插入最新草稿</text>
-				</view>
-			</view>
-			<view class="tn-padding tn-color-gray--dark tn-bg-gray--light">
-				<view class="tn-flex tn-flex-row-around" style="font-size: 28rpx;">
-					<text @tap.stop.prevent="deleteDraft()">取消</text>
-					<text class="tn-color-grey--light">|</text>
-					<text class="ch-color-primary" @tap.stop.prevent="insertDraft()">确定</text>
-				</view>
-			</view>
-		</tn-popup>
-		<tn-popup mode="center" :borderRadius="20" v-model="showSaveDraft" length="80%">
-			<view class="tn-margin">
-				<view class="tn-flex tn-flex-direction-column tn-flex-col-center">
-					<text>保存</text>
+					<text>保存草稿</text>
 					<text class="tn-padding-sm tn-color-gray--dark" style="font-size: 28rpx;">是否保存草稿？</text>
 				</view>
 			</view>
 			<view class="tn-padding tn-color-gray--dark tn-bg-gray--light">
 				<view class="tn-flex tn-flex-row-around" style="font-size: 28rpx;">
-					<text @tap.stop.prevent="saveDraftAction(false)">取消</text>
+					<view class="tn-flex-1 tn-text-center" @tap.stop.prevent="showSaveDraft= false">
+						<text>取消</text>
+					</view>
 					<text class="tn-color-grey--light">|</text>
-					<text class="ch-color-primary" @tap.stop.prevent="saveDraftAction(true)">确定</text>
+					<view class="tn-flex-1 tn-text-center" @tap.stop.prevent="saveDraft()">
+						<text class="ch-color-primary">确定</text>
+					</view>
 				</view>
 			</view>
 		</tn-popup>
-
 	</view>
 </template>
 
@@ -360,339 +360,263 @@
 	export default {
 		data() {
 			return {
-				link: null,
-				linkName: null,
-				update: false,
-				id: 0,
-				edit: null,
-				showArticleSet: false,
-				formatObj: null,
-				tabsIndex: 0,
-				tabsList: ['格式', '颜色'],
-				format: false,
-				formatColor: false,
-				curTop: 0,
+				onreadOnly: false,
+				col: 4,
+				params: null,
+				titleMAX: 30,
+				contentMAX: 30000,
+				category: null,
+				collect: [],
+				tag: [],
 				btnList: [{
-						name: '图片',
-						type: 'pictrue',
-						icon: 'tn-icon-image',
-
+						type: 'image',
+						icon: 'image',
 					},
 					{
-						name: '视频',
+						type: 'emoji',
+						icon: 'emoji-good',
+					},
+					{
+						type: 'at',
+						icon: 'at-sign',
+					},
+					{
+						type: 'font',
+						icon: 'font',
+					},
+					{
 						type: 'video',
-						icon: 'tn-icon-play',
-
+						icon: 'video',
 					},
 					{
-						name: '格式',
-						type: 'format',
-						icon: 'tn-icon-font',
-					},
-					{
-						name: '颜色',
-						type: 'color',
-						icon: 'tn-icon-theme',
-					},
-					{
-						name: '链接',
-						type: 'link',
-						icon: 'tn-icon-link',
-
-					},
-					{
-						name: '商品',
-						type: 'good',
-						icon: 'tn-icon-shop',
-
-					},
-					{
-						name: '撤回',
-						type: 'undo',
-						icon: 'editor icon-undo',
-						customFn: 'tool'
+						type: 'more',
+						icon: 'add-circle',
 					}
 				],
-				fontFormat: [{
-						type: 'header',
-						value: 'H2',
-						id: 2,
-						icon: 'editor icon-h2'
-					},
-					{
-						type: 'header',
-						value: 'H3',
-						id: 3,
-						icon: 'editor icon-h3'
-					},
-					{
-						type: 'header',
-						value: 'H4',
-						id: 4,
-						icon: 'editor icon-h4'
-					},
-
-					{
-						type: 'bold',
-						value: '粗体',
-						id: true,
-						icon: 'editor icon-bold'
-					},
-					{
-						type: 'italic',
-						value: '斜体',
-						id: true,
-						icon: 'editor icon-italic'
-					},
-					{
-						type: 'underline',
-						value: '下划线',
-						id: true,
-						icon: 'editor icon-underline'
-					},
-					{
-						type: 'strike',
-						value: '删除线',
-						id: true,
-						icon: 'editor icon-strikethrough'
-					},
-					{
-						type: 'align',
-						value: 'left',
-						id: 'left',
-						icon: 'editor icon-align-left'
-					},
-					{
-						type: 'align',
-						value: 'center',
-						id: 'center',
-						icon: 'editor icon-align-center'
-					},
-					{
-						type: 'align',
-						value: 'right',
-						id: 'right',
-						icon: 'editor icon-align-right'
-					},
-
-					{
-						type: 'lineHeight',
-						value: '2',
-						id: '2',
-						icon: 'editor icon-line-height'
-					},
-					{
-						type: 'script',
-						value: 'sub',
-						id: 'sub',
-						icon: 'editor icon-caret-down'
-					},
-					{
-						type: 'script',
-						value: 'super',
-						id: 'super',
-						icon: 'editor icon-caret-up'
-					},
-					{
-						type: 'list',
-						value: 'ordered',
-						id: 'ordered',
-						icon: 'editor icon-ordered-list'
-					},
-					{
-						type: 'list',
-						value: 'bullet',
-						id: 'bullet',
-						icon: 'editor icon-unordered-list'
-					},
-					{
-						type: 'insertDivider',
-						value: '',
-						id: true,
-						icon: 'editor icon-minus',
-						customFn: 'tool'
-					},
-					{
-						type: 'removeFormat',
-						value: '',
-						id: true,
-						icon: 'editor icon-eraser',
-						customFn: 'tool'
-					},
-					{
-						type: 'clear',
-						value: '',
-						id: 'clear',
-						icon: 'editor icon-delete',
-						customFn: 'tool'
-					},
-				],
-				fontColor: [
-					'#303133',
-					'#666666',
-					'#999999',
-					'#E93423',
-					'#ED6940',
-					'#E7B23E',
-					'#59C780',
-					'#4EA9FA',
-					'#2B61F5',
-					'#675BED',
-				],
-				bgColor: [
-					'#E8E8E8',
-					'#FED0D0',
-					'#FBF0B8',
-					'#C3ECDA',
-					'#B2D1FF',
-					'#E0C4FF',
-				],
-				fontSize: 16,
-				articleTitle: null,
-				category: [],
-				selectedCategory: {},
-				categoryName: null,
-				categoryId: null,
-				description: null,
-				tmpDes: null,
-				showCategory: false,
-				tags: [],
-				collects: [],
-				selectedCollect: null,
-				showTagCreate: false,
-				tagName: null,
-				showSetting: false,
-				selectedTagsList: [],
-				showDescription: false,
-				showPermission: false,
-				showCollect: false,
-				articleOpt: {
-					password: '',
-					auth: 'anyone',
-					comments: {
-						show: true,
-						allow: true,
+				editHeight: 0,
+				keyHeight: 0,
+				screenHeight: 0,
+				edit: null,
+				showAt: false,
+				// 显示哪个面板
+				showCurrent: null,
+				articleInfo: {
+					title: '',
+					tags: [],
+					sort: null,
+					collect: null,
+					opt: {
+						password: '',
+						auth: 'anyone',
+						comments: {
+							show: true,
+							allow: true,
+							image: true,
+						},
+						transport: true,
 					}
 				},
-				keyHeight: 0,
-				bottom: 0,
-				showDraft: false,
+				//表情
+				emoji: {
+					tab: [],
+					list: [],
+				},
+				// 格式
+				format: {
+					format: {},
+					color: {
+						font: [
+							'#303133',
+							'#666666',
+							'#999999',
+							'#E93423',
+							'#ED6940',
+							'#E7B23E',
+							'#59C780',
+							'#4EA9FA',
+							'#2B61F5',
+							'#675BED',
+						],
+						background: [
+							'#E8E8E8',
+							'#FED0D0',
+							'#FBF0B8',
+							'#C3ECDA',
+							'#B2D1FF',
+							'#E0C4FF',
+						]
+					}
+				},
+				// 显示弹窗
+				showCategory: false,
+				//话题
+				showTag: false,
+				// 搜索关键词
+				searchKey: '',
+				// 显示合集
+				showCollect: false,
+				realBack: false,
+				// 显示草稿
 				showSaveDraft: false,
-				draft: null,
-				showAddLink: false,
-				save: false,
-				realback: false,
-			};
+				// 草稿列表
+				showDraftList: false,
+				draftList: [],
+				// 创作
+				creative: false,
+				auth: true,
+			}
 		},
 		onLoad(params) {
-			this.id = params.id
-			this.update = params.update
-			uni.onKeyboardHeightChange((res) => {
-				// 监听软键盘的高度，页面隐藏后一定要取消监听键盘
-				if (res.height !== 0) this.bottom = 0;
-				if (res.height === 0) {
-					this.bottom = this.curTop
-				}
-			})
-			this.getTags()
-			this.getCollect()
-			this.getCategory()
-			if (params.update) {
-				this.getArticle()
-				return;
-			}
-			if (uni.getStorageSync('draft')) {
-				this.showDraft = true
-			}
+			this.params = params
 		},
+
 		beforeRouteLeave(to, from, next) {
-			if (this.realback || to.name == 'searchTag' || this.update) {
-				next();
-			} else if (this.edit.textCount) {
-				this.showSaveDraft = true;
-				next(false);
-				this.$Router.$lockStatus = false
-			} else {
-				next();
+			this.$Router.$lockStatus = false
+			if (this.edit.textCount >= 10 && !this.realBack) {
+				this.showSaveDraft = true
+				next(false)
+				return
 			}
+			next()
 		},
-		created() {
-			uni.$on('searchTag', data => {
-				this.tagsTap(data)
-			})
+		onReady() {
+			this.initData()
+			// 获取草稿
+			this.draftList = uni.getStorageSync('draft')
+			if (!this.draftList) this.draftList = [];
+
 		},
 		computed: {
-
+			// 兼容小程序
+			gridItemWidth() {
+				return 100 / this.col + '%'
+			},
+			// 是否为编辑
+			isReady() {
+				let status = false
+				if (this.showCurrent != 'font' && this.showCurrent != null) status = true
+				return status
+			},
 		},
-
 		methods: {
-			// 获取文章内容 用于更新
+			initData() {
+				// 获取分类
+				this.getCategory()
+				// 获取表情
+				this.getEmoji()
+				if (this.params.update) {
+					this.getArticle()
+				}
+			},
 			getArticle() {
 				this.$http.get('/article/one', {
 					params: {
-						id: this.id
+						id: this.params.id
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
-						this.draft = res.data.data.content
-						this.selectedCategory = res.data.data.expand.sort[0]
-						this.selectedTagsList = res.data.data.expand.tag
-						this.categoryName = res.data.data.expand.sort[0].name
-						this.articleTitle = res.data.data.title
-						this.description = res.data.data.description
-						this.tmpDes = res.data.data.description
-						this.articleOpt = res.data.data.opt
-					}
-				})
-			},
-
-			// 更新文章
-			// 保存草稿方法
-			saveDraftAction(data) {
-				if (data) {
-					this.saveDraft()
-				}
-				this.showSaveDraft = false
-				this.realback = true
-				this.$Router.$lockStatus = false
-				this.$Router.back(1)
-			},
-			getTags() {
-				this.$http.get('/tag/all', {
-					params: {
-						page: 1,
-						limit: 20,
-					}
-				}).then(res => {
-					if (res.data.code === 200) {
-						this.tags = res.data.data.data
-					}
-				})
-			},
-			getCollect() {
-				this.$http.get('/collections/Find', {
-					params: {
-						page: 1,
-						limit: 10,
-					}
-				}).then(res => {
-					if (res.data.code === 200) {
-						this.collects = res.data.data
+						console.log(res)
+						this.articleInfo.title = res.data.data.title
+						this.articleInfo.content = res.data.data.content
+						this.articleInfo.tags = res.data.data.expand.tag
+						this.articleInfo.sort = res.data.data.expand.sort[0]
+						this.articleInfo.opt = res.data.data.opt
+						this.articleInfo.collect = res.data.data.expand.collections
 					}
 				})
 			},
 			getCategory() {
 				this.$http.get('/article-sort/all', {
 					params: {
-						page: 1,
 						limit: 20,
 					}
 				}).then(res => {
 					if (res.data.code === 200) {
 						this.category = res.data.data.data
-						this.selectedCategory = res.data.data.data[0]
 					}
 				})
+			},
+			// 获取标签
+			getTag(page, limit) {
+				this.$http.get('/tag/all', {
+					params: {
+						page: page,
+						limit: 20
+					}
+				}).then(res => {
+					if (res.data.code === 200) {
+						this.$refs.tags.complete(res.data.data.data)
+					}
+				})
+			},
+			// 搜索标签
+			searchTag(page, limit) {
+				this.$http.get('/tag/sql', {
+					params: {
+						page,
+						limit,
+						where: `name like '%${this.searchKey}%'`
+					}
+				}).then(res => {
+
+					this.$refs.tags.complete(res.data.data.data)
+				})
+			},
+			// 获取表情
+			getEmoji() {
+				this.$http.get('/emoji/list', {}).then(res => {
+					if (res.data.code === 200) {
+						this.emoji.tab = res.data.data
+						this.getEmojiList(res.data.data[0])
+					}
+				})
+			},
+			// 获取表情列表
+			getEmojiList(emoji) {
+				this.$http.get('/emoji/one', {
+					params: {
+						name: emoji
+					}
+				}).then(res => {
+					if (res.data.code === 200) {
+						this.emoji.list.push(res.data.data)
+					}
+				})
+			},
+			// 获取合集
+			getCollect(page, limit) {
+				this.$http.get('/collections/users', {
+					params: {
+						page,
+						limit
+					}
+				}).then(res => {
+					console.log(res)
+					if (res.data.code === 200) {
+						this.$refs.collect.complete(res.data.data)
+
+					}
+				})
+			},
+			// 选择话题
+			tagTap(item) {
+				// 先检查标签数量
+				if (this.articleInfo.tags && this.articleInfo.tags.length >= 10) {
+					uni.showToast({
+						title: '最多选择10个标签'
+					});
+					return;
+				}
+
+				// 再检查标签是否已存在
+				const index = this.articleInfo.tags.findIndex(tag => tag.id === item.id);
+				if (index === -1) {
+					// 不存在则添加
+					this.articleInfo.tags.push(item);
+				} else {
+					// 存在则删除
+					this.articleInfo.tags.splice(index, 1);
+				}
 			},
 			// 编辑器初始化完毕，返回edit对象
 			editReady(edit) {
@@ -700,7 +624,6 @@
 				this.edit = edit;
 				// 监听光标进入
 				this.edit.$on('edit:focus', (e) => {
-					console.log('监听光标进入', e);
 
 				});
 				// 监听输入
@@ -708,154 +631,51 @@
 					// console.log('监听输入', e);
 				});
 				// 监听光标指向不同样式时回调
-				this.edit.$on('edit:statuschange', this.statuschange)
+				this.edit.$on('edit:statuschange', this.editStatus)
 			},
-			statuschange(e) {
-				this.formatObj = e.detail
-				if (this.formatObj.hasOwnProperty('fontSize')) {
-					this.fontSize = parseInt(this.formatObj['fontSize']);
-				} else {
-					this.fontSize = 16;
-				}
-			},
-			switchBtn(item) {
-				switch (item.type) {
-					case 'pictrue':
-						this.edit.addImage()
-						break;
-					case 'video':
-						break;
-					case 'format':
-						if (this.formatColor) {
-							this.formatColor = false
-						}
-						this.format = !this.format
-						break;
 
-					case 'color':
-						if (this.format) {
-							this.format = false
-						}
-						this.formatColor = !this.formatColor
-						break;
-					case 'link':
-						this.showAddLink = !this.showAddLink
-						break;
-					case 'good':
-						break;
-					case 'undo':
-						this.formatTap(item)
-						break;
-					default:
-						break;
-				}
+			editStatus(e) {
+				this.format.format = e.detail
+				console.log(e.detail)
 			},
-			changeTab(index) {
-				this.tabsIndex = index
-			},
-			getContent() {
-				this.$http.get('/article/one')
-			},
-			formatTap(item) {
-				this.edit[item.customFn ? item.customFn : 'format'](item.type, item.value);
-			},
+
+			//切换颜色
 			colorTap(type, color) {
 				this.edit.format(type, color);
 			},
-			setDescription() {
-				this.description = this.tmpDes
-				this.showDescription = !this.showDescription
+			// 插入表情
+			insertEmoji(src) {
+				this.edit.insertEmoji(src)
 			},
-			changePermission(type, subType) {
-				switch (type) {
-					case 'auth':
-						this.articleOpt.auth = this.articleOpt.auth == 'anyone' ? 'private' : 'anyone';
-						console.log(this.articleOpt.auth)
-						break;
-					case 'comments':
-						if (subType == 'show') this.articleOpt.comments.show = !this.articleOpt.comments.show;
-						if (subType == 'allow') this.articleOpt.comments.allow = !this.articleOpt.comments.allow;
-						break;
-					default:
-						break;
-				}
+			// 切换样式
+			formatTap(item) {
+				this.edit[item.customFn ? item.customFn : 'format'](item.type, item.value);
 			},
-			getBoxDetail(e) {
-				this.curTop = uni.getSystemInfoSync().windowHeight - e.curTop
-				this.bottom = this.curTop
-			},
-			createTag(name) {
-				// 检查是否已存在于 tags 
-				if (this.selectedTagsList.length >= 10) {
-					uni.showToast({
-						icon: 'none',
-						title: '至多添加10个标签'
-					})
-					return
-				}
-				if (this.tags.some(t => t.name === name)) {
-					// 获取已存在的标签数据
-					const tag = this.tags.find(t => t.name === name)
-
-					// 检查是否已在 selectedTagsList 中
-					if (!this.selectedTagsList.includes(tag)) {
-						// 仅当不存在时才添加 
-						this.selectedTagsList.push(tag)
-					}
-					return
-				}
-				// 新建标签
-				const newTag = {
-					name,
-					new: true
-				}
-				// 检查是否已在 selectedTagsList 中 
-				if (!this.selectedTagsList.includes(newTag)) {
-					this.selectedTagsList.push(newTag)
-				}
-				this.tagName = null
-			},
-			goSearch() {
+			// 创建合集
+			goCreateCollect() {
 				this.$Router.push({
-					path: '/pages/tabbar/publish/searchTag',
+					path: '/pages/user/collect/create'
 				})
 			},
-			categoryTap(item) {
-				this.selectedCategory = item
-				this.showCategory = !this.showCategory
+			// 切换权限
+			authChange(e) {
+				if (e) this.articleInfo.opt.auth = 'anyone';
+				else this.articleInfo.opt.auth = 'private';
 			},
-			tagsTap(item) {
-				const index = this.selectedTagsList.findIndex(tag => tag.id === item.id)
-				if (index === -1) {
-					if (this.selectedTagsList.length >= 10) {
-						uni.showToast({
-							icon: 'none',
-							title: '至多选择10个标签'
-						})
-						// 已达到最大标签数,禁止添加
-						return
-					} else {
-						this.selectedTagsList = this.selectedTagsList.concat(item)
-					}
-				} else {
-					// 如果存在,则删除该标签
-					this.selectedTagsList.splice(index, 1)
-				}
-			},
-			collectsTap(item) {
-				if (this.selectedCollect && this.selectedCollect.id === item.id) {
-					// 如果点击的是已经选中的标签,则取消选中
-					this.selectedCollect = null
-				} else {
-					// 如果是未选中的标签,则选中它
-					this.selectedCollect = item
-				}
-			},
+
+			// 发布准备
 			async publish() {
 				// 获取插入的图片列表
 				let imgs = await this.edit.getImages()
 				// 判断是否允许提交
-				if (!this.articleTitle) {
+				if (!this.articleInfo.sort) {
+					uni.showToast({
+						icon: 'none',
+						title: '未选择分区'
+					});
+					return;
+				}
+				if (!this.articleInfo.title) {
 					uni.showToast({
 						icon: 'none',
 						title: '标题未填写~'
@@ -869,7 +689,6 @@
 					});
 					return;
 				}
-				this.showArticleSet = !this.showArticleSet
 				uni.showLoading({
 					title: '发布中...'
 				})
@@ -890,77 +709,49 @@
 					return data.data
 				}).then(res => {
 					// console.log('替换完成,最终内容为', JSON.stringify(res.html));
+					// 在这全局替换表情
+					const pattern = /<img[^>]+src="[^"]+\/([^/]+)\.[^"]*"[^>]*alt="emoji"[^>]*>/g;
+					res.html = res.html.replace(pattern, '_($1)')
+					// 发布文章
+					this.addArticle(res)
 
-					if (this.update) {
-						// 更新文章
-						this.updateArticle(res)
-					} else {
-						// 发布文章
-						this.addArtiCle(res)
-					}
 				});
 			},
-			// 更新文章
-			updateArticle(res) {
-				const idTags = this.selectedTagsList.filter(t => t.id)
-				const newTags = this.selectedTagsList.filter(t => t.new)
+			addArticle(res) {
+				const idTags = this.articleInfo.tags.filter(t => t.id)
 				const idList = idTags.map(t => t.id)
-				const newNameList = newTags.map(t => t.name)
-				this.$http.put('/article/save', {
-					id: this.id,
-					title: this.articleTitle ? this.articleTitle : res.text.substring(0, 10),
-					content: res.html,
-					description: this.description ? this.description : '',
-					sort_id: this.selectedCategory.id,
-					tag_id: idList,
-					collections_id: this.selectedCollect && this.selectedCollect.id ? this.selectedCollect.id : '',
-					tag_name: newNameList,
-					opt: JSON.stringify(this.articleOpt),
-				}).then(res => {
-					if (res.data.code === 200) {
-						this.realback = true
-						uni.hideLoading()
-						uni.showToast({
-							icon: 'none',
-							title: '发布' + res.data.msg
-						})
-						setTimeout(() => {
-							this.$Router.back(1)
-						}, 1000)
-					}
-				}).catch(err => {
-					console.log(err)
-					uni.showToast({
-						icon: 'none',
-						title: res.data.msg
-					})
-				})
-			},
-			// 发布文章
-			addArtiCle(res) {
-				const idTags = this.selectedTagsList.filter(t => t.id)
-				const newTags = this.selectedTagsList.filter(t => t.new)
-				const idList = idTags.map(t => t.id)
-				const newNameList = newTags.map(t => t.name)
 				this.$http.post('/article/save', {
-					title: this.articleTitle ? this.articleTitle : res.text.substring(0, 10),
+					id: this.params.update ? this.params.id : '',
+					title: this.articleInfo.title ? this.articleInfo.title : res.text.substring(0, 10),
 					content: res.html,
-					description: this.description ? this.description : '',
-					sort_id: this.selectedCategory.id,
+					sort_id: this.articleInfo.sort.id,
 					tag_id: idList,
-					collections_id: this.selectedCollect && this.selectedCollect.id ? this.selectedCollect.id : '',
-					tag_name: newNameList,
-					opt: JSON.stringify(this.articleOpt),
+					collections_id: this.articleInfo.collect && this.articleInfo.collect.id ? this
+						.articleInfo
+						.collect.id : '',
+					opt: JSON.stringify(this.articleInfo.opt),
 				}).then(res => {
 					if (res.data.code === 200) {
-						this.realback = true
+						this.realBack = true
 						uni.hideLoading()
 						uni.showToast({
 							icon: 'none',
 							title: '发布' + res.data.msg
 						})
+						// 如果articleInfo.id存在且等于草稿中的id，则删除草稿
+						const index = this.draftList.findIndex(draft => draft.id === this.articleInfo
+							.id);
+						if (index !== -1) {
+							this.draftList.splice(index, 1);
+							uni.setStorageSync('draft', this.draftList);
+						}
 						setTimeout(() => {
-							this.$Router.back(1)
+							this.$Router.replaceAll({
+								path: '/pages/common/article/article',
+								query: {
+									id: res.data.data
+								}
+							})
 						}, 1000)
 					}
 				}).catch(err => {
@@ -971,43 +762,73 @@
 					})
 				})
 			},
+			// 点击按钮
+			btnAction(type) {
+				console.log(type)
+				switch (type) {
+					case 'image':
+						this.edit.addImage()
+						break;
+					case 'at':
+						this.showAt = !this.showAt
+						break;
+					case 'video':
+						this.showFont = !this.showFont
+						break;
+					case 'emoji':
+					case 'font':
+					case 'more':
+					case 'set':
+						if (this.showCurrent == type) this.showCurrent = null;
+						else this.showCurrent = type;
+						break;
+					default:
+						break;
+				}
+			},
+			// 保存草稿
 			async saveDraft() {
-				const contents = await this.edit.getContents()
-				uni.setStorageSync('draft', contents.html)
+				let nowTime = new Date().toLocaleDateString();
+				let article = this.articleInfo;
+				let content = await this.edit.getContents();
+				article.content = content.html;
+				article.update_time = nowTime;
+
+				// 检查是否已存在相同ID的草稿
+				let index = this.draftList.findIndex(draft => draft.id === article.id);
+
+				if (index !== -1) {
+					// 如果存在相同ID的草稿，更新草稿
+					this.draftList[index] = article;
+				} else {
+					// 否则，添加新的草稿到列表
+					article.id = this.draftList.length++; // 请注意这里的写法
+					this.draftList.push(article);
+				}
+
+				this.realBack = true;
+				uni.setStorageSync('draft', this.draftList);
 				uni.showToast({
 					icon: 'none',
-					title: '已保存草稿'
-				})
+					title: '保存成功！'
+				});
+				setTimeout(() => {
+					this.$Router.back(1);
+				}, 500);
 			},
-			deleteDraft() {
-				uni.removeStorageSync('draft')
-				this.showDraft = !this.showDraft
+			// 删除草稿
+			deleteDraft(index, type) {
+				if (type == 'all') this.draftList = [];
+				else this.draftList.splice(index, 1); // 删除指定索引的元素
+				uni.setStorageSync('draft', this.draftList);
+				this.draftList = uni.getStorageSync('draft');
 			},
-			insertDraft() {
-				this.draft = uni.getStorageSync('draft')
-				this.showDraft = !this.showDraft
-			},
-			addLink() {
-				const link = {
-					name: this.linkName,
-					data: {
-						type: 'link',
-						url: this.link
-					}
-				}
-				this.edit.addLink(link)
-				this.showAddLink = !this.showAddLink
-			},
-			showTip() {
 
-			},
-			// 字号滑动条
-			fontSliderChange({
-				detail
-			}) {
-				this.fontsize = detail.value;
-				this.edit.format('fontSize', detail.value + 'px');
-			},
+			// 设置草稿
+			getDraft(article) {
+				console.log(article)
+				this.articleInfo = article
+			}
 		}
 	}
 </script>
@@ -1024,11 +845,11 @@
 		color: white !important;
 	}
 
-	.ch-color {
-		color: $ch-color-primary;
-	}
-
 	.toolbar {
 		width: 100vw;
+	}
+
+	.ch-border-primary {
+		border: 5px solid #29b7cb;
 	}
 </style>
