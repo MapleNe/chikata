@@ -49,7 +49,8 @@
 			@click="goAgreement($store.state.page,'privacy')">隐私政策</tn-list-cell>
 		<tn-list-cell unlined :arrow="true" :arrowRight="true"
 			@click="goAgreement($store.state.page,'permission')">个人信息收集清单</tn-list-cell>
-		<tn-list-cell unlined :arrow="true" :arrowRight="true">第三方共享个人信息清单</tn-list-cell>
+		<tn-list-cell unlined :arrow="true" :arrowRight="true"
+			@click="goAgreement($store.state.page,'share')">第三方共享个人信息清单</tn-list-cell>
 		<view class="tn-padding-xs tn-bg-gray--light"></view>
 		<view class="tn-padding tn-text-center" style="font-size: 28rpx;" @tap.stop.prevent="logout" v-if="hasLogin">
 			<text>退出登录</text>
