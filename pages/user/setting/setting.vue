@@ -66,11 +66,11 @@
 			</view>
 			<view class="tn-color-gray--dark tn-bg-gray--light">
 				<view class="tn-padding tn-flex tn-flex-row-around" style="font-size: 28rpx;">
-					<view class="tn-flex-1" @tap.stop.prevent="showClearCache = false">
+					<view class="tn-flex-1 tn-text-center" @tap.stop.prevent="showClearCache = false">
 						<text>取消</text>
 					</view>
 					<text class="tn-color-grey--light">|</text>
-					<view class="tn-flex-1" @tap.stop.prevent="clearCache()">
+					<view class="tn-flex-1 tn-text-center" @tap.stop.prevent="clearCache()">
 						<text class="ch-color-primary">确定</text>
 					</view>
 				</view>
