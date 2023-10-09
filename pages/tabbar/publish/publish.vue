@@ -17,8 +17,7 @@
 		<view :style="{paddingTop: vuex_custom_bar_height + 'px'}"></view>
 		<view class="tn-flex tn-flex-direction-column tn-flex-row-between">
 
-			<view :style="{height:screenHeight - 100 - editHeight - keyHeight +'px',overflow:'scroll'}"
-				class="tn-margin">
+			<view :style="{height:screenHeight -100- editHeight - keyHeight +'px',overflow:'scroll'}" class="tn-margin">
 				<view class="tn-color-grey--disabled tn-flex tn-flex-col-center">
 					<tn-input v-model="articleInfo.title" :maxLength="titleMAX" placeholder-style="color:#C6D1D8"
 						:clearable="false" placeholder="标题(必填)" />
@@ -480,12 +479,22 @@
 			next()
 		},
 		onReady() {
+			uni.createSelectorQuery().select('#contentBtn').boundingClientRect(data => {
+				this.editHeight = data.height
+			}).exec()
+			this.screenHeight = uni.getSystemInfoSync().windowHeight
+			uni.onKeyboardHeightChange(data => {
+				this.keyHeight = data.height
+			})
+
+			console.log(this.editHeight, this.keyHeight, this.screenHeight)
 			this.initData()
 			// 获取草稿
 			this.draftList = uni.getStorageSync('draft')
 			if (!this.draftList) this.draftList = [];
 
 		},
+
 		computed: {
 			// 兼容小程序
 			gridItemWidth() {

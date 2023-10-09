@@ -49,7 +49,8 @@
 			@click="goAgreement($store.state.page,'privacy')">隐私政策</tn-list-cell>
 		<tn-list-cell unlined :arrow="true" :arrowRight="true"
 			@click="goAgreement($store.state.page,'permission')">个人信息收集清单</tn-list-cell>
-		<tn-list-cell unlined :arrow="true" :arrowRight="true">第三方共享个人信息清单</tn-list-cell>
+		<tn-list-cell unlined :arrow="true" :arrowRight="true"
+			@click="goAgreement($store.state.page,'share')">第三方共享个人信息清单</tn-list-cell>
 		<view class="tn-padding-xs tn-bg-gray--light"></view>
 		<view class="tn-padding tn-text-center" style="font-size: 28rpx;" @tap.stop.prevent="logout" v-if="hasLogin">
 			<text>退出登录</text>
@@ -65,11 +66,11 @@
 			</view>
 			<view class="tn-color-gray--dark tn-bg-gray--light">
 				<view class="tn-padding tn-flex tn-flex-row-around" style="font-size: 28rpx;">
-					<view class="tn-flex-1" @tap.stop.prevent="showClearCache = false">
+					<view class="tn-flex-1 tn-text-center" @tap.stop.prevent="showClearCache = false">
 						<text>取消</text>
 					</view>
 					<text class="tn-color-grey--light">|</text>
-					<view class="tn-flex-1" @tap.stop.prevent="clearCache()">
+					<view class="tn-flex-1 tn-text-center" @tap.stop.prevent="clearCache()">
 						<text class="ch-color-primary">确定</text>
 					</view>
 				</view>
