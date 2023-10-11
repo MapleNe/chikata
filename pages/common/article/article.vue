@@ -105,10 +105,10 @@
 										<text class="tn-margin-right-xs">浏览数：</text>
 										<text>{{article.views}}</text>
 									</view>
-									<!-- <view >
+									<view v-if="article.opt && article.opt.transport">
 										<text class="tn-icon-tip tn-margin-right-xs"></text>
 										<text>已开启创作声明，允许规范转载</text>
-									</view> -->
+									</view>
 								</view>
 
 							</view>
@@ -798,7 +798,7 @@
 						mode: 'html'
 					}
 				}).then(res => {
-
+					console.log(res)
 					if (res.data.code == 200) {
 						// 设置文章
 						this.article = res.data.data

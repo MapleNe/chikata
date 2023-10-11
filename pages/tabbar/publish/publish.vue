@@ -32,7 +32,7 @@
 				</view>
 			</view>
 			<view style="position: absolute;bottom: 0;width: 100%;" class="tn-bg-white" id="contentBtn">
-				<view class="tn-text-right tn-margin">
+				<view class="tn-text-right tn-margin-right">
 					<text class="tn-color-grey--disabled tn-text-sm">{{edit&&edit.textCount}}/{{contentMAX}}</text>
 				</view>
 				<view
@@ -412,7 +412,7 @@
 							allow: true,
 							image: true,
 						},
-						transport: true,
+						transport: false,
 					}
 				},
 				//表情
