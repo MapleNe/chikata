@@ -40,8 +40,9 @@
 			"path": "pages/tabbar/mine",
 			"style": {
 				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": true
 			}
+			
 
 		}, {
 			"path": "pages/user/login",

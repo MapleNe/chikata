@@ -208,10 +208,28 @@
 				return 100 / this.col + '%'
 			}
 		},
+		onPullDownRefresh() {
+			this.getUserProfile()
+			setTimeout(()=>{
+				uni.stopPullDownRefresh();
+			},500)
+		},
 		methods: {
 			...mapMutations(['logout']),
 			changeTab(index) {
 				this.tabsIndex = index
+			},
+			getUserProfile() {
+				this.$http.get('/users/one', {
+					params: {
+						id: this.id
+					}
+				}).then(res => {
+					if (res.data.code === 200) {
+						this.$store.commit('setUserInfo', res.data.data)
+						console.log('用户数据更新完成')
+					}
+				})
 			},
 			changeSwpier(event) {
 				this.swiperIndex = event.detail.current
