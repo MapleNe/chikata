@@ -156,7 +156,7 @@
 									class="tn-flex tn-flex-direction-column tn-margin-left-xl tn-padding-bottom-xs tn-border-solid-bottom tn-border-gray--light">
 									<!-- 父评论 -->
 									<view style="overflow: hidden;word-wrap: break-word" @tap="subReply(item)">
-										<mp-html :content="item.content" :img-cache="true"
+										<mp-html :content="renderEmoji(item.content)" :img-cache="true"
 											:preview-img="false"></mp-html>
 										<view v-if="item.images && item.images.length>0">
 											<tn-grid align=" left" :col="col" hoverClass="none">
